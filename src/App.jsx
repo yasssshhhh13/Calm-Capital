@@ -2599,7 +2599,7 @@ function SectionLabel({ icon: Icon, children }) {
 /* =====================================================================
    GMP TRENDS TAB
 ===================================================================== */
-function GMPTab({ tick }) {
+function GMPTab({ tick, onOpen }) {
   const data = useMemo(() => {
     return [...getLiveIPOS()]
       .sort((a, b) => gainPct(b) - gainPct(a))
@@ -2607,7 +2607,8 @@ function GMPTab({ tick }) {
         name: i.name, 
         pct: Number(gainPct(i).toFixed(1)),
         gmp: i.gmp,
-        dateRange: `${i.open} to ${i.close}`
+        dateRange: `${i.open} to ${i.close}`,
+        rawIpo: i
       }));
   }, [tick]);
 
@@ -2616,7 +2617,7 @@ function GMPTab({ tick }) {
       <div className="flex items-center gap-2 mb-6">
         <BarChart3 size={16} className="text-slate-500" />
         <h2 className="text-xs uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">
-          GMP % gain — all IPOs
+          GMP % gain — all IPOs (Click to view details)
         </h2>
       </div>
       
@@ -2642,7 +2643,42 @@ function GMPTab({ tick }) {
               
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.12)" horizontal={false} vertical={true} />
               <XAxis type="number" stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${v}%`} axisLine={false} tickLine={false} domain={[0, (max) => Math.ceil(max * 1.15)]} />
-              <YAxis type="category" dataKey="name" stroke="#64748b" fontSize={11} fontWeight={600} width={130} tickFormatter={truncateName} interval={0} axisLine={false} tickLine={false} />
+              <YAxis 
+                type="category" 
+                dataKey="name" 
+                stroke="#64748b" 
+                fontSize={11} 
+                fontWeight={600} 
+                width={130} 
+                interval={0} 
+                axisLine={false} 
+                tickLine={false}
+                tick={(props) => {
+                  const { x, y, payload } = props;
+                  const item = data.find((d) => d.name === payload.value);
+                  return (
+                    <g 
+                      transform={`translate(${x},${y})`} 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (item?.rawIpo) onOpen?.(item.rawIpo);
+                      }}
+                      className="cursor-pointer group"
+                    >
+                      <text 
+                        x={-8} 
+                        y={0} 
+                        dy={4} 
+                        textAnchor="end" 
+                        fill="currentColor" 
+                        className="text-slate-600 group-hover:text-[#1c9bda] dark:text-slate-400 dark:group-hover:text-[#1c9bda] transition-colors"
+                      >
+                        {truncateName(payload.value)}
+                      </text>
+                    </g>
+                  );
+                }}
+              />
               
               <Tooltip 
                 content={({ active, payload }) => {
@@ -2656,6 +2692,7 @@ function GMPTab({ tick }) {
                         </div>
                         <p className="text-slate-400 dark:text-slate-550 font-mono">{item.dateRange}</p>
                         <p className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">GMP: {item.pct}% (₹{item.gmp})</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 italic">Click to open details</p>
                       </div>
                     );
                   }
@@ -2664,7 +2701,15 @@ function GMPTab({ tick }) {
                 cursor={{ fill: "rgba(148, 163, 184, 0.04)" }} 
               />
               
-              <Bar dataKey="pct" radius={[0, 6, 6, 0]} barSize={20}>
+              <Bar 
+                dataKey="pct" 
+                radius={[0, 6, 6, 0]} 
+                barSize={20}
+                onClick={(entry) => {
+                  if (entry?.rawIpo) onOpen?.(entry.rawIpo);
+                }}
+                style={{ cursor: "pointer" }}
+              >
                 {data.map((entry, index) => (
                   <Cell 
                     key={`cell-${index}`} 
@@ -4555,7 +4600,7 @@ export default function App() {
               );
             })()}
 
-            {tab === "gmp" && <GMPTab tick={tick} />}
+            {tab === "gmp" && <GMPTab tick={tick} onOpen={handleSelectIpo} />}
             {tab === "subscriptions" && <SubscriptionsTab dark={dark} />}
             {tab === "financials" && <FinancialsTab onOpen={handleSelectIpo} dark={dark} />}
             {tab === "docs" && <DocumentsTab onOpen={handleSelectIpo} />}
