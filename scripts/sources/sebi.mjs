@@ -38,8 +38,12 @@ export async function findFilingUrl(companyName, browser) {
     });
 
     if (match && match.href) {
-      console.log(`[SEBI SUCCESS] Found official URL for ${companyName}: ${match.href}`);
-      return match.href;
+      let absoluteUrl = match.href;
+      try {
+        absoluteUrl = new URL(match.href, "https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&ssid=15&smid=10").href;
+      } catch (e) {}
+      console.log(`[SEBI SUCCESS] Found official URL for ${companyName}: ${absoluteUrl}`);
+      return absoluteUrl;
     }
     return null;
   } catch (err) {

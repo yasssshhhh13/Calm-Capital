@@ -101,6 +101,15 @@ function formatCompanyName(name) {
   return name;
 }
 
+function normalizeSebiUrl(href) {
+  if (!href) return null;
+  try {
+    return new URL(href, "https://www.sebi.gov.in/sebiweb/home/HomeAction.do?doListing=yes&sid=3&ssid=15&smid=10").href;
+  } catch (e) {
+    return href;
+  }
+}
+
 // Parse SEBI dates (e.g., "Jul 16, 2026")
 function parseSebiDate(dateStr) {
   if (!dateStr) return null;
@@ -226,6 +235,7 @@ async function main() {
         continue;
       }
 
+      const rawDrhpUrl = normalizeSebiUrl(filing.href);
       const rawCompanyName = extractCompanyName(filing.title);
       const companyName = formatCompanyName(rawCompanyName);
       const id = normalizeName(companyName).replace(/\s+/g, "-");
@@ -280,7 +290,7 @@ async function main() {
             listedAt: null,
             currentPrice: null,
             gmpHistory: [],
-            drhp: filing.href,
+            drhp: rawDrhpUrl,
             rhp: null,
             leadManager: "To Be Announced",
             registrar: "To Be Announced",
@@ -326,9 +336,9 @@ async function main() {
         }
 
         // 2. Check for field updates
-        if (filing.href && existingIpo.drhp !== filing.href) {
-          changes.drhp = { old: existingIpo.drhp, new: filing.href };
-          existingIpo.drhp = filing.href;
+        if (rawDrhpUrl && existingIpo.drhp !== rawDrhpUrl) {
+          changes.drhp = { old: existingIpo.drhp, new: rawDrhpUrl };
+          existingIpo.drhp = rawDrhpUrl;
         }
 
         // If changes detected, log and record in audit trail
