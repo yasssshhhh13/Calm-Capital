@@ -2624,12 +2624,12 @@ function GMPTab({ tick, onOpen }) {
       {(() => {
         const truncateName = (name) => {
           if (!name) return "";
-          return name.length > 18 ? `${name.slice(0, 16)}...` : name;
+          return name.length > 22 ? `${name.slice(0, 20)}...` : name;
         };
 
         return (
           <ResponsiveContainer width="100%" height={Math.max(400, data.length * 36)}>
-            <BarChart data={data} layout="vertical" margin={{ left: 8, right: 70, top: 4, bottom: 4 }}>
+            <BarChart data={data} layout="vertical" margin={{ left: 30, right: 70, top: 4, bottom: 4 }}>
               <defs>
                 <linearGradient id="gmpGradient" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#1a5d3f" />
@@ -2649,7 +2649,7 @@ function GMPTab({ tick, onOpen }) {
                 stroke="#64748b" 
                 fontSize={11} 
                 fontWeight={600} 
-                width={130} 
+                width={145} 
                 interval={0} 
                 axisLine={false} 
                 tickLine={false}
