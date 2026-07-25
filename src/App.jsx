@@ -2629,7 +2629,7 @@ function GMPTab({ tick, onOpen }) {
 
         return (
           <ResponsiveContainer width="100%" height={Math.max(400, data.length * 36)}>
-            <BarChart data={data} layout="vertical" margin={{ left: 30, right: 70, top: 4, bottom: 4 }}>
+            <BarChart data={data} layout="vertical" margin={{ left: 10, right: 70, top: 4, bottom: 4 }}>
               <defs>
                 <linearGradient id="gmpGradient" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#1a5d3f" />
@@ -2649,7 +2649,7 @@ function GMPTab({ tick, onOpen }) {
                 stroke="#64748b" 
                 fontSize={11} 
                 fontWeight={600} 
-                width={145} 
+                width={155} 
                 interval={0} 
                 axisLine={false} 
                 tickLine={false}
@@ -2666,10 +2666,10 @@ function GMPTab({ tick, onOpen }) {
                       className="cursor-pointer group"
                     >
                       <text 
-                        x={-8} 
+                        x={-145} 
                         y={0} 
                         dy={4} 
-                        textAnchor="end" 
+                        textAnchor="start" 
                         fill="currentColor" 
                         className="text-slate-600 group-hover:text-[#1c9bda] dark:text-slate-400 dark:group-hover:text-[#1c9bda] transition-colors"
                       >
