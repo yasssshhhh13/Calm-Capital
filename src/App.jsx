@@ -143,14 +143,31 @@ function getComputedStatus(ipo, now = new Date()) {
 
 /** IST calendar Y-M-D parts for a Date. */
 function istYmdParts(date = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Kolkata",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(date);
-  const get = (t) => Number(parts.find((p) => p.type === t)?.value);
-  return { y: get("year"), m: get("month"), d: get("day") };
+  try {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).formatToParts(date);
+    const get = (t) => {
+      const found = parts.find((p) => p.type === t);
+      return found ? Number(found.value) : null;
+    };
+    const y = get("year");
+    const m = get("month");
+    const d = get("day");
+    if (y !== null && m !== null && d !== null) {
+      return { y, m, d };
+    }
+  } catch (e) {
+    console.warn("istYmdParts failed, falling back to local time:", e);
+  }
+  return {
+    y: date.getFullYear(),
+    m: date.getMonth() + 1,
+    d: date.getDate(),
+  };
 }
 
 /** True for Sat/Sun in the Asia/Kolkata calendar (IPO bidding holidays). */
@@ -537,17 +554,38 @@ function pad2(n) {
 
 /** IST calendar parts for a Date. */
 function istClockParts(date = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Kolkata",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(date);
-  const get = (t) => Number(parts.find((p) => p.type === t)?.value);
-  return { y: get("year"), m: get("month"), d: get("day"), h: get("hour"), mi: get("minute") };
+  try {
+    const parts = new Intl.DateTimeFormat("en-CA", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    }).formatToParts(date);
+    const get = (t) => {
+      const found = parts.find((p) => p.type === t);
+      return found ? Number(found.value) : null;
+    };
+    const y = get("year");
+    const m = get("month");
+    const d = get("day");
+    const h = get("hour");
+    const mi = get("minute");
+    if (y !== null && m !== null && d !== null && h !== null && mi !== null) {
+      return { y, m, d, h, mi };
+    }
+  } catch (e) {
+    console.warn("istClockParts failed, falling back to local time:", e);
+  }
+  return {
+    y: date.getFullYear(),
+    m: date.getMonth() + 1,
+    d: date.getDate(),
+    h: date.getHours(),
+    mi: date.getMinutes(),
+  };
 }
 
 function addCalendarDaysYmd(ymdStr, days) {
@@ -1290,20 +1328,17 @@ function sortedCalcIpos() {
 
 function CalculatorTab({ onOpen }) {
   const allIpos = sortedCalcIpos();
-  const [ipoId, setIpoId] = useState(allIpos.find((i) => i.status === "Open")?.id || allIpos[0].id);
+  const [ipoId, setIpoId] = useState(() => {
+    const openIpo = allIpos.find((i) => i.status === "Open");
+    if (openIpo) return openIpo.id;
+    return allIpos[0]?.id || "";
+  });
   const [lots, setLots] = useState(1);
   const [search, setSearch] = useState("");
   const [listOpen, setListOpen] = useState(false);
   const [calcFilter, setCalcFilter] = useState(null); // null = All
 
-  const ipo = allIpos.find((i) => i.id === ipoId) || allIpos[0];
-  const p = price(ipo);
-  const shares = ipo.lot * lots;
-  const inv = p * shares;
-  const estListingValue = (ipo.estListing || p) * shares;
-  const profit = estListingValue - inv;
-  const roi = inv ? (profit / inv) * 100 : 0;
-  const breakeven = p;
+  const ipo = allIpos.find((i) => i.id === ipoId) || allIpos[0] || null;
 
   const statusColors = {
     Open:     { bg: "rgba(16,185,129,0.12)", color: "#10b981", dot: "bg-emerald-500" },
@@ -1311,6 +1346,26 @@ function CalculatorTab({ onOpen }) {
     Closed:   { bg: "rgba(148,163,184,0.10)", color: "#64748b", dot: "bg-slate-400" },
     Listed:   { bg: "rgba(28,155,218,0.10)", color: BRAND.blue, dot: "bg-blue-400" },
   };
+
+  if (!ipo) {
+    return (
+      <div className="bg-white dark:bg-[#161c28] border border-slate-200 dark:border-white/5 rounded-3xl p-12 text-center shadow-sm">
+        <CalcIcon size={48} className="mx-auto mb-4 text-slate-300 dark:text-slate-700" />
+        <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-2">Calculator Unavailable</h2>
+        <p className="text-slate-500 text-sm max-w-sm mx-auto">
+          No IPO database records are loaded. Please try reloading or check your connection.
+        </p>
+      </div>
+    );
+  }
+
+  const p = price(ipo);
+  const shares = (ipo.lot || 0) * lots;
+  const inv = p * shares;
+  const estListingValue = (ipo.estListing || p) * shares;
+  const profit = estListingValue - inv;
+  const roi = inv ? (profit / inv) * 100 : 0;
+  const breakeven = p;
 
   const filtered = allIpos.filter((i) => {
     const matchSearch = !search || i.company.toLowerCase().includes(search.toLowerCase());
@@ -1562,12 +1617,14 @@ const LOGO_REGISTRY = {
 
 // Returns the best matching logo URL for a given display name.
 function getLogoUrl(name) {
-  const n = name.toLowerCase().trim();
+  if (!name) return null;
+  const n = String(name).toLowerCase().trim();
   // Exact match first
   if (LOGO_REGISTRY[n]) return LOGO_REGISTRY[n];
   // Partial match
   for (const key of Object.keys(LOGO_REGISTRY)) {
-    if (n.includes(key) || key.includes(n.split(" ")[0])) return LOGO_REGISTRY[key];
+    const firstWord = n.split(" ")[0];
+    if (n.includes(key) || (firstWord && key.includes(firstWord))) return LOGO_REGISTRY[key];
   }
   return null;
 }
@@ -1575,29 +1632,32 @@ function getLogoUrl(name) {
 /* =====================================================================
    COMPANY AVATAR — official logo with graceful initials fallback
 ===================================================================== */
-function CompanyAvatar({ name, size = 40 }) {
+function CompanyAvatar({ name = "", size = 40 }) {
   const [srcIndex, setSrcIndex] = useState(0);
 
   // Reset index whenever the company name changes (e.g. navigating between cards)
   useEffect(() => { setSrcIndex(0); }, [name]);
 
+  const safeName = String(name || "").trim();
+
   // Initials fallback values
-  const words = name.replace(/Ltd\.|Limited|Pvt\.|Private|Co\./gi, "").trim().split(/\s+/);
+  const words = safeName.replace(/Ltd\.|Limited|Pvt\.|Private|Co\./gi, "").trim().split(/\s+/);
   const initials = words.slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
   const colors = ["#1c9bda", "#8b5cf6", "#f59e0b", "#10b981", "#ef4444", "#3b82f6", "#ec4899"];
-  const colorIdx = name.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length;
+  const colorIdx = safeName.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length;
   const bg = colors[colorIdx];
 
   // Build source cascade once per name
   const sources = useMemo(() => {
-    const primaryUrl = getLogoUrl(name);
+    if (!safeName) return [];
+    const primaryUrl = getLogoUrl(safeName);
     if (!primaryUrl) return [];
     const domain = primaryUrl.replace("https://logo.clearbit.com/", "");
     return [
       primaryUrl,
       `https://www.google.com/s2/favicons?sz=128&domain=${domain}`,
     ];
-  }, [name]);
+  }, [safeName]);
 
   const currentSrc = sources[srcIndex];
 
@@ -1609,7 +1669,7 @@ function CompanyAvatar({ name, size = 40 }) {
       >
         <img
           src={currentSrc}
-          alt={`${name} logo`}
+          alt={`${safeName} logo`}
           width={Math.round(size * 0.78)}
           height={Math.round(size * 0.78)}
           loading="lazy"
@@ -4147,7 +4207,11 @@ export default function App() {
     const all = getLiveIPOS();
     if (!query.trim()) return all;
     const q = query.toLowerCase();
-    return all.filter((i) => i.company.toLowerCase().includes(q) || i.sector.toLowerCase().includes(q));
+    return all.filter((i) => {
+      const companyName = i.company || i.name || "";
+      const sectorName = i.sector || "";
+      return companyName.toLowerCase().includes(q) || sectorName.toLowerCase().includes(q);
+    });
   }, [query, tick]);
 
   const counts = useMemo(() => {
