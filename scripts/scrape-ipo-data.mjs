@@ -53,8 +53,8 @@ function calculateStatus(ipo) {
   const open = d(ipo.open);
   if (today < open) return "Upcoming";
   if (!ipo.close) return "Open";
-  const closeEnd = new Date(d(ipo.close).getTime() + 24 * 60 * 60 * 1000 - 1);
-  if (today <= closeEnd) return "Open";
+  const closeDeadline = new Date(ipo.close + "T16:50:00+05:30");
+  if (today < closeDeadline) return "Open";
   if (!ipo.listing) return "Closed";
   const listing = d(ipo.listing);
   if (today < listing) return "Closed";

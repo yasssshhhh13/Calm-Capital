@@ -128,8 +128,8 @@ function liveStatus(ipo, today) {
   if (today < open) return "Upcoming";
   
   if (!ipo.close) return "Open"; // If open but close is not set, treat as Open
-  const closeEnd = new Date(d(ipo.close).getTime() + 24 * 60 * 60 * 1000 - 1);
-  if (today <= closeEnd) return "Open";
+  const closeDeadline = new Date(ipo.close + "T16:50:00+05:30");
+  if (today < closeDeadline) return "Open";
   
   if (!ipo.listing) return "Closed"; // If closed but listing not set, treat as Closed
   const listing = d(ipo.listing);
@@ -752,10 +752,10 @@ function computeAllNotifications(ipos, now = new Date()) {
       });
     }
 
-    // Last Day to Apply — on close notification-day, hidden after 5:00 PM IST on that calendar day
+    // Last Day to Apply — on close notification-day, hidden after 4:50 PM IST on that calendar day
     if (ipo.close && ipo.close === notifDay) {
       const pastCloseDeadline =
-        calendarToday > ipo.close || (calendarToday === ipo.close && ist.h >= 17);
+        calendarToday > ipo.close || (calendarToday === ipo.close && (ist.h > 16 || (ist.h === 16 && ist.mi >= 50)));
       if (!pastCloseDeadline) {
         candidates.push({
           id: `${ipo.id}-close-${ipo.close}`,
