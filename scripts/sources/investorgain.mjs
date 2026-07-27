@@ -418,26 +418,65 @@ export async function scrapeSubscription(page, iposBase) {
         for (const table of tables) {
           const headers = Array.from(table.querySelectorAll("th")).map((th) => th.innerText.trim().toLowerCase());
           if (!headers.length) continue;
-          const appsIdx = headers.findIndex((h) => h.includes("application") || h.includes("apps") || h.includes("allotment chance") || h.includes("odds"));
+
           const catIdx = headers.findIndex((h) => h.includes("category") || h.includes("investor") || h === "quota");
-          if (appsIdx < 0) continue;
+          if (catIdx < 0) continue;
 
-          for (const tr of Array.from(table.querySelectorAll("tbody tr"))) {
-            const tds = Array.from(tr.querySelectorAll("td"));
-            if (!tds.length) continue;
-            const cat = (catIdx >= 0 ? tds[catIdx] : tds[0])?.innerText.trim().toLowerCase() || "";
-            const appsRaw = tds[appsIdx]?.innerText || "";
-            const m = appsRaw.replace(/,/g, "").match(/(\d+(?:\.\d+)?)/);
-            if (!m) continue;
-            const appsVal = parseFloat(m[1]);
-            if (!Number.isFinite(appsVal) || appsVal <= 0) continue;
+          // 1. Demand/Applications/Odds table
+          const appsIdx = headers.findIndex((h) => h.includes("application") || h.includes("apps") || h.includes("allotment chance") || h.includes("odds"));
+          if (appsIdx >= 0) {
+            for (const tr of Array.from(table.querySelectorAll("tbody tr"))) {
+              const tds = Array.from(tr.querySelectorAll("td"));
+              if (!tds.length) continue;
+              const cat = tds[catIdx]?.innerText.trim().toLowerCase() || "";
+              const appsRaw = tds[appsIdx]?.innerText || "";
+              const m = appsRaw.replace(/,/g, "").match(/(\d+(?:\.\d+)?)/);
+              if (!m) continue;
+              const appsVal = parseFloat(m[1]);
+              if (!Number.isFinite(appsVal) || appsVal <= 0) continue;
 
-            if (cat.includes("retail") || cat.includes("rii")) out.apps.retail_apps = appsVal;
-            else if (cat.includes("snii") || cat.includes("s-nii") || cat.includes("small nii") || cat.includes("shni") || cat.includes("s-hni")) out.apps.shni_apps = appsVal;
-            else if (cat.includes("bnii") || cat.includes("b-nii") || cat.includes("big nii") || cat.includes("bhni") || cat.includes("b-hni")) out.apps.bhni_apps = appsVal;
-            else if (cat.includes("employee") || cat === "emp") out.apps.employee_apps = appsVal;
-            else if (cat.includes("shareholder") || cat === "shr") out.apps.shareholder_apps = appsVal;
-            else if (cat.includes("policyholder") || cat === "pol") out.apps.policyholder_apps = appsVal;
+              if (cat.includes("retail") || cat.includes("rii")) out.apps.retail_apps = appsVal;
+              else if (cat.includes("snii") || cat.includes("s-nii") || cat.includes("small nii") || cat.includes("shni") || cat.includes("s-hni")) out.apps.shni_apps = appsVal;
+              else if (cat.includes("bnii") || cat.includes("b-nii") || cat.includes("big nii") || cat.includes("bhni") || cat.includes("b-hni")) out.apps.bhni_apps = appsVal;
+              else if (cat.includes("employee") || cat === "emp") out.apps.employee_apps = appsVal;
+              else if (cat.includes("shareholder") || cat === "shr") out.apps.shareholder_apps = appsVal;
+              else if (cat.includes("policyholder") || cat === "pol") out.apps.policyholder_apps = appsVal;
+            }
+          }
+
+          // 2. Share subscription multiplier table
+          const subTimesIdx = headers.findIndex((h) => h.includes("subscription") || h.includes("times") || h === "sub" || h === "times subscribed");
+          if (subTimesIdx >= 0) {
+            for (const tr of Array.from(table.querySelectorAll("tbody tr"))) {
+              const tds = Array.from(tr.querySelectorAll("td"));
+              if (!tds.length) continue;
+              const cat = tds[catIdx]?.innerText.trim().toLowerCase() || "";
+              const subTimesRaw = tds[subTimesIdx]?.innerText || "";
+              const m = subTimesRaw.replace(/,/g, "").match(/(\d+(?:\.\d+)?)/);
+              if (!m) continue;
+              const subVal = parseFloat(m[1]);
+              if (!Number.isFinite(subVal)) continue;
+
+              if (cat.includes("retail") || cat.includes("rii")) {
+                if (out.shares.retail === undefined) out.shares.retail = subVal;
+              } else if (cat.includes("snii") || cat.includes("s-nii") || cat.includes("small nii")) {
+                if (out.shares.snii === undefined) out.shares.snii = subVal;
+              } else if (cat.includes("bnii") || cat.includes("b-nii") || cat.includes("big nii")) {
+                if (out.shares.bnii === undefined) out.shares.bnii = subVal;
+              } else if (cat.includes("qib")) {
+                if (out.shares.qib === undefined) out.shares.qib = subVal;
+              } else if (cat.includes("nii") || cat.includes("hni") || cat.includes("non-institutional") || cat.includes("non institutional")) {
+                if (out.shares.hni === undefined) out.shares.hni = subVal;
+              } else if (cat.includes("employee") || cat === "emp") {
+                if (out.shares.employee === undefined) out.shares.employee = subVal;
+              } else if (cat.includes("shareholder") || cat === "shr") {
+                if (out.shares.shareholder === undefined) out.shares.shareholder = subVal;
+              } else if (cat.includes("policyholder") || cat === "pol") {
+                if (out.shares.policyholder === undefined) out.shares.policyholder = subVal;
+              } else if (cat === "total" || cat.includes("overall")) {
+                if (out.shares.overall === undefined) out.shares.overall = subVal;
+              }
+            }
           }
         }
         return out;
@@ -448,7 +487,12 @@ export async function scrapeSubscription(page, iposBase) {
       if ([s.qib, s.hni, s.retail, s.overall, s.snii, s.bnii, s.employee, s.shareholder, s.policyholder].every((v) => v === undefined)) continue;
 
       result[id] = {
-        overall: s.overall ?? 0, qib: s.qib ?? 0, snii: s.snii ?? 0, bnii: s.bnii ?? 0, hni: s.hni ?? 0, retail: s.retail ?? 0,
+        ...(s.overall !== undefined ? { overall: s.overall } : {}),
+        ...(s.qib !== undefined ? { qib: s.qib } : {}),
+        ...(s.snii !== undefined ? { snii: s.snii } : {}),
+        ...(s.bnii !== undefined ? { bnii: s.bnii } : {}),
+        ...(s.hni !== undefined ? { hni: s.hni } : {}),
+        ...(s.retail !== undefined ? { retail: s.retail } : {}),
         ...(s.employee !== undefined ? { employee: s.employee } : {}),
         ...(s.shareholder !== undefined ? { shareholder: s.shareholder } : {}),
         ...(s.policyholder !== undefined ? { policyholder: s.policyholder } : {}),
