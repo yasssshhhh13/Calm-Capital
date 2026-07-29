@@ -2731,10 +2731,10 @@ function GMPTab({ tick, onOpen }) {
                       className="cursor-pointer group"
                     >
                       <text 
-                        x={-145} 
+                        x={-10} 
                         y={0} 
                         dy={4} 
-                        textAnchor="start" 
+                        textAnchor="end" 
                         fill="currentColor" 
                         className="text-slate-600 group-hover:text-[#1c9bda] dark:text-slate-400 dark:group-hover:text-[#1c9bda] transition-colors"
                       >
