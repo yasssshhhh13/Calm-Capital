@@ -1413,7 +1413,7 @@ function CalculatorTab({ onOpen }) {
                 borderColor: listOpen ? "rgba(28,155,218,0.4)" : "rgba(148,163,184,0.2)"
               }}
             >
-              <CompanyAvatar name={ipo.company} size={36} />
+              <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={36} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{ipo.company}</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
@@ -1491,7 +1491,7 @@ function CalculatorTab({ onOpen }) {
                           className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-left"
                           style={{ background: i.id === ipoId ? "rgba(28,155,218,0.06)" : "transparent" }}
                         >
-                          <CompanyAvatar name={i.company} size={30} />
+                          <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={30} />
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">{i.company}</p>
                             <p className="text-[10px] text-slate-400 dark:text-slate-500">{i.type} · {i.priceMax ? `₹${i.priceMax}` : "TBA"}</p>
@@ -1632,11 +1632,11 @@ function getLogoUrl(name) {
 /* =====================================================================
    COMPANY AVATAR — official logo with graceful initials fallback
 ===================================================================== */
-function CompanyAvatar({ name = "", size = 40 }) {
+function CompanyAvatar({ name = "", logoUrl = null, size = 40 }) {
   const [srcIndex, setSrcIndex] = useState(0);
 
-  // Reset index whenever the company name changes (e.g. navigating between cards)
-  useEffect(() => { setSrcIndex(0); }, [name]);
+  // Reset index whenever the company name or logoUrl changes (e.g. navigating between cards)
+  useEffect(() => { setSrcIndex(0); }, [name, logoUrl]);
 
   const safeName = String(name || "").trim();
 
@@ -1647,17 +1647,22 @@ function CompanyAvatar({ name = "", size = 40 }) {
   const colorIdx = safeName.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length;
   const bg = colors[colorIdx];
 
-  // Build source cascade once per name
+  // Build source cascade once per name/logoUrl
   const sources = useMemo(() => {
-    if (!safeName) return [];
-    const primaryUrl = getLogoUrl(safeName);
-    if (!primaryUrl) return [];
-    const domain = primaryUrl.replace("https://logo.clearbit.com/", "");
-    return [
-      primaryUrl,
-      `https://www.google.com/s2/favicons?sz=128&domain=${domain}`,
-    ];
-  }, [safeName]);
+    const list = [];
+    if (logoUrl && !logoUrl.includes("dummy-logo")) {
+      list.push(logoUrl);
+    }
+    if (safeName) {
+      const primaryUrl = getLogoUrl(safeName);
+      if (primaryUrl) {
+        list.push(primaryUrl);
+        const domain = primaryUrl.replace("https://logo.clearbit.com/", "");
+        list.push(`https://www.google.com/s2/favicons?sz=128&domain=${domain}`);
+      }
+    }
+    return list;
+  }, [safeName, logoUrl]);
 
   const currentSrc = sources[srcIndex];
 
@@ -1736,7 +1741,7 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
         {/* Row 1: Company Logo, Name, Sector and Bookmark */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <CompanyAvatar name={ipo.company} size={42} />
+            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} />
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-bold text-slate-800 dark:text-white text-[15px] leading-tight truncate">{ipo.company}</h3>
@@ -1984,7 +1989,7 @@ function ListedIPOCard({ ipo, onOpen, watchlist }) {
       <div className="p-5 relative z-[1] pointer-events-none">
         {/* Header: Avatar + Company + Type badge */}
         <div className="flex items-center gap-3 mb-1">
-          <CompanyAvatar name={ipo.company} size={44} />
+          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={44} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-bold text-slate-850 dark:text-white text-[15px] leading-snug">{ipo.company}</h3>
@@ -2172,7 +2177,7 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
 
         {/* ── Company header ── */}
         <div className="flex items-start gap-4 px-5 py-4">
-          <CompanyAvatar name={ipo.company} size={52} />
+          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={52} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap">
               <h2 className="text-xl font-extrabold tracking-tight" style={{ color: dark ? "#ffffff" : "#1e293b" }}>{ipo.company}</h2>
@@ -2627,7 +2632,7 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
                       border: dark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.04)",
                     }}
                   >
-                    <CompanyAvatar name={rel.company} size={32} />
+                    <CompanyAvatar name={rel.company} logoUrl={rel.logoUrl} size={32} />
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-bold truncate" style={{ color: dark ? "#fff" : "#1e293b" }}>
                         {rel.company}
@@ -2747,7 +2752,7 @@ function GMPTab({ tick, onOpen }) {
                     return (
                       <div className="bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 p-3 rounded-2xl shadow-xl text-xs space-y-2">
                         <div className="flex items-center gap-2">
-                          <CompanyAvatar name={item.name} size={28} />
+                          <CompanyAvatar name={item.name} logoUrl={item.rawIpo?.logoUrl} size={28} />
                           <p className="font-bold text-slate-800 dark:text-slate-100">{item.name}</p>
                         </div>
                         <p className="text-slate-400 dark:text-slate-550 font-mono">{item.dateRange}</p>
@@ -3073,7 +3078,7 @@ function AllotmentCard({ ipo, onOpen, dark, todayStr }) {
       <div>
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <CompanyAvatar name={ipo.company} size={42} />
+            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} />
             <div className="min-w-0">
               <h3 className="font-bold text-slate-800 dark:text-white text-[15px] leading-tight truncate">{ipo.company}</h3>
               <div className="flex items-center gap-1.5 mt-1 flex-wrap">
@@ -3401,7 +3406,7 @@ function SubscriptionsTab({ dark }) {
                 {/* Header row: logo + company name + badges */}
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <CompanyAvatar name={ipo.company} size={38} />
+                    <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} />
                     <div className="min-w-0">
                       <p className="text-sm font-bold tracking-tight leading-snug text-slate-800 dark:text-white truncate">{ipo.company}</p>
                       <span
@@ -3547,7 +3552,7 @@ function FinancialsTab({ onOpen, dark }) {
             >
               {/* Company logo + name */}
               <div className="flex items-center gap-2.5 mb-4">
-                <CompanyAvatar name={ipo.company} size={34} />
+                <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={34} />
                 <div>
                   <p className="text-sm font-bold tracking-tight leading-snug" style={{ color: dark ? "#ffffff" : "#1e293b" }}>{ipo.company}</p>
                   <span
@@ -3666,7 +3671,7 @@ function DocumentsTab({ onOpen }) {
             className="flex items-center justify-between glass glass-hover rounded-xl px-4 py-3 cursor-pointer"
           >
           <div className="flex items-center gap-2.5">
-            <CompanyAvatar name={ipo.company} size={30} />
+            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={30} />
             <div>
               <span className="text-sm text-slate-700 dark:text-slate-200 font-medium block leading-snug">{ipo.company}</span>
               <span
