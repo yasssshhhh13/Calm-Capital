@@ -5,38 +5,58 @@
     "company": "Ardee Industries Limited",
     "type": "Mainboard",
     "status": "Upcoming",
+<<<<<<< HEAD
     "discoveredAt": "2026-07-27T15:42:12.382Z",
+=======
+    "discoveredAt": "2026-07-30T08:20:59.101Z",
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     "open": "2026-08-05",
     "close": "2026-08-07",
     "listing": "2026-08-12",
     "allotment": "2026-08-10",
-    "refund": null,
-    "demat": null,
+    "refund": "2026-08-10",
+    "demat": "2026-08-10",
     "priceMin": 53,
     "priceMax": 53,
     "faceValue": 10,
-    "lot": null,
+    "lot": 281,
     "issueSize": 425.87,
-    "freshIssue": 320,
+    "freshIssue": 425.87,
     "ofs": 0,
+<<<<<<< HEAD
     "gmp": 0,
     "trend": "stable",
     "estListing": 53,
     "listedAt": null,
     "currentPrice": null,
     "gmpHistory": [],
+=======
+    "gmp": 5,
+    "trend": "up",
+    "estListing": 58,
+    "listedAt": null,
+    "currentPrice": null,
+    "gmpHistory": [
+      {
+        "d": "Jul 30",
+        "v": 5
+      }
+    ],
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     "drhp": "https://www.sebi.gov.in/filings/public-issues/oct-2025/ardee-industries-limited_97225.html",
     "rhp": null,
     "leadManager": "Pantomath Capital Advisors Pvt.Ltd.",
     "exchange": "BSE, NSE",
     "sub": null,
     "fin": {
-      "revenue": 743.53,
-      "pat": 33.27,
-      "ebitda": 65.93,
-      "netWorth": 62.6,
-      "debt": 165.77,
-      "roe": 72
+      "revenue": 1168.88,
+      "pat": 84.68,
+      "ebitda": 147.08,
+      "netWorth": 147.38,
+      "debt": 182.75,
+      "eps": 3.32,
+      "roe": 81,
+      "pe": 15.96
     },
     "about": "Ardee Industries Limited is a newly announced Mainboard IPO operating in the General sector. The company is launching its issue on BSE, NSE.",
     "sector": "General",
@@ -51,20 +71,35 @@
       "Highly competitive market segment and raw material cost exposure"
     ],
     "verification": {
+      "priceMin": {
+        "status": "unverified",
+        "value": 53,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
       "priceMax": {
         "status": "unverified",
         "value": 53,
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "pending",
+        "status": "unverified",
+        "value": 281,
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
         "status": "unverified",
@@ -72,6 +107,7 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
       },
       "freshIssue": {
@@ -81,22 +117,41 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "freshIssue": {
+        "status": "unverified",
+        "value": 425.87,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
@@ -104,7 +159,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
         "status": "unverified",
@@ -112,17 +171,29 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-10",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-12",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
       },
@@ -133,6 +204,12 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "finMeta": {
@@ -140,7 +217,7 @@
       "sourceUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2025/ardee-industries-limited_97225.html",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:38.374Z",
+      "verifiedAt": "2026-07-30T08:24:53.567Z",
       "method": "InvestorGain prospectus table + DRHP/RHP",
       "status": "Verified"
     },
@@ -148,12 +225,497 @@
     "website": "https://ardeeindustries.com/"
   },
   {
+    "id": "aegeus-technologies",
+    "name": "Aegeus Technologies",
+    "company": "Aegeus Technologies Limited",
+    "type": "SME",
+    "status": "Upcoming",
+    "discoveredAt": "2026-07-30T08:21:08.766Z",
+    "open": "2026-08-04",
+    "close": "2026-08-06",
+    "listing": "2026-08-11",
+    "allotment": "2026-08-07",
+    "refund": "2026-08-07",
+    "demat": "2026-08-07",
+    "priceMin": 105,
+    "priceMax": 105,
+    "faceValue": 10,
+    "lot": 1200,
+    "issueSize": 23.71,
+    "freshIssue": 23.71,
+    "ofs": 0,
+    "gmp": 0,
+    "trend": "stable",
+    "estListing": null,
+    "listedAt": null,
+    "currentPrice": null,
+    "gmpHistory": [],
+    "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
+    "rhp": null,
+    "leadManager": "Turnaround Corporate Advisors Pvt.Ltd.",
+    "exchange": "BSE SME",
+    "sub": null,
+    "fin": {
+      "revenue": 41.22,
+      "pat": 4.02,
+      "ebitda": 6.48,
+      "netWorth": 15.4,
+      "debt": 11.93
+    },
+    "about": "Aegeus Technologies Limited is a newly announced SME IPO operating in the IT Services & Technology sector. The company is launching its issue on BSE SME.",
+    "sector": "IT Services & Technology",
+    "registrar": "Skyline Financial Services Pvt.Ltd.",
+    "investorgainUrl": "https://www.investorgain.com/ipo/aegeus-technologies-ipo/2089/",
+    "strengths": [
+      "Growing market footprint in the IT Services & Technology sector",
+      "Experienced promoter group and management team"
+    ],
+    "risks": [
+      "Operating scale limits relative to larger peers",
+      "Highly competitive market segment and raw material cost exposure"
+    ],
+    "finMeta": {
+      "sourceDoc": "DRHP",
+      "sourceUrl": "https://www.investorgain.com/ipo/aegeus-technologies-ipo/2089/",
+      "fy": "FY2026",
+      "pageNum": "Financials",
+      "verifiedAt": "2026-07-30T08:24:47.877Z",
+      "method": "Chittorgarh prospectus table + regulatory filing",
+      "status": "Verified",
+      "chittorgarhUrl": "https://www.chittorgarh.com/ipo/aegeus-technologies-ipo/2837/"
+    },
+    "verification": {
+      "priceMin": {
+        "status": "unverified",
+        "value": 105,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "priceMax": {
+        "status": "verified",
+        "value": 105,
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "lot": {
+        "status": "verified",
+        "value": 1200,
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "issueSize": {
+        "status": "verified",
+        "value": 24,
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "freshIssue": {
+        "status": "unverified",
+        "value": 23.71,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "ofs": {
+        "status": "unverified",
+        "value": 0,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "faceValue": {
+        "status": "unverified",
+        "value": 10,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "open": {
+        "status": "conflict",
+        "candidates": {
+          "2026-08-04": [
+            "investorgain"
+          ],
+          "2001-04-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "close": {
+        "status": "verified",
+        "value": "2026-08-06",
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "allotment": {
+        "status": "unverified",
+        "value": "2026-08-07",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "listing": {
+        "status": "unverified",
+        "value": "2026-08-11",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      }
+    }
+  },
+  {
+    "id": "anawil-wire-engineering",
+    "name": "Anawil Wire & Engineering",
+    "company": "Anawil Wire & Engineering Limited",
+    "type": "SME",
+    "status": "Upcoming",
+    "discoveredAt": "2026-07-30T08:21:18.156Z",
+    "open": "2026-08-03",
+    "close": "2026-08-05",
+    "listing": "2026-08-10",
+    "allotment": "2026-08-06",
+    "refund": "2026-08-06",
+    "demat": "2026-08-06",
+    "priceMin": 270,
+    "priceMax": 270,
+    "faceValue": 10,
+    "lot": 400,
+    "issueSize": 177.81,
+    "freshIssue": 177.81,
+    "ofs": 0,
+    "gmp": 70,
+    "trend": "up",
+    "estListing": 340,
+    "listedAt": null,
+    "currentPrice": null,
+    "gmpHistory": [
+      {
+        "d": "Jul 30",
+        "v": 70
+      }
+    ],
+    "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
+    "rhp": null,
+    "leadManager": "Hem Securities Ltd.",
+    "exchange": "NSE Emerge",
+    "sub": null,
+    "fin": {
+      "revenue": 143.63,
+      "pat": 36.63,
+      "ebitda": 61.09,
+      "netWorth": 89.51,
+      "debt": 128.25
+    },
+    "about": "Anawil Wire & Engineering Limited is a newly announced SME IPO operating in the General sector. The company is launching its issue on NSE Emerge.",
+    "sector": "General",
+    "registrar": "Bigshare Services Pvt.Ltd.",
+    "investorgainUrl": "https://www.investorgain.com/ipo/anawil-wire-engieering-ipo/1895/",
+    "strengths": [
+      "Growing market footprint in the General sector",
+      "Experienced promoter group and management team"
+    ],
+    "risks": [
+      "Operating scale limits relative to larger peers",
+      "Highly competitive market segment and raw material cost exposure"
+    ],
+    "finMeta": {
+      "sourceDoc": "DRHP",
+      "sourceUrl": "https://www.investorgain.com/ipo/anawil-wire-engieering-ipo/1895/",
+      "fy": "FY2026",
+      "pageNum": "Financials",
+      "verifiedAt": "2026-07-30T08:24:47.877Z",
+      "method": "Chittorgarh prospectus table + regulatory filing",
+      "status": "Verified",
+      "chittorgarhUrl": "https://www.chittorgarh.com/ipo/anawil-wire-engieering-ipo/2618/"
+    },
+    "verification": {
+      "priceMin": {
+        "status": "unverified",
+        "value": 270,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "priceMax": {
+        "status": "verified",
+        "value": 270,
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "lot": {
+        "status": "verified",
+        "value": 400,
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "issueSize": {
+        "status": "verified",
+        "value": 178,
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "freshIssue": {
+        "status": "unverified",
+        "value": 177.81,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "ofs": {
+        "status": "unverified",
+        "value": 0,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "faceValue": {
+        "status": "unverified",
+        "value": 10,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "open": {
+        "status": "conflict",
+        "candidates": {
+          "2026-08-03": [
+            "investorgain"
+          ],
+          "2001-03-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "close": {
+        "status": "verified",
+        "value": "2026-08-05",
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "allotment": {
+        "status": "unverified",
+        "value": "2026-08-06",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "listing": {
+        "status": "unverified",
+        "value": "2026-08-10",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      }
+    }
+  },
+  {
+    "id": "g-v-electricals",
+    "name": "G.V. Electricals",
+    "company": "G.V. Electricals Limited",
+    "type": "SME",
+    "status": "Upcoming",
+    "discoveredAt": "2026-07-30T08:21:27.739Z",
+    "open": "2026-07-31",
+    "close": "2026-08-04",
+    "listing": "2026-08-07",
+    "allotment": "2026-08-05",
+    "refund": "2026-08-05",
+    "demat": "2026-08-05",
+    "priceMin": 130,
+    "priceMax": 130,
+    "faceValue": 10,
+    "lot": 1000,
+    "issueSize": 42.25,
+    "freshIssue": 42.25,
+    "ofs": 0,
+    "gmp": 24,
+    "trend": "up",
+    "estListing": 154,
+    "listedAt": null,
+    "currentPrice": null,
+    "gmpHistory": [
+      {
+        "d": "Jul 30",
+        "v": 24
+      }
+    ],
+    "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
+    "rhp": null,
+    "leadManager": "Seren Capital Pvt.Ltd.",
+    "exchange": "BSE SME",
+    "sub": null,
+    "fin": {
+      "revenue": 156.66,
+      "pat": 10.47,
+      "ebitda": 17.05,
+      "netWorth": 33.67,
+      "debt": 16.47
+    },
+    "about": "G.V. Electricals Limited is a newly announced SME IPO operating in the General sector. The company is launching its issue on BSE SME.",
+    "sector": "General",
+    "registrar": "Mudra RTA Ventures Private...",
+    "investorgainUrl": "https://www.investorgain.com/ipo/gv-electricals-ipo/2246/",
+    "strengths": [
+      "Growing market footprint in the General sector",
+      "Experienced promoter group and management team"
+    ],
+    "risks": [
+      "Operating scale limits relative to larger peers",
+      "Highly competitive market segment and raw material cost exposure"
+    ],
+    "finMeta": {
+      "sourceDoc": "DRHP",
+      "sourceUrl": "https://www.investorgain.com/ipo/gv-electricals-ipo/2246/",
+      "fy": "FY2026",
+      "pageNum": "Financials",
+      "verifiedAt": "2026-07-30T08:24:47.877Z",
+      "method": "Chittorgarh prospectus table + regulatory filing",
+      "status": "Verified",
+      "chittorgarhUrl": "https://www.chittorgarh.com/ipo/gv-electricals-ipo/2985/"
+    },
+    "verification": {
+      "priceMin": {
+        "status": "unverified",
+        "value": 130,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "priceMax": {
+        "status": "verified",
+        "value": 130,
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "lot": {
+        "status": "verified",
+        "value": 1000,
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "issueSize": {
+        "status": "verified",
+        "value": 42,
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "freshIssue": {
+        "status": "unverified",
+        "value": 42.25,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "ofs": {
+        "status": "unverified",
+        "value": 0,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "faceValue": {
+        "status": "unverified",
+        "value": 10,
+        "sources": [
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "open": {
+        "status": "conflict",
+        "candidates": {
+          "2026-07-31": [
+            "investorgain"
+          ],
+          "2001-07-31": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "close": {
+        "status": "verified",
+        "value": "2026-08-04",
+        "sources": [
+          "investorgain",
+          "chittorgarh"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "allotment": {
+        "status": "unverified",
+        "value": "2026-08-05",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "listing": {
+        "status": "unverified",
+        "value": "2026-08-07",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      }
+    }
+  },
+  {
     "id": "fusion-klassroom-edutech",
     "name": "Fusion Klassroom Edutech",
     "company": "Fusion Klassroom Edutech Limited",
     "type": "SME",
     "status": "Upcoming",
-    "discoveredAt": "2026-07-27T15:42:21.832Z",
+    "discoveredAt": "2026-07-30T08:21:37.330Z",
     "open": "2026-07-31",
     "close": "2026-08-04",
     "listing": "2026-08-07",
@@ -202,7 +764,7 @@
       "sourceUrl": "https://www.investorgain.com/ipo/fusion-klassroom-edutech-ipo/2130/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.825Z",
+      "verifiedAt": "2026-07-30T08:24:47.877Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
       "chittorgarhUrl": "https://www.chittorgarh.com/ipo/fusion-klassroom-edutech-ipo/2867/"
@@ -214,31 +776,50 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 159,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 800,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 39.04,
+        "status": "verified",
+        "value": 39,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
@@ -246,7 +827,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
@@ -254,7 +839,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -262,14 +851,36 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-31",
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "open": {
+        "status": "conflict",
+        "candidates": {
+          "2026-07-31": [
+            "investorgain"
+          ],
+          "2001-07-31": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "close": {
+        "status": "verified",
+        "value": "2026-08-04",
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
       },
       "close": {
@@ -279,24 +890,42 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-05",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-07",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/fusion-klassroom-edutech-ipo/2867/",
     "website": "https://www.klassroom.in/"
   },
   {
+<<<<<<< HEAD
     "id": "g-v-electricals",
     "name": "G.V. Electricals",
     "company": "G.V. Electricals Limited",
@@ -454,21 +1083,26 @@
     "id": "dhaval-packaging",
     "name": "Dhaval Packaging",
     "company": "Dhaval Packaging Limited",
+=======
+    "id": "oneindig-technologies",
+    "name": "Oneindig Technologies",
+    "company": "Oneindig Technologies Limited",
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     "type": "SME",
     "status": "Open",
-    "discoveredAt": "2026-07-27T15:42:40.020Z",
+    "discoveredAt": "2026-07-30T08:21:46.920Z",
     "open": "2026-07-30",
     "close": "2026-08-03",
     "listing": "2026-08-06",
     "allotment": "2026-08-04",
     "refund": "2026-08-04",
     "demat": "2026-08-04",
-    "priceMin": 97,
-    "priceMax": 97,
+    "priceMin": 96,
+    "priceMax": 96,
     "faceValue": 10,
     "lot": 1200,
-    "issueSize": 36.36,
-    "freshIssue": 36.36,
+    "issueSize": 27.65,
+    "freshIssue": 27.65,
     "ofs": 0,
     "gmp": 0,
     "trend": "stable",
@@ -478,28 +1112,36 @@
     "gmpHistory": [],
     "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
     "rhp": null,
-    "leadManager": "Rarever Financial Advisors Pvt.Ltd.",
+    "leadManager": "Share India Capital Services...",
     "exchange": "BSE SME",
     "sub": {
+<<<<<<< HEAD
       "overall": 0.3,
       "snii": 0.39,
       "hni": 0.75,
       "retail": 0.3,
       "bnii": 0.93
+=======
+      "overall": 0.15,
+      "snii": 0.17,
+      "bnii": 0.04,
+      "hni": 0.08,
+      "retail": 0.27
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     },
     "fin": {
-      "revenue": 65.2,
-      "pat": 8.04,
-      "ebitda": 13.93,
-      "netWorth": 30.75,
-      "debt": 24.13
+      "revenue": 57.56,
+      "pat": 6.16,
+      "ebitda": 10.52,
+      "netWorth": 20.65,
+      "debt": 50.77
     },
-    "about": "Dhaval Packaging Limited is a newly announced SME IPO operating in the Packaging & Plastics sector. The company is launching its issue on BSE SME.",
-    "sector": "Packaging & Plastics",
-    "registrar": "Kfin Technologies Ltd.",
-    "investorgainUrl": "https://www.investorgain.com/ipo/dhaval-packaging-ipo/2087/",
+    "about": "Oneindig Technologies Limited is a newly announced SME IPO operating in the IT Services & Technology sector. The company is launching its issue on BSE SME.",
+    "sector": "IT Services & Technology",
+    "registrar": "Maashitla Securities Pvt.Ltd.",
+    "investorgainUrl": "https://www.investorgain.com/ipo/oneindig-technologies-ipo/1916/",
     "strengths": [
-      "Growing market footprint in the Packaging & Plastics sector",
+      "Growing market footprint in the IT Services & Technology sector",
       "Experienced promoter group and management team"
     ],
     "risks": [
@@ -508,60 +1150,87 @@
     ],
     "finMeta": {
       "sourceDoc": "DRHP",
-      "sourceUrl": "https://www.investorgain.com/ipo/dhaval-packaging-ipo/2087/",
+      "sourceUrl": "https://www.investorgain.com/ipo/oneindig-technologies-ipo/1916/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.826Z",
+      "verifiedAt": "2026-07-30T08:24:47.877Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
-      "chittorgarhUrl": "https://www.chittorgarh.com/ipo/dhaval-packaging-ipo/2835/"
+      "chittorgarhUrl": "https://www.chittorgarh.com/ipo/oneindig-technologies-ipo/2646/"
     },
     "verification": {
       "priceMin": {
         "status": "unverified",
-        "value": 97,
+        "value": 96,
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
-        "value": 97,
+        "status": "verified",
+        "value": 96,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1200,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 36.36,
+        "status": "verified",
+        "value": 28,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
-        "value": 36.36,
+        "value": 27.65,
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -569,39 +1238,231 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-30",
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "open": {
+        "status": "conflict",
+        "candidates": {
+          "2026-07-30": [
+            "investorgain"
+          ],
+          "2001-07-30": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "close": {
+        "status": "verified",
+        "value": "2026-08-03",
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "allotment": {
+        "status": "unverified",
+        "value": "2026-08-04",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "listing": {
+        "status": "unverified",
+        "value": "2026-08-06",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      }
+    }
+  },
+  {
+    "id": "juniper-green-energy",
+    "name": "Juniper Green Energy",
+    "company": "Juniper Green Energy Limited",
+    "type": "Mainboard",
+    "status": "Open",
+    "discoveredAt": "2026-07-30T08:21:56.493Z",
+    "open": "2026-07-30",
+    "close": "2026-08-03",
+    "listing": "2026-08-06",
+    "allotment": "2026-08-04",
+    "refund": "2026-08-04",
+    "demat": "2026-08-04",
+    "priceMin": 225,
+    "priceMax": 225,
+    "faceValue": 10,
+    "lot": 66,
+    "issueSize": 1800,
+    "freshIssue": 1800,
+    "ofs": 0,
+    "gmp": 11,
+    "trend": "up",
+    "estListing": 236,
+    "listedAt": null,
+    "currentPrice": null,
+    "gmpHistory": [
+      {
+        "d": "Jul 30",
+        "v": 11
+      }
+    ],
+    "drhp": "https://www.sebi.gov.in/filings/public-issues/jul-2025/juniper-green-energy-limited_95197.html",
+    "rhp": null,
+    "leadManager": "Kotak Mahindra Capital Co.Ltd.",
+    "exchange": "BSE, NSE",
+    "sub": {
+      "overall": 0.06,
+      "snii": 0.07,
+      "bnii": 0.01,
+      "hni": 0.03,
+      "retail": 0.1
+    },
+    "fin": {
+      "revenue": 804.93,
+      "pat": 40.46,
+      "ebitda": 692.18,
+      "netWorth": 122.89,
+      "debt": 12920.54,
+      "eps": 0.83,
+      "pe": 271.08
+    },
+    "about": "Juniper Green Energy Limited is a newly announced Mainboard IPO operating in the Energy & Power sector. The company is launching its issue on BSE, NSE.",
+    "sector": "Energy & Power",
+    "registrar": "Kfin Technologies Ltd.",
+    "investorgainUrl": "https://www.investorgain.com/ipo/juniper-green-energy-ipo/1809/",
+    "strengths": [
+      "Growing market footprint in the Energy & Power sector",
+      "Experienced promoter group and management team"
+    ],
+    "risks": [
+      "Operating scale limits relative to larger peers",
+      "Highly competitive market segment and raw material cost exposure"
+    ],
+    "verification": {
+      "priceMin": {
+        "status": "unverified",
+        "value": 225,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "priceMax": {
+        "status": "unverified",
+        "value": 225,
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "lot": {
+        "status": "unverified",
+        "value": 66,
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "issueSize": {
+        "status": "unverified",
+        "value": 1800,
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "freshIssue": {
+        "status": "unverified",
+        "value": 1800,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "ofs": {
+        "status": "unverified",
+        "value": 0,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "faceValue": {
+        "status": "unverified",
+        "value": 10,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "open": {
+        "status": "unverified",
+        "value": "2026-07-30",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
         "status": "unverified",
         "value": "2026-08-03",
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-04",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-06",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/dhaval-packaging-ipo/2835/",
     "website": "https://www.dhavalpackaging.com/"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      }
+    },
+    "finMeta": {
+      "sourceDoc": "DRHP",
+      "sourceUrl": "https://www.sebi.gov.in/filings/public-issues/jul-2025/juniper-green-energy-limited_95197.html",
+      "fy": "FY2026",
+      "pageNum": "Financials",
+      "verifiedAt": "2026-07-30T08:24:49.249Z",
+      "method": "InvestorGain prospectus table + DRHP/RHP",
+      "status": "Verified"
+    }
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
   },
   {
     "id": "mv-electrosystems",
@@ -609,7 +1470,7 @@
     "company": "MV Electrosystems Limited",
     "type": "Mainboard",
     "status": "Open",
-    "discoveredAt": "2026-07-27T15:42:49.523Z",
+    "discoveredAt": "2026-07-30T08:22:05.838Z",
     "open": "2026-07-30",
     "close": "2026-08-03",
     "listing": "2026-08-06",
@@ -623,15 +1484,15 @@
     "issueSize": 290,
     "freshIssue": 290,
     "ofs": 0,
-    "gmp": 90,
+    "gmp": 110,
     "trend": "up",
-    "estListing": 515,
+    "estListing": 535,
     "listedAt": null,
     "currentPrice": null,
     "gmpHistory": [
       {
-        "d": "Jul 27",
-        "v": 90
+        "d": "Jul 30",
+        "v": 110
       }
     ],
     "drhp": "https://www.sebi.gov.in/filings/public-issues/dec-2025/mv-electrosystems-limited_98280.html",
@@ -639,12 +1500,21 @@
     "leadManager": "Sundae Capital Advisors Pvt.Ltd.",
     "exchange": "BSE, NSE",
     "sub": {
+<<<<<<< HEAD
       "overall": 2.01,
       "qib": 0.06,
       "snii": 3.14,
       "bnii": 1.37,
       "hni": 1.96,
       "retail": 7.92
+=======
+      "overall": 1.79,
+      "qib": 0.06,
+      "snii": 2.76,
+      "bnii": 1.2,
+      "hni": 1.72,
+      "retail": 7.07
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     },
     "fin": {
       "revenue": 49.79,
@@ -672,10 +1542,15 @@
       "priceMin": {
         "status": "unverified",
         "value": 425,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
         "status": "unverified",
@@ -683,7 +1558,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
         "status": "unverified",
@@ -691,7 +1570,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
         "status": "unverified",
@@ -699,29 +1582,47 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
         "value": 290,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
@@ -729,7 +1630,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
         "status": "unverified",
@@ -737,19 +1642,37 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-04",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-06",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "finMeta": {
@@ -757,7 +1680,7 @@
       "sourceUrl": "https://www.sebi.gov.in/filings/public-issues/dec-2025/mv-electrosystems-limited_98280.html",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:39.781Z",
+      "verifiedAt": "2026-07-30T08:24:50.685Z",
       "method": "InvestorGain prospectus table + DRHP/RHP",
       "status": "Verified"
     },
@@ -765,6 +1688,7 @@
     "website": "https://www.mvelectrosystems.com/"
   },
   {
+<<<<<<< HEAD
     "id": "juniper-green-energy",
     "name": "Juniper Green Energy",
     "company": "Juniper Green Energy Limited",
@@ -922,52 +1846,76 @@
     "id": "oneindig-technologies",
     "name": "Oneindig Technologies",
     "company": "Oneindig Technologies Limited",
+=======
+    "id": "dhaval-packaging",
+    "name": "Dhaval Packaging",
+    "company": "Dhaval Packaging Limited",
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     "type": "SME",
     "status": "Open",
-    "discoveredAt": "2026-07-27T15:43:08.189Z",
+    "discoveredAt": "2026-07-30T08:22:15.541Z",
     "open": "2026-07-30",
     "close": "2026-08-03",
     "listing": "2026-08-06",
     "allotment": "2026-08-04",
     "refund": "2026-08-04",
     "demat": "2026-08-04",
-    "priceMin": 96,
-    "priceMax": 96,
+    "priceMin": 97,
+    "priceMax": 97,
     "faceValue": 10,
     "lot": 1200,
-    "issueSize": 27.65,
-    "freshIssue": 27.65,
+    "issueSize": 36.36,
+    "freshIssue": 36.36,
     "ofs": 0,
+<<<<<<< HEAD
     "gmp": 0,
     "trend": "stable",
     "estListing": 96,
+=======
+    "gmp": 8,
+    "trend": "up",
+    "estListing": 105,
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     "listedAt": null,
     "currentPrice": null,
-    "gmpHistory": [],
+    "gmpHistory": [
+      {
+        "d": "Jul 30",
+        "v": 8
+      }
+    ],
     "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
     "rhp": null,
-    "leadManager": "Share India Capital Services...",
+    "leadManager": "Rarever Financial Advisors Pvt.Ltd.",
     "exchange": "BSE SME",
     "sub": {
+<<<<<<< HEAD
       "overall": 0.15,
       "snii": 0.17,
       "bnii": 0.04,
       "hni": 0.08,
       "retail": 0.27
+=======
+      "overall": 0.3,
+      "snii": 0.39,
+      "bnii": 0.93,
+      "hni": 0.75,
+      "retail": 0.3
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     },
     "fin": {
-      "revenue": 57.56,
-      "pat": 6.16,
-      "ebitda": 10.52,
-      "netWorth": 20.65,
-      "debt": 50.77
+      "revenue": 65.2,
+      "pat": 8.04,
+      "ebitda": 13.93,
+      "netWorth": 30.75,
+      "debt": 24.13
     },
-    "about": "Oneindig Technologies Limited is a newly announced SME IPO operating in the IT Services & Technology sector. The company is launching its issue on BSE SME.",
-    "sector": "IT Services & Technology",
-    "registrar": "Maashitla Securities Pvt.Ltd.",
-    "investorgainUrl": "https://www.investorgain.com/ipo/oneindig-technologies-ipo/1916/",
+    "about": "Dhaval Packaging Limited is a newly announced SME IPO operating in the Packaging & Plastics sector. The company is launching its issue on BSE SME.",
+    "sector": "Packaging & Plastics",
+    "registrar": "Kfin Technologies Ltd.",
+    "investorgainUrl": "https://www.investorgain.com/ipo/dhaval-packaging-ipo/2087/",
     "strengths": [
-      "Growing market footprint in the IT Services & Technology sector",
+      "Growing market footprint in the Packaging & Plastics sector",
       "Experienced promoter group and management team"
     ],
     "risks": [
@@ -976,60 +1924,87 @@
     ],
     "finMeta": {
       "sourceDoc": "DRHP",
-      "sourceUrl": "https://www.investorgain.com/ipo/oneindig-technologies-ipo/1916/",
+      "sourceUrl": "https://www.investorgain.com/ipo/dhaval-packaging-ipo/2087/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.827Z",
+      "verifiedAt": "2026-07-30T08:24:47.878Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
-      "chittorgarhUrl": "https://www.chittorgarh.com/ipo/oneindig-technologies-ipo/2646/"
+      "chittorgarhUrl": "https://www.chittorgarh.com/ipo/dhaval-packaging-ipo/2835/"
     },
     "verification": {
       "priceMin": {
         "status": "unverified",
-        "value": 96,
+        "value": 97,
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
-        "value": 96,
+        "status": "verified",
+        "value": 97,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1200,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 27.65,
+        "status": "verified",
+        "value": 36,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
-        "value": 27.65,
+        "value": 36.36,
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -1037,14 +2012,36 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-30",
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "open": {
+        "status": "conflict",
+        "candidates": {
+          "2026-07-30": [
+            "investorgain"
+          ],
+          "2001-07-30": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "close": {
+        "status": "verified",
+        "value": "2026-08-03",
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
       },
       "close": {
@@ -1054,18 +2051,35 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-04",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-06",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/oneindig-technologies-ipo/2646/",
@@ -1077,7 +2091,7 @@
     "company": "H.R. Hygiene Products Limited",
     "type": "SME",
     "status": "Open",
-    "discoveredAt": "2026-07-27T15:43:17.554Z",
+    "discoveredAt": "2026-07-30T08:22:25.676Z",
     "open": "2026-07-29",
     "close": "2026-07-31",
     "listing": "2026-08-05",
@@ -1098,7 +2112,7 @@
     "currentPrice": null,
     "gmpHistory": [
       {
-        "d": "Jul 27",
+        "d": "Jul 30",
         "v": 2
       }
     ],
@@ -1107,12 +2121,21 @@
     "leadManager": "Marwadi Chandarana Intermediaries Brokers...",
     "exchange": "BSE SME",
     "sub": {
+<<<<<<< HEAD
       "overall": 1.61,
       "hni": 2.15,
       "retail": 1.74,
       "qib": 1.01,
       "snii": 1.26,
       "bnii": 2.59
+=======
+      "overall": 1.59,
+      "qib": 1.01,
+      "snii": 1.25,
+      "bnii": 2.55,
+      "hni": 2.11,
+      "retail": 1.72
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     },
     "fin": {
       "revenue": 131.9,
@@ -1138,7 +2161,7 @@
       "sourceUrl": "https://www.investorgain.com/ipo/hr-hygiene-products-ipo/1972/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.827Z",
+      "verifiedAt": "2026-07-30T08:24:47.878Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
       "chittorgarhUrl": "https://www.chittorgarh.com/ipo/hr-hygiene-products-ipo/2713/"
@@ -1150,31 +2173,50 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 88,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1600,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 53.95,
+        "status": "verified",
+        "value": 54,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
@@ -1182,7 +2224,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
@@ -1190,7 +2236,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -1198,33 +2248,63 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-29",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-07-31",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-03",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-05",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/hr-hygiene-products-ipo/2713/",
@@ -1236,7 +2316,7 @@
     "company": "Manipal Health Enterprises Limited",
     "type": "Mainboard",
     "status": "Open",
-    "discoveredAt": "2026-07-27T15:43:26.953Z",
+    "discoveredAt": "2026-07-30T08:22:34.948Z",
     "open": "2026-07-29",
     "close": "2026-07-31",
     "listing": "2026-08-05",
@@ -1250,15 +2330,15 @@
     "issueSize": 9275.22,
     "freshIssue": 9275.22,
     "ofs": 0,
-    "gmp": 25,
+    "gmp": 6,
     "trend": "up",
-    "estListing": 615,
+    "estListing": 596,
     "listedAt": null,
     "currentPrice": null,
     "gmpHistory": [
       {
-        "d": "Jul 27",
-        "v": 25
+        "d": "Jul 30",
+        "v": 6
       }
     ],
     "drhp": "https://www.sebi.gov.in/filings/public-issues/apr-2026/manipal-health-enterprises-limited-drhp_100763.html",
@@ -1267,11 +2347,19 @@
     "exchange": "BSE, NSE",
     "sub": {
       "overall": 0.24,
+<<<<<<< HEAD
       "snii": 0.14,
       "bnii": 0.12,
       "hni": 0.13,
       "retail": 0.42,
       "qib": 0.22
+=======
+      "qib": 0.22,
+      "snii": 0.14,
+      "bnii": 0.12,
+      "hni": 0.13,
+      "retail": 0.42
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     },
     "fin": {
       "revenue": 10520.52,
@@ -1298,10 +2386,15 @@
       "priceMin": {
         "status": "unverified",
         "value": 590,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
         "status": "unverified",
@@ -1309,7 +2402,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
         "status": "unverified",
@@ -1317,7 +2414,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
         "status": "unverified",
@@ -1325,37 +2426,63 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
         "value": 9275.22,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-29",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
         "status": "unverified",
@@ -1363,19 +2490,37 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-03",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-05",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "finMeta": {
@@ -1383,7 +2528,7 @@
       "sourceUrl": "https://www.sebi.gov.in/filings/public-issues/apr-2026/manipal-health-enterprises-limited-drhp_100763.html",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:42.609Z",
+      "verifiedAt": "2026-07-30T08:24:52.055Z",
       "method": "InvestorGain prospectus table + DRHP/RHP",
       "status": "Verified"
     },
@@ -1391,12 +2536,12 @@
     "website": "https://www.manipalhospitals.com/"
   },
   {
-    "id": "poojaa-precision-engg",
-    "name": "Poojaa Precision Engg.",
-    "company": "Poojaa Precision Engg. Limited",
+    "id": "poojaa-precision-engg-smect",
+    "name": "Poojaa Precision Engg. BSE SMECT",
+    "company": "Poojaa Precision Engg. BSE SMECT Limited",
     "type": "SME",
     "status": "Open",
-    "discoveredAt": "2026-07-27T15:43:36.122Z",
+    "discoveredAt": "2026-07-30T08:22:44.214Z",
     "open": "2026-07-28",
     "close": "2026-07-30",
     "listing": "2026-08-04",
@@ -1410,15 +2555,15 @@
     "issueSize": 159.83,
     "freshIssue": 159.83,
     "ofs": 0,
-    "gmp": 260,
+    "gmp": 185,
     "trend": "up",
-    "estListing": 561,
+    "estListing": 486,
     "listedAt": null,
     "currentPrice": null,
     "gmpHistory": [
       {
-        "d": "Jul 27",
-        "v": 260
+        "d": "Jul 30",
+        "v": 185
       }
     ],
     "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
@@ -1426,12 +2571,21 @@
     "leadManager": "Hem Securities Ltd.",
     "exchange": "BSE SME",
     "sub": {
+<<<<<<< HEAD
       "overall": 175.44,
       "snii": 201.85,
       "bnii": 400.47,
       "hni": 334.47,
       "retail": 181.69,
       "qib": 52.34
+=======
+      "overall": 160.78,
+      "qib": 37.14,
+      "snii": 188.95,
+      "bnii": 373.34,
+      "hni": 312.07,
+      "retail": 170.3
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     },
     "fin": {
       "revenue": 295.2,
@@ -1440,7 +2594,7 @@
       "netWorth": 133.16,
       "debt": 41.16
     },
-    "about": "Poojaa Precision Engg. Limited is a newly announced SME IPO operating in the General sector. The company is launching its issue on BSE SME.",
+    "about": "Poojaa Precision Engg. BSE SMECT Limited is a newly announced SME IPO operating in the General sector. The company is launching its issue on BSE SME.",
     "sector": "General",
     "registrar": "MUFG Intime India Pvt.Ltd.",
     "investorgainUrl": "https://www.investorgain.com/ipo/poojaa-precision-engg-ipo/2215/",
@@ -1457,7 +2611,7 @@
       "sourceUrl": "https://www.investorgain.com/ipo/poojaa-precision-engg-ipo/2215/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.827Z",
+      "verifiedAt": "2026-07-30T08:24:47.878Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
       "chittorgarhUrl": "https://www.chittorgarh.com/ipo/poojaa-precision-engg-ipo/2954/"
@@ -1469,31 +2623,50 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 301,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 400,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 159.83,
+        "status": "verified",
+        "value": 160,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
@@ -1501,13 +2674,21 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -1515,33 +2696,63 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-28",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-07-30",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-31",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-04",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/poojaa-precision-engg-ipo/2954/",
@@ -1553,7 +2764,7 @@
     "company": "Propshop Events & Exhibitions Limited",
     "type": "SME",
     "status": "Closed",
-    "discoveredAt": "2026-07-27T15:43:45.310Z",
+    "discoveredAt": "2026-07-30T08:22:53.888Z",
     "open": "2026-07-27",
     "close": "2026-07-29",
     "listing": "2026-08-03",
@@ -1579,11 +2790,11 @@
     "exchange": "NSE Emerge",
     "sub": {
       "overall": 1.53,
-      "retail": 1.77,
-      "snii": 1.75,
-      "hni": 1.38,
       "qib": 1.37,
-      "bnii": 1.19
+      "snii": 1.75,
+      "bnii": 1.19,
+      "hni": 1.38,
+      "retail": 1.77
     },
     "fin": {
       "revenue": 59.94,
@@ -1608,7 +2819,7 @@
       "sourceUrl": "https://www.investorgain.com/ipo/propshop-events-exhibitions-ipo/1990/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.827Z",
+      "verifiedAt": "2026-07-30T08:24:47.878Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
       "chittorgarhUrl": "https://www.chittorgarh.com/ipo/propshop-events-exhibitions-ipo/2732/"
@@ -1620,31 +2831,50 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 69,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 2000,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 28.57,
+        "status": "verified",
+        "value": 29,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
@@ -1652,7 +2882,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
@@ -1660,7 +2894,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -1668,33 +2906,63 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-27",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-07-29",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-30",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-03",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/propshop-events-exhibitions-ipo/2732/",
@@ -1706,7 +2974,7 @@
     "company": "Advance Technoforge Limited",
     "type": "SME",
     "status": "Closed",
-    "discoveredAt": "2026-07-27T15:43:54.515Z",
+    "discoveredAt": "2026-07-30T08:23:03.445Z",
     "open": "2026-07-27",
     "close": "2026-07-29",
     "listing": "2026-08-03",
@@ -1720,15 +2988,15 @@
     "issueSize": 24.03,
     "freshIssue": 24.03,
     "ofs": 0,
-    "gmp": 9,
+    "gmp": 8,
     "trend": "up",
-    "estListing": 104,
+    "estListing": 103,
     "listedAt": null,
     "currentPrice": null,
     "gmpHistory": [
       {
-        "d": "Jul 27",
-        "v": 9
+        "d": "Jul 30",
+        "v": 8
       }
     ],
     "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
@@ -1764,7 +3032,7 @@
       "sourceUrl": "https://www.investorgain.com/ipo/advance-technoforge-ipo/1714/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.828Z",
+      "verifiedAt": "2026-07-30T08:24:47.878Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
       "chittorgarhUrl": "https://www.chittorgarh.com/ipo/advance-technoforge-ipo/2307/"
@@ -1776,31 +3044,50 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 95,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1200,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 24.03,
+        "status": "verified",
+        "value": 24,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
@@ -1808,13 +3095,21 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -1822,45 +3117,75 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-27",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-07-29",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-30",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-03",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/advance-technoforge-ipo/2307/",
     "website": "https://www.advancetechforge.com/"
   },
   {
-    "id": "silverstorm-parks-resorts",
-    "name": "Silverstorm Parks & Resorts",
-    "company": "Silverstorm Parks & Resorts Limited",
+    "id": "silverstorm-parks-resorts-smecallotted",
+    "name": "Silverstorm Parks & Resorts BSE SMECALLOTTED",
+    "company": "Silverstorm Parks & Resorts BSE SMECALLOTTED Limited",
     "type": "SME",
     "status": "Closed",
-    "discoveredAt": "2026-07-27T15:44:03.634Z",
+    "discoveredAt": "2026-07-30T08:23:12.955Z",
     "open": "2026-07-24",
     "close": "2026-07-28",
     "listing": "2026-07-31",
@@ -1899,7 +3224,7 @@
       "netWorth": 72.84,
       "debt": 65.07
     },
-    "about": "Silverstorm Parks & Resorts Limited is a newly announced SME IPO operating in the General sector. The company is launching its issue on BSE SME.",
+    "about": "Silverstorm Parks & Resorts BSE SMECALLOTTED Limited is a newly announced SME IPO operating in the General sector. The company is launching its issue on BSE SME.",
     "sector": "General",
     "registrar": "MUFG Intime India Pvt.Ltd.",
     "investorgainUrl": "https://www.investorgain.com/ipo/silverstorm-parks-resorts-ipo/2078/",
@@ -1916,7 +3241,7 @@
       "sourceUrl": "https://www.investorgain.com/ipo/silverstorm-parks-resorts-ipo/2078/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.828Z",
+      "verifiedAt": "2026-07-30T08:24:47.878Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
       "chittorgarhUrl": "https://www.chittorgarh.com/ipo/silverstorm-parks-resorts-ipo/2824/"
@@ -1928,31 +3253,50 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 133,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1000,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 82.43,
+        "status": "verified",
+        "value": 82,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
@@ -1960,13 +3304,21 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -1974,39 +3326,70 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-24",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-07-28",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-29",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
         "value": "2026-07-31",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/silverstorm-parks-resorts-ipo/2824/",
     "website": "https://silverstorm.in/"
   },
   {
+<<<<<<< HEAD
     "id": "lohia",
     "name": "Lohia Corp",
     "company": "Lohia Corp Limited",
@@ -2334,12 +3717,14 @@
     "website": "https://www.indo-mim.com/"
   },
   {
+=======
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     "id": "xtranet-technologies",
     "name": "Xtranet Technologies",
     "company": "Xtranet Technologies Limited",
     "type": "Mainboard",
     "status": "Listed",
-    "discoveredAt": "2026-07-27T15:44:30.910Z",
+    "discoveredAt": "2026-07-30T08:23:22.109Z",
     "open": "2026-07-23",
     "close": "2026-07-27",
     "listing": "2026-07-30",
@@ -2353,15 +3738,21 @@
     "issueSize": 166.8,
     "freshIssue": 166.8,
     "ofs": 0,
-    "gmp": 7,
+    "gmp": 14,
     "trend": "up",
+<<<<<<< HEAD
     "estListing": 134,
     "listedAt": 136,
     "currentPrice": 129.2,
+=======
+    "estListing": 141,
+    "listedAt": 141.5,
+    "currentPrice": 141.5,
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
     "gmpHistory": [
       {
-        "d": "Jul 27",
-        "v": 7
+        "d": "Jul 30",
+        "v": 14
       }
     ],
     "drhp": "https://www.sebi.gov.in/filings/public-issues/oct-2025/xtranet-technologies-limited-drhp_97031.html",
@@ -2402,10 +3793,15 @@
       "priceMin": {
         "status": "unverified",
         "value": 127,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
         "status": "unverified",
@@ -2413,7 +3809,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
         "status": "unverified",
@@ -2421,7 +3821,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
         "status": "unverified",
@@ -2429,35 +3833,60 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
         "value": 166.8,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
+<<<<<<< HEAD
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-23",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
         "status": "unverified",
@@ -2465,13 +3894,24 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-28",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
         "status": "unverified",
@@ -2479,7 +3919,11 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "finMeta": {
@@ -2487,7 +3931,320 @@
       "sourceUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2025/xtranet-technologies-limited-drhp_97031.html",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:36.954Z",
+      "verifiedAt": "2026-07-30T08:24:54.952Z",
+      "method": "InvestorGain prospectus table + DRHP/RHP",
+      "status": "Verified"
+    }
+  },
+  {
+    "id": "lohia",
+    "name": "Lohia Corp",
+    "company": "Lohia Corp Limited",
+    "type": "Mainboard",
+    "status": "Listed",
+    "discoveredAt": "2026-07-30T08:23:31.455Z",
+    "open": "2026-07-23",
+    "close": "2026-07-27",
+    "listing": "2026-07-30",
+    "allotment": "2026-07-28",
+    "refund": "2026-07-28",
+    "demat": "2026-07-28",
+    "priceMin": 425,
+    "priceMax": 425,
+    "faceValue": 10,
+    "lot": 35,
+    "issueSize": 1101.28,
+    "freshIssue": 1101.28,
+    "ofs": 0,
+    "gmp": 17,
+    "trend": "up",
+    "estListing": 442,
+    "listedAt": 442,
+    "currentPrice": 442,
+    "gmpHistory": [
+      {
+        "d": "Jul 30",
+        "v": 17
+      }
+    ],
+    "drhp": "https://www.sebi.gov.in/filings/public-issues/aug-2025/lohia-corp-limited_96273.html",
+    "rhp": null,
+    "leadManager": "Motilal Oswal Investment Advisors...",
+    "exchange": "BSE, NSE",
+    "sub": {
+      "overall": 7.26,
+      "qib": 9.11,
+      "snii": 5.77,
+      "bnii": 7.35,
+      "hni": 6.82,
+      "retail": 2.78
+    },
+    "fin": {
+      "revenue": 1737.87,
+      "pat": 193.45,
+      "ebitda": 339.45,
+      "debt": 152.78,
+      "eps": 18.31,
+      "roe": 31.71,
+      "pe": 23.21
+    },
+    "about": "Lohia Corp Limited is a newly announced Mainboard IPO operating in the General sector. The company is launching its issue on BSE, NSE.",
+    "sector": "General",
+    "registrar": "MUFG Intime India Pvt.Ltd.",
+    "investorgainUrl": "https://www.investorgain.com/ipo/lohia-corp-ipo/1862/",
+    "strengths": [
+      "Growing market footprint in the General sector",
+      "Experienced promoter group and management team"
+    ],
+    "risks": [
+      "Operating scale limits relative to larger peers",
+      "Highly competitive market segment and raw material cost exposure"
+    ],
+    "verification": {
+      "priceMin": {
+        "status": "unverified",
+        "value": 425,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "priceMax": {
+        "status": "unverified",
+        "value": 425,
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "lot": {
+        "status": "unverified",
+        "value": 35,
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "issueSize": {
+        "status": "unverified",
+        "value": 1101.28,
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "freshIssue": {
+        "status": "unverified",
+        "value": 1101.28,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "ofs": {
+        "status": "unverified",
+        "value": 0,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "faceValue": {
+        "status": "unverified",
+        "value": 10,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "open": {
+        "status": "unverified",
+        "value": "2026-07-23",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "close": {
+        "status": "unverified",
+        "value": "2026-07-27",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "allotment": {
+        "status": "unverified",
+        "value": "2026-07-28",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "listing": {
+        "status": "unverified",
+        "value": "2026-07-30",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      }
+    },
+    "finMeta": {
+      "sourceDoc": "DRHP",
+      "sourceUrl": "https://www.sebi.gov.in/filings/public-issues/aug-2025/lohia-corp-limited_96273.html",
+      "fy": "FY2026",
+      "pageNum": "Financials",
+      "verifiedAt": "2026-07-30T08:24:56.300Z",
+      "method": "InvestorGain prospectus table + DRHP/RHP",
+      "status": "Verified"
+    }
+  },
+  {
+    "id": "indo-mim",
+    "name": "Indo-MIM",
+    "company": "Indo-MIM Limited",
+    "type": "Mainboard",
+    "status": "Listed",
+    "discoveredAt": "2026-07-30T08:23:40.712Z",
+    "open": "2026-07-23",
+    "close": "2026-07-27",
+    "listing": "2026-07-30",
+    "allotment": "2026-07-28",
+    "refund": "2026-07-28",
+    "demat": "2026-07-28",
+    "priceMin": 485,
+    "priceMax": 485,
+    "faceValue": 10,
+    "lot": 30,
+    "issueSize": 3811.21,
+    "freshIssue": 3811.21,
+    "ofs": 0,
+    "gmp": 184,
+    "trend": "up",
+    "estListing": 669,
+    "listedAt": 669,
+    "currentPrice": 669,
+    "gmpHistory": [
+      {
+        "d": "Jul 30",
+        "v": 184
+      }
+    ],
+    "drhp": "https://www.sebi.gov.in/filings/public-issues/oct-2025/indo-mim-limited_97069.html",
+    "rhp": null,
+    "leadManager": "Kotak Mahindra Capital Co.Ltd.",
+    "exchange": "BSE, NSE",
+    "sub": {
+      "overall": 72.37,
+      "qib": 204.47,
+      "snii": 36.55,
+      "bnii": 57.69,
+      "hni": 50.65,
+      "retail": 6.69
+    },
+    "fin": {
+      "revenue": 4320.7,
+      "pat": 533.54,
+      "ebitda": 1070.92,
+      "netWorth": 2819.55,
+      "debt": 1090.49,
+      "eps": 11.02,
+      "roe": 21.26,
+      "pe": 44.01
+    },
+    "about": "Indo-MIM Limited is a newly announced Mainboard IPO operating in the General sector. The company is launching its issue on BSE, NSE.",
+    "sector": "General",
+    "registrar": "MUFG Intime India Pvt.Ltd.",
+    "investorgainUrl": "https://www.investorgain.com/ipo/indo-mim-ipo/1594/",
+    "strengths": [
+      "Growing market footprint in the General sector",
+      "Experienced promoter group and management team"
+    ],
+    "risks": [
+      "Operating scale limits relative to larger peers",
+      "Highly competitive market segment and raw material cost exposure"
+    ],
+    "verification": {
+      "priceMin": {
+        "status": "unverified",
+        "value": 485,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "priceMax": {
+        "status": "unverified",
+        "value": 485,
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "lot": {
+        "status": "unverified",
+        "value": 30,
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "issueSize": {
+        "status": "unverified",
+        "value": 3811.21,
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "freshIssue": {
+        "status": "unverified",
+        "value": 3811.21,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "ofs": {
+        "status": "unverified",
+        "value": 0,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "faceValue": {
+        "status": "unverified",
+        "value": 10,
+        "sources": [],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "open": {
+        "status": "unverified",
+        "value": "2026-07-23",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "close": {
+        "status": "unverified",
+        "value": "2026-07-27",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "allotment": {
+        "status": "unverified",
+        "value": "2026-07-28",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      },
+      "listing": {
+        "status": "unverified",
+        "value": "2026-07-30",
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+      }
+    },
+    "finMeta": {
+      "sourceDoc": "DRHP",
+      "sourceUrl": "https://www.sebi.gov.in/filings/public-issues/oct-2025/indo-mim-limited_97069.html",
+      "fy": "FY2026",
+      "pageNum": "Financials",
+      "verifiedAt": "2026-07-30T08:24:57.701Z",
       "method": "InvestorGain prospectus table + DRHP/RHP",
       "status": "Verified"
     },
@@ -2502,7 +4259,7 @@
     "company": "Shree Balaji Mala Limited",
     "type": "SME",
     "status": "Listed",
-    "discoveredAt": "2026-07-27T15:44:40.397Z",
+    "discoveredAt": "2026-07-30T08:23:49.923Z",
     "open": "2026-07-22",
     "close": "2026-07-24",
     "listing": "2026-07-29",
@@ -2516,15 +4273,15 @@
     "issueSize": 18.9,
     "freshIssue": 18.9,
     "ofs": 0,
-    "gmp": 13,
+    "gmp": 56,
     "trend": "up",
-    "estListing": 83,
-    "listedAt": 110,
-    "currentPrice": 110,
+    "estListing": 126,
+    "listedAt": 126,
+    "currentPrice": 126,
     "gmpHistory": [
       {
-        "d": "Jul 27",
-        "v": 13
+        "d": "Jul 30",
+        "v": 56
       }
     ],
     "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
@@ -2563,7 +4320,7 @@
       "sourceUrl": "https://www.investorgain.com/ipo/shree-balaji-mala-ipo/1967/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.830Z",
+      "verifiedAt": "2026-07-30T08:24:47.879Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
       "chittorgarhUrl": "https://www.chittorgarh.com/ipo/shree-balaji-mala-ipo/2706/"
@@ -2575,31 +4332,50 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 70,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 2000,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 18.9,
+        "status": "verified",
+        "value": 19,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
@@ -2607,13 +4383,21 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -2621,35 +4405,63 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-22",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-07-24",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-27",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-07-29",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/shree-balaji-mala-ipo/2706/",
@@ -2657,12 +4469,12 @@
     "website": "https://www.malasaree.com/"
   },
   {
-    "id": "metalic-technoforge-smecallotted",
-    "name": "Metalic Technoforge NSE SMECALLOTTED",
-    "company": "Metalic Technoforge NSE SMECALLOTTED Limited",
+    "id": "metalic-technoforge",
+    "name": "Metalic Technoforge",
+    "company": "Metalic Technoforge Limited",
     "type": "SME",
     "status": "Listed",
-    "discoveredAt": "2026-07-27T15:44:49.367Z",
+    "discoveredAt": "2026-07-30T08:23:59.173Z",
     "open": "2026-07-21",
     "close": "2026-07-23",
     "listing": "2026-07-28",
@@ -2683,7 +4495,7 @@
     "currentPrice": 83,
     "gmpHistory": [
       {
-        "d": "Jul 27",
+        "d": "Jul 30",
         "v": 6
       }
     ],
@@ -2706,7 +4518,7 @@
       "netWorth": 33.42,
       "debt": 31.78
     },
-    "about": "Metalic Technoforge NSE SMECALLOTTED Limited is a newly announced SME IPO operating in the IT Services & Technology sector. The company is launching its issue on NSE Emerge.",
+    "about": "Metalic Technoforge Limited is a newly announced SME IPO operating in the IT Services & Technology sector. The company is launching its issue on NSE Emerge.",
     "sector": "IT Services & Technology",
     "registrar": "Bigshare Services Pvt.Ltd.",
     "investorgainUrl": "https://www.investorgain.com/ipo/metalic-technoforge-ipo/2255/",
@@ -2723,7 +4535,7 @@
       "sourceUrl": "https://www.investorgain.com/ipo/metalic-technoforge-ipo/2255/",
       "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-07-27T15:45:32.830Z",
+      "verifiedAt": "2026-07-30T08:24:47.879Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
       "chittorgarhUrl": "https://www.chittorgarh.com/ipo/metalic-technoforge-ipo/2993/"
@@ -2735,31 +4547,50 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 77,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1600,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 49.96,
+        "status": "verified",
+        "value": 50,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "freshIssue": {
         "status": "unverified",
@@ -2767,13 +4598,21 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "faceValue": {
         "status": "unverified",
@@ -2781,34 +4620,59 @@
         "sources": [
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-21",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-07-23",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-24",
+<<<<<<< HEAD
         "sources": [],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-07-28",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
+<<<<<<< HEAD
         "updatedAt": "2026-07-30T08:40:21.335Z"
       }
     },
@@ -4323,6 +6187,9 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-07-30T08:40:21.335Z"
+=======
+        "updatedAt": "2026-07-30T08:24:47.876Z"
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/jesons-industries-ipo/2004/",
@@ -4350,7 +6217,7 @@
     "company": "Fusion CX Limited",
     "type": "Mainboard",
     "status": "Upcoming",
-    "discoveredAt": "2026-07-29T11:25:13.318Z",
+    "discoveredAt": "2026-07-30T08:25:50.099Z",
     "open": null,
     "close": null,
     "listing": null,
@@ -4387,6 +6254,7 @@
     ],
     "auditTrail": [
       {
+<<<<<<< HEAD
         "timestamp": "2026-07-29T11:25:13.318Z",
         "action": "created",
         "details": "Discovered from SEBI DRHP filing. Verified on: IPO Central"
@@ -4694,6 +6562,9 @@
     "auditTrail": [
       {
         "timestamp": "2026-07-30T05:38:59.327Z",
+=======
+        "timestamp": "2026-07-30T08:25:50.099Z",
+>>>>>>> a5480e98b94b4e635266781876f0eedb527635e4
         "action": "created",
         "details": "Discovered from SEBI DRHP filing. Verified on: IPO Central"
       }
