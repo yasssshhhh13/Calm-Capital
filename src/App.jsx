@@ -97,11 +97,30 @@ function VerifyMark({ ipo, field }) {
     const srcs = labelSources(v.sources);
     return (
       <span title={`Unverified${srcs ? ` - only ${srcs} so far` : ""}. Awaiting a second source.`} className="inline-flex items-center align-middle ml-1 text-slate-400 dark:text-slate-500">
-        <HelpCircle size={12} />
+        <Clock size={12} />
       </span>
     );
   }
   return null;
+}
+
+function FieldHelp({ label }) {
+  const definitions = {
+    "Price band": "The price range set by the company for bidding. It includes a floor price and a cap price.",
+    "Lot size": "The minimum number of shares an investor must bid for. All bids must be in multiples of this quantity.",
+    "Issue size": "The total monetary value of shares offered to the public in this IPO issue.",
+    "Face value": "The nominal value of a single share as recorded in the company's financial books.",
+    "Min. investment": "The minimum amount of money needed to buy one lot of shares (Price Cap × Lot Size).",
+    "Fresh issue": "New shares issued by the company to raise fresh capital. The funds go directly to the company.",
+    "OFS": "Offer for Sale. Shares sold by existing promoters/shareholders. The proceeds go to the sellers, not the company."
+  };
+  const desc = definitions[label];
+  if (!desc) return null;
+  return (
+    <span title={desc} className="inline-flex items-center align-middle ml-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 cursor-help">
+      <HelpCircle size={12} />
+    </span>
+  );
 }
 
 // A few SME IPOs don't have a confirmed direct SEBI/exchange document URL yet —
@@ -2234,7 +2253,11 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
                   border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)"
                 }}
               >
-                <p className="text-xs font-medium mb-1.5 flex items-center" style={{ color: "#64748b" }}>{label}<VerifyMark ipo={ipo} field={field} /></p>
+                <p className="text-xs font-medium mb-1.5 flex items-center gap-0.5" style={{ color: "#64748b" }}>
+                  <span>{label}</span>
+                  <FieldHelp label={label} />
+                  <VerifyMark ipo={ipo} field={field} />
+                </p>
                 {pending ? (
                   <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 italic">Pending verification</p>
                 ) : (
@@ -2261,7 +2284,11 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
                   border: dark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.04)"
                 }}
               >
-                <p className="text-[10px] font-medium mb-1 flex items-center" style={{ color: "#64748b" }}>{l}{field && <VerifyMark ipo={ipo} field={field} />}</p>
+                <p className="text-[10px] font-medium mb-1 flex items-center gap-0.5" style={{ color: "#64748b" }}>
+                  <span>{l}</span>
+                  <FieldHelp label={l} />
+                  {field && <VerifyMark ipo={ipo} field={field} />}
+                </p>
                 <p className="font-mono text-sm font-semibold" style={{ color: dark ? "#ffffff" : "#1e293b" }}>{field ? gatedText(ipo, field, v) : v}</p>
               </div>
             ))}
