@@ -1648,11 +1648,9 @@ function CompanyAvatar({ name = "", logoUrl = null, size = 40 }) {
   const bg = colors[colorIdx];
 
   // Try to find the company website from the live list to build domain-based fallbacks
-  const website = useMemo(() => {
-    const list = getLiveIPOS();
-    const found = list.find((i) => i.company === safeName || i.name === safeName || i.company === name || i.name === name);
-    return found?.website || null;
-  }, [safeName, name]);
+  const list = getLiveIPOS();
+  const found = list.find((i) => i.company === safeName || i.name === safeName || i.company === name || i.name === name);
+  const website = found?.website || null;
 
   // Build source cascade once per name/logoUrl
   const sources = useMemo(() => {
