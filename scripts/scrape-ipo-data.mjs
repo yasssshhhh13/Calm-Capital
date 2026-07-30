@@ -27,7 +27,7 @@ import {
   toInvestorGainDetailUrl,
   scrapeFinancials,
 } from "./sources/investorgain.mjs";
-import { fetchAll as fetchChittorgarh } from "./sources/chittorgarh.mjs";
+import { fetchAll as fetchChittorgarh, resolveChittorgarhUrl } from "./sources/chittorgarh.mjs";
 import { fetchAll as fetchNse } from "./sources/nse.mjs";
 import { fetchAll as fetchBse } from "./sources/bse.mjs";
 import { findFilingUrl } from "./sources/sebi.mjs";
@@ -45,10 +45,23 @@ function isMissingRegistrar(value) {
 }
 
 function calculateStatus(ipo) {
+  const today = new Date();
+  
+  // Clean up any stale estimated values if the listing date is in the future
+  const isFutureListing = ipo.listing && today < new Date(ipo.listing + "T10:00:00+05:30");
+  if (isFutureListing) {
+    if (ipo.listedAt !== null && ipo.listedAt !== undefined) {
+      ipo.listedAt = null;
+      console.log(`[CLEANUP] Reset listing price for upcoming IPO: "${ipo.name}"`);
+    }
+    if (ipo.currentPrice !== null && ipo.currentPrice !== undefined) {
+      ipo.currentPrice = null;
+    }
+  }
+
   if (ipo.listedAt !== null && ipo.listedAt !== undefined) return "Listed";
   if (ipo.currentPrice !== null && ipo.currentPrice !== undefined) return "Listed";
   if (!ipo.open) return "Upcoming";
-  const today = new Date();
   const d = (s) => new Date(s + "T00:00:00+05:30");
   const open = d(ipo.open);
   if (today < open) return "Upcoming";
@@ -56,8 +69,8 @@ function calculateStatus(ipo) {
   const closeDeadline = new Date(ipo.close + "T16:50:00+05:30");
   if (today < closeDeadline) return "Open";
   if (!ipo.listing) return "Closed";
-  const listing = d(ipo.listing);
-  if (today < listing) return "Closed";
+  const listingTime = new Date(ipo.listing + "T10:00:00+05:30");
+  if (today < listingTime) return "Closed";
   return "Listed";
 }
 
@@ -103,11 +116,24 @@ function applyDetailInfo(ipo, detailInfo) {
   if (validNum(detailInfo.freshIssue) && ipo.freshIssue == null) { ipo.freshIssue = detailInfo.freshIssue; changed = true; }
   if (validNum(detailInfo.ofs) && ipo.ofs == null) { ipo.ofs = detailInfo.ofs; changed = true; }
   if (validNum(detailInfo.faceValue) && ipo.faceValue == null) { ipo.faceValue = detailInfo.faceValue; changed = true; }
-  if (validNum(detailInfo.listedAt) && ipo.listedAt == null) {
+  
+  const today = new Date();
+  const isFutureListing = ipo.listing && today < new Date(ipo.listing + "T10:00:00+05:30");
+  if (validNum(detailInfo.listedAt) && ipo.listedAt == null && !isFutureListing) {
     ipo.listedAt = detailInfo.listedAt;
     if (ipo.currentPrice == null) ipo.currentPrice = detailInfo.listedAt;
     changed = true;
     console.log(`[LISTING] "${ipo.name}" listed at ₹${detailInfo.listedAt} (detail page)`);
+  }
+  if (detailInfo.bseCode && ipo.bseCode !== detailInfo.bseCode) {
+    ipo.bseCode = detailInfo.bseCode;
+    changed = true;
+    console.log(`[BSE CODE] "${ipo.name}" -> ${detailInfo.bseCode}`);
+  }
+  if (detailInfo.nseCode && ipo.nseCode !== detailInfo.nseCode) {
+    ipo.nseCode = detailInfo.nseCode;
+    changed = true;
+    console.log(`[NSE CODE] "${ipo.name}" -> ${detailInfo.nseCode}`);
   }
   if (ipo.estListing == null && validNum(ipo.priceMax) && typeof ipo.gmp === "number") {
     ipo.estListing = ipo.priceMax + ipo.gmp;
@@ -139,6 +165,65 @@ function needsRegistrarRefresh(ipo) {
   const allot = new Date(`${ipo.allotment}T00:00:00+05:30`);
   const daysAfter = (today - allot) / (1000 * 60 * 60 * 24);
   return daysAfter <= 10;
+}
+
+function needsCodes(ipo) {
+  if (!ipo) return false;
+  const status = (ipo.status || "").toLowerCase();
+  if (status === "upcoming" || status === "open" || status === "closed" || status === "listed") {
+    return ipo.nseCode == null && ipo.bseCode == null;
+  }
+  return false;
+}
+
+async function enrichListingPrices(iposBase) {
+  console.log("[Yahoo Finance] Checking listing prices for listed/listing IPOs...");
+  let changed = false;
+  for (const ipo of iposBase) {
+    const today = new Date();
+    // Only check if it is Listed, or if it is Closed but listing date has arrived/passed
+    const isListedOrListingDay = ipo.status === "Listed" || (ipo.listing && today >= new Date(ipo.listing + "T00:00:00+05:30"));
+    if (!isListedOrListingDay) continue;
+
+    // Check if we have nseCode or bseCode
+    const symbols = [];
+    if (ipo.nseCode) symbols.push(`${ipo.nseCode.toUpperCase().trim()}.NS`);
+    if (ipo.bseCode) symbols.push(`${ipo.bseCode.toUpperCase().trim()}.BO`);
+
+    if (symbols.length === 0) continue;
+
+    for (const sym of symbols) {
+      const url = `https://query1.finance.yahoo.com/v8/finance/chart/${sym}?interval=1d&range=5d`;
+      try {
+        const res = await fetch(url);
+        if (res.status === 200) {
+          const json = await res.json();
+          const meta = json.chart?.result?.[0]?.meta;
+          const quote = json.chart?.result?.[0]?.indicators?.quote?.[0];
+          if (meta && quote) {
+            const openPrices = quote.open || [];
+            const listingPrice = openPrices.find(p => p != null && p > 0);
+            const currentPrice = meta.regularMarketPrice;
+
+            if (listingPrice && ipo.listedAt !== listingPrice) {
+              ipo.listedAt = listingPrice;
+              changed = true;
+              console.log(`[Yahoo Finance] Verified ${ipo.name} listedAt to ₹${listingPrice}`);
+            }
+            if (currentPrice && ipo.currentPrice !== currentPrice) {
+              ipo.currentPrice = currentPrice;
+              changed = true;
+              console.log(`[Yahoo Finance] Verified ${ipo.name} currentPrice to ₹${currentPrice}`);
+            }
+            break;
+          }
+        }
+      } catch (err) {
+        console.warn(`[Yahoo Finance Warn] Failed for ${sym}:`, err.message);
+      }
+    }
+  }
+  return changed;
 }
 
 function detectSector(cleanedName) {
@@ -176,6 +261,21 @@ async function main() {
     NAME_TO_ID[norm] = ipo.id;
   }
 
+  let databaseUpdated = false;
+
+  // 1b. Resolve chittorgarhUrl for any IPOs missing it
+  console.log("[Chittorgarh] Resolving missing URLs...");
+  for (const ipo of iposBase) {
+    if (!ipo.chittorgarhUrl) {
+      const url = await resolveChittorgarhUrl(page, ipo.name);
+      if (url) {
+        ipo.chittorgarhUrl = url;
+        databaseUpdated = true;
+        console.log(`[CHITTORGARH URL] Resolved "${ipo.name}" -> ${url}`);
+      }
+    }
+  }
+
   let gmpPatches = {};
   let rawGmpRows = [];
   let subPatches = {};
@@ -191,7 +291,6 @@ async function main() {
   }
 
   // 2. InvestorGain discovery + per-row date/status/listing/detail updates
-  let databaseUpdated = false;
   for (const { cells, href } of rawGmpRows) {
     const rawName = cells[0];
     const cleanedName = cleanScrapedName(rawName || "");
@@ -326,7 +425,7 @@ async function main() {
 
         const detailUrl = toInvestorGainDetailUrl(href);
         if (detailUrl && existingIpo.investorgainUrl !== detailUrl) { existingIpo.investorgainUrl = detailUrl; changed = true; }
-        if ((needsRegistrarRefresh(existingIpo) || needsCoreDetails(existingIpo)) && (href || existingIpo.investorgainUrl)) {
+        if ((needsRegistrarRefresh(existingIpo) || needsCoreDetails(existingIpo) || needsListingPrice(existingIpo) || needsCodes(existingIpo)) && (href || existingIpo.investorgainUrl)) {
           const detailInfo = await scrapeIpoDetailPage(page, href || existingIpo.investorgainUrl);
           if (applyDetailInfo(existingIpo, detailInfo)) changed = true;
         }
@@ -341,13 +440,21 @@ async function main() {
 
   // Final sweep: status + registrar/core-detail backfill for IPOs not on today's GMP table
   for (const ipo of iposBase) {
+    const oldListedAt = ipo.listedAt;
+    const oldCurrentPrice = ipo.currentPrice;
+
     const calculated = calculateStatus(ipo);
+
+    if (ipo.listedAt !== oldListedAt || ipo.currentPrice !== oldCurrentPrice) {
+      databaseUpdated = true;
+    }
+
     if (ipo.status !== calculated) {
       console.log(`[SWEEP] Updating status of "${ipo.name}" from "${ipo.status}" to "${calculated}"`);
       ipo.status = calculated;
       databaseUpdated = true;
     }
-    if ((needsRegistrarRefresh(ipo) || needsCoreDetails(ipo) || needsListingPrice(ipo)) && ipo.investorgainUrl) {
+    if ((needsRegistrarRefresh(ipo) || needsCoreDetails(ipo) || needsListingPrice(ipo) || needsCodes(ipo)) && ipo.investorgainUrl) {
       const detailInfo = await scrapeIpoDetailPage(page, ipo.investorgainUrl);
       if (applyDetailInfo(ipo, detailInfo)) databaseUpdated = true;
     }
@@ -415,6 +522,15 @@ async function main() {
     baselineSubUpdated = true;
     console.log(`[BASELINE SUB] Persisted subscription for "${baseIpo.name}"`);
   }
+
+  // 4b. Enrich listing prices from Yahoo Finance
+  try {
+    const pricesUpdated = await enrichListingPrices(iposBase);
+    if (pricesUpdated) databaseUpdated = true;
+  } catch (err) {
+    console.error("Yahoo Finance enrichment failed:", err.message);
+  }
+
   if (baselineSubUpdated || databaseUpdated) {
     console.log(`[DATABASE UPDATE] Writing ${iposBase.length} records back to ipos.json...`);
     await writeFile(IPOS_JSON_PATH, JSON.stringify(iposBase, null, 2), "utf-8");

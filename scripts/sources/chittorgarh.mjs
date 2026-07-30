@@ -50,6 +50,44 @@ function toAbsolute(href) {
   return `https://www.chittorgarh.com${href.startsWith("/") ? href : `/${href}`}`;
 }
 
+export async function resolveChittorgarhUrl(page, companyName) {
+  const query = companyName.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().replace(/\s+/g, "+");
+  const searchUrl = `https://www.chittorgarh.com/search.asp?q=${query}`;
+  try {
+    await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
+    await page.waitForTimeout(2000);
+    return await page.evaluate((compName) => {
+      const anchors = Array.from(document.querySelectorAll("a"));
+      const ipoLinks = anchors.map(a => ({
+        text: a.innerText.trim(),
+        href: a.getAttribute("href")
+      })).filter(x => x.href && (x.href.includes("/ipo/") || x.href.includes("/report/")));
+      
+      const nameNorm = compName.toLowerCase().replace(/[^a-z0-9]+/g, "");
+      
+      // Try to find matching link
+      for (const l of ipoLinks) {
+        if (!l.href.includes("/ipo/")) continue;
+        const textNorm = l.text.toLowerCase().replace(/[^a-z0-9]+/g, "");
+        if (textNorm.includes(nameNorm) || nameNorm.includes(textNorm)) {
+          return l.href.startsWith("http") ? l.href : "https://www.chittorgarh.com" + l.href;
+        }
+      }
+      for (const l of ipoLinks) {
+        if (!l.href.includes("/ipo/")) continue;
+        const pathNorm = l.href.toLowerCase().replace(/[^a-z0-9]+/g, "");
+        if (pathNorm.includes(nameNorm)) {
+          return l.href.startsWith("http") ? l.href : "https://www.chittorgarh.com" + l.href;
+        }
+      }
+      return null;
+    }, companyName);
+  } catch (err) {
+    console.warn(`[Chittorgarh Search Warn] Failed to search for ${companyName}:`, err.message);
+  }
+  return null;
+}
+
 async function scrapeDetail(page, url) {
   try {
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 25000 });
@@ -134,7 +172,22 @@ async function scrapeDetail(page, url) {
         if (fin.debt == null && label.includes("total borrowing")) fin.debt = val;
       }
 
-      return { fields, fin: Object.keys(fin).length ? fin : null };
+      // Scrape company website
+      let website = null;
+      const cards = Array.from(document.querySelectorAll('.card'));
+      for (const card of cards) {
+        const text = card.innerText || '';
+        if (text.includes('Contact Details') && !text.includes('Registrar') && text.includes('Visit Website')) {
+          const links = Array.from(card.querySelectorAll('a'));
+          const webLink = links.find(a => a.innerText.trim() === 'Visit Website');
+          if (webLink) {
+            website = webLink.getAttribute('href');
+            break;
+          }
+        }
+      }
+
+      return { fields, fin: Object.keys(fin).length ? fin : null, website };
     });
   } catch (err) {
     console.warn(`[Chittorgarh] detail failed (${url}):`, err.message);
@@ -145,7 +198,7 @@ async function scrapeDetail(page, url) {
 /**
  * @param {import('playwright').Browser} browser
  * @param {Array} iposBase - only deep-scrape IPOs we already track, to bound runtime.
- * @returns {Promise<Array<{name, fields, fin, meta}>>}
+ * @returns {Promise<Array<{name, fields, fin, website, meta}>>}
  */
 export async function fetchAll(browser, iposBase) {
   const page = await browser.newPage({ userAgent: UA });
@@ -163,7 +216,15 @@ export async function fetchAll(browser, iposBase) {
       const url = toAbsolute(l.href);
       if (!url || seen.has(url)) continue;
       seen.add(url);
-      relevant.push({ ...l, url, match });
+      relevant.push({ name: l.name, url, match });
+    }
+
+    // Also add any tracked IPOs that have a chittorgarhUrl and are not in relevant
+    for (const ipo of iposBase) {
+      if (ipo.chittorgarhUrl && !seen.has(ipo.chittorgarhUrl)) {
+        seen.add(ipo.chittorgarhUrl);
+        relevant.push({ name: ipo.name, url: ipo.chittorgarhUrl, match: ipo });
+      }
     }
 
     const priority = (entry) => {
@@ -185,6 +246,7 @@ export async function fetchAll(browser, iposBase) {
         name: l.name,
         fields: detail.fields,
         fin: detail.fin,
+        website: detail.website,
         meta: { source: "chittorgarh", url: l.url, capturedAt: new Date().toISOString() },
       });
     }

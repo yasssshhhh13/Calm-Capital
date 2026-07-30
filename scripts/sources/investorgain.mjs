@@ -195,7 +195,7 @@ export async function scrapeIpoDetailPage(page, href) {
   const empty = {
     registrar: null, leadManager: null, detailUrl: url,
     priceMin: null, priceMax: null, lot: null, issueSize: null, freshIssue: null, ofs: null, faceValue: null,
-    listedAt: null,
+    listedAt: null, bseCode: null, nseCode: null,
   };
   if (!url) return { ...empty, detailUrl: null };
   try {
@@ -207,7 +207,7 @@ export async function scrapeIpoDetailPage(page, href) {
       const result = {
         registrar: null, leadManager: null,
         priceMin: null, priceMax: null, lot: null, issueSize: null, freshIssue: null, ofs: null, faceValue: null,
-        listedAt: null,
+        listedAt: null, bseCode: null, nseCode: null,
       };
       const clean = (v) => {
         if (!v) return null;
@@ -235,7 +235,7 @@ export async function scrapeIpoDetailPage(page, href) {
       for (const row of rows) {
         const cells = Array.from(row.querySelectorAll("th, td")).map((c) => c.innerText.trim());
         if (cells.length < 2) continue;
-        const label = cells[0].toLowerCase().replace(/:$/, "");
+        const label = cells[0].toLowerCase().replace(/:$/, "").trim();
         const value = cells.slice(1).join(" ").trim();
         if (!value) continue;
 
@@ -254,6 +254,12 @@ export async function scrapeIpoDetailPage(page, href) {
         if (result.faceValue == null && label.includes("face value")) result.faceValue = firstNum(value);
         if (result.listedAt == null && (label.includes("listing price") || label.includes("listed at") || label.includes("list price"))) {
           result.listedAt = firstNum(value);
+        }
+        if (result.bseCode == null && (label.includes("bse code") || label === "bse script code" || label.includes("bse scrip code"))) {
+          result.bseCode = clean(value);
+        }
+        if (result.nseCode == null && (label.includes("nse code") || label === "nse symbol" || label.includes("nse script code") || label.includes("nse scrip code"))) {
+          result.nseCode = clean(value);
         }
       }
 
@@ -275,6 +281,8 @@ export async function scrapeIpoDetailPage(page, href) {
       priceMin: info.priceMin, priceMax: info.priceMax, lot: info.lot,
       issueSize: info.issueSize, freshIssue: info.freshIssue, ofs: info.ofs, faceValue: info.faceValue,
       listedAt: info.listedAt,
+      bseCode: info.bseCode ? String(info.bseCode).trim() : null,
+      nseCode: info.nseCode ? String(info.nseCode).trim() : null,
     };
   } catch (err) {
     console.warn(`[DETAIL WARN] Failed to scrape detail page:`, err.message);

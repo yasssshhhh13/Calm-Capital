@@ -132,8 +132,8 @@ function liveStatus(ipo, today) {
   if (today < closeDeadline) return "Open";
   
   if (!ipo.listing) return "Closed"; // If closed but listing not set, treat as Closed
-  const listing = d(ipo.listing);
-  if (today < listing) return "Closed";
+  const listingTime = new Date(ipo.listing + "T10:00:00+05:30");
+  if (today < listingTime) return "Closed";
   return "Listed";
 }
 
@@ -1647,6 +1647,13 @@ function CompanyAvatar({ name = "", logoUrl = null, size = 40 }) {
   const colorIdx = safeName.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length;
   const bg = colors[colorIdx];
 
+  // Try to find the company website from the live list to build domain-based fallbacks
+  const website = useMemo(() => {
+    const list = getLiveIPOS();
+    const found = list.find((i) => i.company === safeName || i.name === safeName || i.company === name || i.name === name);
+    return found?.website || null;
+  }, [safeName, name]);
+
   // Build source cascade once per name/logoUrl
   const sources = useMemo(() => {
     const list = [];
@@ -1661,8 +1668,18 @@ function CompanyAvatar({ name = "", logoUrl = null, size = 40 }) {
         list.push(`https://www.google.com/s2/favicons?sz=128&domain=${domain}`);
       }
     }
+    if (website) {
+      try {
+        const domain = new URL(website).hostname.replace("www.", "");
+        list.push(`https://logo.clearbit.com/${domain}`);
+        list.push(`https://www.google.com/s2/favicons?sz=128&domain=${domain}`);
+        list.push(`https://icons.duckduckgo.com/ip2/${domain}.ico`);
+      } catch (e) {
+        // ignore
+      }
+    }
     return list;
-  }, [safeName, logoUrl]);
+  }, [safeName, logoUrl, website]);
 
   const currentSrc = sources[srcIndex];
 
@@ -2345,12 +2362,12 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
                   {[
                     ["Issue price", rupee(ipo.priceMax)],
                     ["Listing price", rupee(ipo.listedAt)],
-                    ["Listing gain", `${listingGainPct(ipo)?.toFixed(1)}%`],
+                    ["Listing gain", (() => { const g = listingGainPct(ipo); return g == null ? "-" : `${g >= 0 ? "+" : ""}${g.toFixed(1)}%`; })()],
                     ["P&L / lot", `${listingProfitLossPerLot(ipo) >= 0 ? "+" : ""}${rupee(listingProfitLossPerLot(ipo))}`],
                     ["Listing date", ipo.listing],
                     ...(ipo.currentPrice ? [
                       ["Current price", rupee(ipo.currentPrice)],
-                      ["Current return", `${currentReturnPct(ipo)?.toFixed(1)}%`]
+                      ["Current return", (() => { const r = currentReturnPct(ipo); return r == null ? "-" : `${r >= 0 ? "+" : ""}${r.toFixed(1)}%`; })()]
                     ] : []),
                   ].map(([l, v]) => (
                     <div
@@ -4231,7 +4248,32 @@ export default function App() {
     };
   }, [tick]);
 
-  const refresh = () => { setRefreshing(true); syncNow().finally(() => setTimeout(() => setRefreshing(false), 900)); };
+  const refresh = async () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    try {
+      const res = await fetch("/api/refresh", { method: "POST" });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `HTTP error ${res.status}`);
+      }
+      
+      const dbRes = await fetch(`/ipos.json?t=${Date.now()}`);
+      if (dbRes.ok) {
+        const dbData = await dbRes.json();
+        IPOS_BASE = dbData;
+      }
+      
+      await syncNow();
+      setTick((t) => t + 1);
+      setLiveDataVersion((v) => v + 1);
+    } catch (err) {
+      console.error("Refresh failed:", err);
+      alert("Failed to refresh: " + err.message);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const groupedFiltered = (status) =>
     sortIposLogically(filtered.filter((i) => getComputedStatus(i) === status));
@@ -4442,7 +4484,7 @@ export default function App() {
                 </div>
               </div>
 
-              <button onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121625]/30 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
+              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121625]/30 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
                 <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
               </button>
               <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />

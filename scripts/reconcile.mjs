@@ -158,6 +158,14 @@ export function reconcile(iposBase, sourceRecords) {
       }
     }
 
+    if (matches.chittorgarh?.website) {
+      if (ipo.website !== matches.chittorgarh.website) {
+        ipo.website = matches.chittorgarh.website;
+        changed++;
+        console.log(`[WEBSITE] "${ipo.name}" -> ${ipo.website}`);
+      }
+    }
+
     // Promote to Verified when numbers pass sanity checks (UI requires finMeta.status).
     if (isValidFin(ipo.fin) && !isVerifiedFin(ipo)) {
       ipo.fin = enrichFinDerived(ipo, ipo.fin);
