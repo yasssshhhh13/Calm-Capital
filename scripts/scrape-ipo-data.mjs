@@ -105,11 +105,17 @@ function applyDetailInfo(ipo, detailInfo) {
     changed = true;
   }
   const validNum = (v) => typeof v === "number" && Number.isFinite(v) && v > 0;
-  if (validNum(detailInfo.priceMax) && ipo.priceMax == null) {
-    ipo.priceMax = detailInfo.priceMax;
-    if (ipo.priceMin == null) ipo.priceMin = validNum(detailInfo.priceMin) ? detailInfo.priceMin : detailInfo.priceMax;
-    changed = true;
-    console.log(`[PRICE] "${ipo.name}" -> band ₹${ipo.priceMin}-₹${ipo.priceMax}`);
+  if (validNum(detailInfo.priceMax)) {
+    if (ipo.priceMax == null || ipo.priceMin == null || ipo.priceMin === ipo.priceMax) {
+      const nextMax = detailInfo.priceMax;
+      const nextMin = validNum(detailInfo.priceMin) ? detailInfo.priceMin : detailInfo.priceMax;
+      if (ipo.priceMax !== nextMax || ipo.priceMin !== nextMin) {
+        ipo.priceMax = nextMax;
+        ipo.priceMin = nextMin;
+        changed = true;
+        console.log(`[PRICE] "${ipo.name}" -> band ₹${ipo.priceMin}-₹${ipo.priceMax}`);
+      }
+    }
   }
   if (validNum(detailInfo.lot) && ipo.lot == null) { ipo.lot = detailInfo.lot; changed = true; console.log(`[LOT] "${ipo.name}" -> ${ipo.lot} shares`); }
   if (validNum(detailInfo.issueSize) && ipo.issueSize == null) { ipo.issueSize = detailInfo.issueSize; changed = true; console.log(`[ISSUE SIZE] "${ipo.name}" -> ₹${ipo.issueSize} Cr`); }
@@ -145,7 +151,7 @@ function applyDetailInfo(ipo, detailInfo) {
 function needsCoreDetails(ipo) {
   if (!ipo) return false;
   if ((ipo.status || "").toLowerCase() === "listed") return false;
-  return ipo.priceMax == null || ipo.lot == null || ipo.issueSize == null;
+  return ipo.priceMax == null || ipo.priceMin == null || ipo.lot == null || ipo.issueSize == null;
 }
 
 function needsListingPrice(ipo) {
@@ -321,7 +327,7 @@ async function main() {
 
       const priceMaxVal = toNumber(cells[4]);
       const priceMax = priceMaxVal && priceMaxVal > 0 ? priceMaxVal : null;
-      const priceMin = priceMax;
+      const priceMin = null;
       const lot = toNumber(cells[6]) || null;
       const issueSize = toNumber(cells[5]) || null;
 

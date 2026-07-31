@@ -61,7 +61,19 @@ const listingProfitLossPerLot = (i) => (i.listedAt && i.priceMax && i.lot) ? (i.
    until confirmed). The UI reflects that trust level.
 ===================================================================== */
 const SOURCE_LABEL = { nse: "NSE", bse: "BSE", chittorgarh: "Chittorgarh", investorgain: "InvestorGain", existing: "prior data" };
-const labelSources = (arr) => (arr || []).map((s) => SOURCE_LABEL[s] || s).join(", ");
+const labelSources = (arr) => (arr || [])
+  .filter((s) => s !== "chittorgarh" && s !== "investorgain")
+  .map((s) => SOURCE_LABEL[s] || s)
+  .join(", ");
+
+const formatPriceBand = (min, max) => {
+  if (min == null && max == null) return "—";
+  if (min == null) return `₹${max}`;
+  if (max == null) return `₹${min}`;
+  if (min === max) return `₹${max}`;
+  return `₹${min}–₹${max}`;
+};
+
 const fieldVerification = (ipo, field) => (ipo && ipo.verification && ipo.verification[field]) || null;
 const isPending = (ipo, field) => {
   const v = fieldVerification(ipo, field);
@@ -77,26 +89,45 @@ function VerifyMark({ ipo, field }) {
   const v = fieldVerification(ipo, field);
   if (!v) return null;
   if (v.status === "verified") {
+    const visible = (v.sources || []).filter((s) => s !== "chittorgarh" && s !== "investorgain");
+    const titleText = visible.length > 0 ? `Verified: ${labelSources(visible)} agree` : "Verified";
     return (
-      <span title={`Verified: ${labelSources(v.sources)} agree`} className="inline-flex items-center align-middle ml-1 text-emerald-600 dark:text-emerald-400">
+      <span title={titleText} className="inline-flex items-center align-middle ml-1 text-emerald-600 dark:text-emerald-400">
         <ShieldCheck size={12} />
       </span>
     );
   }
   if (v.status === "conflict") {
-    const parts = Object.entries(v.candidates || {})
-      .map(([val, srcs]) => `${val} (${labelSources(srcs)})`)
-      .join("  vs  ");
+    const visibleCandidates = Object.entries(v.candidates || {})
+      .map(([val, srcs]) => {
+        const visibleSrcs = (srcs || []).filter((s) => s !== "chittorgarh" && s !== "investorgain");
+        return [val, visibleSrcs];
+      })
+      .filter(([val, srcs]) => srcs.length > 0);
+    
+    let titleText;
+    if (visibleCandidates.length > 0) {
+      const parts = visibleCandidates
+        .map(([val, srcs]) => `${val} (${labelSources(srcs)})`)
+        .join("  vs  ");
+      titleText = `Sources disagree - ${parts}`;
+    } else {
+      titleText = "Conflict";
+    }
     return (
-      <span title={`Sources disagree - ${parts}`} className="inline-flex items-center align-middle ml-1 text-amber-500">
+      <span title={titleText} className="inline-flex items-center align-middle ml-1 text-amber-500">
         <AlertTriangle size={12} />
       </span>
     );
   }
   if (v.status === "unverified") {
-    const srcs = labelSources(v.sources);
+    const visible = (v.sources || []).filter((s) => s !== "chittorgarh" && s !== "investorgain");
+    const srcs = labelSources(visible);
+    const titleText = srcs 
+      ? `Unverified - only ${srcs} so far. Awaiting a second source.`
+      : "Unverified. Awaiting verification.";
     return (
-      <span title={`Unverified${srcs ? ` - only ${srcs} so far` : ""}. Awaiting a second source.`} className="inline-flex items-center align-middle ml-1 text-slate-400 dark:text-slate-500">
+      <span title={titleText} className="inline-flex items-center align-middle ml-1 text-slate-400 dark:text-slate-500">
         <Clock size={12} />
       </span>
     );
@@ -727,7 +758,7 @@ function computeAllNotifications(ipos, now = new Date()) {
           ipoId: ipo.id,
           title: `${ipo.company}: RHP Filed`,
           message: `Red Herring Prospectus filed${
-            ipo.priceMin != null ? `. Price band set at ₹${ipo.priceMin}–₹${ipo.priceMax}` : ""
+            ipo.priceMin != null || ipo.priceMax != null ? `. Price set at ${formatPriceBand(ipo.priceMin, ipo.priceMax)}` : ""
           }.`,
           date: rhpDay,
           realtime: true,
@@ -745,7 +776,7 @@ function computeAllNotifications(ipos, now = new Date()) {
         type: "open",
         ipoId: ipo.id,
         title: `${ipo.company} Opens Today`,
-        message: `Subscription window is now active. Price: ₹${ipo.priceMin}–₹${ipo.priceMax}.`,
+        message: `Subscription window is now active. Price: ${formatPriceBand(ipo.priceMin, ipo.priceMax)}.`,
         date: ipo.open,
       });
     } else if (ipo.open && stillVisible(ipo.open) && ipo.open < notifDay) {
@@ -754,7 +785,7 @@ function computeAllNotifications(ipos, now = new Date()) {
         type: "open",
         ipoId: ipo.id,
         title: `${ipo.company} Opened`,
-        message: `Subscription opened on ${formatDate(ipo.open)}. Price: ₹${ipo.priceMin}–₹${ipo.priceMax}.`,
+        message: `Subscription opened on ${formatDate(ipo.open)}. Price: ${formatPriceBand(ipo.priceMin, ipo.priceMax)}.`,
         date: ipo.open,
       });
     }
@@ -766,7 +797,7 @@ function computeAllNotifications(ipos, now = new Date()) {
         type: "opens-tomorrow",
         ipoId: ipo.id,
         title: `${ipo.company} Opens Tomorrow`,
-        message: `Subscription starts tomorrow, ${formatDate(ipo.open)}. Price band: ₹${ipo.priceMin}–₹${ipo.priceMax}.`,
+        message: `Subscription starts tomorrow, ${formatDate(ipo.open)}. Price: ${formatPriceBand(ipo.priceMin, ipo.priceMax)}.`,
         date: notifDay,
       });
     }
@@ -781,7 +812,7 @@ function computeAllNotifications(ipos, now = new Date()) {
           type: "close",
           ipoId: ipo.id,
           title: `Last Day to Apply: ${ipo.company}`,
-          message: `Subscription closes today. Price band: ₹${ipo.priceMin}–₹${ipo.priceMax}.`,
+          message: `Subscription closes today. Price: ${formatPriceBand(ipo.priceMin, ipo.priceMax)}.`,
           date: ipo.close,
         });
       }
@@ -1184,7 +1215,7 @@ function useWatchlist() {
 ===================================================================== */
 function buildSystemPrompt() {
   const rows = getLiveIPOS().map((i) =>
-    `${i.name} (${i.type}, ${i.status}): price ₹${i.priceMin}-₹${i.priceMax}, lot ${i.lot}, GMP ₹${i.gmp} (${gainPct(i).toFixed(1)}%), ` +
+    `${i.name} (${i.type}, ${i.status}): price ${formatPriceBand(i.priceMin, i.priceMax)}, lot ${i.lot}, GMP ₹${i.gmp} (${gainPct(i).toFixed(1)}%), ` +
     `est. profit/lot ₹${profitPerLot(i)}, issue ₹${i.issueSize} Cr, open ${i.open} close ${i.close} listing ${i.listing}, sector ${i.sector}` +
     `${i.fin ? `, revenue ${cr(i.fin.revenue)}, PAT ${cr(i.fin.pat)}, ROE ${i.fin.roe}%, P/E ${i.fin.pe}x` : ""}` +
     `${i.sub ? `, subscription ${i.sub.overall}x overall` : ""}` +
@@ -1513,7 +1544,7 @@ function CalculatorTab({ onOpen }) {
                           <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={30} />
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">{i.company}</p>
-                            <p className="text-[10px] text-slate-400 dark:text-slate-500">{i.type} · {i.priceMax ? `₹${i.priceMax}` : "TBA"}</p>
+                            <p className="text-[10px] text-slate-400 dark:text-slate-500">{i.type} · {i.priceMin || i.priceMax ? formatPriceBand(i.priceMin, i.priceMax) : "TBA"}</p>
                           </div>
                           {i.id === ipoId && (
                             <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
@@ -1534,7 +1565,7 @@ function CalculatorTab({ onOpen }) {
           <div className="border-t border-slate-150 dark:border-slate-800 pt-4 space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-slate-550 dark:text-slate-400">Price band</span>
-              <span className="font-mono text-slate-805 dark:text-slate-200 font-bold">{ipo.priceMin && ipo.priceMax ? `₹${ipo.priceMin}–₹${ipo.priceMax}` : "—"}</span>
+              <span className="font-mono text-slate-805 dark:text-slate-200 font-bold">{formatPriceBand(ipo.priceMin, ipo.priceMax)}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-slate-550 dark:text-slate-400">Lot size</span>
@@ -1876,7 +1907,7 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
           <div className="grid grid-cols-3 gap-4 text-xs flex-1">
             <div>
               <p className="text-slate-500 dark:text-slate-400 mb-0.5 flex items-center">Price<VerifyMark ipo={ipo} field="priceMax" /></p>
-              <p className="font-mono font-bold text-slate-800 dark:text-slate-100">{isPending(ipo, "priceMax") ? <span className="text-[11px] italic font-medium text-slate-400">Pending</span> : (ipo.priceMin ? `₹${ipo.priceMin}-${ipo.priceMax}` : "-")}</p>
+              <p className="font-mono font-bold text-slate-800 dark:text-slate-100">{isPending(ipo, "priceMax") ? <span className="text-[11px] italic font-medium text-slate-400">Pending</span> : formatPriceBand(ipo.priceMin, ipo.priceMax)}</p>
             </div>
             <div>
               <p className="text-slate-500 dark:text-slate-400 mb-0.5 flex items-center">Lot<VerifyMark ipo={ipo} field="lot" /></p>
@@ -2116,7 +2147,7 @@ function ListedIPOCard({ ipo, onOpen, watchlist }) {
           <div>
             <p className="text-slate-500 dark:text-slate-400 mb-0.5 flex items-center">Price<VerifyMark ipo={ipo} field="priceMax" /></p>
             <p className="font-mono font-bold text-slate-800 dark:text-slate-100">
-              {isPending(ipo, "priceMax") ? <span className="text-[11px] italic font-medium text-slate-400">Pending</span> : (ipo.priceMin ? `₹${ipo.priceMin}-${ipo.priceMax}` : "—")}
+              {isPending(ipo, "priceMax") ? <span className="text-[11px] italic font-medium text-slate-400">Pending</span> : formatPriceBand(ipo.priceMin, ipo.priceMax)}
             </p>
           </div>
           <div>
@@ -2239,7 +2270,7 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
           {/* ── 3 key metric cards ── */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              ["Price band", ipo.priceMin ? `₹${ipo.priceMin}-${ipo.priceMax}` : "-", "priceMax"],
+              ["Price band", formatPriceBand(ipo.priceMin, ipo.priceMax), "priceMax"],
               ["Lot size", ipo.lot || "-", "lot"],
               ["Issue size", ipo.issueSize ? `₹${Number(ipo.issueSize).toLocaleString("en-IN")} Cr` : "-", "issueSize"],
             ].map(([label, value, field]) => {

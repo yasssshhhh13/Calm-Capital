@@ -259,7 +259,7 @@ export function buildIpoFaqs(ipo) {
       question: `What is the lot size and price band for ${name} IPO?`,
       answer: `${name} IPO ${
         ipo.priceMin != null && ipo.priceMax != null
-          ? `price band is ₹${ipo.priceMin}–₹${ipo.priceMax}`
+          ? (ipo.priceMin === ipo.priceMax ? `price is ₹${ipo.priceMax}` : `price band is ₹${ipo.priceMin}–₹${ipo.priceMax}`)
           : ipo.priceMax != null
             ? `price is ₹${ipo.priceMax}`
             : "price band is to be announced"
@@ -559,7 +559,7 @@ export function buildIpoCrawlSummaryHtml(ipo) {
     <li>GMP: ${ipo.gmp != null ? `₹${escapeHtml(ipo.gmp)}` : "—"}</li>
     <li>Price band: ${
       ipo.priceMin != null && ipo.priceMax != null
-        ? `₹${escapeHtml(ipo.priceMin)}–₹${escapeHtml(ipo.priceMax)}`
+        ? (ipo.priceMin === ipo.priceMax ? `₹${escapeHtml(ipo.priceMax)}` : `₹${escapeHtml(ipo.priceMin)}–₹${escapeHtml(ipo.priceMax)}`)
         : "—"
     }</li>
     <li>Lot size: ${escapeHtml(ipo.lot ?? "—")}</li>
