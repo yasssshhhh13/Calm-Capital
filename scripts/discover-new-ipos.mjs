@@ -246,80 +246,75 @@ async function main() {
       const existingIpo = findExistingIpo(ipos, companyName, id);
 
       if (!existingIpo) {
-        console.log(`\n[NEW DISCOVERY] Found new filing: "${companyName}". Verifying against secondary sources...`);
+        console.log(`\n[NEW DISCOVERY] Found new filing: "${companyName}". Checking secondary sources for logging...`);
         
         const isVerifiedIG = await verifyOnInvestorGainList(page, companyName);
         const isVerifiedIC = await verifyOnIPOCentral(page, companyName);
         const isVerifiedIW = await verifyOnIPOWiz(page, companyName);
         
-        const isVerified = isVerifiedIG || isVerifiedIC || isVerifiedIW;
         const verifiedSources = [];
         if (isVerifiedIG) verifiedSources.push("InvestorGain");
         if (isVerifiedIC) verifiedSources.push("IPO Central");
         if (isVerifiedIW) verifiedSources.push("IPOWiz");
 
-        if (isVerified) {
-          console.log(`[VERIFIED] Verified "${companyName}" on sources: ${verifiedSources.join(", ")}`);
-          
-          const sector = deduceSector(companyName);
-          const type = filing.title.toLowerCase().includes("sme") ? "SME" : "Mainboard";
+        console.log(`[DISCOVERY] Adding "${companyName}" directly to database.`);
+        
+        const sector = deduceSector(companyName);
+        const type = filing.title.toLowerCase().includes("sme") ? "SME" : "Mainboard";
 
-          const newIpo = {
-            id,
-            name: companyName,
-            company: companyName.endsWith("Limited") || companyName.endsWith("Ltd.") ? companyName : `${companyName} Limited`,
-            type,
-            status: "Upcoming",
-            discoveredAt: new Date().toISOString(),
-            open: null,
-            close: null,
-            listing: null,
-            allotment: null,
-            refund: null,
-            demat: null,
-            priceMin: null,
-            priceMax: null,
-            faceValue: 10,
-            lot: null,
-            issueSize: null,
-            freshIssue: null,
-            ofs: 0,
-            gmp: 0,
-            trend: "stable",
-            estListing: null,
-            listedAt: null,
-            currentPrice: null,
-            gmpHistory: [],
-            drhp: rawDrhpUrl,
-            rhp: null,
-            leadManager: "To Be Announced",
-            registrar: "To Be Announced",
-            exchange: type === "SME" ? "BSE SME / NSE Emerge" : "BSE, NSE",
-            about: `${companyName} is a newly announced ${type} IPO in the ${sector} sector. The company has filed its DRHP with SEBI and is preparing for its public issue.`,
-            sector,
-            strengths: [
-              `Established presence in the ${sector} industry`,
-              "Experienced promoter group and leadership team"
-            ],
-            risks: [
-              "Subject to regulatory approvals and market conditions",
-              "Industry competitive pressures and operating scale constraints"
-            ],
-            auditTrail: [
-              {
-                timestamp: new Date().toISOString(),
-                action: "created",
-                details: `Discovered from SEBI DRHP filing. Verified on: ${verifiedSources.join(", ")}`
-              }
-            ]
-          };
+        const newIpo = {
+          id,
+          name: companyName,
+          company: companyName.endsWith("Limited") || companyName.endsWith("Ltd.") ? companyName : `${companyName} Limited`,
+          type,
+          status: "Upcoming",
+          discoveredAt: new Date().toISOString(),
+          open: null,
+          close: null,
+          listing: null,
+          allotment: null,
+          refund: null,
+          demat: null,
+          priceMin: null,
+          priceMax: null,
+          faceValue: 10,
+          lot: null,
+          issueSize: null,
+          freshIssue: null,
+          ofs: 0,
+          gmp: 0,
+          trend: "stable",
+          estListing: null,
+          listedAt: null,
+          currentPrice: null,
+          gmpHistory: [],
+          drhp: rawDrhpUrl,
+          rhp: null,
+          leadManager: "To Be Announced",
+          registrar: "To Be Announced",
+          exchange: type === "SME" ? "BSE SME / NSE Emerge" : "BSE, NSE",
+          about: `${companyName} is a newly announced ${type} IPO in the ${sector} sector. The company has filed its DRHP with SEBI and is preparing for its public issue.`,
+          sector,
+          strengths: [
+            `Established presence in the ${sector} industry`,
+            "Experienced promoter group and leadership team"
+          ],
+          risks: [
+            "Subject to regulatory approvals and market conditions",
+            "Industry competitive pressures and operating scale constraints"
+          ],
+          auditTrail: [
+            {
+              timestamp: new Date().toISOString(),
+              action: "created",
+              details: `Discovered from SEBI DRHP filing. Secondary source check results: ${verifiedSources.length > 0 ? verifiedSources.join(", ") : "None found yet"}`
+            }
+          ]
+        };
 
-          ipos.push(newIpo);
-          databaseUpdated = true;
-          auditLogs.push(`[CREATED] Added new IPO: "${companyName}" (ID: ${id})`);
-        } else {
-          console.log(`[HOLD] "${companyName}" not verified on any secondary sources yet. Postponing addition.`);
-        }
+        ipos.push(newIpo);
+        databaseUpdated = true;
+        auditLogs.push(`[CREATED] Added new IPO: "${companyName}" (ID: ${id})`);
       } else {
         // IPO exists. Let's compare and update missing/changed fields
         const changes = {};
