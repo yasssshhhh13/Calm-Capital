@@ -4309,9 +4309,13 @@ export default function App() {
     setRefreshing(true);
     try {
       const res = await fetch("/api/refresh", { method: "POST" });
+      const resData = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || `HTTP error ${res.status}`);
+        throw new Error(resData.error || `HTTP error ${res.status}`);
+      }
+      
+      if (resData.message) {
+        alert(resData.message);
       }
       
       const dbRes = await fetch(`/ipos.json?t=${Date.now()}`);
