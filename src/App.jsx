@@ -4312,22 +4312,21 @@ export default function App() {
   const refresh = async () => {
     if (refreshing) return;
     setRefreshing(true);
-    let scraperError = null;
+    
+    // Guarantee the spinner runs for at least 800ms so the user has visual feedback
+    const minDelay = new Promise((resolve) => setTimeout(resolve, 800));
 
     try {
       const res = await fetch("/api/refresh", { method: "POST" });
       const resData = await res.json().catch(() => ({}));
       if (!res.ok) {
-        scraperError = new Error(resData.error || `HTTP error ${res.status}`);
-      } else if (resData.message) {
-        alert(resData.message);
+        console.warn("[Refresh] Scraper trigger skipped/failed:", resData.error || `HTTP error ${res.status}`);
       }
     } catch (err) {
-      console.error("API Refresh trigger failed:", err);
-      scraperError = err;
+      console.warn("[Refresh] API Refresh trigger failed:", err);
     }
 
-    // Always fetch latest ipos.json and sync live data, even if direct scraping failed
+    // Always fetch latest ipos.json and sync live data silently
     try {
       const dbRes = await fetch(`/ipos.json?t=${Date.now()}`);
       if (dbRes.ok) {
@@ -4339,14 +4338,10 @@ export default function App() {
       setTick((t) => t + 1);
       setLiveDataVersion((v) => v + 1);
     } catch (err) {
-      console.error("Data reload failed:", err);
+      console.error("[Refresh] Data reload failed:", err);
     }
 
-    // Display the scraper error or configuration guide if one occurred
-    if (scraperError) {
-      alert("Failed to refresh: " + scraperError.message);
-    }
-
+    await minDelay;
     setRefreshing(false);
   };
 
