@@ -4312,17 +4312,23 @@ export default function App() {
   const refresh = async () => {
     if (refreshing) return;
     setRefreshing(true);
+    let scraperError = null;
+
     try {
       const res = await fetch("/api/refresh", { method: "POST" });
       const resData = await res.json().catch(() => ({}));
       if (!res.ok) {
-        throw new Error(resData.error || `HTTP error ${res.status}`);
-      }
-      
-      if (resData.message) {
+        scraperError = new Error(resData.error || `HTTP error ${res.status}`);
+      } else if (resData.message) {
         alert(resData.message);
       }
-      
+    } catch (err) {
+      console.error("API Refresh trigger failed:", err);
+      scraperError = err;
+    }
+
+    // Always fetch latest ipos.json and sync live data, even if direct scraping failed
+    try {
       const dbRes = await fetch(`/ipos.json?t=${Date.now()}`);
       if (dbRes.ok) {
         const dbData = await dbRes.json();
@@ -4333,11 +4339,15 @@ export default function App() {
       setTick((t) => t + 1);
       setLiveDataVersion((v) => v + 1);
     } catch (err) {
-      console.error("Refresh failed:", err);
-      alert("Failed to refresh: " + err.message);
-    } finally {
-      setRefreshing(false);
+      console.error("Data reload failed:", err);
     }
+
+    // Display the scraper error or configuration guide if one occurred
+    if (scraperError) {
+      alert("Failed to refresh: " + scraperError.message);
+    }
+
+    setRefreshing(false);
   };
 
   const groupedFiltered = (status) =>
