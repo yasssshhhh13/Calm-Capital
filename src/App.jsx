@@ -168,22 +168,27 @@ const isPortalLink = (url) => PORTAL_URLS.has(url);
 // so "Open"/"Upcoming"/"Closed"/"Listed" is always correct for whatever day
 // the dashboard is opened on — not just the day the data was last refreshed.
 function liveStatus(ipo, today) {
-  // If listed price or current price exists, it is Listed
-  if (ipo.listedAt !== null && ipo.listedAt !== undefined) return "Listed";
-  if (ipo.currentPrice !== null && ipo.currentPrice !== undefined) return "Listed";
-
-  if (!ipo.open) return "Upcoming"; // DRHP filed but subscription dates not yet announced
   const d = (s) => new Date(s + "T00:00:00+05:30"); // dates are IST
+
+  // 1. If open date is not set, it is Upcoming (DRHP filed)
+  if (!ipo.open) return "Upcoming";
   const open = d(ipo.open);
+  // If open date is in the future, it is Upcoming
   if (today < open) return "Upcoming";
   
-  if (!ipo.close) return "Open"; // If open but close is not set, treat as Open
+  // 2. If close date is not set, it is Open
+  if (!ipo.close) return "Open";
   const closeDeadline = new Date(ipo.close + "T16:50:00+05:30");
+  // If close deadline is in the future, it is Open
   if (today < closeDeadline) return "Open";
   
-  if (!ipo.listing) return "Closed"; // If closed but listing not set, treat as Closed
+  // 3. If listing date is not set, it is Closed
+  if (!ipo.listing) return "Closed";
   const listingTime = new Date(ipo.listing + "T10:00:00+05:30");
+  // If listing time is in the future, it is Closed
   if (today < listingTime) return "Closed";
+  
+  // 4. Default to Listed once listing date arrives or if listed price flags are set
   return "Listed";
 }
 
