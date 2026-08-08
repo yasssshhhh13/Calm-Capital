@@ -1166,11 +1166,11 @@ function NotificationBell({ hook, onOpenIpo }) {
       {/* Bell button */}
       <button
         onClick={toggleOpen}
-        className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121625]/30 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 relative shadow-sm"
+        className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121D2D]/30 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 relative shadow-sm"
       >
         <Bell size={14} />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-blue-500 ring-2 ring-white dark:ring-[#0a0d16]" />
+          <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-blue-500 ring-2 ring-white dark:ring-[#0A1020]" />
         )}
       </button>
 
@@ -1184,7 +1184,7 @@ function NotificationBell({ hook, onOpenIpo }) {
           <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
             <p className="text-base font-bold text-white">Notifications</p>
             {notifications.length > 0 && (
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(255,255,255,0.08)", color: "#94a3b8" }}>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(52,74,97,0.9)", color: "#8EA1B7" }}>
                 {notifications.length} total
               </span>
             )}
@@ -1501,7 +1501,7 @@ function CalculatorTab({ onOpen }) {
 
   if (!ipo) {
     return (
-      <div className="bg-white dark:bg-[#161c28] border border-slate-200 dark:border-white/5 rounded-3xl p-12 text-center shadow-sm">
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-3xl p-12 text-center shadow-sm">
         <CalcIcon size={48} className="mx-auto mb-4 text-slate-300 dark:text-slate-700" />
         <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-2">Calculator Unavailable</h2>
         <p className="text-slate-500 text-sm max-w-sm mx-auto">
@@ -1540,7 +1540,7 @@ function CalculatorTab({ onOpen }) {
       
       <div className="grid md:grid-cols-2 gap-6 items-start">
         {/* ── Input Card ── */}
-        <div className="bg-white dark:bg-[#161c28] border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm dark:shadow-xl space-y-5">
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm dark:shadow-xl space-y-5">
           
           {/* IPO Selector */}
           <div>
@@ -1579,10 +1579,10 @@ function CalculatorTab({ onOpen }) {
 
             {/* Dropdown panel */}
             {listOpen && (
-              <div className="mt-2 rounded-2xl border border-slate-200 dark:border-white/5 bg-white dark:bg-[#111520] shadow-xl overflow-hidden flex flex-col" style={{ maxHeight: "340px" }}>
+              <div className="mt-2 rounded-2xl border border-slate-200 dark:border-white/5 bg-white dark:bg-[#121D2D] shadow-xl overflow-hidden flex flex-col" style={{ maxHeight: "340px" }}>
 
                 {/* ── Sticky header: filter tabs + search ── */}
-                <div className="sticky top-0 z-20 bg-white dark:bg-[#111520] border-b border-slate-100 dark:border-white/5">
+                <div className="sticky top-0 z-20 bg-white dark:bg-[#121D2D] border-b border-slate-100 dark:border-white/5">
 
                   {/* Filter tabs */}
                   <div className="flex gap-1 p-2.5 pb-2">
@@ -1596,7 +1596,7 @@ function CalculatorTab({ onOpen }) {
                           className="flex-1 text-[10px] font-bold rounded-lg py-1 transition-all"
                           style={{
                             background: isActive ? BRAND.blue : "transparent",
-                            color: isActive ? "#fff" : "#94a3b8",
+                            color: isActive ? "#fff" : "#8EA1B7",
                             border: isActive ? `1px solid ${BRAND.blue}` : "1px solid transparent",
                           }}
                         >
@@ -1615,7 +1615,7 @@ function CalculatorTab({ onOpen }) {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder={calcFilter ? `Search ${calcFilter} IPOs…` : "Search all IPOs…"}
-                        className="w-full bg-slate-50 dark:bg-[#161c28] border border-slate-200 dark:border-white/5 rounded-xl pl-8 pr-3 py-2 text-base md:text-xs outline-none text-slate-700 dark:text-slate-200 placeholder:text-slate-400"
+                        className="w-full bg-slate-50 dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-xl pl-8 pr-3 py-2 text-base md:text-xs outline-none text-slate-700 dark:text-slate-200 placeholder:text-slate-400"
                       />
                     </div>
                   </div>
@@ -1685,16 +1685,16 @@ function CalculatorTab({ onOpen }) {
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => setLots((l) => Math.max(1, l - 1))} 
-                className="w-12 h-12 rounded-xl border border-blue-500/40 text-blue-500 bg-slate-50 dark:bg-[#111520] hover:bg-slate-100 dark:hover:bg-[#111520]/80 flex items-center justify-center text-lg font-bold transition-all shadow-[0_0_10px_rgba(59,130,246,0.15)] focus:outline-none"
+                className="w-12 h-12 rounded-xl border border-blue-500/40 text-blue-500 bg-slate-50 dark:bg-[#121D2D] hover:bg-slate-100 dark:hover:bg-[#121D2D]/80 flex items-center justify-center text-lg font-bold transition-all shadow-[0_0_10px_rgba(59,130,246,0.15)] focus:outline-none"
               >
                 <Minus size={16} />
               </button>
-              <div className="flex-1 bg-slate-50 dark:bg-[#111520] border border-slate-200 dark:border-slate-800 rounded-xl h-12 flex items-center justify-center font-mono text-xl font-bold text-slate-800 dark:text-white">
+              <div className="flex-1 bg-slate-50 dark:bg-[#121D2D] border border-slate-200 dark:border-slate-800 rounded-xl h-12 flex items-center justify-center font-mono text-xl font-bold text-slate-800 dark:text-white">
                 {lots}
               </div>
               <button 
                 onClick={() => setLots((l) => l + 1)} 
-                className="w-12 h-12 rounded-xl border border-blue-500/40 text-blue-500 bg-slate-50 dark:bg-[#111520] hover:bg-slate-100 dark:hover:bg-[#111520]/80 flex items-center justify-center text-lg font-bold transition-all shadow-[0_0_10px_rgba(59,130,246,0.15)] focus:outline-none"
+                className="w-12 h-12 rounded-xl border border-blue-500/40 text-blue-500 bg-slate-50 dark:bg-[#121D2D] hover:bg-slate-100 dark:hover:bg-[#121D2D]/80 flex items-center justify-center text-lg font-bold transition-all shadow-[0_0_10px_rgba(59,130,246,0.15)] focus:outline-none"
               >
                 <span className="text-xl">+</span>
               </button>
@@ -1703,7 +1703,7 @@ function CalculatorTab({ onOpen }) {
         </div>
 
         {/* ── Result Card ── */}
-        <div className="bg-white dark:bg-[#161c28] border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm dark:shadow-xl flex flex-col justify-between min-h-[340px]">
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm dark:shadow-xl flex flex-col justify-between min-h-[340px]">
           <div className="space-y-4">
             <p className="text-[10px] uppercase tracking-wider text-slate-450 dark:text-slate-500 font-bold mb-1">Result</p>
             {[
@@ -1885,7 +1885,7 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
 
   return (
     <div
-      className="bg-white dark:bg-[#161c28] border rounded-2xl overflow-hidden relative group transition-all hover:shadow-md"
+      className="bg-white dark:bg-[#121D2D] border rounded-2xl overflow-hidden relative group transition-all hover:shadow-md"
       style={{ borderColor: isOpen ? "rgba(28,155,218,0.35)" : "rgba(0,0,0,0.06)", boxShadow: isOpen ? "0 0 0 1px rgba(28,155,218,0.12), 0 4px 16px -4px rgba(28,155,218,0.15)" : "0 1px 4px rgba(0,0,0,0.04)" }}
     >
       {/* Stretch link for SEO + open details (bookmark sits above this) */}
@@ -2142,7 +2142,7 @@ function ListedIPOCard({ ipo, onOpen, watchlist }) {
   else if (currentRet < 0) currentColor = "#e11d48";
 
   return (
-    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl shadow-sm hover:shadow-md transition-all overflow-hidden relative">
+    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl shadow-sm hover:shadow-md transition-all overflow-hidden relative">
       <a
         href={ipoPath(ipo.id)}
         aria-label={`View ${ipo.company} IPO details`}
@@ -2311,8 +2311,8 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
       <div
         className="rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl transition-colors border"
         style={{
-          background: dark ? "#111827" : "#ffffff",
-          borderColor: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
+          background: dark ? "#172437" : "#ffffff",
+          borderColor: dark ? "rgba(52,74,97,0.9)" : "rgba(0,0,0,0.08)",
           color: dark ? "#ffffff" : "#1e293b"
         }}
         onClick={(e) => e.stopPropagation()}
@@ -2326,7 +2326,7 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
               style={{
                 background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
                 borderColor: dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
-                color: watched ? BRAND.blue : (dark ? "#94a3b8" : "#475569")
+                color: watched ? BRAND.blue : (dark ? "#8EA1B7" : "#475569")
               }}
             >
               {watched ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
@@ -2651,7 +2651,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             style={{
               background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
               borderColor: dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
-              color: watched ? BRAND.blue : (dark ? "#94a3b8" : "#475569")
+              color: watched ? BRAND.blue : (dark ? "#8EA1B7" : "#475569")
             }}
           >
             {watched ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
@@ -2702,7 +2702,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
       {/* ── 2. Top Info Grid ── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#1C9BDA] rounded-2xl p-4 flex items-start justify-between">
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#1C9BDA] rounded-2xl p-4 flex items-start justify-between">
           <div>
             <span className="text-slate-455 dark:text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Price Band</span>
             <span className="font-mono font-black text-xl text-slate-850 dark:text-white mt-1.5 block">
@@ -2713,7 +2713,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             <CircleDollarSign size={15} />
           </div>
         </div>
-        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#aed768] rounded-2xl p-4 flex items-start justify-between">
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#aed768] rounded-2xl p-4 flex items-start justify-between">
           <div>
             <span className="text-slate-455 dark:text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Lot Size</span>
             <span className="font-mono font-black text-xl text-slate-850 dark:text-white mt-1.5 block">
@@ -2724,7 +2724,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             <LayoutGrid size={15} />
           </div>
         </div>
-        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#1C9BDA] rounded-2xl p-4 flex items-start justify-between">
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#1C9BDA] rounded-2xl p-4 flex items-start justify-between">
           <div>
             <span className="text-slate-455 dark:text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Minimum Investment</span>
             <span className="font-mono font-black text-xl text-slate-850 dark:text-white mt-1.5 block">
@@ -2735,7 +2735,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             <Landmark size={15} />
           </div>
         </div>
-        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#aed768] rounded-2xl p-4 flex items-start justify-between">
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#aed768] rounded-2xl p-4 flex items-start justify-between">
           <div>
             <span className="text-slate-455 dark:text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Cut-off Price</span>
             <span className="font-mono font-black text-xl text-slate-850 dark:text-white mt-1.5 block">
@@ -2751,8 +2751,8 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
       {/* ── 3. GMP & Overview Row ── */}
       <div className="grid md:grid-cols-12 gap-6">
         {/* GMP Card and details */}
-        <div className="md:col-span-6 bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
-          <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider flex items-center gap-1.5 border-b pb-2" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+        <div className="md:col-span-6 bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+          <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider flex items-center gap-1.5 border-b pb-2" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
             <CircleDollarSign size={14} className="text-[#1c9bda]" /> Grey Market Premium (GMP TODAY)
           </h3>
 
@@ -2828,9 +2828,9 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
         </div>
 
         {/* At a Glance Summary Card */}
-        <div className="md:col-span-6 bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 flex flex-col justify-between">
+        <div className="md:col-span-6 bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 flex flex-col justify-between">
           <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider border-b pb-2" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+            <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider border-b pb-2" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
               {displayIpoName(ipo)} IPO At a Glance
             </h3>
 
@@ -2878,7 +2878,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
       {/* ── 4. About & Timeline ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
         {/* About the Company — rich multi-section layout using all available data */}
-        <div className="h-full bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-5 flex flex-col justify-between">
+        <div className="h-full bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-5 flex flex-col justify-between">
 
           {/* Section: About the Company */}
           <div>
@@ -3005,11 +3005,11 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
         </div>
 
         {/* IPO Timeline Events */}
-        <div className="h-full bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4 flex flex-col justify-between">
-          <div className="flex items-center justify-between border-b pb-2.5" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between border-b pb-2.5" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
             <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider flex items-center gap-1.5">
               <Calendar size={13} className="text-[#1c9bda]" />
-              IPO Schedule & Important Dates
+              IPO Schedule &amp; Important Dates
             </h3>
             {status && (
               <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full ${
@@ -3023,65 +3023,59 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             )}
           </div>
 
-          <div className="relative pl-6 space-y-4 text-xs pt-1">
-            {/* vertical timeline track line */}
-            <div className="absolute top-2 bottom-2 left-2 w-0.5 bg-slate-200 dark:bg-slate-800" />
-
+          {/* CSS-grid schedule: [28px dot] [1fr label] [120px date] */}
+          <div className="relative">
+            {/* Vertical track line inside the 28px icon column */}
+            <div
+              className="absolute pointer-events-none bg-slate-200 dark:bg-slate-700"
+              style={{ left: 13, top: 22, bottom: 22, width: 2 }}
+            />
             {(() => {
               const todayYmd = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-              
-              // Determine current active stage index
               let activeStageIdx = -1;
               milestones.forEach((m, idx) => {
                 if (m.date && m.date <= todayYmd) activeStageIdx = idx;
               });
-
               return milestones.map((m, idx) => {
                 const isCompleted = isPast(m.date) && (idx < activeStageIdx || isListed);
                 const isActiveStage = idx === activeStageIdx && !isListed;
-                const isUpcomingStage = !isCompleted && !isActiveStage;
-
                 return (
-                  <div key={m.label} className={`relative flex items-center justify-between gap-4 p-2 rounded-xl transition-all ${
-                    isActiveStage ? "bg-[#1c9bda]/5 dark:bg-[#1c9bda]/10 border border-[#1c9bda]/20" : ""
-                  }`}>
-                    {/* timeline dot indicator */}
-                    <span
-                      className={`absolute -left-5 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
-                        isCompleted
-                          ? "bg-emerald-500 border-emerald-500 text-white"
-                          : isActiveStage
-                          ? "bg-[#1c9bda] border-[#1c9bda] text-white ring-4 ring-[#1c9bda]/20 animate-pulse"
-                          : "bg-white dark:bg-[#161c28] border-slate-300 dark:border-slate-700"
-                      }`}
-                    >
-                      {isCompleted && <CheckCircle size={10} className="text-white" />}
-                      {isActiveStage && <span className="w-1.5 h-1.5 rounded-full bg-white"></span>}
-                    </span>
-
-                    <div className="flex items-center gap-2">
-                      <span className={`font-semibold ${
+                  <div
+                    key={m.label}
+                    className={`relative flex items-center gap-2 py-1 ${isActiveStage ? "rounded-xl bg-[#1c9bda]/5 dark:bg-[#1c9bda]/10 border border-[#1c9bda]/20 px-1" : ""}`}
+                    style={{ display: "grid", gridTemplateColumns: "28px minmax(0,1fr) 120px", alignItems: "center", zIndex: 1, minHeight: 46 }}
+                  >
+                    {/* Col 1: dot (28px) */}
+                    <div className="flex items-center justify-center">
+                      <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                        isCompleted ? "bg-emerald-500 border-emerald-500" :
+                        isActiveStage ? "bg-[#1c9bda] border-[#1c9bda] ring-4 ring-[#1c9bda]/20" :
+                        "bg-white dark:bg-[#121D2D] border-slate-300 dark:border-slate-600"
+                      }`}>
+                        {isCompleted && <CheckCircle size={9} className="text-white" />}
+                        {isActiveStage && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
+                      </span>
+                    </div>
+                    {/* Col 2: label + badges (flex-1) */}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className={`text-[13px] font-semibold truncate ${
                         isCompleted ? "text-slate-800 dark:text-white font-bold" :
                         isActiveStage ? "text-[#1c9bda] font-extrabold" :
-                        "text-slate-500 dark:text-slate-400"
-                      }`}>
-                        {m.label}
-                      </span>
+                        "text-slate-600 dark:text-slate-400"
+                      }`}>{m.label}</span>
                       {isActiveStage && (
-                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">
-                          Active Stage
-                        </span>
+                        <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">Active</span>
                       )}
                       {isCompleted && (
-                        <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
-                          ✓ Done
-                        </span>
+                        <span className="shrink-0 text-[9px] font-bold text-emerald-500 dark:text-emerald-400">✓ Done</span>
                       )}
                     </div>
-
-                    <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
-                      {formatDate(m.date)}
-                    </span>
+                    {/* Col 3: date (120px, right-aligned, fixed) */}
+                    <span className={`text-right whitespace-nowrap font-mono text-[13px] ${
+                      isActiveStage ? "text-[#1c9bda] font-extrabold" :
+                      isCompleted ? "text-slate-700 dark:text-slate-300 font-bold" :
+                      "text-slate-600 dark:text-slate-400 font-semibold"
+                    }`}>{formatDate(m.date)}</span>
                   </div>
                 );
               });
@@ -3090,8 +3084,8 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
         </div>
       </div>
 
-      {/* ── 5. Subscription Tracker ── */}
-      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+            {/* ── 5. Subscription Tracker ── */}
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider flex items-center gap-2">
             <LayoutGrid size={14} className="text-[#1c9bda]" />
@@ -3185,7 +3179,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
       </div>
 
       {/* ── 6. Financials Section ── */}
-      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
         {(() => {
           const getMockHistoricalValues = (currentVal) => {
             if (currentVal == null) return null;
@@ -3202,7 +3196,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             
             return (
               <div className="space-y-3 p-4 bg-slate-50/50 dark:bg-white/[0.01] rounded-2xl border border-slate-150 dark:border-white/5">
-                <div className="flex justify-between items-center border-b pb-1.5" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+                <div className="flex justify-between items-center border-b pb-1.5" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
                   <span className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">{label} Growth</span>
                   <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Values in Cr</span>
                 </div>
@@ -3321,8 +3315,8 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
                   {/* Full Financials Modal Overlay */}
                   {showAllFinancials && (
-                    <div className="fixed inset-0 z-50 bg-[#0a0d16]/75 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in" onClick={() => setShowAllFinancials(false)}>
-                      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+                    <div className="fixed inset-0 z-50 bg-[#0A1020]/75 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in" onClick={() => setShowAllFinancials(false)}>
+                      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
                         <button 
                           onClick={() => setShowAllFinancials(false)}
                           className="absolute top-4 right-4 text-slate-455 hover:text-slate-800 dark:hover:text-white bg-transparent border-0 cursor-pointer p-1"
@@ -3330,7 +3324,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                           <X size={20} />
                         </button>
 
-                        <div className="border-b pb-4 mb-4" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+                        <div className="border-b pb-4 mb-4" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
                           <h3 className="text-base font-bold text-slate-850 dark:text-white uppercase tracking-wider">{displayIpoName(ipo)} Detailed Financials</h3>
                           <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Audit status: verified against SEBI RHP filings</p>
                         </div>
@@ -3348,7 +3342,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                               </thead>
                               <tbody className="divide-y divide-slate-150 dark:divide-white/5 text-slate-700 dark:text-slate-350">
                                 {/* Alternating rows */}
-                                <tr className="bg-white dark:bg-[#161c28] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
+                                <tr className="bg-white dark:bg-[#121D2D] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
                                   <td className="p-3 font-semibold">Total Revenue (Cr)</td>
                                   <td className="p-3 text-right font-mono text-slate-400">₹{((ipo.fin.revenue || 0) * 0.70).toFixed(2)} Cr</td>
                                   <td className="p-3 text-right font-mono text-slate-400">₹{((ipo.fin.revenue || 0) * 0.85).toFixed(2)} Cr</td>
@@ -3364,7 +3358,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                                     {ipo.fin.pat != null ? `₹${ipo.fin.pat} Cr` : "—"}
                                   </td>
                                 </tr>
-                                <tr className="bg-white dark:bg-[#161c28] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
+                                <tr className="bg-white dark:bg-[#121D2D] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
                                   <td className="p-3 font-semibold">EBITDA (Cr)</td>
                                   <td className="p-3 text-right font-mono text-slate-400">
                                     {ipo.fin.ebitda != null ? `₹${(ipo.fin.ebitda * 0.70).toFixed(2)} Cr` : "—"}
@@ -3388,7 +3382,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                                     {ipo.fin.netWorth != null ? `₹${ipo.fin.netWorth} Cr` : "—"}
                                   </td>
                                 </tr>
-                                <tr className="bg-white dark:bg-[#161c28] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
+                                <tr className="bg-white dark:bg-[#121D2D] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
                                   <td className="p-3 font-semibold">Total Borrowings (Debt) (Cr)</td>
                                   <td className="p-3 text-right font-mono text-slate-400">
                                     {ipo.fin.debt != null ? `₹${(ipo.fin.debt * 0.70).toFixed(2)} Cr` : "—"}
@@ -3441,7 +3435,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                 style={{
                   background: dark ? "rgba(28,155,218,0.05)" : "rgba(28,155,218,0.03)",
                   borderColor: dark ? "rgba(28,155,218,0.12)" : "rgba(28,155,218,0.08)",
-                  color: dark ? "#94a3b8" : "#475569"
+                  color: dark ? "#8EA1B7" : "#475569"
                 }}
               >
                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -3462,7 +3456,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
       </div>
 
       {/* ── 7. Issue Details ── */}
-      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
         <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
           IPO Structure & Issue Details
         </h3>
@@ -3538,7 +3532,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
       {/* ── 8. Comparison Peer Matrix ── */}
       {related.length > 0 && (
-        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
           <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
             Sector Peer Comparison
           </h3>
@@ -3584,8 +3578,8 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
       )}
 
       {/* ── 9. Documents (DRHP/RHP) ── */}
-      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
-        <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider border-b pb-2" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+        <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider border-b pb-2" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
           Official Filings & Documents
         </h3>
 
@@ -3632,7 +3626,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
       {/* ── 10. FAQs Section ── */}
       {faqs.length > 0 && (
-        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
           <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
             Frequently Asked Questions (FAQs)
           </h3>
@@ -3650,7 +3644,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                     <ChevronRight size={13} className={`transform transition-transform text-slate-400 ${isActive ? "rotate-90" : ""}`} />
                   </button>
                   {isActive && (
-                    <div className="p-4 text-xs leading-relaxed border-t border-slate-150 dark:border-white/5 text-slate-555 dark:text-slate-350 bg-white dark:bg-[#111827]">
+                    <div className="p-4 text-xs leading-relaxed border-t border-slate-150 dark:border-white/5 text-slate-555 dark:text-slate-350 bg-white dark:bg-[#172437]">
                       {f.answer}
                     </div>
                   )}
@@ -3725,7 +3719,7 @@ function GMPTab({ tick, onOpen }) {
   };
 
   return (
-    <div className="bg-white dark:bg-[#161c28] border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm dark:shadow-xl">
+    <div className="bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm dark:shadow-xl">
       {/* Header */}
       <div className="flex items-center gap-2 mb-6">
         <BarChart3 size={16} className="text-slate-500" />
@@ -4107,7 +4101,7 @@ function AllotmentCard({ ipo, onOpen, dark, todayStr }) {
         e.preventDefault();
         onOpen?.(ipo);
       }}
-      className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full cursor-pointer no-underline text-inherit"
+      className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full cursor-pointer no-underline text-inherit"
     >
       <div>
         <div className="flex items-start justify-between gap-3">
@@ -4379,7 +4373,7 @@ function SubscriptionsTab({ dark }) {
 
   const statusBadge = {
     Open:     { bg: dark ? "rgba(16,185,129,0.15)" : "rgba(16,185,129,0.1)", color: "#10b981", border: dark ? "1px solid rgba(16,185,129,0.25)" : "1px solid rgba(16,185,129,0.2)" },
-    Closed:   { bg: dark ? "rgba(148,163,184,0.1)" : "rgba(148,163,184,0.08)", color: dark ? "#94a3b8" : "#64748b", border: dark ? "1px solid rgba(148,163,184,0.2)" : "1px solid rgba(148,163,184,0.15)" },
+    Closed:   { bg: dark ? "rgba(148,163,184,0.1)" : "rgba(148,163,184,0.08)", color: dark ? "#8EA1B7" : "#64748b", border: dark ? "1px solid rgba(148,163,184,0.2)" : "1px solid rgba(148,163,184,0.15)" },
     Upcoming: { bg: dark ? "rgba(240,162,2,0.12)" : "rgba(240,162,2,0.08)",  color: "#d97706", border: dark ? "1px solid rgba(240,162,2,0.25)" : "1px solid rgba(240,162,2,0.2)" },
     Listed:   { bg: dark ? "rgba(28,155,218,0.12)" : "rgba(28,155,218,0.08)", color: BRAND.blue, border: dark ? "1px solid rgba(28,155,218,0.25)" : "1px solid rgba(28,155,218,0.2)" },
   };
@@ -4431,7 +4425,7 @@ function SubscriptionsTab({ dark }) {
               key={ipo.id}
               className="rounded-3xl p-5 hover:shadow-lg transition-all flex flex-col justify-between"
               style={{
-                background: dark ? "#111827" : "#ffffff",
+                background: dark ? "#172437" : "#ffffff",
                 border: dark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.06)",
                 boxShadow: dark ? "none" : "0 4px 12px rgba(0,0,0,0.03)"
               }}
@@ -4463,7 +4457,7 @@ function SubscriptionsTab({ dark }) {
                 </div>
 
                 {/* Sub-header subscription status */}
-                <p className="text-xs font-semibold mb-4" style={{ color: dark ? "#94a3b8" : "#64748b" }}>
+                <p className="text-xs font-semibold mb-4" style={{ color: dark ? "#8EA1B7" : "#64748b" }}>
                   {status === "Open" ? (
                     <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -4522,10 +4516,10 @@ function FinancialsTab({ onOpen, dark }) {
         border: dark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.05)"
       }}
     >
-      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: dark ? "#64748b" : "#94a3b8" }}>{label}</span>
+      <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: dark ? "#64748b" : "#8EA1B7" }}>{label}</span>
       <span
         className="text-sm font-bold font-mono mt-1"
-        style={{ color: isNA ? (dark ? "#475569" : "#94a3b8") : (dark ? "#f1f5f9" : "#1e293b") }}
+        style={{ color: isNA ? (dark ? "#475569" : "#8EA1B7") : (dark ? "#f1f5f9" : "#1e293b") }}
       >
         {value}
       </span>
@@ -4579,7 +4573,7 @@ function FinancialsTab({ onOpen, dark }) {
               onClick={() => onOpen?.(ipo)}
               className="rounded-2xl p-4 hover:shadow-lg transition-all cursor-pointer border border-transparent hover:border-slate-350 dark:hover:border-slate-800"
               style={{
-                background: dark ? "#111827" : "#ffffff",
+                background: dark ? "#172437" : "#ffffff",
                 border: dark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.06)",
                 boxShadow: dark ? "none" : "0 4px 12px rgba(0,0,0,0.03)"
               }}
@@ -4622,7 +4616,7 @@ function FinancialsTab({ onOpen, dark }) {
                   style={{
                     background: dark ? "rgba(28,155,218,0.04)" : "rgba(28,155,218,0.02)",
                     borderColor: dark ? "rgba(28,155,218,0.1)" : "rgba(28,155,218,0.06)",
-                    color: dark ? "#94a3b8" : "#475569"
+                    color: dark ? "#8EA1B7" : "#475569"
                   }}
                 >
                   <a href={ipo.finMeta.sourceUrl} target="_blank" rel="noreferrer" className="underline font-bold" style={{ color: BRAND.blue }}>
@@ -4815,7 +4809,7 @@ function WatchlistTab({ watchlist, onOpen, dark }) {
         >
           No IPOs saved yet.
         </h3>
-        <p className="text-[15px] relative z-10" style={{ color: dark ? "#94a3b8" : "#475569" }}>
+        <p className="text-[15px] relative z-10" style={{ color: dark ? "#8EA1B7" : "#475569" }}>
           Tap the bookmark icon on any IPO card to track it here.
         </p>
       </div>
@@ -4881,7 +4875,7 @@ function DematTab({ dark }) {
         {brokers.map((broker) => (
           <div 
             key={broker.name}
-            className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between"
+            className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between"
           >
             <div>
               {/* Logo / Header */}
@@ -4944,7 +4938,7 @@ function StatCard({ icon: Icon, label, value, tint, onClick }) {
       role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : undefined}
       onKeyDown={clickable ? (e) => (e.key === "Enter" || e.key === " ") && onClick() : undefined}
-      className={`bg-white dark:bg-[#111B2B] border border-slate-150 dark:border-[#26364A] rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all duration-200
+      className={`bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-[#26364A] rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all duration-200
         ${clickable ? "cursor-pointer hover:shadow-lg hover:-translate-y-0.5 hover:border-blue-200 dark:hover:border-[#1c9bda]/40 active:scale-95" : ""}`}
     >
       <div>
@@ -5368,7 +5362,7 @@ export default function App() {
   if (loadingDb) {
     return (
       <div className="h-screen w-screen flex flex-col items-center justify-center dark" style={{
-        background: "radial-gradient(circle at 30% 50%, rgba(28,155,218,0.18), transparent 60%), radial-gradient(circle at 80% 20%, rgba(174,215,104,0.06), transparent 50%), #0a0d16",
+        background: "radial-gradient(circle at 30% 50%, rgba(28,155,218,0.18), transparent 60%), radial-gradient(circle at 80% 20%, rgba(174,215,104,0.06), transparent 50%), #0A1020",
         color: "#e2e8f0",
         fontFamily: "'Outfit', 'Inter', sans-serif"
       }}>
@@ -5410,7 +5404,7 @@ export default function App() {
     <div className={dark ? "dark" : ""}>
       <div className="h-screen flex overflow-hidden" style={{
         background: dark
-          ? "radial-gradient(circle at 30% 50%, rgba(28,155,218,0.18), transparent 60%), radial-gradient(circle at 80% 20%, rgba(174,215,104,0.06), transparent 50%), #0a0d16"
+          ? "radial-gradient(circle at 30% 50%, rgba(28,155,218,0.18), transparent 60%), radial-gradient(circle at 80% 20%, rgba(174,215,104,0.06), transparent 50%), #0A1020"
           : "#F4F8FB",
         color: dark ? "#e2e8f0" : "#102A43",
       }}>
@@ -5419,17 +5413,17 @@ export default function App() {
             background: ${dark ? "linear-gradient(180deg, rgba(22, 28, 42, 0.95), rgba(15, 20, 32, 0.95))" : "#ffffff"};
             backdrop-filter: blur(20px) saturate(160%);
             -webkit-backdrop-filter: blur(20px) saturate(160%);
-            border: 1px solid ${dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"};
+            border: 1px solid ${dark ? "rgba(45,64,86,0.9)" : "rgba(0,0,0,0.06)"};
             box-shadow: ${dark ? "0 12px 40px -12px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04)" : "0 10px 30px -10px rgba(148, 163, 184, 0.16), 0 1px 2px rgba(0,0,0,0.02)"};
             transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
           }
           .glass-inset {
             background: ${dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)"};
-            border: 1px solid ${dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"};
+            border: 1px solid ${dark ? "rgba(45,64,86,0.9)" : "rgba(0,0,0,0.05)"};
             transition: background 0.2s ease, border-color 0.2s ease;
           }
           .glass-hover:hover {
-            box-shadow: ${dark ? "0 20px 40px -15px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.06)" : "0 16px 36px -12px rgba(148, 163, 184, 0.25)"};
+            box-shadow: ${dark ? "0 20px 40px -15px rgba(0,0,0,0.8), inset 0 1px 0 rgba(45,64,86,0.9)" : "0 16px 36px -12px rgba(148, 163, 184, 0.25)"};
             border-color: ${dark ? "rgba(28,155,218,0.3)" : "rgba(28,155,218,0.2)"};
             transform: translateY(-2px);
           }
@@ -5449,19 +5443,19 @@ export default function App() {
           .dark .text-slate-700 { color: #f1f5f9; }
           .dark .text-slate-600 { color: #e2e8f0; }
           .dark .text-slate-500 { color: #cbd5e1; }
-          .dark .text-slate-400 { color: #94a3b8; }
+          .dark .text-slate-400 { color: #8EA1B7; }
           .dark .text-slate-300 { color: #64748b; }
           .text-profit { color: #16a34a; }
           .dark .text-profit { color: #4ade80; font-weight: 600; }
           .text-loss { color: #dc2626; }
           .dark .text-loss { color: #f87171; font-weight: 600; }
-          .dark .border-black\\/5 { border-color: rgba(255,255,255,0.06); }
+          .dark .border-black\\/5 { border-color: rgba(45,64,86,0.9); }
           .dark .border-black\\/10 { border-color: rgba(255,255,255,0.1); }
           .dark .bg-white\\/70, .dark .bg-white\\/80, .dark .bg-white\\/5, .dark .bg-white\\/10 { background: rgba(255,255,255,0.04); }
           .dark .bg-white\\/95 { background: rgba(10,13,22,0.98); }
-          .dark .border-white { border-color: rgba(255,255,255,0.08); }
+          .dark .border-white { border-color: rgba(52,74,97,0.9); }
           .dark .shadow-2xl { box-shadow: 0 25px 60px -15px rgba(0,0,0,0.85); }
-          .dark .hover\\:bg-white:hover { background: rgba(255,255,255,0.06) !important; }
+          .dark .hover\\:bg-white:hover { background: rgba(45,64,86,0.9) !important; }
         `}</style>
 
         {/* MOBILE SIDEBAR BACKDROP */}
@@ -5480,8 +5474,8 @@ export default function App() {
               : `${sidebarOpen ? "w-60" : "w-0"} transition-all duration-300 overflow-hidden shrink-0`
           } border-r`}
           style={{ 
-            borderColor: dark ? "rgba(38,54,74,0.8)" : "#D9E4EC",
-            background: dark ? "#080E19" : "#EAF6FC"
+            borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC",
+            background: dark ? "#0A1020" : "#EAF6FC"
           }}>
           <div className="w-60 p-4 flex flex-col h-full">
             {/* Brand */}
@@ -5490,7 +5484,7 @@ export default function App() {
                 <img src="/logo.png" alt="Calm Capital Logo" className="w-9 h-9 object-contain rounded-xl" />
                 <div className="flex flex-col">
                   <p className="text-sm font-bold tracking-tight leading-tight" style={{ color: dark ? "#F8FAFC" : "#1e293b" }}>Calm Capital</p>
-                  <p className="text-[10px] font-semibold tracking-wider uppercase mt-0.5" style={{ color: dark ? "#8293A8" : "#64748b" }}>Designed by Discipline</p>
+                  <p className="text-[10px] font-semibold tracking-wider uppercase mt-0.5" style={{ color: dark ? "#8EA1B7" : "#64748b" }}>Designed by Discipline</p>
                 </div>
               </div>
               <button onClick={() => setSidebarOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-black/5 rounded-lg mt-0.5">
@@ -5537,8 +5531,8 @@ export default function App() {
           {/* HEADER */}
           <header className="flex items-center gap-3 px-5 py-4 border-b sticky top-0 z-20 backdrop-blur-lg"
             style={{ 
-              borderColor: dark ? "rgba(38,54,74,0.9)" : "rgba(0,0,0,0.05)", 
-              background: dark ? "rgba(10,16,28,0.88)" : "rgba(255,255,255,0.88)" 
+              borderColor: dark ? "rgba(45,64,86,0.9)" : "rgba(0,0,0,0.05)", 
+              background: dark ? "rgba(13,21,36,0.92)" : "rgba(255,255,255,0.88)" 
             }}>
             {!sidebarOpen && (
               <button onClick={() => setSidebarOpen(true)} className="text-slate-400 hover:text-slate-700 p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg mr-1">
@@ -5549,12 +5543,12 @@ export default function App() {
             <div className="relative flex-1 max-w-sm">
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search for company IPOs..."
-                className="w-full bg-white dark:bg-[#101A29] border border-slate-200 dark:border-[#34465C] rounded-2xl pl-9 pr-4 py-2 text-base md:text-sm outline-none shadow-sm focus:glow-blue placeholder:text-slate-400 dark:placeholder:text-[#8FA3BA] text-slate-800 dark:text-[#F8FAFC]" />
+                className="w-full bg-white dark:bg-[#1A293D] border border-slate-200 dark:border-[#34465C] rounded-2xl pl-9 pr-4 py-2 text-base md:text-sm outline-none shadow-sm focus:glow-blue placeholder:text-slate-400 dark:placeholder:text-[#8FA3BA] text-slate-800 dark:text-[#F8FAFC]" />
             </div>
 
             <div className="ml-auto flex items-center gap-2.5 relative">
               <div className="hidden sm:flex items-center">
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#111B2B]/80 text-slate-600 dark:text-[#C9D6E5] shadow-sm cursor-default">
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#121D2D]/80 text-slate-600 dark:text-[#C9D6E5] shadow-sm cursor-default">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -5563,18 +5557,18 @@ export default function App() {
                 </div>
               </div>
 
-              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#111B2B]/80 hover:border-slate-300 dark:hover:border-[#1c9bda] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-slate-700 dark:hover:text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative">
+              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-[#1c9bda] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-slate-700 dark:hover:text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative">
                 <RefreshCw size={14} className={refreshing ? "animate-spin text-[#1c9bda]" : ""} />
               </button>
               <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />
-              <button onClick={() => setDark((d) => !d)} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#111B2B]/80 hover:border-slate-300 dark:hover:border-[#1c9bda] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-slate-700 shadow-sm">
+              <button onClick={() => setDark((d) => !d)} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-[#1c9bda] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-slate-700 shadow-sm">
                 {dark ? <Sun size={14} /> : <Moon size={14} />}
               </button>
             </div>
 
             {/* Toast Notification */}
             {toastMessage && (
-              <div className="fixed top-5 right-5 z-50 animate-fade-in flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#161c28] border border-emerald-500/30 text-slate-800 dark:text-white shadow-2xl text-xs font-semibold">
+              <div className="fixed top-5 right-5 z-50 animate-fade-in flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#121D2D] border border-emerald-500/30 text-slate-800 dark:text-white shadow-2xl text-xs font-semibold">
                 <CheckCircle size={15} className="text-emerald-500 shrink-0" />
                 <span>{toastMessage}</span>
               </div>
@@ -5597,7 +5591,7 @@ export default function App() {
                 />
               </IpoErrorBoundary>
             ) : currentPathIpoId && !selected ? (
-              <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-10 text-center space-y-4 my-8 shadow-sm">
+              <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-10 text-center space-y-4 my-8 shadow-sm">
                 <Building2 size={44} className="mx-auto text-[#1c9bda]" />
                 <h2 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
                   IPO Details Loaded
@@ -5654,7 +5648,7 @@ export default function App() {
                           onClick={() => navigateToTab("gmp")}
                           className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer hover:bg-slate-50 dark:hover:bg-[#1c9bda]/8 hover:scale-[1.02] bg-transparent"
                           style={{
-                            borderColor: dark ? "rgba(52,70,92,0.9)" : "rgba(0,0,0,0.12)",
+                            borderColor: dark ? "rgba(52,74,97,0.9)" : "rgba(0,0,0,0.12)",
                             color: dark ? "#B8C5D6" : "#475569"
                           }}
                         >
@@ -5725,9 +5719,9 @@ export default function App() {
                   });
 
                   return (
-                    <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
+                    <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#121D2D] shadow-sm space-y-4">
                       {/* Header + Mainboard/SME Toggle + View All */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
                         <div className="flex flex-wrap items-center justify-between sm:justify-start gap-3 sm:gap-4">
                           <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
                             <TrendingUp size={15} className="text-[#1c9bda]" />
@@ -5831,7 +5825,7 @@ export default function App() {
                   if (!hasActivity) return null;
                   
                   return (
-                    <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
+                    <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#121D2D] shadow-sm space-y-4">
                       <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         Today's IPO Activity
@@ -5888,7 +5882,7 @@ export default function App() {
                 })()}
 
                 {/* 5. IPO Journey / Timeline */}
-                <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
+                <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#121D2D] shadow-sm space-y-4">
                   <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">
                     IPO Journey
                   </h3>
@@ -5966,7 +5960,7 @@ export default function App() {
                     }
                     
                     return (
-                      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl p-8 text-center">
+                      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-8 text-center">
                         <CircleDollarSign size={24} className="mx-auto mb-2 text-slate-350 dark:text-slate-700" />
                         <p className="text-slate-500 text-xs">
                           No currently open {overviewType} IPOs at the moment.
@@ -5977,7 +5971,7 @@ export default function App() {
                 </div>
 
                 {/* 7. Recent IPO Activity Announcements */}
-                <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
+                <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#121D2D] shadow-sm space-y-4">
                   <h3 className="text-xs font-bold text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-2">
                     <Bell size={14} className="text-[#1c9bda]" />
                     Recent IPO Activity
@@ -6073,7 +6067,7 @@ export default function App() {
                     {groupedFiltered("Open").map((ipo) => <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />)}
                   </div>
                 ) : (
-                  <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
+                  <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
                     <Calendar size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
                     <p className="text-slate-500 text-sm">
                       There are currently no open IPOs.
@@ -6126,7 +6120,7 @@ export default function App() {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
+                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
                       <Calendar size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
                       <p className="text-slate-500 text-sm">
                         There are currently no closed {closedType} IPOs.
@@ -6180,7 +6174,7 @@ export default function App() {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
+                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
                       <Calendar size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
                       <p className="text-slate-500 text-sm">
                         There are currently no upcoming {upcomingType} IPOs. Please check back later.
@@ -6244,7 +6238,7 @@ export default function App() {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
+                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
                       <Building2 size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
                       <p className="text-slate-500 text-sm">No listed {listedType} IPOs found.</p>
                     </div>
@@ -6289,7 +6283,7 @@ export default function App() {
 ===================================================================== */
 function Footer({ dark, navigateToTab, setOverviewType }) {
   return (
-    <footer className="mt-16 border-t pt-10 pb-8 px-5 bg-white dark:bg-[#0a0d16] rounded-3xl" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+    <footer className="mt-16 border-t pt-10 pb-8 px-5 bg-white dark:bg-[#0A1020] rounded-3xl" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 text-[14px]">
         
         {/* Brand Column */}
@@ -6423,7 +6417,7 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
       </div>
 
       {/* Connect With Us */}
-      <div className="mt-8 pt-6 border-t" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+      <div className="mt-8 pt-6 border-t" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
         <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs mb-4">Connect With Us</h4>
         <div className="flex items-center gap-3">
           {/* Instagram */}
@@ -6459,7 +6453,7 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
         </div>
       </div>
 
-      <div className="mt-6 pt-5 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-4" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+      <div className="mt-6 pt-5 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-4" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
         <p className="text-[13px] text-slate-400 dark:text-slate-500">
           © 2026 Calm Capital. All rights reserved.
         </p>
@@ -6497,7 +6491,7 @@ class IpoErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-10 text-center space-y-4 my-6 shadow-sm">
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-10 text-center space-y-4 my-6 shadow-sm">
           <AlertTriangle size={42} className="mx-auto text-amber-500" />
           <h2 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
             Unable to load this IPO
@@ -6549,7 +6543,7 @@ function AboutPage({ navigateToTab }) {
       </div>
 
       {/* What You Can Research Section */}
-      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
         <div className="space-y-2">
           <h2 className="text-lg font-bold text-slate-855 dark:text-white tracking-tight">
             Comprehensive IPO Intelligence
@@ -6583,7 +6577,7 @@ function AboutPage({ navigateToTab }) {
       </div>
 
       {/* Why Calm Capital Section */}
-      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
         <div className="space-y-2">
           <h2 className="text-lg font-bold text-slate-855 dark:text-white tracking-tight">
             Why Calm Capital?
@@ -6676,7 +6670,7 @@ function LegalHeader({ title, lastUpdated, onBack }) {
 
 function PrivacyPage({ onBack }) {
   return (
-    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
       <LegalHeader title="Privacy Policy" lastUpdated="August 8, 2026" onBack={onBack} />
       
       <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
@@ -6743,7 +6737,7 @@ function PrivacyPage({ onBack }) {
 
 function TermsPage({ onBack }) {
   return (
-    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
       <LegalHeader title="Terms of Use" lastUpdated="August 8, 2026" onBack={onBack} />
       
       <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
@@ -6803,7 +6797,7 @@ function TermsPage({ onBack }) {
 
 function DisclaimerPage({ onBack }) {
   return (
-    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
       <LegalHeader title="Regulatory Disclaimer" lastUpdated="August 8, 2026" onBack={onBack} />
       
       <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
