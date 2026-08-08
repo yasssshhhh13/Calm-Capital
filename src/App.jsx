@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useRef, useEffect, useCallback, Component } from "react";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, PieChart, Pie, LabelList,
@@ -6447,7 +6447,7 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
 /* =====================================================================
    REACT ERROR BOUNDARY FOR IPO DETAILS
 ===================================================================== */
-class IpoErrorBoundary extends React.Component {
+class IpoErrorBoundary extends Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null };
