@@ -349,7 +349,19 @@ function isSameCompanyName(a, b) {
  * (e.g. caliber-mining-and-logistics stub vs caliber-mining open issue).
  */
 function dedupeIpoList(ipos) {
-  const scored = ipos.map((ipo, idx) => {
+  // 1. Strict deduplication by unique ID / slug first
+  const seenIds = new Set();
+  const strictUnique = [];
+  for (const ipo of ipos) {
+    const key = ipo.id || ipo.slug;
+    if (key && !seenIds.has(key)) {
+      seenIds.add(key);
+      strictUnique.push(ipo);
+    }
+  }
+
+  // 2. Score entries and drop duplicate stubs with same company name
+  const scored = strictUnique.map((ipo, idx) => {
     let score = 0;
     if (ipo.open) score += 8;
     if (ipo.close) score += 4;
@@ -370,14 +382,16 @@ function dedupeIpoList(ipos) {
       const a = scored[i];
       const b = scored[j];
       if (!isSameCompanyName(a.ipo.company || a.ipo.name, b.ipo.company || b.ipo.name)) continue;
-      if (a.ipo.id === b.ipo.id) continue;
-      // Prefer the richer / live-status entry; drop the other (usually a null-date Upcoming stub)
+      if (a.ipo.id === b.ipo.id) {
+        drop.add(b.ipo.id);
+        continue;
+      }
       if (a.score >= b.score) drop.add(b.ipo.id);
       else drop.add(a.ipo.id);
     }
   }
 
-  return ipos.filter((ipo) => !drop.has(ipo.id));
+  return strictUnique.filter((ipo) => !drop.has(ipo.id));
 }
 
 /** Prefer real *_apps; else derive application-wise odds from share×. */
@@ -3587,19 +3601,25 @@ function SectionLabel({ icon: Icon, children }) {
 ===================================================================== */
 function GMPTab({ tick, onOpen }) {
   const data = useMemo(() => {
-    // Exclude Listed IPOs — GMP Trends only covers active/upcoming/closed issues
+    const STATUS_ORDER = { Open: 1, Upcoming: 2, Closed: 3 };
+
     return [...getLiveIPOS()]
       .filter((i) => {
         const s = getComputedStatus(i);
-        return s === "Open" || s === "Upcoming" || s === "Closed";
+        return (s === "Open" || s === "Upcoming" || s === "Closed") && i.gmp != null && !isNaN(i.gmp);
       })
-      .sort((a, b) => gainPct(b) - gainPct(a))
+      .sort((a, b) => {
+        const sa = STATUS_ORDER[getComputedStatus(a)] || 99;
+        const sb = STATUS_ORDER[getComputedStatus(b)] || 99;
+        if (sa !== sb) return sa - sb;
+        return gainPct(b) - gainPct(a);
+      })
       .map((i) => ({ 
         name: i.name, 
         pct: Number(gainPct(i).toFixed(1)),
         gmp: i.gmp,
         status: getComputedStatus(i),
-        dateRange: `${i.open} to ${i.close}`,
+        dateRange: `${i.open || 'TBA'} to ${i.close || 'TBA'}`,
         rawIpo: i
       }));
   }, [tick]);
@@ -5553,15 +5573,34 @@ export default function App() {
 
                 {/* 3. LIVE GMP STATUS SECTION (Immediately below status boxes) */}
                 {(() => {
-                  const gmpIpos = sortIposLogically(
-                    getLiveIPOS().filter((i) => {
-                      const s = getComputedStatus(i);
-                      if (s !== "Open" && s !== "Upcoming") return false;
-                      return i.gmp != null && !isNaN(i.gmp);
-                    })
-                  );
+                  const STATUS_ORDER = { Open: 1, Upcoming: 2, Closed: 3 };
 
-                  if (gmpIpos.length === 0) return null;
+                  const eligibleGmpIpos = getLiveIPOS().filter((ipo) => {
+                    const s = getComputedStatus(ipo);
+                    if (s !== "Open" && s !== "Upcoming" && s !== "Closed") return false;
+                    return ipo.gmp != null && !isNaN(ipo.gmp);
+                  });
+
+                  // Deduplicate strictly by ipo.id / slug
+                  const seenIds = new Set();
+                  const uniqueGmpIpos = [];
+                  for (const item of eligibleGmpIpos) {
+                    const id = item.id || item.slug;
+                    if (id && !seenIds.has(id)) {
+                      seenIds.add(id);
+                      uniqueGmpIpos.push(item);
+                    }
+                  }
+
+                  // Sort by Priority: OPEN -> UPCOMING -> CLOSED
+                  uniqueGmpIpos.sort((a, b) => {
+                    const sa = STATUS_ORDER[getComputedStatus(a)] || 99;
+                    const sb = STATUS_ORDER[getComputedStatus(b)] || 99;
+                    if (sa !== sb) return sa - sb;
+                    return (b.gmp || 0) - (a.gmp || 0);
+                  });
+
+                  if (uniqueGmpIpos.length === 0) return null;
 
                   return (
                     <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
@@ -5579,10 +5618,13 @@ export default function App() {
                       </div>
 
                       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {gmpIpos.slice(0, 6).map((ipo) => {
+                        {uniqueGmpIpos.slice(0, 9).map((ipo) => {
                           const cutoff = ipo.priceMax || price(ipo);
                           const gmpPct = cutoff ? ((ipo.gmp / cutoff) * 100).toFixed(2) : "0.00";
                           const status = getComputedStatus(ipo);
+
+                          const isPos = ipo.gmp > 0;
+                          const isNeg = ipo.gmp < 0;
 
                           return (
                             <div
@@ -5594,16 +5636,26 @@ export default function App() {
                                 <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} />
                                 <div className="min-w-0">
                                   <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{ipo.company}</p>
-                                  <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
-                                    {status === "Open" ? "Open IPO" : "Upcoming IPO"} · {ipo.type}
+                                  <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                                    <span className="text-[#1c9bda] font-bold">
+                                      {status === "Open" ? "Open IPO" : status === "Upcoming" ? "Upcoming IPO" : "Closed IPO"}
+                                    </span>
+                                    <span>·</span>
+                                    <span>{ipo.type}</span>
                                   </p>
                                 </div>
                               </div>
                               <div className="text-right shrink-0">
-                                <span className="font-mono font-black text-sm text-[#102A43] dark:text-white block">
+                                <span className={`font-mono font-black text-sm block ${
+                                  isPos ? "text-slate-850 dark:text-white" : isNeg ? "text-red-500" : "text-slate-500"
+                                }`}>
                                   {ipo.gmp >= 0 ? "+" : "-"}₹{Math.abs(ipo.gmp)}
                                 </span>
-                                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                                <span className={`text-[11px] font-bold font-mono px-1.5 py-0.5 rounded ${
+                                  isPos ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
+                                  isNeg ? "bg-rose-500/10 text-rose-600 dark:text-rose-400" :
+                                  "bg-slate-500/10 text-slate-500"
+                                }`}>
                                   {gmpPct}%
                                 </span>
                               </div>
@@ -5762,75 +5814,6 @@ export default function App() {
                         <p className="text-slate-500 text-xs">
                           No currently open {overviewType} IPOs at the moment.
                         </p>
-                      </div>
-                    );
-                  })()}
-                </div>
-
-                {/* 6. Live GMP Section */}
-                <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                      <TrendingUp size={15} className="text-[#1c9bda]" />
-                      Live GMP Status
-                    </h3>
-                    <button onClick={() => navigateToTab("gmp")} className="text-xs font-bold text-[#1c9bda] hover:underline flex items-center gap-1 cursor-pointer border-0 bg-transparent">
-                      GMP Trends <ChevronRight size={13} />
-                    </button>
-                  </div>
-                  
-                  {(() => {
-                    const gmpList = getLiveIPOS()
-                      .filter(i => i.gmp != null && (getComputedStatus(i) === "Open" || getComputedStatus(i) === "Upcoming" || getComputedStatus(i) === "Closed"))
-                      .slice(0, 6);
-                      
-                    if (gmpList.length === 0) {
-                      return <p className="text-xs text-slate-400 italic">No current active IPO GMP data available.</p>;
-                    }
-                    
-                    return (
-                      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-                        {gmpList.map(ipo => {
-                          const val = ipo.gmp;
-                          const isPos = val > 0;
-                          const isNeg = val < 0;
-                          const gmpPct = ipo.priceMax ? (val / ipo.priceMax) * 100 : 0;
-                          
-                          let textClass = "text-slate-700 dark:text-slate-300";
-                          let bgClass = "bg-slate-50 dark:bg-[#121622]/50 border-slate-100 dark:border-white/5";
-                          if (isPos) {
-                            textClass = "text-emerald-600 dark:text-emerald-400";
-                            bgClass = "bg-emerald-50/50 dark:bg-emerald-950/10 border-emerald-100 dark:border-emerald-950/20";
-                          } else if (isNeg) {
-                            textClass = "text-rose-600 dark:text-rose-400";
-                            bgClass = "bg-rose-50/50 dark:bg-rose-950/10 border-rose-100 dark:border-rose-950/20";
-                          }
-                          
-                          return (
-                            <div key={ipo.id} onClick={() => handleSelectIpo(ipo)} className={`p-4 rounded-xl border cursor-pointer hover:shadow-md transition-all flex flex-col justify-between ${bgClass}`}>
-                              <div className="flex items-center gap-2 mb-2">
-                                <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={28} />
-                                <p className="text-xs font-bold text-slate-800 dark:text-white truncate">{ipo.company}</p>
-                              </div>
-                              <div className="flex items-end justify-between">
-                                <div>
-                                  <p className="text-[9px] uppercase font-bold text-slate-455 dark:text-slate-555">Premium</p>
-                                  <p className={`font-mono text-sm font-black mt-0.5 ${textClass}`}>
-                                    {val > 0 ? "+" : ""}{rupee(val)}
-                                  </p>
-                                </div>
-                                {ipo.priceMax && (
-                                  <div className="text-right">
-                                    <p className="text-[9px] uppercase font-bold text-slate-455 dark:text-slate-555">Gain Est.</p>
-                                    <p className={`font-mono text-xs font-black mt-0.5 ${textClass}`}>
-                                      {val > 0 ? "+" : ""}{gmpPct.toFixed(1)}%
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          );
-                        })}
                       </div>
                     );
                   })()}
@@ -6226,7 +6209,6 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
           <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
             {[
               { label: "Live GMP", tabId: "gmp" },
-              { label: "GMP & Market Data", tabId: "gmp" },
               { label: "IPO Subscription", tabId: "subscriptions" },
               { label: "Financials", tabId: "financials" },
               { label: "IPO Calculator", tabId: "calculator" },
@@ -6248,9 +6230,9 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
           <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
             {[
               { label: "DRHP / RHP", tabId: "docs" },
-              { label: "Company Research", tabId: "overview" },
-              { label: "IPO Comparison", tabId: "overview" },
-              { label: "IPO Trends", tabId: "gmp" },
+              { label: "IPO Subscriptions", tabId: "subscriptions" },
+              { label: "Financial Analysis", tabId: "financials" },
+              { label: "Live GMP Trends", tabId: "gmp" },
             ].map(lnk => (
               <li key={lnk.label}>
                 <button onClick={() => navigateToTab(lnk.tabId)} className="bg-transparent border-0 p-0 text-[#52667A] hover:text-[#1c9bda] dark:text-slate-400 dark:hover:text-[#1c9bda] transition-colors cursor-pointer text-left text-[14px] font-medium">
