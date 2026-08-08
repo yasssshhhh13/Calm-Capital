@@ -3569,8 +3569,38 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
         if (peers.length === 0) return null;
 
+        const formatComparisonPeriod = (fy) => {
+          if (!fy) return "Latest Restated";
+          const match = fy.match(/FY(?:20)?(\d{2})/i);
+          if (match) {
+            const endYear = parseInt(match[1]);
+            const startYear = endYear - 1;
+            return `FY20${startYear}–${endYear}`;
+          }
+          return fy;
+        };
+
+        const isPeriodComparable = (p1, p2) => {
+          if (!p1 || !p2) return true;
+          const getYear = (p) => {
+            const m = p.match(/(?:FY)?(?:20)?(\d{2})/i);
+            return m ? parseInt(m[1]) : null;
+          };
+          const y1 = getYear(p1);
+          const y2 = getYear(p2);
+          if (y1 === null || y2 === null) return true;
+          return Math.abs(y1 - y2) <= 1;
+        };
+
+        const ipoPeriod = ipo.finMeta?.fy;
+
         // Helper to extract and format metrics
         const getMetrics = (item) => {
+          const itemPeriod = item.finMeta?.fy;
+          if (item.id !== ipo.id && !isPeriodComparable(ipoPeriod, itemPeriod)) {
+            return { rev: null, ebitda: null, pat: null, patMargin: null, roe: null, de: null, eps: null };
+          }
+
           const f = item.fin || {};
           const rev = f.revenue;
           const ebitda = f.ebitda;
@@ -3625,13 +3655,18 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
         return (
           <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
-            <div>
-              <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
-                Sector Peer Comparison
-              </h3>
-              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
-                Financial performance compared with companies in the same sector
-              </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
+              <div>
+                <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+                  Sector Peer Comparison
+                </h3>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                  Financial performance compared with companies in the same sector
+                </p>
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#1c9bda]/10 text-[#1c9bda] border border-[#1c9bda]/20 self-start sm:self-auto shadow-sm">
+                Comparison Period: {formatComparisonPeriod(ipo.finMeta?.fy)}
+              </div>
             </div>
 
             <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-x-auto text-xs">
@@ -3652,7 +3687,12 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                 <tbody className="divide-y divide-slate-150 dark:divide-white/5">
                   {/* This IPO */}
                   <tr className="font-bold bg-[#1c9bda]/8 dark:bg-[#1c9bda]/15">
-                    <td className="p-3 text-slate-855 dark:text-white font-extrabold">{ipo.company} (This IPO)</td>
+                    <td className="p-3 text-slate-855 dark:text-white">
+                      <div className="font-extrabold">{ipo.company} (This IPO)</div>
+                      <div className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">
+                        Period: {formatComparisonPeriod(ipo.finMeta?.fy)}
+                      </div>
+                    </td>
                     <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.rev)}</td>
                     <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.ebitda)}</td>
                     <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.pat)}</td>
@@ -3665,15 +3705,19 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                   {/* Related Peers */}
                   {peers.map((rel) => {
                     const m = getMetrics(rel);
+                    const isSamePeriod = !rel.finMeta?.fy || !ipo.finMeta?.fy || rel.finMeta.fy === ipo.finMeta.fy;
                     return (
                       <tr key={rel.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
                         <td className="p-3">
                           <button
                             onClick={() => onOpen(rel, "full")}
-                            className="text-left font-bold text-[#1c9bda] hover:underline border-0 bg-transparent p-0 cursor-pointer text-xs"
+                            className="text-left font-bold text-[#1c9bda] hover:underline border-0 bg-transparent p-0 cursor-pointer text-xs block"
                           >
                             {rel.company}
                           </button>
+                          <div className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">
+                            Period: {formatComparisonPeriod(rel.finMeta?.fy)} {!isSamePeriod && rel.finMeta?.fy && "(Comparable)"}
+                          </div>
                         </td>
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.rev)}</td>
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.ebitda)}</td>
@@ -3705,7 +3749,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             </div>
 
             <p className="text-[10px] text-slate-400 dark:text-slate-500 italic mt-2">
-              * Peer comparison is based on publicly available financial information. Peer selection and financial periods may vary depending on data availability.
+              *Peer comparison uses the latest comparable publicly available financial data for the stated comparison period. Peer selection and financial periods may vary depending on data availability.
             </p>
           </div>
         );
@@ -3815,7 +3859,7 @@ function SectionLabel({ icon: Icon, children }) {
 ===================================================================== */
 function GMPTab({ tick, onOpen }) {
   const data = useMemo(() => {
-    const STATUS_ORDER = { Open: 1, Upcoming: 2, Closed: 3 };
+    const STATUS_ORDER = { Open: 1, Closed: 2, Upcoming: 3 };
 
     return [...getLiveIPOS()]
       .filter((i) => {
