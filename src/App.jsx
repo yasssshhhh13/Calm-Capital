@@ -4940,12 +4940,12 @@ const NAV = [
 ].filter((n) => n.id !== "ai" || AI_ASSISTANT_ENABLED);
 
 export default function App() {
-  const [loadingDb, setLoadingDb] = useState(true);
+  const [loadingDb, setLoadingDb] = useState(false);
   const [tab, setTabRaw] = useState(() => {
     try {
       if (typeof window !== "undefined") {
         const fromPath = parseLocation(window.location.pathname, window.location.search);
-        const allTabs = [...NAV.map(n => n.id), "privacy", "terms", "disclaimer"];
+        const allTabs = [...NAV.map(n => n.id), "about", "privacy", "terms", "disclaimer"];
         if (fromPath.tabId && allTabs.includes(fromPath.tabId)) return fromPath.tabId;
       }
       const saved = localStorage.getItem("calmcapital-tab");
@@ -4953,8 +4953,24 @@ export default function App() {
     } catch { /* storage unavailable */ }
     return "overview";
   });
-  const [selected, setSelected] = useState(null);
-  const [viewMode, setViewMode] = useState("modal"); // "modal" | "full"
+  const [selected, setSelected] = useState(() => {
+    try {
+      if (typeof window !== "undefined") {
+        const fromPath = parseLocation(window.location.pathname, window.location.search);
+        if (fromPath.ipoId) {
+          return findIpoByIdOrSlug(fromPath.ipoId);
+        }
+      }
+    } catch { /* ignore */ }
+    return null;
+  });
+  const [viewMode, setViewMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      const fromPath = parseLocation(window.location.pathname, window.location.search);
+      if (fromPath.ipoId) return "full";
+    }
+    return "modal";
+  }); // "modal" | "full"
   const [query, setQuery] = useState("");
   const [upcomingType, setUpcomingType] = useState("Mainboard");
   const [listedType, setListedType] = useState("Mainboard");
@@ -5445,7 +5461,7 @@ export default function App() {
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold relative transition-all no-underline cursor-pointer group ${
                       isActive
-                        ? "bg-[#1c9bda]/12 dark:bg-[#1c9bda]/20 text-[#1c9bda] dark:text-[#52b1e4] font-bold border-l-3 border-[#1c9bda] pl-2.5 shadow-xs"
+                        ? "bg-[#1c9bda]/12 dark:bg-[#1c9bda]/20 text-[#1c9bda] dark:text-[#52b1e4] font-bold border-l-[3px] border-[#1c9bda] pl-2.5 shadow-xs"
                         : "text-slate-700 dark:text-slate-200 hover:bg-[#1c9bda]/5 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white pl-3 font-semibold"
                     }`}
                   >
