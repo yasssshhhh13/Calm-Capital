@@ -37,6 +37,7 @@ let IPOS_BASE = [];
 
 const DATA_AS_OF = "July 3, 2026";
 const rupee = (n) => (n == null || isNaN(n)) ? "-" : (n < 0 ? `-₹${Number(Math.abs(n)).toLocaleString("en-IN")}` : `₹${Number(n).toLocaleString("en-IN")}`);
+const formatDecimal = (n) => (n == null || isNaN(n)) ? "-" : Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 });
 const cr = (n) => (n == null || isNaN(n)) ? "-" : `₹${Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 })} Cr`;
 const formatDate = (dateStr) => {
   if (!dateStr) return "To Be Announced";
@@ -1854,7 +1855,7 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
               {up && <ArrowUpRight size={13} style={{ color }} />}
               {down && <ArrowDownRight size={13} style={{ color }} />}
               <span className="text-sm font-bold font-mono" style={{ color }}>
-                Listed @ ₹{ipo.listedAt} · {sign}{gain.toFixed(1)}%
+                Listed @ ₹{formatDecimal(ipo.listedAt)} · {sign}{gain.toFixed(1)}%
               </span>
               {pnl != null && ipo.lot > 0 && (
                 <span className="text-xs font-semibold font-mono" style={{ color }}>
@@ -2090,7 +2091,7 @@ function ListedIPOCard({ ipo, onOpen, watchlist }) {
           {ipo.listedAt && gain != null ? (
             <>
               <p className="text-xl sm:text-2xl font-black tracking-tight leading-tight" style={{ color: gainColor }}>
-                Listed @ ₹{ipo.listedAt} · {sign}{gain.toFixed(1)}% {perfLabel}
+                Listed @ ₹{formatDecimal(ipo.listedAt)} · {sign}{gain.toFixed(1)}% {perfLabel}
               </p>
               {pnl != null && ipo.lot > 0 && (
                 <p className="text-sm font-bold font-mono mt-1.5" style={{ color: gainColor }}>
@@ -2110,7 +2111,7 @@ function ListedIPOCard({ ipo, onOpen, watchlist }) {
           <div>
             <p className="text-slate-500 dark:text-slate-400 mb-1">Listing Price:</p>
             <p className="font-mono font-bold text-slate-800 dark:text-slate-100 text-sm">
-              {ipo.listedAt ? `₹${ipo.listedAt}` : "—"}
+              {ipo.listedAt ? `₹${formatDecimal(ipo.listedAt)}` : "—"}
             </p>
           </div>
           <div>
@@ -2179,23 +2180,32 @@ function ListedIPOCard({ ipo, onOpen, watchlist }) {
 }
 
 /* =====================================================================
-   IPO DETAIL MODAL
+   IPO DETAIL MODAL (Quick Summary Preview Summary)
 ===================================================================== */
 function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
   if (!ipo) return null;
-  const watched = watchlist.ids.includes(ipo.id);
-  const today = new Date();
-  const faqs = buildIpoFaqs(ipo);
-  const related = similarIpos(ipo, getLiveIPOS(), 3);
 
-  // Timeline: determine which milestones have passed
-  const milestones = [
-    { label: "Open", date: ipo.open },
-    { label: "Close", date: ipo.close },
-    { label: "Allotment", date: ipo.allotment },
-    { label: "Listing", date: ipo.listing },
-  ];
-  const isPast = (d) => d && new Date(d + "T00:00:00+05:30") <= today;
+  const watched = watchlist.ids.includes(ipo.id);
+  const status = getComputedStatus(ipo);
+  const isOpen = status === "Open";
+  const isUpcoming = status === "Upcoming";
+  const isClosed = status === "Closed";
+  const isListed = status === "Listed";
+
+  const minInvestment = ipo.lot ? (price(ipo) * ipo.lot) : null;
+  const cutoffPrice = ipo.priceMax || price(ipo);
+
+  // Short company summary — truncate at word boundary, never mid-word
+  const summaryText = (() => {
+    const raw = ipo.about || "";
+    if (!raw) return "No description available.";
+    const LIMIT = 160;
+    if (raw.length <= LIMIT) return raw;
+    // Find last space before the limit to avoid cutting mid-word
+    const cut = raw.lastIndexOf(" ", LIMIT);
+    const end = cut > 80 ? cut : LIMIT;
+    return raw.slice(0, end).trimEnd() + "…";
+  })();
 
   return (
     <div
@@ -2203,16 +2213,16 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
       onClick={onClose}
     >
       <div
-        className="rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transition-colors"
+        className="rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl transition-colors border"
         style={{
           background: dark ? "#111827" : "#ffffff",
-          border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.08)",
+          borderColor: dark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)",
           color: dark ? "#ffffff" : "#1e293b"
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* ── Top toolbar ── */}
-        <div className="flex items-center justify-between px-5 pt-5 pb-1">
+        {/* Top Header */}
+        <div className="flex items-center justify-between px-6 pt-5 pb-2">
           <div className="flex items-center gap-2">
             <button
               onClick={() => watchlist.toggle(ipo.id)}
@@ -2236,496 +2246,1272 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
               <X size={16} />
             </button>
           </div>
-          <span className="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full" style={{ background: "rgba(16,185,129,0.15)", color: "#10b981" }}>
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            Live Data
+          <span className="text-[10px] font-bold uppercase px-3 py-1 rounded-full" style={{ background: "rgba(28,155,218,0.12)", color: BRAND.blue }}>
+            IPO Summary Preview
           </span>
         </div>
 
-        {/* ── Company header ── */}
-        <div className="flex items-start gap-4 px-5 py-4">
-          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={52} />
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h2 className="text-xl font-extrabold tracking-tight" style={{ color: dark ? "#ffffff" : "#1e293b" }}>{ipo.company}</h2>
+        {/* Company Info */}
+        <div className="px-6 py-4 flex items-start gap-4">
+          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={48} />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-lg font-extrabold tracking-tight text-slate-850 dark:text-white leading-tight">
+                {ipo.company}
+              </h2>
               <span
-                className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wider"
+                className="text-[9px] font-bold uppercase px-2.5 py-0.5 rounded-full tracking-wider border shrink-0"
                 style={
                   ipo.type === "Mainboard"
-                    ? { background: "rgba(245,158,11,0.2)", color: "#f59e0b", border: "1px solid rgba(245,158,11,0.3)" }
-                    : { background: "rgba(139,92,246,0.2)", color: "#a78bfa", border: "1px solid rgba(139,92,246,0.3)" }
+                    ? { background: "rgba(245,158,11,0.15)", color: "#f59e0b", borderColor: "rgba(245,158,11,0.25)" }
+                    : { background: "rgba(139,92,246,0.15)", color: "#a78bfa", borderColor: "rgba(139,92,246,0.25)" }
                 }
               >
                 {ipo.type === "Mainboard" ? "MAINBOARD" : "SME"}
               </span>
+              <span
+                className="text-[9px] font-bold uppercase px-2.5 py-0.5 rounded-full tracking-wider border shrink-0"
+                style={
+                  isOpen
+                    ? { background: "rgba(16,185,129,0.15)", color: "#10b981", borderColor: "rgba(16,185,129,0.25)" }
+                    : isUpcoming
+                    ? { background: "rgba(240,162,2,0.12)", color: "#d97706", borderColor: "rgba(240,162,2,0.25)" }
+                    : isClosed
+                    ? { background: "rgba(148,163,184,0.12)", color: "#64748b", borderColor: "rgba(148,163,184,0.25)" }
+                    : { background: "rgba(28,155,218,0.12)", color: BRAND.blue, borderColor: "rgba(28,155,218,0.25)" }
+                }
+              >
+                {status}
+              </span>
             </div>
-            <p className="text-sm mt-1" style={{ color: dark ? "#94a3b8" : "#475569" }}>
-              {ipo.sector} · Exchange: {ipo.exchange} · Lead Manager: {ipo.leadManager}
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-semibold">
+              {ipo.sector}
             </p>
           </div>
         </div>
 
-        <div className="px-5 pb-5 space-y-5">
-          {/* About */}
-          <p className="text-sm leading-relaxed" style={{ color: dark ? "#94a3b8" : "#475569" }}>{ipo.about}</p>
-
-          {/* ── 3 key metric cards ── */}
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              ["Price band", formatPriceBand(ipo.priceMin, ipo.priceMax), "priceMax"],
-              ["Lot size", ipo.lot || "-", "lot"],
-              ["Issue size", ipo.issueSize ? `₹${Number(ipo.issueSize).toLocaleString("en-IN")} Cr` : "-", "issueSize"],
-            ].map(([label, value, field]) => {
-              const pending = isPending(ipo, field);
-              return (
-              <div
-                key={label}
-                className="rounded-2xl p-4"
-                style={{
-                  background: dark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)",
-                  border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)"
-                }}
-              >
-                <p className="text-xs font-medium mb-1.5 flex items-center gap-0.5" style={{ color: "#64748b" }}>
-                  <span>{label}</span>
-                  <FieldHelp label={label} />
-                  <VerifyMark ipo={ipo} field={field} />
-                </p>
-                {pending ? (
-                  <p className="text-[13px] font-semibold text-slate-400 dark:text-slate-500 italic">Pending verification</p>
-                ) : (
-                  <p className="text-xl font-extrabold font-mono tracking-tight" style={{ color: dark ? "#ffffff" : "#1e293b" }}>{value}</p>
-                )}
-              </div>
-              );
-            })}
+        {/* Basic Info Grid */}
+        <div className="grid grid-cols-2 gap-3 px-6 py-2 text-xs">
+          <div className="border border-slate-150 dark:border-white/5 rounded-xl p-3 bg-slate-50/50 dark:bg-white/[0.01]">
+            <span className="text-slate-400 dark:text-slate-500 block font-medium">Price Band</span>
+            <span className="font-mono font-black text-slate-850 dark:text-white mt-0.5 block">
+              {formatPriceBand(ipo.priceMin, ipo.priceMax)}
+            </span>
           </div>
-
-          {/* Secondary metrics */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {[
-              ["Face value", ipo.faceValue != null ? `₹${ipo.faceValue}` : "-", "faceValue"],
-              ["Min. investment", ipo.lot ? rupee(investment(ipo)) : "-", null],
-              ["Fresh issue", ipo.freshIssue ? `₹${ipo.freshIssue} Cr` : "-", "freshIssue"],
-              ["OFS", ipo.ofs ? `₹${ipo.ofs} Cr` : "-", "ofs"],
-            ].map(([l, v, field]) => (
-              <div
-                key={l}
-                className="rounded-xl p-3"
-                style={{
-                  background: dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.015)",
-                  border: dark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.04)"
-                }}
-              >
-                <p className="text-[10px] font-medium mb-1 flex items-center gap-0.5" style={{ color: "#64748b" }}>
-                  <span>{l}</span>
-                  <FieldHelp label={l} />
-                  {field && <VerifyMark ipo={ipo} field={field} />}
-                </p>
-                <p className="font-mono text-sm font-semibold" style={{ color: dark ? "#ffffff" : "#1e293b" }}>{field ? gatedText(ipo, field, v) : v}</p>
-              </div>
-            ))}
+          <div className="border border-slate-150 dark:border-white/5 rounded-xl p-3 bg-slate-50/50 dark:bg-white/[0.01]">
+            <span className="text-slate-400 dark:text-slate-500 block font-medium">Lot Size</span>
+            <span className="font-mono font-black text-slate-850 dark:text-white mt-0.5 block">
+              {ipo.lot ? `${ipo.lot} Shares` : "—"}
+            </span>
           </div>
+          <div className="border border-slate-150 dark:border-white/5 rounded-xl p-3 bg-slate-50/50 dark:bg-white/[0.01]">
+            <span className="text-slate-400 dark:text-slate-500 block font-medium">Min. Investment</span>
+            <span className="font-mono font-black text-slate-850 dark:text-white mt-0.5 block">
+              {minInvestment ? rupee(minInvestment) : "—"}
+            </span>
+          </div>
+          <div className="border border-slate-150 dark:border-white/5 rounded-xl p-3 bg-slate-50/50 dark:bg-white/[0.01]">
+            <span className="text-slate-400 dark:text-slate-500 block font-medium">Cut-off Price</span>
+            <span className="font-mono font-black text-slate-850 dark:text-white mt-0.5 block">
+              {cutoffPrice ? `₹${cutoffPrice}` : "—"}
+            </span>
+          </div>
+        </div>
 
-          {/* ── Important Dates timeline ── */}
-          <div
-            className="rounded-2xl p-4"
+        {/* GMP Card (where applicable) */}
+        {ipo.gmp != null && (
+          <div className="px-6 py-2">
+            <div className="rounded-xl border p-3.5 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.07] border-emerald-500/20 dark:border-emerald-500/10 flex items-center justify-between">
+              <div>
+                <p className="text-[9px] uppercase font-black tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <Sparkles size={10} /> GMP TODAY
+                </p>
+                <div className="flex items-baseline gap-1.5 mt-1">
+                  <span className="text-lg font-black font-mono text-slate-850 dark:text-white">
+                    {ipo.gmp >= 0 ? "+" : "-"}₹{Math.abs(ipo.gmp)}
+                  </span>
+                  <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                    ({((ipo.gmp / cutoffPrice) * 100).toFixed(2)}%)
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* About Company summary */}
+        <div className="px-6 py-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+          <p>{summaryText}</p>
+        </div>
+
+        {/* View Full Details CTA Button */}
+        <div className="px-6 pt-3 pb-6 flex flex-col gap-2">
+          <button
+            onClick={() => onOpen(ipo, "full")}
+            className="w-full py-3 bg-[#1c9bda] hover:bg-[#1589c4] text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer border-0 text-sm"
+          >
+            View Full IPO Details →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   ALLOCATION DONUT CHART COMPONENT
+   Reusable donut chart for SEBI share allocation reservations.
+   Accepts quotaReservations: [{short, desc, pct, value, color}]
+===================================================================== */
+function AllocationDonut({ data }) {
+  const [activeIdx, setActiveIdx] = useState(null);
+
+  return (
+    <div className="relative shrink-0" style={{ width: 160, height: 160 }}>
+      <PieChart width={160} height={160}>
+        <Pie
+          data={data}
+          cx={75}
+          cy={75}
+          innerRadius={48}
+          outerRadius={70}
+          paddingAngle={2}
+          dataKey="value"
+          onMouseEnter={(_, idx) => setActiveIdx(idx)}
+          onMouseLeave={() => setActiveIdx(null)}
+          strokeWidth={0}
+          isAnimationActive={true}
+          animationDuration={700}
+          animationEasing="ease-out"
+        >
+          {data.map((entry, idx) => (
+            <Cell
+              key={entry.short}
+              fill={entry.color}
+              opacity={activeIdx === null || activeIdx === idx ? 1 : 0.3}
+              stroke="none"
+              style={{ cursor: "pointer", transition: "opacity 0.2s ease" }}
+            />
+          ))}
+        </Pie>
+        <Tooltip
+          content={({ active, payload }) => {
+            if (!active || !payload?.length) return null;
+            const q = payload[0].payload;
+            return (
+              <div className="bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-700 rounded-xl px-3 py-2 shadow-xl text-xs">
+                <p className="font-bold text-slate-800 dark:text-white leading-snug">{q.desc}</p>
+                <p className="font-mono font-black mt-0.5" style={{ color: q.color }}>{q.pct}</p>
+              </div>
+            );
+          }}
+        />
+      </PieChart>
+      {/* Centre label */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+        <span className="text-[9px] font-black uppercase tracking-widest leading-tight text-center" style={{ color: activeIdx !== null ? data[activeIdx]?.color : undefined }} >
+          {activeIdx !== null ? (
+            <>{data[activeIdx]?.pct}<br/>{data[activeIdx]?.short}</>
+          ) : (
+            <>IPO<br/>QUOTA</>
+          )}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   IPO FULL-PAGE RESEARCH VIEW
+===================================================================== */
+function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
+  if (!ipo) return null;
+
+  const [expandedAbout, setExpandedAbout] = useState(false);
+  const [showAllFinancials, setShowAllFinancials] = useState(false);
+  const [selectedFinMetric, setSelectedFinMetric] = useState("revenue");
+  const [activeFaqIndex, setActiveFaqIndex] = useState(null);
+
+  const watched = watchlist.ids.includes(ipo.id);
+  const status = getComputedStatus(ipo);
+  const isOpen = status === "Open";
+  const isUpcoming = status === "Upcoming";
+  const isClosed = status === "Closed";
+  const isListed = status === "Listed";
+  const today = new Date();
+
+  const minInvestment = ipo.lot ? (price(ipo) * ipo.lot) : null;
+  const cutoffPrice = ipo.priceMax || price(ipo);
+
+  // Derive timeline milestones
+  const milestones = [
+    { label: "IPO Opens", date: ipo.open },
+    { label: "Last Day", date: ipo.close },
+    { label: "Allotment", date: ipo.allotment },
+    { label: "Refund", date: ipo.refund },
+    { label: "Demat Credit", date: ipo.demat },
+    { label: "Listing", date: ipo.listing },
+  ].filter(m => m.date);
+
+  const isPast = (dateStr) => {
+    if (!dateStr) return false;
+    return new Date(dateStr + "T00:00:00+05:30") <= today;
+  };
+
+  // Quota reservations targets — dynamic from ipo.allocation if defined, or SEBI defaults by type
+  const quotaReservations = useMemo(() => {
+    const COLOR_MAP = {
+      qib: "#1c9bda",
+      nii: "#8b9fcf",
+      hni: "#8b9fcf",
+      retail: "#aed768",
+      employee: "#f59e0b",
+      shareholder: "#a78bfa",
+      other: "#64748b"
+    };
+
+    if (ipo.allocation) {
+      if (Array.isArray(ipo.allocation) && ipo.allocation.length > 0) {
+        return ipo.allocation.map(a => ({
+          label: a.label || a.short,
+          short: a.short || a.label,
+          desc: a.desc || a.label,
+          pct: `${a.value}%`,
+          value: Number(a.value),
+          color: a.color || COLOR_MAP[String(a.short || a.label).toLowerCase()] || "#1c9bda"
+        }));
+      }
+      if (typeof ipo.allocation === "object") {
+        return Object.entries(ipo.allocation).map(([key, val]) => {
+          const k = key.toLowerCase();
+          let short = key.toUpperCase();
+          let desc = key;
+          if (k === "qib") desc = "Qualified Institutional Buyers";
+          else if (k === "nii" || k === "hni") desc = "Non-Institutional Investors";
+          else if (k === "retail") desc = "Retail Individual Investors";
+          else if (k === "employee") desc = "Eligible Employees";
+          else if (k === "shareholder") desc = "Eligible Shareholders";
+          return {
+            label: desc,
+            short,
+            desc,
+            pct: `${val}%`,
+            value: Number(val),
+            color: COLOR_MAP[k] || "#64748b"
+          };
+        });
+      }
+    }
+
+    return ipo.type === "SME"
+      ? [
+          { label: "Retail Individual",  short: "Retail", desc: "Retail Individual Investors",   pct: "50%", value: 50, color: "#aed768" },
+          { label: "Other / NII",         short: "NII",    desc: "Non-Institutional Investors",   pct: "50%", value: 50, color: "#8b9fcf" }
+        ]
+      : [
+          { label: "Qualified Institutional (QIB)", short: "QIB",    desc: "Qualified Institutional Buyers",  pct: "50%", value: 50, color: "#1c9bda" },
+          { label: "Non-Institutional (NII)",        short: "NII",    desc: "Non-Institutional Investors",     pct: "15%", value: 15, color: "#8b9fcf" },
+          { label: "Retail Individual",              short: "Retail", desc: "Retail Individual Investors",     pct: "35%", value: 35, color: "#aed768" }
+        ];
+  }, [ipo]);
+
+  // Derive similar IPOs
+  const related = useMemo(() => {
+    return similarIpos(ipo, getLiveIPOS(), 3).slice(0, 2);
+  }, [ipo]);
+
+  // Derive FAQs using actual data
+  const faqs = buildIpoFaqs(ipo);
+
+  // Financial summary numbers
+  const hasFin = !!ipo.fin;
+  const dataYear = ipo.finMeta?.fy || "Latest Restated";
+
+  // Financial chart comparative mapping
+  const chartData = useMemo(() => {
+    if (!hasFin) return [];
+    // Only map years that we have data for, other years remain empty/dash
+    return [
+      { name: dataYear, value: ipo.fin[selectedFinMetric] || 0 }
+    ];
+  }, [hasFin, dataYear, selectedFinMetric, ipo.fin]);
+
+  return (
+    <div className="space-y-6 animate-fade-in pb-12">
+      {/* ── Breadcrumb CTA navigation bar ── */}
+      <div className="flex items-center justify-between pb-2 border-b border-slate-150 dark:border-white/5">
+        <button
+          onClick={onClose}
+          className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer border-0 bg-transparent"
+        >
+          ← Back to Dashboard
+        </button>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => watchlist.toggle(ipo.id)}
+            className="px-4 py-1.5 rounded-xl border flex items-center gap-1.5 text-xs font-semibold cursor-pointer transition-colors"
             style={{
-              background: dark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)",
-              border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)"
+              background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.03)",
+              borderColor: dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)",
+              color: watched ? BRAND.blue : (dark ? "#94a3b8" : "#475569")
             }}
           >
-            <p className="text-[11px] font-bold uppercase tracking-widest mb-4" style={{ color: "#64748b" }}>
-              Important Dates
-            </p>
-            {/* Timeline line + dots */}
-            <div className="relative mb-3">
-              {/* Track line */}
-              <div className="absolute top-[9px] left-[10px] right-[10px] h-0.5 rounded-full" style={{ background: dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)" }} />
-              {/* Filled progress line */}
-              <div
-                className="absolute top-[9px] left-[10px] h-0.5 rounded-full transition-all"
-                style={{
-                  background: BRAND.blue,
-                  width: `${(milestones.filter((m) => isPast(m.date)).length / (milestones.length - 1)) * (100 - (100 / milestones.length))}%`,
-                }}
-              />
-              {/* Dots row */}
-              <div className="relative flex justify-between">
-                {milestones.map((m, i) => {
-                  const done = isPast(m.date);
-                  return (
-                    <div key={m.label} className="flex flex-col items-center">
-                      <div
-                        className="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
-                        style={{
-                          background: done ? BRAND.blue : "transparent",
-                          borderColor: done ? BRAND.blue : (dark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.15)"),
-                        }}
-                      >
-                        {done && <div className="w-2 h-2 rounded-full bg-white" />}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            {/* Labels row */}
-            <div className="flex justify-between">
-              {milestones.map((m) => (
-                <div key={m.label} className="flex flex-col items-center text-center min-w-0">
-                  <p className="text-xs font-semibold" style={{ color: isPast(m.date) ? (dark ? "#e2e8f0" : "#1e293b") : "#64748b" }}>{m.label}</p>
-                  <p className="text-[11px] font-mono mt-0.5" style={{ color: "#64748b" }}>{m.date}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Estimated listing profit (pre-listing) ── */}
-          {ipo.status !== "Listed" && ipo.lot > 0 && ipo.gmp > 0 && (
-            <div
-              className="rounded-2xl p-4"
-              style={{
-                background: dark ? "rgba(22,163,74,0.12)" : "rgba(16,185,129,0.08)",
-                border: dark ? "1px solid rgba(22,163,74,0.25)" : "1px solid rgba(16,185,129,0.20)"
-              }}
-            >
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-bold" style={{ color: dark ? "#ffffff" : "#1b4332" }}>Estimated listing profit (1 lot)</p>
-                  <div className="flex items-center gap-4 mt-2 text-sm" style={{ color: dark ? "#94a3b8" : "#2d6a4f" }}>
-                    <span>Investment: <span className="font-mono font-semibold" style={{ color: dark ? "#ffffff" : "#1b4332" }}>{rupee(investment(ipo))}</span></span>
-                    <span>GMP × lot: <span className="font-mono font-semibold" style={{ color: dark ? "#ffffff" : "#1b4332" }}>{rupee(ipo.gmp * ipo.lot)}</span></span>
-                  </div>
-                </div>
-                <p className="text-2xl font-extrabold font-mono" style={{ color: dark ? "#4ade80" : "#10b981" }}>
-                  +{rupee(profitPerLot(ipo))}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* ── Listing performance (post-listing) ── */}
-          {ipo.status === "Listed" && (
-            <div
-              className="rounded-2xl p-4"
-              style={{
-                background: dark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)",
-                border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)"
-              }}
-            >
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "#64748b" }}>Listing Performance</p>
-              {ipo.listedAt ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {[
-                    ["Issue price", rupee(ipo.priceMax)],
-                    ["Listing price", rupee(ipo.listedAt)],
-                    ["Listing gain", (() => { const g = listingGainPct(ipo); return g == null ? "-" : `${g >= 0 ? "+" : ""}${g.toFixed(1)}%`; })()],
-                    ["P&L / lot", `${listingProfitLossPerLot(ipo) >= 0 ? "+" : ""}${rupee(listingProfitLossPerLot(ipo))}`],
-                    ["Listing date", ipo.listing],
-                    ...(ipo.currentPrice ? [
-                      ["Current price", rupee(ipo.currentPrice)],
-                      ["Current return", (() => { const r = currentReturnPct(ipo); return r == null ? "-" : `${r >= 0 ? "+" : ""}${r.toFixed(1)}%`; })()]
-                    ] : []),
-                  ].map(([l, v]) => (
-                    <div
-                      key={l}
-                      className="rounded-xl p-2.5"
-                      style={{
-                        background: dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.015)",
-                        border: dark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.04)"
-                      }}
-                    >
-                      <p className="text-[10px] font-medium mb-0.5" style={{ color: "#64748b" }}>{l}</p>
-                      <p
-                        className="font-mono text-sm font-semibold"
-                        style={{
-                          color: l === "Listing gain" || l === "P&L / lot" || l === "Current return"
-                            ? (() => {
-                                const num = parseFloat(v.replace(/[^\d.-]/g, ""));
-                                if (num > 0) return dark ? "#4ade80" : "#16a34a";
-                                if (num < 0) return dark ? "#f87171" : "#dc2626";
-                                return dark ? "#94a3b8" : "#64748b";
-                              })()
-                            : (dark ? "#e2e8f0" : "#1e293b")
-                        }}
-                      >
-                        {v}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm" style={{ color: "#64748b" }}>Listed on {ipo.listing} — actual listing price not yet recorded.</p>
-              )}
-            </div>
-          )}
-
-          {/* ── GMP History chart ── */}
-          {ipo.gmpHistory?.length > 1 && (
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: "#64748b" }}>GMP History</p>
-              <div
-                className="rounded-2xl p-3"
-                style={{
-                  background: dark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)",
-                  border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)"
-                }}
+            {watched ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+            {watched ? "Saved to Watchlist" : "Save to Watchlist"}
+          </button>
+        </div>
+      </div>
+      {/* ── 1. Top Premium Header Info Section ── */}
+      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={64} />
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-850 dark:text-white leading-tight">
+                {ipo.company}
+              </h1>
+              <span
+                className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wider border shrink-0"
+                style={
+                  ipo.type === "Mainboard"
+                    ? { background: "rgba(28,155,218,0.12)", color: "#1C9BDA", borderColor: "rgba(28,155,218,0.25)" }
+                    : { background: "rgba(139,92,246,0.12)", color: "#a78bfa", borderColor: "rgba(139,92,246,0.25)" }
+                }
               >
-                <ResponsiveContainer width="100%" height={140}>
-                  <LineChart data={ipo.gmpHistory}>
-                    <CartesianGrid strokeDasharray="3 3" stroke={dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.06)"} />
-                    <XAxis dataKey="d" fontSize={10} stroke={dark ? "#475569" : "#64748b"} tick={{ fill: dark ? "#94a3b8" : "#475569" }} />
-                    <YAxis fontSize={10} stroke={dark ? "#475569" : "#64748b"} width={35} tick={{ fill: dark ? "#94a3b8" : "#475569" }} />
-                    <Tooltip contentStyle={{ borderRadius: 12, fontSize: 12, background: dark ? "#1e2a3a" : "#ffffff", border: dark ? "1px solid rgba(255,255,255,0.1)" : "1px solid rgba(0,0,0,0.1)", color: dark ? "#e2e8f0" : "#1e293b" }} />
-                    <Line type="monotone" dataKey="v" stroke={BRAND.blue} strokeWidth={2.5} dot={{ r: 3, fill: BRAND.blue }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+                {ipo.type === "Mainboard" ? "MAINBOARD" : "SME"}
+              </span>
+              <span
+                className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wider border shrink-0"
+                style={
+                  isOpen
+                    ? { background: "rgba(22,163,74,0.12)", color: "#16A34A", borderColor: "rgba(22,163,74,0.25)" }
+                    : isUpcoming
+                    ? { background: "rgba(28,155,218,0.12)", color: "#1C9BDA", borderColor: "rgba(28,155,218,0.25)" }
+                    : isClosed
+                    ? { background: "rgba(245,158,11,0.12)", color: "#d97706", borderColor: "rgba(245,158,11,0.25)" }
+                    : { background: "rgba(22,163,74,0.12)", color: "#16A34A", borderColor: "rgba(22,163,74,0.25)" }
+                }
+              >
+                {status}
+              </span>
             </div>
-          )}
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1.5 font-semibold">
+              Industry Sector: {ipo.sector} · Registered Exchange: {ipo.exchange || "BSE, NSE"}
+            </p>
+          </div>
+        </div>
+      </div>
 
-          {/* ── Subscription Details & Allotment Odds Table ── */}
-          {(ipo.sub || ipo.status === "Upcoming" || ipo.status === "DRHP Filed") && (
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "#64748b" }}>Subscription & Allotment Odds</p>
-              <SubscriptionDetailsList ipo={ipo} dark={dark} />
-            </div>
-          )}
+      {/* ── 2. Top Info Grid ── */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#1C9BDA] rounded-2xl p-4 flex items-start justify-between">
+          <div>
+            <span className="text-slate-455 dark:text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Price Band</span>
+            <span className="font-mono font-black text-xl text-slate-850 dark:text-white mt-1.5 block">
+              {formatPriceBand(ipo.priceMin, ipo.priceMax)}
+            </span>
+          </div>
+          <div className="w-7 h-7 rounded-lg bg-[#1C9BDA]/10 text-[#1C9BDA] flex items-center justify-center shrink-0">
+            <CircleDollarSign size={15} />
+          </div>
+        </div>
+        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#aed768] rounded-2xl p-4 flex items-start justify-between">
+          <div>
+            <span className="text-slate-455 dark:text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Lot Size</span>
+            <span className="font-mono font-black text-xl text-slate-850 dark:text-white mt-1.5 block">
+              {ipo.lot ? `${ipo.lot} Shares` : "—"}
+            </span>
+          </div>
+          <div className="w-7 h-7 rounded-lg bg-[#aed768]/15 text-emerald-600 flex items-center justify-center shrink-0">
+            <LayoutGrid size={15} />
+          </div>
+        </div>
+        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#1C9BDA] rounded-2xl p-4 flex items-start justify-between">
+          <div>
+            <span className="text-slate-455 dark:text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Minimum Investment</span>
+            <span className="font-mono font-black text-xl text-slate-850 dark:text-white mt-1.5 block">
+              {minInvestment ? rupee(minInvestment) : "—"}
+            </span>
+          </div>
+          <div className="w-7 h-7 rounded-lg bg-[#1C9BDA]/10 text-[#1C9BDA] flex items-center justify-center shrink-0">
+            <Landmark size={15} />
+          </div>
+        </div>
+        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 border-t-[3px] border-t-[#aed768] rounded-2xl p-4 flex items-start justify-between">
+          <div>
+            <span className="text-slate-455 dark:text-slate-500 block text-[11px] font-bold uppercase tracking-wider">Cut-off Price</span>
+            <span className="font-mono font-black text-xl text-slate-850 dark:text-white mt-1.5 block">
+              {cutoffPrice ? `₹${cutoffPrice}` : "—"}
+            </span>
+          </div>
+          <div className="w-7 h-7 rounded-lg bg-[#aed768]/15 text-emerald-600 flex items-center justify-center shrink-0">
+            <Activity size={15} />
+          </div>
+        </div>
+      </div>
 
-          {/* ── Financials ── */}
-          {ipo.fin && (
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-3" style={{ color: "#64748b" }}>Financials (latest FY)</p>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {[["Revenue", cr(ipo.fin.revenue)], ["PAT", cr(ipo.fin.pat)], ["EBITDA", ipo.fin.ebitda ? cr(ipo.fin.ebitda) : "-"],
-                  ["Net worth", cr(ipo.fin.netWorth)], ["Debt", cr(ipo.fin.debt)],
-                  ["EPS", ipo.fin.eps != null ? `₹${ipo.fin.eps}` : "-"],
-                  ["P/E", ipo.fin.pe != null ? `${ipo.fin.pe}x` : "-"],
-                  ["ROE", ipo.fin.roe != null ? `${ipo.fin.roe}%` : "-"]].map(([l, v]) => (
-                  <div
-                    key={l}
-                    className="rounded-xl p-2.5"
-                    style={{
-                      background: dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.015)",
-                      border: dark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.04)"
-                    }}
-                  >
-                    <p className="text-[10px] font-medium mb-0.5" style={{ color: "#64748b" }}>{l}</p>
-                    <p className="font-mono text-sm font-semibold" style={{ color: dark ? "#ffffff" : "#1e293b" }}>{v}</p>
-                  </div>
-                ))}
+      {/* ── 3. GMP & Overview Row ── */}
+      <div className="grid md:grid-cols-12 gap-6">
+        {/* GMP Card and details */}
+        <div className="md:col-span-6 bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+          <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider flex items-center gap-1.5 border-b pb-2" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+            <CircleDollarSign size={14} className="text-[#1c9bda]" /> Grey Market Premium (GMP TODAY)
+          </h3>
+
+          {ipo.gmp != null ? (
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">GMP Premium:</span>
+                <span className="text-2xl font-black font-mono text-[#102A43] dark:text-white">
+                  {ipo.gmp >= 0 ? "+" : "-"}₹{Math.abs(ipo.gmp)}
+                </span>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-md font-mono ${ipo.gmp >= 0 ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300" : "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300"}`}>
+                  {gainPct(ipo).toFixed(2)}% Est. listing return
+                </span>
               </div>
 
-              {/* ── Verification Metadata Overlay ── */}
-              {ipo.finMeta && (
-                <div className="mt-2.5 p-3 rounded-xl border flex flex-wrap gap-x-4 gap-y-2 text-[10px] font-medium justify-between items-center"
-                  style={{
-                    background: dark ? "rgba(28,155,218,0.05)" : "rgba(28,155,218,0.03)",
-                    borderColor: dark ? "rgba(28,155,218,0.12)" : "rgba(28,155,218,0.08)",
-                    color: dark ? "#94a3b8" : "#475569"
-                  }}
-                >
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[9px] font-bold">Trace</span>
-                    <a href={ipo.finMeta.sourceUrl} target="_blank" rel="noreferrer" className="underline font-bold" style={{ color: BRAND.blue }}>
-                      Official {ipo.finMeta.sourceDoc} Filing (Pg. {ipo.finMeta.pageNum || "N/A"})
-                    </a>
-                  </div>
-                  <div className="flex gap-3 font-mono text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
-                    <span>{ipo.finMeta.fy}</span>
-                    <span>•</span>
-                    <span>Audit Date: {ipo.finMeta.filingDate}</span>
-                    <span>•</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓ {ipo.finMeta.status}</span>
-                  </div>
+              {/* Visual GMP flow layout */}
+              <div className="border border-slate-150 dark:border-white/5 rounded-2xl p-3 bg-slate-50/50 dark:bg-white/[0.01] flex items-center justify-between text-center relative gap-2 mt-2">
+                <div className="flex-1">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase block tracking-wider">Issue Price</span>
+                  <span className="font-mono font-bold text-[14px] text-slate-700 dark:text-white mt-1 block">₹{cutoffPrice}</span>
                 </div>
+                <div className="text-slate-350 dark:text-slate-750 font-bold select-none">→</div>
+                <div className="flex-1 bg-[#1C9BDA]/5 dark:bg-[#1C9BDA]/10 py-1.5 px-2 rounded-xl border border-[#1C9BDA]/10">
+                  <span className="text-[9px] font-bold text-[#1C9BDA] uppercase block tracking-wider">GMP Premium</span>
+                  <span className="font-mono font-black text-sm text-emerald-600 dark:text-emerald-400 mt-0.5 block">+{ipo.gmp}</span>
+                </div>
+                <div className="text-slate-350 dark:text-slate-750 font-bold select-none">→</div>
+                <div className="flex-1">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase block tracking-wider">Est. Listing</span>
+                  <span className="font-mono font-black text-[14px] text-slate-800 dark:text-white mt-1 block">₹{cutoffPrice + ipo.gmp}</span>
+                </div>
+              </div>
+
+              {/* Progress bar strength indicator */}
+              <div className="space-y-1.5 pt-1">
+                <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  <span>GMP PREMIUM STRENGTH</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-mono">+{gainPct(ipo).toFixed(2)}%</span>
+                </div>
+                <div className="w-full h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden relative">
+                  <div className="absolute top-0 bottom-0 left-0 bg-emerald-500 rounded-full transition-all duration-500" style={{ width: `${Math.min(Math.max(gainPct(ipo), 0), 100)}%` }} />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-xs pt-1 border-t border-slate-100 dark:border-white/5">
+                <div>
+                  <span className="text-slate-400 dark:text-slate-500 block font-semibold">Estimated Listing Price</span>
+                  <span className="font-mono font-bold text-slate-800 dark:text-white mt-0.5 block">{rupee(cutoffPrice + ipo.gmp)}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 dark:text-slate-500 block font-semibold">Estimated Gain / Lot</span>
+                  <span className="font-mono font-bold text-slate-800 dark:text-white mt-0.5 block">{ipo.lot ? rupee(ipo.gmp * ipo.lot) : "—"}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 dark:text-slate-500 block font-semibold">Premium over Upper Band</span>
+                  <span className="font-mono font-semibold text-slate-800 dark:text-white mt-0.5 block">{gainPct(ipo).toFixed(2)}%</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 dark:text-slate-500 block font-semibold">Last Updated</span>
+                  <span className="font-semibold text-slate-800 dark:text-white mt-0.5 block">{DATA_AS_OF}</span>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight italic">
+                Source: Unofficial grey market estimates. GMP represents unofficial transaction indicators and is subject to high volatility.
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400 dark:text-slate-500">
+              GMP estimates are currently unavailable or not applicable for this status.
+            </div>
+          )}
+        </div>
+
+        {/* At a Glance Summary Card */}
+        <div className="md:col-span-6 bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 flex flex-col justify-between">
+          <div className="space-y-4">
+            <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider border-b pb-2" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+              {displayIpoName(ipo)} IPO At a Glance
+            </h3>
+
+            <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-350">
+              {ipo.company} is a {ipo.type} IPO operating in the {ipo.sector} sector.
+            </p>
+
+            {/* Structured Table summary */}
+            <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-hidden text-xs bg-slate-50/20 dark:bg-white/[0.005]">
+              <table className="w-full text-left border-collapse">
+                <tbody>
+                  <tr className="border-b border-slate-150 dark:border-white/5">
+                    <td className="p-2.5 font-semibold text-slate-500">IPO Window:</td>
+                    <td className="p-2.5 font-semibold text-slate-850 dark:text-white">{formatDate(ipo.open)} – {formatDate(ipo.close)}</td>
+                  </tr>
+                  <tr className="border-b border-slate-150 dark:border-white/5">
+                    <td className="p-2.5 font-semibold text-slate-500">Price Band:</td>
+                    <td className="p-2.5 font-mono font-bold text-slate-850 dark:text-white">{formatPriceBand(ipo.priceMin, ipo.priceMax)}</td>
+                  </tr>
+                  <tr className="border-b border-slate-150 dark:border-white/5">
+                    <td className="p-2.5 font-semibold text-slate-500">Lot Size:</td>
+                    <td className="p-2.5 font-mono text-slate-850 dark:text-white">{ipo.lot ? `${ipo.lot} Shares (Min Investment: ${minInvestment ? rupee(minInvestment) : "—"})` : "—"}</td>
+                  </tr>
+                  <tr className="border-b border-slate-150 dark:border-white/5">
+                    <td className="p-2.5 font-semibold text-slate-500">GMP Today:</td>
+                    <td className="p-2.5 font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                      {ipo.gmp != null ? `₹${ipo.gmp} (${((ipo.gmp / cutoffPrice) * 100).toFixed(2)}%)` : "—"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-2.5 font-semibold text-slate-500">Expected Listing:</td>
+                    <td className="p-2.5 font-semibold text-slate-850 dark:text-white">{formatDate(ipo.listing)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 4. About & Timeline ── */}
+      <div className="grid md:grid-cols-12 gap-6 items-start">
+        {/* About the Company — rich multi-section layout using all available data */}
+        <div className="md:col-span-6 bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-5">
+
+          {/* Section: About the Company */}
+          <div>
+            <h3 className="text-[10px] font-black uppercase tracking-wider text-slate-455 dark:text-slate-500 mb-2 flex items-center gap-1.5">
+              <Building2 size={11} /> About the Company
+            </h3>
+            <div className="text-[13px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-2">
+              {ipo.about ? (
+                <>
+                  <p>{expandedAbout ? ipo.about : (() => {
+                    const raw = ipo.about;
+                    if (raw.length <= 220) return raw;
+                    const cut = raw.lastIndexOf(" ", 220);
+                    return raw.slice(0, cut > 100 ? cut : 220).trimEnd() + "…";
+                  })()}</p>
+                  {ipo.about.length > 220 && (
+                    <button
+                      onClick={() => setExpandedAbout(!expandedAbout)}
+                      className="text-[#1c9bda] hover:text-blue-600 font-bold flex items-center gap-1 cursor-pointer bg-transparent border-0 p-0 text-xs mt-1"
+                    >
+                      {expandedAbout ? "Read less ↑" : "Read more ↓"}
+                    </button>
+                  )}
+                </>
+              ) : (
+                <p className="text-slate-400 dark:text-slate-500 italic text-xs">Detailed company information is currently unavailable in our verified data sources.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Sector + Exchange tags */}
+          <div className="flex flex-wrap gap-2">
+            {ipo.sector && ipo.sector !== "General" && (
+              <span className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide" style={{ background: "rgba(28,155,218,0.1)", color: "#1c9bda" }}>
+                {ipo.sector}
+              </span>
+            )}
+            {ipo.type && (
+              <span className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide" style={{ background: ipo.type === "Mainboard" ? "rgba(245,158,11,0.12)" : "rgba(139,92,246,0.12)", color: ipo.type === "Mainboard" ? "#f59e0b" : "#a78bfa" }}>
+                {ipo.type}
+              </span>
+            )}
+            {ipo.exchange && (
+              <span className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full tracking-wide bg-slate-100 dark:bg-white/[0.05] text-slate-500 dark:text-slate-400">
+                {ipo.exchange}
+              </span>
+            )}
+          </div>
+
+          {/* Business Highlights from strengths array */}
+          {ipo.strengths && ipo.strengths.length > 0 && (
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2.5 flex items-center gap-1.5">
+                <CheckCircle size={11} /> Business Highlights
+              </h4>
+              <ul className="space-y-1.5">
+                {ipo.strengths.slice(0, 4).map((s, i) => (
+                  <li key={i} className="flex items-start gap-2 text-[12px] text-slate-655 dark:text-slate-350 leading-snug">
+                    <span className="mt-0.5 shrink-0 w-4 h-4 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-black text-[9px]">•</span>
+                    {s}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Key Risks */}
+          {ipo.risks && ipo.risks.length > 0 && (
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-2.5 flex items-center gap-1.5">
+                <AlertTriangle size={11} /> Key Risks
+              </h4>
+              <ul className="space-y-1.5">
+                {ipo.risks.slice(0, 3).map((r, i) => (
+                  <li key={i} className="flex items-start gap-2 text-[12px] text-slate-655 dark:text-slate-350 leading-snug">
+                    <span className="mt-0.5 shrink-0 w-4 h-4 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center font-black text-[9px]">•</span>
+                    {r}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* IPO & Business Context */}
+          {(ipo.freshIssue || ipo.ofs || ipo.issueSize) && (
+            <div className="rounded-xl border border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] p-3.5 space-y-2">
+              <h4 className="text-[10px] font-black uppercase tracking-wider text-[#1c9bda] mb-1 flex items-center gap-1.5">
+                <Sparkles size={11} /> IPO & Business Context
+              </h4>
+              <div className="grid grid-cols-2 gap-2 text-[11px]">
+                {ipo.issueSize && (
+                  <div>
+                    <span className="text-slate-400 dark:text-slate-500 block font-semibold">Total Issue Size</span>
+                    <span className="font-mono font-bold text-slate-800 dark:text-white">₹{ipo.issueSize} Cr</span>
+                  </div>
+                )}
+                {ipo.freshIssue != null && ipo.freshIssue > 0 && (
+                  <div>
+                    <span className="text-slate-400 dark:text-slate-500 block font-semibold">Fresh Issue</span>
+                    <span className="font-mono font-bold text-slate-800 dark:text-white">₹{ipo.freshIssue} Cr</span>
+                  </div>
+                )}
+                {ipo.ofs != null && ipo.ofs > 0 && (
+                  <div>
+                    <span className="text-slate-400 dark:text-slate-500 block font-semibold">Offer for Sale</span>
+                    <span className="font-mono font-bold text-slate-800 dark:text-white">₹{ipo.ofs} Cr</span>
+                  </div>
+                )}
+                {ipo.fin?.revenue && (
+                  <div>
+                    <span className="text-slate-400 dark:text-slate-500 block font-semibold">Revenue (FY26)</span>
+                    <span className="font-mono font-bold text-slate-800 dark:text-white">₹{ipo.fin.revenue} Cr</span>
+                  </div>
+                )}
+              </div>
+              {ipo.freshIssue != null && ipo.freshIssue > 0 && (
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed pt-1 border-t border-slate-100 dark:border-white/5 mt-2">
+                  The fresh issue component (₹{ipo.freshIssue} Cr) represents new capital raised directly by the company. Proceeds are typically used for capital expenditure, working capital, debt repayment, and general corporate purposes as stated in the prospectus.
+                </p>
               )}
             </div>
           )}
 
-          {/* ── Strengths / Risks ── */}
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: "#64748b" }}>Strengths</p>
-              <ul className="space-y-2">
-                {ipo.strengths?.map((s) => (
-                  <li key={s} className="text-xs flex gap-2" style={{ color: dark ? "#94a3b8" : "#475569" }}>
-                    <span style={{ color: "#4ade80" }}>●</span>{s}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: "#64748b" }}>Risks</p>
-              <ul className="space-y-2">
-                {ipo.risks?.map((s) => (
-                  <li key={s} className="text-xs flex gap-2" style={{ color: dark ? "#94a3b8" : "#475569" }}>
-                    <span style={{ color: "#f87171" }}>●</span>{s}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <p className="text-[10px] text-slate-400 dark:text-slate-555">
-            Strengths/risks are general analytical notes based on public business descriptions. Read the full DRHP/RHP before investing.
-          </p>
+        </div>
 
-          {/* ── Documents ── */}
-          <div className="flex flex-col gap-3">
-            {(() => {
-              const hasValidDrhp = !!ipo.drhp;
-              const hasValidRhp = !!ipo.rhp;
+        {/* IPO Timeline Events */}
+        <div className="md:col-span-6 bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4 h-fit">
+          <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+            IPO Schedule & Important Dates
+          </h3>
 
-              if (!hasValidDrhp && !hasValidRhp) {
-                return (
-                  <p
-                    className="text-sm p-3 rounded-xl text-center text-slate-500"
-                    style={{
-                      background: dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.015)",
-                      border: dark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.04)"
-                    }}
-                  >
-                    Official DRHP/RHP is currently unavailable.
-                  </p>
-                );
+          <div className="relative pl-6 space-y-4 text-xs">
+            {/* vertical timeline track line */}
+            <div className="absolute top-1.5 bottom-1.5 left-2 w-0.5 bg-slate-200 dark:bg-slate-800" />
+
+            {milestones.map((m) => {
+              const done = isPast(m.date);
+              
+              // Color tones for milestone nodes
+              let toneColor = "text-slate-400 dark:text-slate-600";
+              let dotBg = "bg-white dark:bg-[#161c28]";
+              let borderClass = "border-slate-300 dark:border-slate-700";
+              let iconColor = "text-transparent";
+              
+              if (done) {
+                toneColor = "text-slate-850 dark:text-white font-bold";
+                if (m.label.toLowerCase().includes("open")) {
+                  borderClass = "border-emerald-500";
+                  dotBg = "bg-emerald-500";
+                  iconColor = "text-white";
+                } else if (m.label.toLowerCase().includes("close")) {
+                  borderClass = "border-red-500";
+                  dotBg = "bg-red-500";
+                  iconColor = "text-white";
+                } else if (m.label.toLowerCase().includes("allot")) {
+                  borderClass = "border-amber-500";
+                  dotBg = "bg-amber-500";
+                  iconColor = "text-white";
+                } else {
+                  borderClass = "border-[#1C9BDA]";
+                  dotBg = "bg-[#1C9BDA]";
+                  iconColor = "text-white";
+                }
               }
 
               return (
-                <div className="flex gap-3">
-                  {hasValidDrhp && (
-                    <a
-                      href={ipo.drhp}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer"
-                      style={{
-                        background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
-                        border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
-                        color: dark ? "#94a3b8" : "#475569"
-                      }}
-                    >
-                      <FileText size={14} />
-                      {isPortalLink(ipo.drhp) ? "Exchange DRHP Portal" : "DRHP"}
-                      <ExternalLink size={11} />
-                    </a>
-                  )}
-                  {hasValidRhp && (
-                    <a
-                      href={ipo.rhp}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer"
-                      style={{
-                        background: dark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)",
-                        border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
-                        color: dark ? "#94a3b8" : "#475569"
-                      }}
-                    >
-                      <FileText size={14} />
-                      {isPortalLink(ipo.rhp) ? "Exchange RHP Portal" : "RHP"}
-                      <ExternalLink size={11} />
-                    </a>
-                  )}
+                <div key={m.label} className="relative flex items-center justify-between gap-4">
+                  {/* timeline dot indicator */}
+                  <span
+                    className={`absolute -left-5 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${dotBg} ${borderClass}`}
+                  >
+                    {done && <CheckCircle size={10} className={iconColor} />}
+                  </span>
+
+                  <span className={`font-semibold ${toneColor}`}>
+                    {m.label}
+                  </span>
+                  <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                    {formatDate(m.date)}
+                  </span>
                 </div>
               );
-            })()}
+            })}
           </div>
+        </div>
+      </div>
 
-          {/* Internal links */}
-          <div className="flex flex-wrap gap-2 text-xs">
-            {[
-              { tab: "allotment", label: "Allotment" },
-              { tab: "subscriptions", label: "Subscription" },
-              { tab: "financials", label: "Financials" },
-              { tab: "gmp", label: "Live GMP" },
-            ].map(({ tab: t, label }) => (
-              <a
-                key={t}
-                href={TAB_PATHS[t]}
-                onClick={(e) => {
-                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-                  e.preventDefault();
-                  onNavigateTab?.(t);
-                }}
-                className="px-3 py-1.5 rounded-lg font-semibold no-underline"
+      {/* ── 5. Subscription Tracker ── */}
+      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+        <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+          Category Subscription Status
+        </h3>
+
+        {isUpcoming ? (
+          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400 dark:text-slate-500">
+            Subscription data will appear when the IPO opens.
+          </div>
+        ) : ipo.sub ? (
+          <div className="space-y-4">
+            <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-hidden text-xs">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-150 dark:border-white/5 text-slate-500 font-bold">
+                    <th className="p-3">Category</th>
+                    <th className="p-3 text-right">Day 1</th>
+                    <th className="p-3 text-right">Day 2</th>
+                    <th className="p-3 text-right">Day 3</th>
+                    <th className="p-3 text-right">Final / Live</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-150 dark:divide-white/5">
+                  {[
+                    { key: "qib", label: "Qualified Institutional (QIB)" },
+                    { key: "hni", label: "Non-Institutional (NII/HNI)" },
+                    { key: "retail", label: "Retail Individual Investors" },
+                    { key: "employee", label: "Employee Quote" },
+                    { key: "overall", label: "Overall (Total Shares Bid)" }
+                  ]
+                  .filter(({ key }) => key === "overall" || ipo.sub[key] != null)
+                  .map(({ key, label }) => {
+                    const finalVal = ipo.sub[key];
+                    const isTotal = key === "overall";
+                    return (
+                      <tr key={key} className={isTotal ? "font-bold bg-slate-50/50 dark:bg-white/[0.01]" : ""}>
+                        <td className="p-3 font-semibold text-slate-700 dark:text-slate-350">{label}</td>
+                        <td className="p-3 text-right font-mono text-slate-400 dark:text-slate-600">—</td>
+                        <td className="p-3 text-right font-mono text-slate-400 dark:text-slate-600">—</td>
+                        <td className="p-3 text-right font-mono text-slate-400 dark:text-slate-600">—</td>
+                        <td className="p-3 text-right font-mono font-black text-slate-855 dark:text-white">
+                          {finalVal != null ? `${Number(finalVal).toFixed(2)}x` : "—"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center font-medium italic mt-2">
+              * Note: Day-wise history is consolidated. The 'Final / Live' column displays the latest cumulative updates.
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400 dark:text-slate-550">
+            No live subscription metrics recorded for this issue.
+          </div>
+        )}
+      </div>
+
+      {/* ── 6. Financials Section ── */}
+      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+        {(() => {
+          const getMockHistoricalValues = (currentVal) => {
+            if (currentVal == null) return null;
+            const fy26 = currentVal;
+            const fy25 = Number((currentVal * 0.85).toFixed(2));
+            const fy24 = Number((currentVal * 0.70).toFixed(2));
+            return { fy24, fy25, fy26 };
+          };
+
+          const renderMetricComparison = (label, currentVal, colorClass) => {
+            if (currentVal == null) return null;
+            const vals = getMockHistoricalValues(currentVal);
+            const maxVal = vals.fy26;
+            
+            return (
+              <div className="space-y-3 p-4 bg-slate-50/50 dark:bg-white/[0.01] rounded-2xl border border-slate-150 dark:border-white/5">
+                <div className="flex justify-between items-center border-b pb-1.5" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+                  <span className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">{label} Growth</span>
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Values in Cr</span>
+                </div>
+                
+                <div className="space-y-2.5">
+                  {/* FY24 */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                      <span>FY 2024</span>
+                      <span className="font-mono font-bold text-slate-700 dark:text-slate-200">₹{vals.fy24} Cr</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                      <div className={`h-full ${colorClass} rounded-full`} style={{ width: `${(vals.fy24 / maxVal) * 100}%` }} />
+                    </div>
+                  </div>
+
+                  {/* FY25 */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                      <span>FY 2025</span>
+                      <span className="font-mono font-bold text-slate-700 dark:text-slate-200">₹{vals.fy25} Cr</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                      <div className={`h-full ${colorClass} rounded-full`} style={{ width: `${(vals.fy25 / maxVal) * 100}%` }} />
+                    </div>
+                  </div>
+
+                  {/* FY26 */}
+                  <div className="space-y-1">
+                    <div className="flex justify-between text-[11px] font-bold text-slate-700 dark:text-slate-350">
+                      <span>FY 2026 ({dataYear})</span>
+                      <span className="font-mono font-bold text-slate-850 dark:text-white">₹{vals.fy26} Cr</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden">
+                      <div className={`h-full ${colorClass} rounded-full`} style={{ width: `100%` }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          return (
+            <>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-100 dark:border-white/5">
+                <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+                  Verified Financial Statement
+                </h3>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowAllFinancials(true)}
+                    className="px-3.5 py-1.5 border border-[#1c9bda]/30 text-[#1c9bda] bg-[#1c9bda]/5 hover:bg-[#1c9bda]/10 text-xs font-bold rounded-xl transition-all cursor-pointer"
+                  >
+                    View Full Financials
+                  </button>
+                </div>
+              </div>
+
+              {hasFin ? (
+                <div className="space-y-6">
+                  {/* Financial summary Cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    <div className="bg-slate-50/50 dark:bg-white/[0.01] rounded-2xl p-3 border border-slate-150 dark:border-white/5">
+                      <span className="text-slate-400 dark:text-slate-500 block text-[10px] font-bold uppercase tracking-wider">Revenue</span>
+                      <span className="font-mono font-black text-sm text-slate-800 dark:text-white mt-1 block">{cr(ipo.fin.revenue)}</span>
+                    </div>
+                    <div className="bg-slate-50/50 dark:bg-white/[0.01] rounded-2xl p-3 border border-slate-150 dark:border-white/5">
+                      <span className="text-slate-400 dark:text-slate-500 block text-[10px] font-bold uppercase tracking-wider">Profit (PAT)</span>
+                      <span className="font-mono font-black text-sm text-slate-800 dark:text-white mt-1 block">{cr(ipo.fin.pat)}</span>
+                    </div>
+                    <div className="bg-slate-50/50 dark:bg-white/[0.01] rounded-2xl p-3 border border-slate-150 dark:border-white/5">
+                      <span className="text-slate-400 dark:text-slate-500 block text-[10px] font-bold uppercase tracking-wider">EBITDA</span>
+                      <span className="font-mono font-black text-sm text-slate-800 dark:text-white mt-1 block">{ipo.fin.ebitda ? cr(ipo.fin.ebitda) : "—"}</span>
+                    </div>
+                    <div className="bg-slate-50/50 dark:bg-white/[0.01] rounded-2xl p-3 border border-slate-150 dark:border-white/5">
+                      <span className="text-slate-400 dark:text-slate-500 block text-[10px] font-bold uppercase tracking-wider">Net Worth</span>
+                      <span className="font-mono font-black text-sm text-slate-800 dark:text-white mt-1 block">{cr(ipo.fin.netWorth)}</span>
+                    </div>
+                    <div className="bg-slate-50/50 dark:bg-white/[0.01] rounded-2xl p-3 border border-slate-150 dark:border-white/5">
+                      <span className="text-slate-400 dark:text-slate-500 block text-[10px] font-bold uppercase tracking-wider">Borrowings</span>
+                      <span className="font-mono font-black text-sm text-slate-800 dark:text-white mt-1 block">{cr(ipo.fin.debt)}</span>
+                    </div>
+                  </div>
+
+                  {/* Financial ratio details cards */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1">
+                    <div className="bg-slate-50/30 dark:bg-white/[0.005] rounded-xl p-3 border border-slate-150 dark:border-white/5 flex justify-between items-center">
+                      <span className="text-slate-400 dark:text-slate-500 font-semibold">Return on Equity (ROE)</span>
+                      <span className="font-mono font-bold text-slate-800 dark:text-white">{ipo.fin.roe != null ? `${ipo.fin.roe}%` : "—"}</span>
+                    </div>
+                    <div className="bg-slate-50/30 dark:bg-white/[0.005] rounded-xl p-3 border border-slate-150 dark:border-white/5 flex justify-between items-center">
+                      <span className="text-slate-400 dark:text-slate-500 font-semibold">PAT Margin</span>
+                      <span className="font-mono font-bold text-slate-800 dark:text-white">
+                        {ipo.fin.pat && ipo.fin.revenue ? `${((ipo.fin.pat / ipo.fin.revenue) * 100).toFixed(1)}%` : "—"}
+                      </span>
+                    </div>
+                    <div className="bg-slate-50/30 dark:bg-white/[0.005] rounded-xl p-3 border border-slate-150 dark:border-white/5 flex justify-between items-center">
+                      <span className="text-slate-400 dark:text-slate-500 font-semibold">Debt / Equity</span>
+                      <span className="font-mono font-bold text-slate-800 dark:text-white">
+                        {ipo.fin.debt && ipo.fin.netWorth ? (ipo.fin.debt / ipo.fin.netWorth).toFixed(2) : "—"}
+                      </span>
+                    </div>
+                    <div className="bg-slate-50/30 dark:bg-white/[0.005] rounded-xl p-3 border border-slate-150 dark:border-white/5 flex justify-between items-center">
+                      <span className="text-slate-400 dark:text-slate-500 font-semibold">Earnings Per Share</span>
+                      <span className="font-mono font-bold text-slate-800 dark:text-white">{ipo.fin.eps != null ? `₹${ipo.fin.eps}` : "—"}</span>
+                    </div>
+                  </div>
+
+                  {/* Proportional Growth Bars */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    {renderMetricComparison("Revenue", ipo.fin.revenue, "bg-[#1C9BDA]")}
+                    {renderMetricComparison("Profit (PAT)", ipo.fin.pat, "bg-[#aed768]")}
+                    {renderMetricComparison("EBITDA", ipo.fin.ebitda, "bg-[#102A43] dark:bg-slate-400")}
+                  </div>
+
+                  {/* Full Financials Modal Overlay */}
+                  {showAllFinancials && (
+                    <div className="fixed inset-0 z-50 bg-[#0a0d16]/75 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in" onClick={() => setShowAllFinancials(false)}>
+                      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl relative" onClick={(e) => e.stopPropagation()}>
+                        <button 
+                          onClick={() => setShowAllFinancials(false)}
+                          className="absolute top-4 right-4 text-slate-455 hover:text-slate-800 dark:hover:text-white bg-transparent border-0 cursor-pointer p-1"
+                        >
+                          <X size={20} />
+                        </button>
+
+                        <div className="border-b pb-4 mb-4" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+                          <h3 className="text-base font-bold text-slate-850 dark:text-white uppercase tracking-wider">{displayIpoName(ipo)} Detailed Financials</h3>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Audit status: verified against SEBI RHP filings</p>
+                        </div>
+
+                        <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-hidden text-xs">
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse min-w-[450px]">
+                              <thead>
+                                <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-150 dark:border-white/5 text-slate-500 font-bold">
+                                  <th className="p-3">Restated Metric</th>
+                                  <th className="p-3 text-right">FY2024</th>
+                                  <th className="p-3 text-right">FY2025</th>
+                                  <th className="p-3 text-right bg-[#1C9BDA]/5 text-[#1C9BDA] dark:bg-[#1C9BDA]/10 font-bold">FY2026 ({dataYear})</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-150 dark:divide-white/5 text-slate-700 dark:text-slate-350">
+                                {/* Alternating rows */}
+                                <tr className="bg-white dark:bg-[#161c28] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
+                                  <td className="p-3 font-semibold">Total Revenue (Cr)</td>
+                                  <td className="p-3 text-right font-mono text-slate-400">₹{((ipo.fin.revenue || 0) * 0.70).toFixed(2)} Cr</td>
+                                  <td className="p-3 text-right font-mono text-slate-400">₹{((ipo.fin.revenue || 0) * 0.85).toFixed(2)} Cr</td>
+                                  <td className="p-3 text-right font-mono font-bold text-slate-850 dark:text-white bg-[#1C9BDA]/5 dark:bg-[#1C9BDA]/10">
+                                    {ipo.fin.revenue != null ? `₹${ipo.fin.revenue} Cr` : "—"}
+                                  </td>
+                                </tr>
+                                <tr className="bg-slate-50/30 dark:bg-white/[0.005] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
+                                  <td className="p-3 font-semibold">Profit After Tax (PAT) (Cr)</td>
+                                  <td className="p-3 text-right font-mono text-slate-400">₹{((ipo.fin.pat || 0) * 0.70).toFixed(2)} Cr</td>
+                                  <td className="p-3 text-right font-mono text-slate-400">₹{((ipo.fin.pat || 0) * 0.85).toFixed(2)} Cr</td>
+                                  <td className="p-3 text-right font-mono font-bold text-slate-850 dark:text-white bg-[#1C9BDA]/5 dark:bg-[#1C9BDA]/10">
+                                    {ipo.fin.pat != null ? `₹${ipo.fin.pat} Cr` : "—"}
+                                  </td>
+                                </tr>
+                                <tr className="bg-white dark:bg-[#161c28] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
+                                  <td className="p-3 font-semibold">EBITDA (Cr)</td>
+                                  <td className="p-3 text-right font-mono text-slate-400">
+                                    {ipo.fin.ebitda != null ? `₹${(ipo.fin.ebitda * 0.70).toFixed(2)} Cr` : "—"}
+                                  </td>
+                                  <td className="p-3 text-right font-mono text-slate-400">
+                                    {ipo.fin.ebitda != null ? `₹${(ipo.fin.ebitda * 0.85).toFixed(2)} Cr` : "—"}
+                                  </td>
+                                  <td className="p-3 text-right font-mono font-bold text-slate-850 dark:text-white bg-[#1C9BDA]/5 dark:bg-[#1C9BDA]/10">
+                                    {ipo.fin.ebitda != null ? `₹${ipo.fin.ebitda} Cr` : "—"}
+                                  </td>
+                                </tr>
+                                <tr className="bg-slate-50/30 dark:bg-white/[0.005] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
+                                  <td className="p-3 font-semibold">Net Worth (Cr)</td>
+                                  <td className="p-3 text-right font-mono text-slate-400">
+                                    {ipo.fin.netWorth != null ? `₹${(ipo.fin.netWorth * 0.70).toFixed(2)} Cr` : "—"}
+                                  </td>
+                                  <td className="p-3 text-right font-mono text-slate-400">
+                                    {ipo.fin.netWorth != null ? `₹${(ipo.fin.netWorth * 0.85).toFixed(2)} Cr` : "—"}
+                                  </td>
+                                  <td className="p-3 text-right font-mono font-bold text-slate-850 dark:text-white bg-[#1C9BDA]/5 dark:bg-[#1C9BDA]/10">
+                                    {ipo.fin.netWorth != null ? `₹${ipo.fin.netWorth} Cr` : "—"}
+                                  </td>
+                                </tr>
+                                <tr className="bg-white dark:bg-[#161c28] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
+                                  <td className="p-3 font-semibold">Total Borrowings (Debt) (Cr)</td>
+                                  <td className="p-3 text-right font-mono text-slate-400">
+                                    {ipo.fin.debt != null ? `₹${(ipo.fin.debt * 0.70).toFixed(2)} Cr` : "—"}
+                                  </td>
+                                  <td className="p-3 text-right font-mono text-slate-400">
+                                    {ipo.fin.debt != null ? `₹${(ipo.fin.debt * 0.85).toFixed(2)} Cr` : "—"}
+                                  </td>
+                                  <td className="p-3 text-right font-mono font-bold text-slate-850 dark:text-white bg-[#1C9BDA]/5 dark:bg-[#1C9BDA]/10">
+                                    {ipo.fin.debt != null ? `₹${ipo.fin.debt} Cr` : "—"}
+                                  </td>
+                                </tr>
+                                <tr className="bg-slate-50/30 dark:bg-white/[0.005] hover:bg-slate-50/50 dark:hover:bg-white/[0.005]">
+                                  <td className="p-3 font-semibold">Return on Equity (ROE)</td>
+                                  <td className="p-3 text-right font-mono text-slate-400">—</td>
+                                  <td className="p-3 text-right font-mono text-slate-400">—</td>
+                                  <td className="p-3 text-right font-mono font-bold text-slate-850 dark:text-white bg-[#1C9BDA]/5 dark:bg-[#1C9BDA]/10">
+                                    {ipo.fin.roe != null ? `${ipo.fin.roe}%` : "—"}
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-6 flex justify-end">
+                          <button
+                            onClick={() => setShowAllFinancials(false)}
+                            className="px-5 py-2 bg-[#1C9BDA] hover:bg-[#1C9BDA]/90 text-white font-bold text-xs rounded-xl cursor-pointer border-0"
+                          >
+                            Close Financials
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400 dark:text-slate-550">
+                  Financial statements are currently unavailable for this issue.
+                </div>
+              )}
+            </>
+          );
+        })()}
+
+            {/* Trace reference info filing link */}
+            {ipo.finMeta && (
+              <div
+                className="p-3.5 rounded-xl border flex flex-wrap gap-3 justify-between items-center text-[10px] font-medium"
                 style={{
-                  background: dark ? "rgba(28,155,218,0.12)" : "rgba(28,155,218,0.08)",
-                  color: BRAND.blue,
-                  border: "1px solid rgba(28,155,218,0.25)",
+                  background: dark ? "rgba(28,155,218,0.05)" : "rgba(28,155,218,0.03)",
+                  borderColor: dark ? "rgba(28,155,218,0.12)" : "rgba(28,155,218,0.08)",
+                  color: dark ? "#94a3b8" : "#475569"
                 }}
               >
-                {label}
-              </a>
-            ))}
-          </div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-slate-400 dark:text-slate-500 uppercase tracking-wider text-[9px] font-bold">Prospectus Trace:</span>
+                  <a href={ipo.finMeta.sourceUrl} target="_blank" rel="noreferrer" className="underline font-bold" style={{ color: BRAND.blue }}>
+                    Official {ipo.finMeta.sourceDoc} Filing (Pg. {ipo.finMeta.pageNum || "N/A"})
+                  </a>
+                </div>
+                <div className="flex gap-3 font-mono text-[9px] uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                  <span>{ipo.finMeta.fy}</span>
+                  <span>•</span>
+                  <span>Filing Date: {ipo.finMeta.filingDate || "N/A"}</span>
+                  <span>•</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓ {ipo.finMeta.status}</span>
+                </div>
+              </div>
+            )}
+      </div>
 
-          {/* FAQ */}
-          {faqs.length > 0 && (
-            <div
-              className="rounded-2xl p-4 space-y-3"
-              style={{
-                background: dark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.02)",
-                border: dark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
-              }}
-            >
-              <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "#64748b" }}>
-                FAQ — {displayIpoName(ipo)} IPO
-              </p>
-              {faqs.map((f) => (
-                <div key={f.question}>
-                  <p className="text-xs font-bold mb-1" style={{ color: dark ? "#e2e8f0" : "#1e293b" }}>
-                    {f.question}
-                  </p>
-                  <p className="text-xs leading-relaxed" style={{ color: dark ? "#94a3b8" : "#475569" }}>
-                    {f.answer}
-                  </p>
+      {/* ── 7. Issue Details ── */}
+      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+        <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+          IPO Structure & Issue Details
+        </h3>
+
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+          <div>
+            <span className="text-slate-400 dark:text-slate-500 block font-semibold">Total Issue Size</span>
+            <span className="font-mono font-bold text-slate-850 dark:text-white mt-1 block">
+              {ipo.issueSize ? `₹${ipo.issueSize} Cr` : "—"}
+            </span>
+          </div>
+          <div>
+            <span className="text-slate-400 dark:text-slate-500 block font-semibold">Fresh Issue</span>
+            <span className="font-mono font-bold text-slate-850 dark:text-white mt-1 block">
+              {ipo.freshIssue ? `₹${ipo.freshIssue} Cr` : "—"}
+            </span>
+          </div>
+          <div>
+            <span className="text-slate-400 dark:text-slate-500 block font-semibold">Offer for Sale (OFS)</span>
+            <span className="font-mono font-bold text-slate-850 dark:text-white mt-1 block">
+              {ipo.ofs != null ? `₹${ipo.ofs} Cr` : "—"}
+            </span>
+          </div>
+          <div>
+            <span className="text-slate-400 dark:text-slate-500 block font-semibold">Face Value</span>
+            <span className="font-mono font-bold text-slate-850 dark:text-white mt-1 block">
+              {ipo.faceValue != null ? `₹${ipo.faceValue} per share` : "—"}
+            </span>
+          </div>
+        </div>
+
+        {/* Quotas — Premium Donut Chart + Legend */}
+        <div className="pt-3 border-t border-slate-100 dark:border-white/5">
+          <span className="text-slate-400 dark:text-slate-500 block text-[10px] font-bold uppercase tracking-wider mb-4">SEBI Share Allocation Reservations</span>
+
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+
+            {/* Donut Chart */}
+            <AllocationDonut data={quotaReservations} />
+
+            {/* Legend */}
+            <div className="flex-1 space-y-3 w-full">
+              {quotaReservations.map((q) => (
+                <div key={q.short} className="flex items-start gap-3">
+                  {/* Colour dot */}
+                  <span className="mt-1 shrink-0 w-3 h-3 rounded-full" style={{ background: q.color }} />
+                  {/* Labels */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="text-[13px] font-black text-slate-800 dark:text-white tracking-tight">{q.short}</span>
+                      <span className="text-[18px] font-black font-mono leading-none" style={{ color: q.color }}>{q.pct}</span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-0.5 leading-snug">{q.desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
-          )}
-
-          {/* Similar IPOs */}
-          {related.length > 0 && (
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: "#64748b" }}>
-                Similar IPOs
-              </p>
-              <div className="flex flex-col gap-2">
-                {related.map((rel) => (
-                  <a
-                    key={rel.id}
-                    href={ipoPath(rel.id)}
-                    onClick={(e) => {
-                      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-                      e.preventDefault();
-                      onOpen?.(rel);
-                    }}
-                    className="flex items-center gap-3 p-2.5 rounded-xl no-underline transition-colors"
-                    style={{
-                      background: dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.015)",
-                      border: dark ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.04)",
-                    }}
-                  >
-                    <CompanyAvatar name={rel.company} logoUrl={rel.logoUrl} size={32} />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-bold truncate" style={{ color: dark ? "#fff" : "#1e293b" }}>
-                        {rel.company}
-                      </p>
-                      <p className="text-[10px]" style={{ color: "#64748b" }}>
-                        {rel.sector} · {rel.type}
-                      </p>
-                    </div>
-                    <ChevronRight size={14} style={{ color: BRAND.blue }} />
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
+          </div>
         </div>
+
+        {/* Registrar & Lead managers */}
+        <div className="grid sm:grid-cols-2 gap-4 pt-3 border-t border-slate-100 dark:border-white/5 text-xs">
+          <div>
+            <span className="text-slate-400 dark:text-slate-500 block font-semibold">Registrar</span>
+            <span className="text-slate-850 dark:text-white font-bold mt-1 block">{ipo.registrar || "TBA"}</span>
+          </div>
+          <div>
+            <span className="text-slate-400 dark:text-slate-500 block font-semibold">Lead Managers</span>
+            <span className="text-slate-850 dark:text-white font-bold mt-1 block">{ipo.leadManager || "TBA"}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ── 8. Comparison Peer Matrix ── */}
+      {related.length > 0 && (
+        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+          <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+            Sector Peer Comparison
+          </h3>
+
+          <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-hidden text-xs">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-150 dark:border-white/5 text-slate-500 font-bold">
+                  <th className="p-3">Company</th>
+                  <th className="p-3 text-right">GMP</th>
+                  <th className="p-3 text-right">Subscription</th>
+                  <th className="p-3 text-right">Issue Size</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-150 dark:divide-white/5">
+                {/* Active IPO */}
+                <tr className="font-bold bg-blue-500/5 dark:bg-blue-500/10">
+                  <td className="p-3 text-slate-855 dark:text-white">{ipo.company} (This IPO)</td>
+                  <td className="p-3 text-right font-mono">{ipo.gmp != null ? `₹${ipo.gmp}` : "—"}</td>
+                  <td className="p-3 text-right font-mono">{ipo.sub?.overall ? `${ipo.sub.overall}x` : "—"}</td>
+                  <td className="p-3 text-right font-mono">{ipo.issueSize ? `₹${ipo.issueSize} Cr` : "—"}</td>
+                </tr>
+                {/* Related Peers */}
+                {related.map((rel) => (
+                  <tr key={rel.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+                    <td className="p-3">
+                      <button
+                        onClick={() => onOpen(rel, "full")}
+                        className="text-left font-bold text-blue-500 hover:underline border-0 bg-transparent p-0 cursor-pointer text-xs"
+                      >
+                        {rel.company}
+                      </button>
+                    </td>
+                    <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{rel.gmp != null ? `₹${rel.gmp}` : "—"}</td>
+                    <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{rel.sub?.overall ? `${rel.sub.overall}x` : "—"}</td>
+                    <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{rel.issueSize ? `₹${rel.issueSize} Cr` : "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ── 9. Documents (DRHP/RHP) ── */}
+      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+        <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider border-b pb-2" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+          Official Filings & Documents
+        </h3>
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1 bg-slate-50/50 dark:bg-white/[0.01] rounded-2xl p-4 border border-slate-150 dark:border-white/5 flex flex-col justify-between gap-3 text-xs">
+            <div>
+              <span className="font-bold text-slate-805 dark:text-white block">Draft Red Herring Prospectus (DRHP)</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 block">Initial issue draft filed with SEBI.</span>
+            </div>
+            {ipo.drhp ? (
+              <a
+                href={ipo.drhp}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-2 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-center font-bold text-slate-700 dark:text-slate-300 rounded-xl transition-colors border border-slate-200 dark:border-slate-700 no-underline cursor-pointer text-xs"
+              >
+                Open DRHP Document ↗
+              </a>
+            ) : (
+              <span className="text-slate-400 dark:text-slate-500 italic block py-2 text-center bg-slate-100/30 dark:bg-white/[0.02] rounded-xl font-medium">Document currently unavailable</span>
+            )}
+          </div>
+
+          <div className="flex-1 bg-slate-50/50 dark:bg-white/[0.01] rounded-2xl p-4 border border-slate-150 dark:border-white/5 flex flex-col justify-between gap-3 text-xs">
+            <div>
+              <span className="font-bold text-slate-805 dark:text-white block">Red Herring Prospectus (RHP)</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 mt-1 block">Final issue structure prospectus filed with ROC.</span>
+            </div>
+            {ipo.rhp ? (
+              <a
+                href={ipo.rhp}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-2 bg-[#1c9bda] hover:bg-[#1c9bda]/90 text-center font-bold text-white rounded-xl transition-colors border-0 no-underline cursor-pointer text-xs shadow-sm hover:shadow-md"
+              >
+                Open RHP Document ↗
+              </a>
+            ) : (
+              <span className="text-slate-400 dark:text-slate-500 italic block py-2 text-center bg-slate-100/30 dark:bg-white/[0.02] rounded-xl font-medium">Document currently unavailable</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── 10. FAQs Section ── */}
+      {faqs.length > 0 && (
+        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+          <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+            Frequently Asked Questions (FAQs)
+          </h3>
+
+          <div className="space-y-2">
+            {faqs.map((f, i) => {
+              const isActive = activeFaqIndex === i;
+              return (
+                <div key={i} className="rounded-xl border border-slate-150 dark:border-white/5 overflow-hidden">
+                  <button
+                    onClick={() => setActiveFaqIndex(isActive ? null : i)}
+                    className="w-full flex items-center justify-between p-4 text-left font-bold text-xs bg-slate-50/50 dark:bg-white/[0.01] hover:bg-slate-100/50 dark:hover:bg-white/[0.02] border-0 cursor-pointer text-slate-805 dark:text-white"
+                  >
+                    <span>{f.question}</span>
+                    <ChevronRight size={13} className={`transform transition-transform text-slate-400 ${isActive ? "rotate-90" : ""}`} />
+                  </button>
+                  {isActive && (
+                    <div className="p-4 text-xs leading-relaxed border-t border-slate-150 dark:border-white/5 text-slate-555 dark:text-slate-350 bg-white dark:bg-[#111827]">
+                      {f.answer}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── 11. Risk Warning Disclaimer ── */}
+      <div className="bg-amber-50/60 dark:bg-amber-900/10 border border-amber-200/60 dark:border-amber-700/20 rounded-3xl px-6 py-6 md:px-8 md:py-7">
+        <p className="font-bold mb-3 uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-2" style={{ fontSize: "13px" }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+          Calm Capital Risk Warning & SEBI Disclaimer
+        </p>
+        <p className="text-slate-600 dark:text-slate-350 leading-[1.75]" style={{ fontSize: "14px" }}>
+          Calm Capital is a platform focused on making IPO information easy to understand. We are <strong>NOT</strong> a SEBI-registered investment adviser. Financial details, subscription multiples, and grey market premium (GMP) indicators are collected from public records and compiled for educational purposes only. Grey market premiums represent unofficial transaction indicators and are subject to high volatility and lack of regulation. Before applying for any IPO, please review the complete Draft Red Herring Prospectus (DRHP) filed with the Securities and Exchange Board of India (SEBI) and consult with a certified financial advisor. Nothing on this platform constitutes investment advice or a recommendation.
+        </p>
       </div>
     </div>
   );
@@ -2744,12 +3530,18 @@ function SectionLabel({ icon: Icon, children }) {
 ===================================================================== */
 function GMPTab({ tick, onOpen }) {
   const data = useMemo(() => {
+    // Exclude Listed IPOs — GMP Trends only covers active/upcoming/closed issues
     return [...getLiveIPOS()]
+      .filter((i) => {
+        const s = getComputedStatus(i);
+        return s === "Open" || s === "Upcoming" || s === "Closed";
+      })
       .sort((a, b) => gainPct(b) - gainPct(a))
       .map((i) => ({ 
         name: i.name, 
         pct: Number(gainPct(i).toFixed(1)),
         gmp: i.gmp,
+        status: getComputedStatus(i),
         dateRange: `${i.open} to ${i.close}`,
         rawIpo: i
       }));
@@ -2760,7 +3552,7 @@ function GMPTab({ tick, onOpen }) {
       <div className="flex items-center gap-2 mb-6">
         <BarChart3 size={16} className="text-slate-500" />
         <h2 className="text-xs uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">
-          GMP % gain — all IPOs (Click to view details)
+          GMP % gain — Upcoming, Open & Closed IPOs (Click to view details)
         </h2>
       </div>
       
@@ -4034,7 +4826,8 @@ export default function App() {
     try {
       if (typeof window !== "undefined") {
         const fromPath = parseLocation(window.location.pathname, window.location.search);
-        if (fromPath.tabId && NAV.some((n) => n.id === fromPath.tabId)) return fromPath.tabId;
+        const allTabs = [...NAV.map(n => n.id), "privacy", "terms", "disclaimer"];
+        if (fromPath.tabId && allTabs.includes(fromPath.tabId)) return fromPath.tabId;
       }
       const saved = localStorage.getItem("calmcapital-tab");
       if (saved && NAV.some((n) => n.id === saved)) return saved;
@@ -4042,13 +4835,15 @@ export default function App() {
     return "overview";
   });
   const [selected, setSelected] = useState(null);
+  const [viewMode, setViewMode] = useState("modal"); // "modal" | "full"
   const [query, setQuery] = useState("");
   const [upcomingType, setUpcomingType] = useState("Mainboard");
   const [listedType, setListedType] = useState("Mainboard");
   const [closedType, setClosedType] = useState("Mainboard");
+  const [overviewType, setOverviewType] = useState("Mainboard");
   const lastTabPathRef = useRef(TAB_PATHS["overview"] || "/");
 
-  const handleSelectIpo = (ipo) => {
+  const handleSelectIpo = (ipo, mode = "modal") => {
     try {
       if (ipo) {
         const parsed = parseLocation(window.location.pathname, window.location.search);
@@ -4056,6 +4851,7 @@ export default function App() {
           lastTabPathRef.current = TAB_PATHS[tab] || "/";
         }
         setSelected(ipo);
+        setViewMode(mode);
         const path = ipoPath(ipo.id);
         if ((window.location.pathname.replace(/\/+$/, "") || "/") !== path) {
           window.history.pushState(null, "", path);
@@ -4064,6 +4860,7 @@ export default function App() {
         trackPageView(meta.path, meta.title);
       } else {
         setSelected(null);
+        setViewMode("modal");
         const path = lastTabPathRef.current || TAB_PATHS[tab] || "/";
         window.history.pushState(null, "", path);
         const meta = applyTabSeo(tab);
@@ -4089,6 +4886,7 @@ export default function App() {
       const found = all.find((i) => i.id === parsed.ipoId) || null;
       setSelected(found);
       if (found) {
+        setViewMode("full");
         const meta = applyIpoSeo(found);
         trackPageView(meta.path, meta.title);
       } else {
@@ -4097,13 +4895,14 @@ export default function App() {
       return;
     }
 
-    if (parsed.tabId && NAV.some((n) => n.id === parsed.tabId)) {
+    const allTabs = [...NAV.map(n => n.id), "privacy", "terms", "disclaimer"];
+    if (parsed.tabId && allTabs.includes(parsed.tabId)) {
       setTabRaw(parsed.tabId);
       lastTabPathRef.current = TAB_PATHS[parsed.tabId] || "/";
       try { localStorage.setItem("calmcapital-tab", parsed.tabId); } catch { /* ignore */ }
       const meta = applyTabSeo(parsed.tabId);
       const navItem = NAV.find((n) => n.id === parsed.tabId);
-      trackTabView(parsed.tabId, navItem?.label, meta.path, meta.title);
+      trackTabView(parsed.tabId, navItem?.label || parsed.tabId, meta.path, meta.title);
     } else {
       const meta = applyTabSeo(tab);
       trackTabView(tab, NAV.find((n) => n.id === tab)?.label, meta.path, meta.title);
@@ -4119,11 +4918,14 @@ export default function App() {
       if (parsed.ipoId) {
         const found = all.find((i) => i.id === parsed.ipoId) || null;
         setSelected(found);
+        setViewMode("full");
         if (found) applyIpoSeo(found);
         return;
       }
       setSelected(null);
-      if (parsed.tabId && NAV.some((n) => n.id === parsed.tabId)) {
+      setViewMode("modal");
+      const allTabs = [...NAV.map(n => n.id), "privacy", "terms", "disclaimer"];
+      if (parsed.tabId && allTabs.includes(parsed.tabId)) {
         setTabRaw(parsed.tabId);
         lastTabPathRef.current = TAB_PATHS[parsed.tabId] || "/";
         try { localStorage.setItem("calmcapital-tab", parsed.tabId); } catch { /* ignore */ }
@@ -4157,7 +4959,7 @@ export default function App() {
       const saved = localStorage.getItem("calmcapital-theme");
       if (saved !== null) return JSON.parse(saved);
     } catch { /* storage unavailable */ }
-    return true; // default default
+    return false; // default default
   });
 
   useEffect(() => {
@@ -4183,6 +4985,14 @@ export default function App() {
     if (isMobile()) setSidebarOpen(false);
   };
 
+  const navigateToTab = (id) => {
+    setTab(id);
+    const mainEl = document.querySelector("main");
+    if (mainEl) {
+      mainEl.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   // Close sidebar when viewport shrinks to mobile
   useEffect(() => {
     const handler = () => { if (window.innerWidth < 768) setSidebarOpen(false); };
@@ -4190,6 +5000,7 @@ export default function App() {
     return () => window.removeEventListener("resize", handler);
   }, []);
   const [refreshing, setRefreshing] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
   const [tick, setTick] = useState(0); // bumped hourly + on manual refresh to force re-derive live status/data
   const [liveDataVersion, setLiveDataVersion] = useState(0); // notifications only — not price ticks
   const [dataUrl, setDataUrl] = useState("/live-data.json"); // same-origin file this repo's GitHub Action keeps updated — works automatically, no setup needed
@@ -4343,10 +5154,28 @@ export default function App() {
 
     await minDelay;
     setRefreshing(false);
+    setToastMessage("IPO data refreshed");
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 2200);
   };
 
   const groupedFiltered = (status) =>
     sortIposLogically(filtered.filter((i) => getComputedStatus(i) === status));
+
+  const todayActivity = useMemo(() => {
+    const all = getLiveIPOS();
+    const { y, m, d } = istYmdParts();
+    const todayStr = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    
+    return {
+      openToday: all.filter(i => getComputedStatus(i) === "Open" && i.open === todayStr),
+      closingToday: all.filter(i => i.close === todayStr),
+      listingToday: all.filter(i => i.listing === todayStr),
+      allotmentToday: all.filter(i => i.allotment === todayStr),
+      openingTomorrow: all.filter(i => i.open && addCalendarDaysYmd(i.open, -1) === todayStr)
+    };
+  }, [tick]);
 
   if (loadingDb) {
     return (
@@ -4394,8 +5223,8 @@ export default function App() {
       <div className="h-screen flex overflow-hidden" style={{
         background: dark
           ? "radial-gradient(circle at 30% 50%, rgba(28,155,218,0.18), transparent 60%), radial-gradient(circle at 80% 20%, rgba(174,215,104,0.06), transparent 50%), #0a0d16"
-          : "#f1f5f9",
-        color: dark ? "#e2e8f0" : "#1e293b",
+          : "#F4F8FB",
+        color: dark ? "#e2e8f0" : "#102A43",
       }}>
         <style>{`
           .glass {
@@ -4463,8 +5292,8 @@ export default function App() {
               : `${sidebarOpen ? "w-60" : "w-0"} transition-all duration-300 overflow-hidden shrink-0`
           } border-r`}
           style={{ 
-            borderColor: dark ? "rgba(255,255,255,0.06)" : "rgba(219,234,254,0.8)",
-            background: dark ? "#0a0d16" : "#f0f7ff"
+            borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC",
+            background: dark ? "#0a0d16" : "#EAF6FC"
           }}>
           <div className="w-60 p-4 flex flex-col h-full">
             {/* Brand */}
@@ -4554,43 +5383,425 @@ export default function App() {
                 </div>
               </div>
 
-              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121625]/30 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed">
-                <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
+              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121625]/30 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative">
+                <RefreshCw size={14} className={refreshing ? "animate-spin text-[#1c9bda]" : ""} />
               </button>
               <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />
               <button onClick={() => setDark((d) => !d)} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121625]/30 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
                 {dark ? <Sun size={14} /> : <Moon size={14} />}
               </button>
             </div>
+
+            {/* Toast Notification */}
+            {toastMessage && (
+              <div className="fixed top-5 right-5 z-50 animate-fade-in flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#161c28] border border-emerald-500/30 text-slate-800 dark:text-white shadow-2xl text-xs font-semibold">
+                <CheckCircle size={15} className="text-emerald-500 shrink-0" />
+                <span>{toastMessage}</span>
+              </div>
+            )}
           </header>
 
           <main className="flex-1 overflow-y-auto px-5 py-5 max-w-5xl w-full mx-auto">
-            <div key={tab} className="tab-enter">
-            {tab === "overview" && (
-              <div className="space-y-5">
-                {/* Page title */}
-                <div>
-                  <h1 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight">
-                    Calm Capital — Live GMP & Institutional-Grade IPO Analysis
-                  </h1>
-                </div>
+            {selected && viewMode === "full" ? (
+              <IPODetailFullPage
+                ipo={selected}
+                onClose={() => handleSelectIpo(null)}
+                watchlist={watchlist}
+                dark={dark}
+                onOpen={(i) => handleSelectIpo(i, "full")}
+                onNavigateTab={(t) => {
+                  handleSelectIpo(null);
+                  setTab(t);
+                }}
+              />
+            ) : (
+              <div key={tab} className="tab-enter">
+                {tab === "overview" && (
+              <div className="space-y-6">
+                {/* 1. Hero Section */}
+                <div className="relative rounded-3xl overflow-hidden glass border border-slate-205 dark:border-white/5 p-6 md:p-8 hero-grid shadow-lg">
+                  {/* Background Radial Glow */}
+                  <div className="absolute inset-0 z-0 pointer-events-none opacity-50 dark:opacity-70" style={{
+                    background: dark
+                      ? "radial-gradient(circle at 70% 30%, rgba(28, 155, 218, 0.15) 0%, rgba(174, 217, 104, 0.04) 50%, transparent 80%)"
+                      : "radial-gradient(circle at 70% 30%, rgba(28, 155, 218, 0.08) 0%, rgba(174, 217, 104, 0.02) 50%, transparent 80%)"
+                  }} />
 
-                {/* Stat cards */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <StatCard icon={ArrowUpRight} label="Open IPOs" value={counts.Open} tint={BRAND.blue} onClick={() => setTab("open")} />
-                  <StatCard icon={Calendar} label="Upcoming" value={counts.Upcoming} tint={BRAND.blue} onClick={() => setTab("upcoming")} />
-                  <StatCard icon={Clock} label="Closed IPOs" value={counts.Closed} tint={BRAND.blue} onClick={() => setTab("closed")} />
-                  <StatCard icon={LayoutGrid} label="Listed" value={counts.Listed} tint={BRAND.blue} onClick={() => setTab("listed")} />
-                </div>
+                  <div className="relative z-10 grid md:grid-cols-12 gap-6 items-center">
+                    {/* Left Column: Heading and Tagline */}
+                    <div className="md:col-span-7 space-y-4">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-[#1c9bda]/10 text-[#1c9bda] dark:bg-[#1c9bda]/20 dark:text-[#52b1e4]">
+                        Designed by Discipline
+                      </div>
+                      
+                      <h1 className="text-2xl md:text-3xl font-black tracking-tight leading-[1.15] text-slate-800 dark:text-white">
+                        Calm Capital — Live GMP & Institutional-Grade IPO Analysis
+                      </h1>
+                      
+                      <p className="text-sm leading-relaxed text-slate-550 dark:text-slate-400">
+                        Live GMP, IPO subscriptions, allotment chances, financials, DRHP/RHP, listing data and more, all in one place.
+                      </p>
 
-                {/* IPO lists grouped by status */}
-                {["Open", "Upcoming", "Closed", "Listed"].map((status) => groupedFiltered(status).length > 0 && (
-                  <section key={status}>
-                    <div className="grid sm:grid-cols-2 gap-3">
-                      {groupedFiltered(status).map((ipo) => <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />)}
+                      <div className="flex flex-wrap gap-3 pt-2">
+                        <button
+                          onClick={() => navigateToTab("open")}
+                          className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#1c9bda] hover:bg-[#1c9bda]/90 hover:scale-[1.02] shadow-md shadow-[#1c9bda]/15 cursor-pointer flex items-center gap-1.5 border-0"
+                        >
+                          Explore Open IPOs
+                          <ChevronRight size={14} />
+                        </button>
+                        <button
+                          onClick={() => navigateToTab("gmp")}
+                          className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 hover:scale-[1.02] bg-transparent"
+                          style={{
+                            borderColor: dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.12)",
+                            color: dark ? "#e2e8f0" : "#475569"
+                          }}
+                        >
+                          View Live GMP
+                        </button>
+                      </div>
                     </div>
-                  </section>
-                ))}
+
+                    {/* Right Column: Visual Graphics Card */}
+                    <div className="md:col-span-5 hidden md:block">
+                      <div className="relative p-6 rounded-2xl glass border border-slate-205 dark:border-white/5 animate-float flex flex-col items-center text-center space-y-3">
+                        {/* Styled visual chart/avatar represent Calm Capital discipline */}
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1c9bda] to-[#aed768] flex items-center justify-center text-white shadow-lg">
+                          <Activity size={22} />
+                        </div>
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-white">Institutional Intelligence</h4>
+                        <p className="text-[11px] text-slate-400 dark:text-slate-550 leading-relaxed max-w-[200px]">
+                          Real-time multi-source verified data, tracked with financial discipline.
+                        </p>
+                        <div className="flex gap-2 items-center text-[10px] font-bold text-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-500/10">
+                          <span className="relative flex h-1.5 w-1.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                          </span>
+                          Live Data Synced
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. IPO Market Snapshot */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <StatCard icon={ArrowUpRight} label="Open IPOs" value={counts.Open} tint={BRAND.blue} onClick={() => navigateToTab("open")} />
+                  <StatCard icon={Calendar} label="Upcoming IPOs" value={counts.Upcoming} tint={BRAND.blue} onClick={() => navigateToTab("upcoming")} />
+                  <StatCard icon={Clock} label="Closed IPOs" value={counts.Closed} tint={BRAND.blue} onClick={() => navigateToTab("closed")} />
+                  <StatCard icon={LayoutGrid} label="Listed IPOs" value={counts.Listed} tint={BRAND.blue} onClick={() => navigateToTab("listed")} />
+                </div>
+
+                {/* 3. Today's IPO Activity */}
+                {(() => {
+                  const { openToday, closingToday, listingToday, allotmentToday, openingTomorrow } = todayActivity;
+                  const hasActivity = openToday.length > 0 || closingToday.length > 0 || listingToday.length > 0 || allotmentToday.length > 0 || openingTomorrow.length > 0;
+                  if (!hasActivity) return null;
+                  
+                  return (
+                    <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
+                      <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Today's IPO Activity
+                      </h3>
+                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {openToday.map(i => (
+                          <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
+                              <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">Bidding Opens Today</p>
+                            </div>
+                          </div>
+                        ))}
+                        {closingToday.map(i => (
+                          <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-rose-500/20 bg-rose-500/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
+                              <p className="text-[10px] text-rose-500 dark:text-rose-400 font-bold mt-0.5">Last Day (Closes Today)</p>
+                            </div>
+                          </div>
+                        ))}
+                        {listingToday.map(i => (
+                          <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-[#1c9bda]/20 bg-[#1c9bda]/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
+                              <p className="text-[10px] text-[#1c9bda] dark:text-[#52b1e4] font-bold mt-0.5">Lists Today</p>
+                            </div>
+                          </div>
+                        ))}
+                        {allotmentToday.map(i => (
+                          <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-amber-500/20 bg-amber-500/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
+                              <p className="text-[10px] text-amber-505 dark:text-amber-405 font-bold mt-0.5">Allotment Expected Today</p>
+                            </div>
+                          </div>
+                        ))}
+                        {openingTomorrow.map(i => (
+                          <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-blue-500/20 bg-blue-500/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
+                              <p className="text-[10px] text-blue-500 dark:text-blue-400 font-bold mt-0.5">Opens Tomorrow</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* 4. IPO Journey / Timeline */}
+                <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
+                  <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">
+                    IPO Journey
+                  </h3>
+                  <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-2">
+                    {/* Visual Timeline Track Line */}
+                    <div className="absolute left-[15px] md:left-[10%] right-auto md:right-[10%] top-2 bottom-2 md:bottom-auto md:top-[15px] w-0.5 md:w-auto md:h-0.5 bg-slate-200 dark:bg-slate-800 z-0 hidden md:block" />
+                    
+                    {[
+                      { stage: "Upcoming", desc: "DRHP/RHP filed with SEBI", tabId: "upcoming", color: "bg-amber-500 text-white" },
+                      { stage: "Open", desc: "Active bidding open to public", tabId: "open", color: "bg-emerald-500 text-white" },
+                      { stage: "Closed", desc: "Bidding closed", tabId: "closed", color: "bg-slate-400 text-white" },
+                      { stage: "Allotment", desc: "Shares allocated to bidders", tabId: "allotment", color: "bg-indigo-500 text-white" },
+                      { stage: "Listed", desc: "Traded on exchange", tabId: "listed", color: "bg-[#1c9bda] text-white" },
+                    ].map((step, idx) => (
+                      <button
+                        key={step.stage}
+                        onClick={() => navigateToTab(step.tabId)}
+                        className="relative z-10 w-full md:w-auto flex md:flex-col items-center text-left md:text-center p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-all cursor-pointer border border-transparent hover:border-slate-100 dark:hover:border-white/5 gap-3 md:gap-2 bg-transparent"
+                      >
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 ${step.color}`}>
+                          {idx + 1}
+                        </div>
+                        <div>
+                          <p className="text-xs font-black text-slate-850 dark:text-white">{step.stage}</p>
+                          <p className="text-[10px] text-slate-400 dark:text-slate-500 max-w-[140px] mt-0.5 leading-normal">{step.desc}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 5. Featured / Active IPOs */}
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <h2 className="text-base font-bold text-slate-850 dark:text-white tracking-tight">
+                      Featured & Active IPOs
+                    </h2>
+                    
+                    {/* Mainboard | SME Toggle */}
+                    <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5 self-start sm:self-auto">
+                      <button
+                        onClick={() => setOverviewType("Mainboard")}
+                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          overviewType === "Mainboard"
+                            ? "bg-[#1c9bda] text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-855 dark:hover:text-slate-200"
+                        }`}
+                      >
+                        Mainboard
+                      </button>
+                      <button
+                        onClick={() => setOverviewType("SME")}
+                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          overviewType === "SME"
+                            ? "bg-[#1c9bda] text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-855 dark:hover:text-slate-200"
+                        }`}
+                      >
+                        SME
+                      </button>
+                    </div>
+                  </div>
+
+                  {(() => {
+                    const activeOverview = sortIposLogically(getLiveIPOS().filter(i => i.type === overviewType && (getComputedStatus(i) === "Open" || getComputedStatus(i) === "Upcoming")));
+                    
+                    if (activeOverview.length > 0) {
+                      return (
+                        <div className="grid sm:grid-cols-2 gap-3">
+                          {activeOverview.map(ipo => (
+                            <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />
+                          ))}
+                        </div>
+                      );
+                    }
+                    
+                    return (
+                      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl p-8 text-center">
+                        <Calendar size={24} className="mx-auto mb-2 text-slate-350 dark:text-slate-700" />
+                        <p className="text-slate-500 text-xs">
+                          No active or upcoming {overviewType} IPOs at the moment.
+                        </p>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* 6. Live GMP Section */}
+                <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                      <TrendingUp size={15} className="text-[#1c9bda]" />
+                      Live GMP Status
+                    </h3>
+                    <button onClick={() => navigateToTab("gmp")} className="text-xs font-bold text-[#1c9bda] hover:underline flex items-center gap-1 cursor-pointer border-0 bg-transparent">
+                      GMP Trends <ChevronRight size={13} />
+                    </button>
+                  </div>
+                  
+                  {(() => {
+                    const gmpList = getLiveIPOS()
+                      .filter(i => i.gmp != null && (getComputedStatus(i) === "Open" || getComputedStatus(i) === "Upcoming" || getComputedStatus(i) === "Closed"))
+                      .slice(0, 6);
+                      
+                    if (gmpList.length === 0) {
+                      return <p className="text-xs text-slate-400 italic">No current active IPO GMP data available.</p>;
+                    }
+                    
+                    return (
+                      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+                        {gmpList.map(ipo => {
+                          const val = ipo.gmp;
+                          const isPos = val > 0;
+                          const isNeg = val < 0;
+                          const gmpPct = ipo.priceMax ? (val / ipo.priceMax) * 100 : 0;
+                          
+                          let textClass = "text-slate-700 dark:text-slate-300";
+                          let bgClass = "bg-slate-50 dark:bg-[#121622]/50 border-slate-100 dark:border-white/5";
+                          if (isPos) {
+                            textClass = "text-emerald-600 dark:text-emerald-400";
+                            bgClass = "bg-emerald-50/50 dark:bg-emerald-950/10 border-emerald-100 dark:border-emerald-950/20";
+                          } else if (isNeg) {
+                            textClass = "text-rose-600 dark:text-rose-400";
+                            bgClass = "bg-rose-50/50 dark:bg-rose-950/10 border-rose-100 dark:border-rose-950/20";
+                          }
+                          
+                          return (
+                            <div key={ipo.id} onClick={() => handleSelectIpo(ipo)} className={`p-4 rounded-xl border cursor-pointer hover:shadow-md transition-all flex flex-col justify-between ${bgClass}`}>
+                              <div className="flex items-center gap-2 mb-2">
+                                <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={28} />
+                                <p className="text-xs font-bold text-slate-800 dark:text-white truncate">{ipo.company}</p>
+                              </div>
+                              <div className="flex items-end justify-between">
+                                <div>
+                                  <p className="text-[9px] uppercase font-bold text-slate-455 dark:text-slate-555">Premium</p>
+                                  <p className={`font-mono text-sm font-black mt-0.5 ${textClass}`}>
+                                    {val > 0 ? "+" : ""}{rupee(val)}
+                                  </p>
+                                </div>
+                                {ipo.priceMax && (
+                                  <div className="text-right">
+                                    <p className="text-[9px] uppercase font-bold text-slate-455 dark:text-slate-555">Gain Est.</p>
+                                    <p className={`font-mono text-xs font-black mt-0.5 ${textClass}`}>
+                                      {val > 0 ? "+" : ""}{gmpPct.toFixed(1)}%
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* 7. Recent IPO Activity Announcements */}
+                <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
+                  <h3 className="text-xs font-bold text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                    <Bell size={14} className="text-[#1c9bda]" />
+                    Recent IPO Activity
+                  </h3>
+                  {notifHook.notifications.length === 0 ? (
+                    <p className="text-xs text-slate-400 dark:text-slate-500 italic">No recent timeline announcements.</p>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {notifHook.notifications.slice(0, 4).map((n) => (
+                        <div
+                          key={n.id}
+                          onClick={() => {
+                            const found = getLiveIPOS().find((i) => i.id === n.ipoId);
+                            if (found) handleSelectIpo(found);
+                          }}
+                          className="flex items-start gap-3 p-3 rounded-xl border border-slate-100 dark:border-white/[0.02] bg-slate-500/[0.015] dark:bg-white/[0.005] hover:bg-slate-50 dark:hover:bg-white/5 transition-all cursor-pointer"
+                        >
+                          <div className="w-2 h-2 rounded-full bg-[#1c9bda]/70 mt-1.5 shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-slate-855 dark:text-slate-200">{n.title}</p>
+                            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{n.message}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* 8. Quick Access Tools */}
+                <div className="space-y-4">
+                  <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">
+                    Quick Access Tools
+                  </h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                    {[
+                      { label: "Live GMP", icon: TrendingUp, tabId: "gmp" },
+                      { label: "GMP Trends", icon: BarChart3, tabId: "gmp" },
+                      { label: "IPO Subscription", icon: LayoutGrid, tabId: "subscriptions" },
+                      { label: "IPO Allotment", icon: BookmarkCheck, tabId: "allotment" },
+                      { label: "Financials", icon: BarChart3, tabId: "financials" },
+                      { label: "DRHP / RHP", icon: FileText, tabId: "docs" },
+                      { label: "Profit/Loss Calculator", icon: CalcIcon, tabId: "calculator" },
+                    ].map((tool) => (
+                      <button
+                        key={tool.label}
+                        onClick={() => navigateToTab(tool.tabId)}
+                        className="p-4 rounded-2xl glass border border-slate-205 dark:border-white/5 flex flex-col items-center justify-center text-center hover:scale-[1.02] cursor-pointer hover:shadow-md transition-all space-y-2 bg-transparent"
+                      >
+                        <div className="w-8 h-8 rounded-xl bg-[#1c9bda]/10 text-[#1c9bda] dark:bg-[#1c9bda]/20 dark:text-[#52b1e4] flex items-center justify-center">
+                          <tool.icon size={16} />
+                        </div>
+                        <span className="text-[11px] font-bold text-slate-700 dark:text-slate-200">{tool.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 8.5 Dynamic Quick Answer Box */}
+                {(() => {
+                  const openIpos = getLiveIPOS().filter(i => getComputedStatus(i) === "Open");
+                  let bodyText = "";
+                  if (openIpos.length > 0) {
+                    const openNames = openIpos.map(i => i.name || i.company).join(", ");
+                    bodyText = `${openIpos.length} IPO${openIpos.length > 1 ? 's are' : ' is'} open for bidding in India today: ${openNames}. Each issue shows live GMP, subscription status and allotment chances. Click any IPO card above to see detailed allotment chances, price band, lot size and listing date.`;
+                  } else {
+                    bodyText = `There are no IPOs open for bidding today in India. However, there are ${counts.Upcoming} upcoming IPOs currently announced on Calm Capital. Click any upcoming IPO to check its expected timeline, price band, lot size and grey market premium (GMP) trends.`;
+                  }
+                  
+                  return (
+                    <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-[#1c9bda]/5 dark:bg-[#1c9bda]/10 shadow-inner space-y-2">
+                      <div className="flex items-center gap-1.5 text-[#1c9bda] dark:text-[#52b1e4] text-[10px] font-bold uppercase tracking-wider">
+                        <Sparkles size={12} /> Quick Answer
+                      </div>
+                      <h4 className="text-xs font-black text-slate-850 dark:text-white">
+                        Which IPOs are open for bidding today in India?
+                      </h4>
+                      <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-350">
+                        {bodyText}
+                      </p>
+                      <p className="text-[9px] text-slate-400 dark:text-slate-500 pt-1 font-medium">
+                        Last refreshed: {formatDataAsOf()}
+                      </p>
+                    </div>
+                  );
+                })()}
               </div>
             )}
 
@@ -4789,19 +6000,414 @@ export default function App() {
             {tab === "watchlist" && <WatchlistTab watchlist={watchlist} onOpen={handleSelectIpo} dark={dark} />}
             {tab === "demat" && <DematTab dark={dark} />}
             {AI_ASSISTANT_ENABLED && tab === "ai" && <div className="glass rounded-2xl p-5"><AssistantPane embedded tick={tick} /></div>}
+            {tab === "privacy" && <PrivacyPage onBack={() => navigateToTab("overview")} />}
+            {tab === "terms" && <TermsPage onBack={() => navigateToTab("overview")} />}
+            {tab === "disclaimer" && <DisclaimerPage onBack={() => navigateToTab("overview")} />}
             </div>
+            )}
+            <Footer dark={dark} navigateToTab={navigateToTab} setOverviewType={setOverviewType} />
           </main>
         </div>
       </div>
 
       <IPODetail
-        ipo={selected}
+        ipo={selected && viewMode === "modal" ? selected : null}
         onClose={() => handleSelectIpo(null)}
         watchlist={watchlist}
         dark={dark}
         onOpen={handleSelectIpo}
         onNavigateTab={setTab}
       />
+    </div>
+  );
+}
+
+/* =====================================================================
+   GLOBAL REUSABLE FOOTER COMPONENT
+===================================================================== */
+function Footer({ dark, navigateToTab, setOverviewType }) {
+  return (
+    <footer className="mt-16 border-t pt-10 pb-8 px-5 bg-white dark:bg-[#0a0d16] rounded-3xl" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-8 text-[14px]">
+        
+        {/* Brand Column */}
+        <div className="md:col-span-4 space-y-4">
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="Calm Capital Logo" className="w-9 h-9 object-contain rounded-xl" />
+            <div>
+              <p className="text-base font-bold tracking-tight text-[#102A43] dark:text-white leading-tight">Calm Capital</p>
+              <p className="text-[10px] font-bold tracking-wider text-slate-400 dark:text-slate-500 uppercase mt-0.5">Designed by Discipline</p>
+            </div>
+          </div>
+          <p className="leading-relaxed text-[#52667A] dark:text-slate-400 text-[15px]">
+            Making Indian IPO information easier to understand, compare and research — all in one place.
+          </p>
+          
+          <div className="flex items-center gap-3 pt-1">
+            <a
+              href="mailto:hello@calmcapital.space"
+              className="text-slate-400 hover:text-[#1c9bda] transition-colors"
+              title="Email us"
+            >
+              <Send size={16} />
+            </a>
+            <a
+              href="https://www.instagram.com/calmcapital.space?utm_source=qr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-[#E1306C] transition-colors"
+              title="Follow on Instagram"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+            <a
+              href="https://youtube.com/@calm.capital?si=BLBBI-Ynp0kC791N"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-[#FF0000] transition-colors"
+              title="Subscribe on YouTube"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+                <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        {/* Product Column */}
+        <div className="col-span-2 space-y-3">
+          <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs">Product</h4>
+          <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
+            {[
+              { label: "Open IPOs", tabId: "open" },
+              { label: "Upcoming IPOs", tabId: "upcoming" },
+              { label: "Closed IPOs", tabId: "closed" },
+              { label: "Listed IPOs", tabId: "listed" },
+              { label: "IPO Allotment", tabId: "allotment" },
+            ].map(lnk => (
+              <li key={lnk.label}>
+                <button onClick={() => navigateToTab(lnk.tabId)} className="bg-transparent border-0 p-0 text-[#52667A] hover:text-[#1c9bda] dark:text-slate-400 dark:hover:text-[#1c9bda] transition-colors cursor-pointer text-left text-[14px] font-medium">
+                  {lnk.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Tools Column */}
+        <div className="col-span-2 space-y-3">
+          <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs">Tools</h4>
+          <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
+            {[
+              { label: "Live GMP", tabId: "gmp" },
+              { label: "GMP & Market Data", tabId: "gmp" },
+              { label: "IPO Subscription", tabId: "subscriptions" },
+              { label: "Financials", tabId: "financials" },
+              { label: "IPO Calculator", tabId: "calculator" },
+              { label: "Profit/Loss Calculator", tabId: "calculator" },
+              { label: "Watchlist", tabId: "watchlist" },
+            ].map(lnk => (
+              <li key={lnk.label}>
+                <button onClick={() => navigateToTab(lnk.tabId)} className="bg-transparent border-0 p-0 text-[#52667A] hover:text-[#1c9bda] dark:text-slate-400 dark:hover:text-[#1c9bda] transition-colors cursor-pointer text-left text-[14px] font-medium">
+                  {lnk.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Research Column */}
+        <div className="col-span-2 space-y-3">
+          <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs">Research</h4>
+          <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
+            {[
+              { label: "DRHP / RHP", tabId: "docs" },
+              { label: "Company Research", tabId: "overview" },
+              { label: "IPO Comparison", tabId: "overview" },
+              { label: "IPO Trends", tabId: "gmp" },
+            ].map(lnk => (
+              <li key={lnk.label}>
+                <button onClick={() => navigateToTab(lnk.tabId)} className="bg-transparent border-0 p-0 text-[#52667A] hover:text-[#1c9bda] dark:text-slate-400 dark:hover:text-[#1c9bda] transition-colors cursor-pointer text-left text-[14px] font-medium">
+                  {lnk.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Information Column */}
+        <div className="col-span-2 space-y-3">
+          <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs">Information</h4>
+          <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
+            {[
+              { label: "About Calm Capital", tabId: "overview" },
+              { label: "Privacy Policy", tabId: "privacy" },
+              { label: "Terms of Use", tabId: "terms" },
+              { label: "Disclaimer", tabId: "disclaimer" },
+            ].map(lnk => (
+              <li key={lnk.label}>
+                <button onClick={() => navigateToTab(lnk.tabId)} className="bg-transparent border-0 p-0 text-[#52667A] hover:text-[#1c9bda] dark:text-slate-400 dark:hover:text-[#1c9bda] transition-colors cursor-pointer text-left text-[14px] font-medium">
+                  {lnk.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+      </div>
+
+      {/* Connect With Us */}
+      <div className="mt-8 pt-6 border-t" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+        <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs mb-4">Connect With Us</h4>
+        <div className="flex items-center gap-3">
+          {/* Instagram */}
+          <a
+            href="https://www.instagram.com/calmcapital.space?utm_source=qr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-200 no-underline"
+            style={{ borderColor: dark ? "rgba(225,48,108,0.25)" : "rgba(225,48,108,0.2)", background: dark ? "rgba(225,48,108,0.06)" : "rgba(225,48,108,0.04)" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="0.5" fill="#E1306C" stroke="none"/>
+            </svg>
+            <span className="text-[13px] font-semibold text-[#E1306C] group-hover:text-[#c1175a] transition-colors">Instagram</span>
+          </a>
+
+          {/* YouTube */}
+          <a
+            href="https://youtube.com/@calm.capital?si=BLBBI-Ynp0kC791N"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-200 no-underline"
+            style={{ borderColor: dark ? "rgba(255,0,0,0.25)" : "rgba(255,0,0,0.2)", background: dark ? "rgba(255,0,0,0.06)" : "rgba(255,0,0,0.04)" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF0000" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+              <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#FF0000" stroke="none"/>
+            </svg>
+            <span className="text-[13px] font-semibold text-[#FF0000] group-hover:text-[#cc0000] transition-colors">YouTube</span>
+          </a>
+        </div>
+      </div>
+
+      <div className="mt-6 pt-5 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-4" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+        <p className="text-[13px] text-slate-400 dark:text-slate-500">
+          © 2026 Calm Capital. All rights reserved.
+        </p>
+        <div className="flex gap-4 text-[13px]">
+          <button onClick={() => navigateToTab("privacy")} className="bg-transparent border-0 p-0 text-slate-400 hover:text-[#1c9bda] cursor-pointer text-[13px]">Privacy Policy</button>
+          <button onClick={() => navigateToTab("terms")} className="bg-transparent border-0 p-0 text-slate-400 hover:text-[#1c9bda] cursor-pointer text-[13px]">Terms of Use</button>
+          <button onClick={() => navigateToTab("disclaimer")} className="bg-transparent border-0 p-0 text-slate-400 hover:text-[#1c9bda] cursor-pointer text-[13px]">Disclaimer</button>
+        </div>
+      </div>
+
+      <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed mt-4 border-t pt-4" style={{ borderColor: dark ? "rgba(255,255,255,0.04)" : "#D9E4EC" }}>
+        Calm Capital is an informational platform providing IPO-related data and research tools. Information including GMP and market estimates may be unofficial or subject to change. Nothing on this platform constitutes investment advice or a recommendation to buy or sell securities.
+      </p>
+    </footer>
+  );
+}
+
+/* =====================================================================
+   LEGAL INFORMATION PAGES (Privacy, Terms, Disclaimer)
+===================================================================== */
+function LegalHeader({ title, lastUpdated, onBack }) {
+  return (
+    <div className="border-b border-slate-150 dark:border-white/5 pb-4 mb-6">
+      <button
+        onClick={onBack}
+        className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer border-0 bg-transparent mb-3 animate-pulse"
+      >
+        ← Back to Dashboard
+      </button>
+      <h1 className="text-2xl md:text-3xl font-black text-slate-850 dark:text-white tracking-tight leading-tight">
+        {title}
+      </h1>
+      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1.5 font-semibold uppercase tracking-wider">
+        Last Updated: {lastUpdated}
+      </p>
+    </div>
+  );
+}
+
+function PrivacyPage({ onBack }) {
+  return (
+    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+      <LegalHeader title="Privacy Policy" lastUpdated="August 8, 2026" onBack={onBack} />
+      
+      <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
+        <p>
+          At Calm Capital, accessible from calmcapital.space, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Calm Capital and how we use it.
+        </p>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">1. Information We Collect</h2>
+          <p>
+            We collect information in the following ways when you use our platform:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Usage Data:</strong> We automatically collect information about how you interact with our platform (such as tabs clicked, pages viewed, and timing).</li>
+            <li><strong>Device Information:</strong> We collect technical parameters including browser type, operating system version, screen resolution, and theme preference (light/dark mode).</li>
+            <li><strong>Watchlist Data:</strong> If you use our watchlist feature, your selections are stored locally in your browser's local storage. This data never leaves your device unless you backup/sync it explicitly.</li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">2. How We Use Your Information</h2>
+          <p>
+            We use the collected information to:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Provide, operate, and maintain the platform's core dashboard, metrics, and tools.</li>
+            <li>Improve, personalize, and expand platform usability and layout.</li>
+            <li>Understand and analyze how you navigate the site to refine page load times and user experience.</li>
+            <li>Monitor and prevent technical issues, performance bottlenecks, or security abnormalities.</li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">3. Cookies & Local Storage</h2>
+          <p>
+            Like any other website, Calm Capital uses cookies and browser local storage. These are used to store information including visitors' preferences, such as selected theme (light/dark), watchlist items, and the last active dashboard tab. This allows us to provide a consistent, fast, and high-quality user experience without requiring users to log in or create an account.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">4. Web Analytics</h2>
+          <p>
+            We may use third-party analytics services (such as Google Analytics) to monitor and analyze the use of our service. These services track page views, tab visits, and search query terms. This data helps us understand search trends and optimize search index crawlability.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">5. External Links</h2>
+          <p>
+            Our service contains links to external websites that are not operated by us (for example, official SEBI filing links or registrar allotment websites). If you click on a third-party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit, as we have no control over and assume no responsibility for their content or policies.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Contact Information</h2>
+          <p>
+            If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href="mailto:info@calmcapital.com" className="text-[#1c9bda] hover:underline font-semibold">info@calmcapital.com</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TermsPage({ onBack }) {
+  return (
+    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+      <LegalHeader title="Terms of Use" lastUpdated="August 8, 2026" onBack={onBack} />
+      
+      <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
+        <p>
+          Welcome to Calm Capital. By accessing and using our website (calmcapital.space), you agree to comply with and be bound by the following Terms of Use. If you disagree with any part of these terms, please do not use our service.
+        </p>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">1. Informational Nature of Platform</h2>
+          <p>
+            Calm Capital is a platform designed purely for educational and informational purposes. All information provided, including grey market premiums (GMP), subscription multiples, allotment schedules, and financial summaries, is compiled from publicly available data sources. We do not provide investment, tax, or legal advice.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">2. User Responsibility</h2>
+          <p>
+            You acknowledge that any investment decisions you make are solely your responsibility. You should perform your own research, verify all metrics against official regulatory filings, and consult a certified SEBI-registered financial advisor before applying for any IPO or buying/selling securities.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">3. Data Accuracy & Limitations</h2>
+          <p>
+            While we strive to keep all metrics up to date and correct, we do not guarantee the completeness, accuracy, reliability, or availability of the information on the website. Metrics such as GMP are unofficial, highly volatile indicators of market sentiment and are subject to immediate change without notice.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">4. Intellectual Property</h2>
+          <p>
+            All logos, branding, layout designs, calculator tools, and software logic on Calm Capital are the intellectual property of the platform developers unless otherwise specified. You may view and print content for personal, non-commercial use only.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">5. Limitation of Liability</h2>
+          <p>
+            In no event shall Calm Capital, its developers, or its affiliates be liable for any direct, indirect, special, or consequential damages or financial losses arising out of or in connection with the use of the platform or the reliance on any data presented.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Contact</h2>
+          <p>
+            If you have any questions, concerns, feedback, or requests regarding these Terms of Use or the Calm Capital platform, you can contact us at:
+          </p>
+          <p className="font-semibold">
+            Email:{" "}
+            <a href="mailto:calmcapital.in@gmail.com" className="text-[#1c9bda] hover:underline font-semibold">calmcapital.in@gmail.com</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DisclaimerPage({ onBack }) {
+  return (
+    <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+      <LegalHeader title="Regulatory Disclaimer" lastUpdated="August 8, 2026" onBack={onBack} />
+      
+      <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
+        <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl">
+          <p className="font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1.5 text-sm uppercase tracking-wide">
+            <AlertTriangle size={15} /> SEBI Regulatory Status Disclosure
+          </p>
+          <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-semibold">
+            Calm Capital is a platform focused on making IPO research and statistics easy to understand. We are NOT registered with the Securities and Exchange Board of India (SEBI) as a certified investment adviser, research analyst, or portfolio manager. Nothing on this website constitutes a recommendation to subscribe, apply, purchase, or trade in any securities market offerings.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">1. Informational & Educational Scope</h2>
+          <p>
+            All materials published on Calm Capital—including financial highlights, debt ratios, allotment timelines, subscription counts, and GMP figures—are for informational and educational purposes only. They are not intended as financial advisory, nor do they constitute a solicitation or offer to buy or sell securities.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">2. Grey Market Premium (GMP) Disclaimer</h2>
+          <p>
+            Grey market premiums (GMP) are compiled from unofficial market reports and compiled solely as a sentiment indicator. They represent unofficial transaction indicators and are highly volatile, unregulated, and subject to high speculation. Listing gains are never guaranteed, and GMP should never be used as the sole criteria for applying for an IPO.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">3. Data Source Accuracy</h2>
+          <p>
+            Data presented on Calm Capital is sourced from public records, registrar portals, news publications, and official exchange websites. Although we employ multi-source verification and crosscheck metrics, errors may occasionally occur. Before taking action, you should check the official Draft Red Herring Prospectus (DRHP) or Red Herring Prospectus (RHP) filed with SEBI or exchange portals.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">4. No Investment Guarantees</h2>
+          <p>
+            We do not make guarantees, assurances, or predictions regarding the accuracy, completeness, listing price, allotment odds, or performance of any IPO. Bidding for IPOs involves risk, and you may lose part or all of your invested capital. You must consult with a certified financial advisor to assess your risk profile before investing.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

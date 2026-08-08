@@ -43,6 +43,9 @@ const SECTION_PATHS = [
   "/subscriptions",
   "/allotment",
   "/financials",
+  "/privacy",
+  "/terms",
+  "/disclaimer",
 ];
 
 async function exists(p) {

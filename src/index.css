@@ -83,3 +83,109 @@ h1, h2, h3, h4, h5, h6 {
   animation: flash-down-bg 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Calm Capital Premium Redesign Helper Classes */
+.hero-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(rgba(28, 155, 218, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 155, 218, 0.03) 1px, transparent 1px);
+}
+.dark .hero-grid {
+  background-image: 
+    linear-gradient(rgba(28, 155, 218, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 155, 218, 0.05) 1px, transparent 1px);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #1c9bda 0%, #aed768 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0px); }
+}
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+/* Calm Capital Color Palette Tokens */
+:root {
+  --bg-primary: #F4F8FB;
+  --text-primary: #102A43;
+  --text-secondary: #52667A;
+  --border-primary: #D9E4EC;
+  --color-blue: #1C9BDA;
+  --color-navy: #102A43;
+  --color-green: #AED768;
+}
+
+/* Light mode overrides for high-contrast professional look */
+html:not(.dark) body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+html:not(.dark) .text-slate-900,
+html:not(.dark) .text-slate-855,
+html:not(.dark) .text-slate-850,
+html:not(.dark) .text-slate-805,
+html:not(.dark) .text-slate-800 {
+  color: #102A43 !important;
+}
+
+html:not(.dark) .text-slate-700,
+html:not(.dark) .text-slate-655,
+html:not(.dark) .text-slate-600 {
+  color: #334E68 !important;
+}
+
+html:not(.dark) .text-slate-555,
+html:not(.dark) .text-slate-500,
+html:not(.dark) .text-slate-455,
+html:not(.dark) .text-slate-450 {
+  color: #52667A !important;
+}
+
+html:not(.dark) .text-slate-400 {
+  color: #627D98 !important;
+}
+
+html:not(.dark) .border-slate-100,
+html:not(.dark) .border-slate-150,
+html:not(.dark) .border-slate-200,
+html:not(.dark) .border-slate-205,
+html:not(.dark) .border-slate-300 {
+  border-color: #D9E4EC !important;
+}
+
+html:not(.dark) .bg-slate-50 {
+  background-color: #F4F8FB !important;
+}
+
+html:not(.dark) .bg-slate-100 {
+  background-color: #EAF6FC !important;
+}
+
+/* Financial visual comparison bars styles */
+.financial-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.financial-bar {
+  height: 8px;
+  border-radius: 4px;
+  background-color: var(--color-blue);
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.financial-bar-pat {
+  background-color: #16A34A;
+}
+.financial-bar-ebitda {
+  background-color: #D97706;
+}
+
+

@@ -25,6 +25,9 @@ export const TAB_PATHS = {
   calculator: "/calculator",
   watchlist: "/watchlist",
   demat: "/demat",
+  privacy: "/privacy",
+  terms: "/terms",
+  disclaimer: "/disclaimer",
 };
 
 /** Path → tab id (includes aliases). */
@@ -44,6 +47,9 @@ export const PATH_TO_TAB = {
   "/calculator": "calculator",
   "/watchlist": "watchlist",
   "/demat": "demat",
+  "/privacy": "privacy",
+  "/terms": "terms",
+  "/disclaimer": "disclaimer",
 };
 
 export const SECTION_META = {
@@ -121,6 +127,21 @@ export const SECTION_META = {
     title: "Best Demat Accounts for IPO | Calm Capital",
     description: "Compare demat account options for applying to IPOs on Calm Capital.",
     path: "/demat",
+  },
+  privacy: {
+    title: "Privacy Policy | Calm Capital",
+    description: "Read Calm Capital's Privacy Policy describing how we collect, use and safeguard your personal information.",
+    path: "/privacy",
+  },
+  terms: {
+    title: "Terms of Use | Calm Capital",
+    description: "Read Calm Capital's Terms of Use governing your access to and use of our IPO informational platform.",
+    path: "/terms",
+  },
+  disclaimer: {
+    title: "Disclaimer & Risk Disclosure | Calm Capital",
+    description: "Calm Capital is a platform for educational and informational purposes. Read our full regulatory disclaimer here.",
+    path: "/disclaimer",
   },
 };
 
