@@ -5690,32 +5690,52 @@ export default function App() {
 
                 {/* 3. LIVE GMP STATUS SECTION (Immediately below status boxes) */}
                 {(() => {
-                  const STATUS_ORDER = { Open: 1, Upcoming: 2, Closed: 3 };
+                  // Priority: Open=1, Closed=2, Upcoming=3 — NEVER Listed
+                  const STATUS_ORDER = { Open: 1, Closed: 2, Upcoming: 3 };
 
+                  // Step 1: filter by type (Mainboard/SME) and exclude Listed + no-GMP
                   const eligibleGmpIpos = getLiveIPOS().filter((ipo) => {
                     const s = getComputedStatus(ipo);
-                    if (s !== "Open" && s !== "Upcoming" && s !== "Closed") return false;
+                    if (s !== "Open" && s !== "Closed" && s !== "Upcoming") return false;
                     if (ipo.type !== gmpMarket) return false;
                     return ipo.gmp != null && !isNaN(ipo.gmp);
                   });
 
-                  // Deduplicate strictly by ipo.id / slug
+                  // Step 2: deduplicate strictly by ipo.id / slug
                   const seenIds = new Set();
-                  const uniqueGmpIpos = [];
+                  const deduped = [];
                   for (const item of eligibleGmpIpos) {
                     const id = item.id || item.slug;
                     if (id && !seenIds.has(id)) {
                       seenIds.add(id);
-                      uniqueGmpIpos.push(item);
+                      deduped.push(item);
                     }
                   }
 
-                  // Sort by Priority: OPEN (1) -> UPCOMING (2) -> CLOSED (3)
-                  uniqueGmpIpos.sort((a, b) => {
-                    const sa = STATUS_ORDER[getComputedStatus(a)] || 99;
-                    const sb = STATUS_ORDER[getComputedStatus(b)] || 99;
-                    if (sa !== sb) return sa - sb;
-                    return (b.gmp || 0) - (a.gmp || 0);
+                  // Step 3: group by status (Open / Closed / Upcoming)
+                  const grouped = { Open: [], Closed: [], Upcoming: [] };
+                  for (const ipo of deduped) {
+                    const s = getComputedStatus(ipo);
+                    if (grouped[s]) grouped[s].push(ipo);
+                  }
+
+                  // Step 4: within each group sort by GMP% descending
+                  const gmpPctOf = (ipo) => {
+                    const p = ipo.priceMax || ipo.priceMin || 0;
+                    return p ? (ipo.gmp / p) * 100 : 0;
+                  };
+                  grouped.Open.sort((a, b) => gmpPctOf(b) - gmpPctOf(a));
+                  grouped.Closed.sort((a, b) => gmpPctOf(b) - gmpPctOf(a));
+                  grouped.Upcoming.sort((a, b) => gmpPctOf(b) - gmpPctOf(a));
+
+                  // Step 5: concatenate Open -> Closed -> Upcoming (Listed excluded)
+                  const uniqueGmpIpos = [
+                    ...grouped.Open,
+                    ...grouped.Closed,
+                    ...grouped.Upcoming,
+                  ];
+
+                  return (b.gmp || 0) - (a.gmp || 0);
                   });
 
                   return (
