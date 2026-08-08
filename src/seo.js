@@ -25,6 +25,7 @@ export const TAB_PATHS = {
   calculator: "/calculator",
   watchlist: "/watchlist",
   demat: "/demat",
+  about: "/about",
   privacy: "/privacy",
   terms: "/terms",
   disclaimer: "/disclaimer",
@@ -47,12 +48,18 @@ export const PATH_TO_TAB = {
   "/calculator": "calculator",
   "/watchlist": "watchlist",
   "/demat": "demat",
+  "/about": "about",
   "/privacy": "privacy",
   "/terms": "terms",
   "/disclaimer": "disclaimer",
 };
 
 export const SECTION_META = {
+  about: {
+    title: "About Calm Capital | Independent Indian IPO Research & Analytics Platform",
+    description: "Learn about Calm Capital—an independent information and research platform built to make Indian IPO research simpler, clearer, and easier to access.",
+    path: "/about",
+  },
   overview: {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,

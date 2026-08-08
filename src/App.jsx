@@ -408,29 +408,67 @@ function estimateAppsFromShares(label, sharesSub, isSME) {
 
 function getLiveIPOS() {
   const today = new Date();
-  const mergedList = IPOS_BASE.map((ipo) => {
-    const patch = _liveOverlay.byId[ipo.id];
-    let merged = ipo;
-    if (patch) {
-      merged = { ...ipo, ...patch };
-      if (patch.sub) {
-        // Share figures from live win. Keep baseline *_apps unless live
-        // explicitly provides them — otherwise correct final odds (e.g. SBI
-        // retail_apps 2.32) get wiped every hourly scrape.
-        merged.sub = { ...(ipo.sub || {}), ...patch.sub };
+  const baseMap = new Map();
+
+  // 1. Baseline IPOs
+  IPOS_BASE.forEach((ipo) => {
+    if (ipo && (ipo.id || ipo.slug)) {
+      const key = ipo.id || ipo.slug;
+      baseMap.set(key, ipo);
+    }
+  });
+
+  // 2. Overlay live scraped items (includes dynamic SME IPOs not yet in baseline)
+  if (_liveOverlay && _liveOverlay.byId) {
+    Object.entries(_liveOverlay.byId).forEach(([id, patch]) => {
+      if (!id || !patch) return;
+      const existing = baseMap.get(id);
+      if (existing) {
+        let merged = { ...existing, ...patch };
+        if (patch.sub) {
+          merged.sub = { ...(existing.sub || {}), ...patch.sub };
+        }
+        baseMap.set(id, merged);
+      } else {
+        baseMap.set(id, { id, company: patch.company || patch.name || id, type: patch.type || "SME", ...patch });
       }
+    });
+  }
+
+  // 3. Apply realtime prices, status and validate financials
+  const mergedList = Array.from(baseMap.values()).map((merged) => {
+    let finalIpo = merged;
+    if (_realtimePrices[merged.id]) {
+      finalIpo = { ...finalIpo, currentPrice: _realtimePrices[merged.id].price };
     }
-    // Overlay real-time simulation price if registered
-    if (_realtimePrices[ipo.id]) {
-      merged = { ...merged, currentPrice: _realtimePrices[ipo.id].price };
-    }
-    const finalIpo = { ...merged, status: liveStatus(merged, today) };
+    finalIpo = { ...finalIpo, status: liveStatus(finalIpo, today) };
     if (finalIpo.fin) {
       finalIpo.fin = validateFinancials(finalIpo);
     }
     return finalIpo;
   });
+
   return dedupeIpoList(mergedList);
+}
+
+function findIpoByIdOrSlug(idOrSlug) {
+  if (!idOrSlug) return null;
+  const all = getLiveIPOS();
+  const target = String(idOrSlug).toLowerCase().trim();
+
+  return (
+    all.find((i) => {
+      if (!i) return false;
+      const id = String(i.id || "").toLowerCase();
+      const slug = String(i.slug || "").toLowerCase();
+      if (id === target || slug === target) return true;
+      const cleanId = id.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
+      const cleanTarget = target.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
+      if (cleanId === cleanTarget) return true;
+      if (companyTokens(i.company || i.name).join("-") === companyTokens(target).join("-")) return true;
+      return false;
+    }) || null
+  );
 }
 
 const sortIposLogically = (ipos) => {
@@ -4965,7 +5003,7 @@ export default function App() {
     }
 
     if (parsed.ipoId) {
-      const found = all.find((i) => i.id === parsed.ipoId) || null;
+      const found = findIpoByIdOrSlug(parsed.ipoId);
       setSelected(found);
       if (found) {
         setViewMode("full");
@@ -4977,7 +5015,7 @@ export default function App() {
       return;
     }
 
-    const allTabs = [...NAV.map(n => n.id), "privacy", "terms", "disclaimer"];
+    const allTabs = [...NAV.map(n => n.id), "about", "privacy", "terms", "disclaimer"];
     if (parsed.tabId && allTabs.includes(parsed.tabId)) {
       setTabRaw(parsed.tabId);
       lastTabPathRef.current = TAB_PATHS[parsed.tabId] || "/";
@@ -4995,10 +5033,9 @@ export default function App() {
   // Listen to browser back/forward buttons
   useEffect(() => {
     const handlePopState = () => {
-      const all = getLiveIPOS();
       const parsed = parseLocation(window.location.pathname, window.location.search);
       if (parsed.ipoId) {
-        const found = all.find((i) => i.id === parsed.ipoId) || null;
+        const found = findIpoByIdOrSlug(parsed.ipoId);
         setSelected(found);
         setViewMode("full");
         if (found) applyIpoSeo(found);
@@ -5006,7 +5043,7 @@ export default function App() {
       }
       setSelected(null);
       setViewMode("modal");
-      const allTabs = [...NAV.map(n => n.id), "privacy", "terms", "disclaimer"];
+      const allTabs = [...NAV.map(n => n.id), "about", "privacy", "terms", "disclaimer"];
       if (parsed.tabId && allTabs.includes(parsed.tabId)) {
         setTabRaw(parsed.tabId);
         lastTabPathRef.current = TAB_PATHS[parsed.tabId] || "/";
@@ -6143,6 +6180,7 @@ export default function App() {
             {tab === "watchlist" && <WatchlistTab watchlist={watchlist} onOpen={handleSelectIpo} dark={dark} />}
             {tab === "demat" && <DematTab dark={dark} />}
             {AI_ASSISTANT_ENABLED && tab === "ai" && <div className="glass rounded-2xl p-5"><AssistantPane embedded tick={tick} /></div>}
+            {tab === "about" && <AboutPage navigateToTab={navigateToTab} />}
             {tab === "privacy" && <PrivacyPage onBack={() => navigateToTab("overview")} />}
             {tab === "terms" && <TermsPage onBack={() => navigateToTab("overview")} />}
             {tab === "disclaimer" && <DisclaimerPage onBack={() => navigateToTab("overview")} />}
@@ -6287,7 +6325,7 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
           <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs">Information</h4>
           <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
             {[
-              { label: "About Calm Capital", tabId: "overview" },
+              { label: "About Calm Capital", tabId: "about" },
               { label: "Privacy Policy", tabId: "privacy" },
               { label: "Terms of Use", tabId: "terms" },
               { label: "Disclaimer", tabId: "disclaimer" },
@@ -6355,6 +6393,129 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
         Calm Capital is an informational platform providing IPO-related data and research tools. Information including GMP and market estimates may be unofficial or subject to change. Nothing on this platform constitutes investment advice or a recommendation to buy or sell securities.
       </p>
     </footer>
+  );
+}
+
+/* =====================================================================
+   ABOUT CALM CAPITAL PAGE
+===================================================================== */
+function AboutPage({ navigateToTab }) {
+  return (
+    <div className="space-y-8 max-w-4xl mx-auto py-2">
+      {/* Hero Banner */}
+      <div className="relative rounded-3xl overflow-hidden glass border border-slate-205 dark:border-white/5 p-8 md:p-10 text-center space-y-4">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-[#1c9bda]/10 text-[#1c9bda] dark:bg-[#1c9bda]/20 dark:text-[#52b1e4] mx-auto">
+          Designed by Discipline
+        </div>
+        <h1 className="text-3xl md:text-4xl font-black text-slate-855 dark:text-white tracking-tight leading-tight">
+          About Calm Capital
+        </h1>
+        <p className="text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium">
+          Calm Capital is an independent information and research platform built to make Indian IPO research simpler, clearer and easier to access.
+        </p>
+      </div>
+
+      {/* What You Can Research Section */}
+      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-lg font-bold text-slate-855 dark:text-white tracking-tight">
+            Comprehensive IPO Intelligence
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            Calm Capital brings together all essential IPO metrics into one clean, structured dashboard. On our platform, investors and researchers can find:
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {[
+            "Live GMP estimates",
+            "IPO subscription data",
+            "Allotment information & registrar links",
+            "IPO timelines & important dates",
+            "Company overview & business highlights",
+            "Verified financial performance metrics",
+            "IPO structure & share allocation",
+            "Official DRHP / RHP documents",
+            "Interactive IPO lot size calculator",
+            "GMP trends & historical performance",
+            "Mainboard & SME IPO tracking",
+            "IPO comparison & research tools",
+          ].map((item, idx) => (
+            <div key={idx} className="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-150 dark:border-white/5 flex items-center gap-2.5">
+              <span className="w-5 h-5 rounded-full bg-[#1c9bda]/10 text-[#1c9bda] flex items-center justify-center font-bold text-xs shrink-0">✓</span>
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Why Calm Capital Section */}
+      <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-lg font-bold text-slate-855 dark:text-white tracking-tight">
+            Why Calm Capital?
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            We built Calm Capital to eliminate clutter and provide disciplined IPO research tools.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            {
+              title: "Everything in One Place",
+              desc: "No need to jump between multiple stock exchange filings, news portals, and registrar sites.",
+            },
+            {
+              title: "Easy to Understand",
+              desc: "Complex IPO structures, price bands, and allocation quotas are presented in clean, visual formats.",
+            },
+            {
+              title: "Research-Focused",
+              desc: "Designed specifically to help users evaluate company business models and financial health.",
+            },
+            {
+              title: "Mainboard + SME Coverage",
+              desc: "Track both Mainboard and SME category public issues with seamless category filtering.",
+            },
+            {
+              title: "Data-Driven Insights",
+              desc: "Multi-source verified subscription numbers, lot calculations, and timeline tracking.",
+            },
+            {
+              title: "Built for Informed Research",
+              desc: "Calm Capital provides objective information and analytical tools, not investment recommendations.",
+            },
+          ].map((feature, idx) => (
+            <div key={idx} className="p-4 rounded-2xl bg-slate-50/50 dark:bg-white/[0.01] border border-slate-150 dark:border-white/5 space-y-1.5">
+              <h3 className="text-sm font-bold text-[#102A43] dark:text-white">{feature.title}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Call to Action Section */}
+      <div className="rounded-3xl p-8 bg-gradient-to-r from-[#1c9bda]/10 via-emerald-500/5 to-transparent border border-[#1c9bda]/20 text-center space-y-4">
+        <h2 className="text-xl font-bold text-slate-855 dark:text-white">
+          Ready to start your IPO research?
+        </h2>
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button
+            onClick={() => navigateToTab("open")}
+            className="px-6 py-3 rounded-2xl bg-[#1c9bda] text-white text-xs font-bold shadow-md hover:brightness-110 transition-all cursor-pointer border-0"
+          >
+            Explore Open IPOs →
+          </button>
+          <button
+            onClick={() => navigateToTab("overview")}
+            className="px-6 py-3 rounded-2xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white text-xs font-bold hover:bg-slate-200 dark:hover:bg-white/20 transition-all cursor-pointer border border-slate-200 dark:border-white/10"
+          >
+            Explore All IPOs →
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
