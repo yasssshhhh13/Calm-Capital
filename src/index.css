@@ -21,176 +21,615 @@ h1, h2, h3, h4, h5, h6 {
   font-variant-numeric: tabular-nums;
 }
 
-/* Premium Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
-  border-radius: 99px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.5);
+/* ─────────────────────────────────────────────────────────────
+   CALM CAPITAL DESIGN TOKENS
+   ───────────────────────────────────────────────────────────── */
+:root {
+  /* Brand */
+  --cc-blue:       #1C9BDA;
+  --cc-blue-light: #38BDF8;
+  --cc-green:      #AED768;
+  --cc-green-vivid:#22C55E;
+
+  /* Light mode */
+  --bg-primary:    #F4F8FB;
+  --text-primary:  #102A43;
+  --text-secondary:#52667A;
+  --border-primary:#D9E4EC;
+  --color-blue:    #1C9BDA;
+  --color-navy:    #102A43;
+  --color-green:   #AED768;
+
+  /* Dark mode tokens (set in .dark below) */
+  --dm-bg-page:    #0B1220;
+  --dm-bg-sidebar: #080E19;
+  --dm-bg-header:  #0A101C;
+  --dm-bg-card:    #111B2B;
+  --dm-bg-card-2:  #152235;
+  --dm-border:     #26364A;
+  --dm-border-ui:  #34465C;
+  --dm-border-act: var(--cc-blue);
+
+  --dm-text-prim:  #F8FAFC;
+  --dm-text-sec:   #B8C5D6;
+  --dm-text-muted: #8293A8;
+  --dm-text-nav:   #C2D0E0;
+  --dm-icon:       #8FA3BA;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+/* ─────────────────────────────────────────────────────────────
+   LIGHT MODE BODY
+   ───────────────────────────────────────────────────────────── */
+html:not(.dark) body {
+  background-color: var(--bg-primary) !important;
+  color: var(--text-primary) !important;
 }
 
-/* Glassmorphism & custom utility styles */
+/* Light mode text overrides */
+html:not(.dark) .text-slate-900,
+html:not(.dark) .text-slate-855,
+html:not(.dark) .text-slate-850,
+html:not(.dark) .text-slate-805,
+html:not(.dark) .text-slate-800 { color: #102A43 !important; }
+
+html:not(.dark) .text-slate-700,
+html:not(.dark) .text-slate-655,
+html:not(.dark) .text-slate-600 { color: #334E68 !important; }
+
+html:not(.dark) .text-slate-555,
+html:not(.dark) .text-slate-500,
+html:not(.dark) .text-slate-455,
+html:not(.dark) .text-slate-450 { color: #52667A !important; }
+
+html:not(.dark) .text-slate-400 { color: #627D98 !important; }
+
+html:not(.dark) .border-slate-100,
+html:not(.dark) .border-slate-150,
+html:not(.dark) .border-slate-200,
+html:not(.dark) .border-slate-205,
+html:not(.dark) .border-slate-300 { border-color: #D9E4EC !important; }
+
+html:not(.dark) .bg-slate-50  { background-color: #F4F8FB !important; }
+html:not(.dark) .bg-slate-100 { background-color: #EAF6FC !important; }
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — GLOBAL BACKGROUND ELEVATION
+   Lift the page, sidebar, header, and card backgrounds from
+   near-black to the premium navy palette.
+   ───────────────────────────────────────────────────────────── */
+html.dark body {
+  background-color: var(--dm-bg-page) !important;
+  color: var(--dm-text-sec) !important;
+}
+
+/* Main page background */
+html.dark .flex-1.flex.flex-col.min-w-0 > main {
+  background-color: var(--dm-bg-page);
+}
+
+/* ── Dark mode background overrides ──────────────────────────── */
+/* Very dark near-black panels → elevated navy card */
+html.dark .dark\:bg-\[\#0a0d16\]  { background-color: var(--dm-bg-sidebar) !important; }
+html.dark .dark\:bg-\[\#0e1320\]  { background-color: var(--dm-bg-card) !important; }
+html.dark .dark\:bg-\[\#111520\]  { background-color: var(--dm-bg-card) !important; }
+html.dark .dark\:bg-\[\#111827\]  { background-color: var(--dm-bg-card-2) !important; }
+html.dark .dark\:bg-\[\#161c28\]  { background-color: var(--dm-bg-card) !important; }
+html.dark .dark\:bg-slate-900     { background-color: var(--dm-bg-card) !important; }
+html.dark .dark\:bg-slate-800     { background-color: var(--dm-bg-card-2) !important; }
+
+/* Subtle overlay panels */
+html.dark .dark\:bg-white\/5      { background-color: rgba(255,255,255,0.045) !important; }
+html.dark .dark\:bg-white\/\[0\.005\]  { background-color: rgba(255,255,255,0.025) !important; }
+html.dark .dark\:bg-white\/\[0\.01\]  { background-color: rgba(255,255,255,0.03) !important; }
+html.dark .dark\:bg-white\/\[0\.015\] { background-color: rgba(255,255,255,0.04) !important; }
+html.dark .dark\:bg-white\/\[0\.02\]  { background-color: rgba(255,255,255,0.05) !important; }
+html.dark .dark\:bg-white\/\[0\.04\]  { background-color: rgba(255,255,255,0.06) !important; }
+html.dark .dark\:bg-white\/\[0\.05\]  { background-color: rgba(255,255,255,0.07) !important; }
+
+/* ── Dark mode TEXT CONTRAST LIFT ────────────────────────────── */
+/* Primary text: white/near-white */
+html.dark .dark\:text-white    { color: var(--dm-text-prim) !important; }
+html.dark .dark\:text-slate-100 { color: var(--dm-text-prim) !important; }
+html.dark .dark\:text-slate-200 { color: #ECF1F8 !important; }
+html.dark .dark\:text-slate-300 { color: var(--dm-text-sec) !important; }
+html.dark .dark\:text-slate-350 { color: #A8BAC9 !important; }
+
+/* Secondary text: lift from near-invisible to readable */
+html.dark .dark\:text-slate-400 { color: var(--dm-text-sec) !important; }
+html.dark .dark\:text-slate-455 { color: #A0B4C8 !important; }
+html.dark .dark\:text-slate-500 { color: var(--dm-text-muted) !important; }
+html.dark .dark\:text-slate-550 { color: #7D9AB0 !important; }
+html.dark .dark\:text-slate-600 { color: #6F849C !important; }
+html.dark .dark\:text-slate-605 { color: #6B7F96 !important; }
+html.dark .dark\:text-slate-700 { color: #5B7187 !important; }
+html.dark .dark\:text-slate-750 { color: #536B80 !important; }
+
+/* ── Dark mode BORDER CONTRAST LIFT ──────────────────────────── */
+html.dark .dark\:border-white\/5   { border-color: var(--dm-border) !important; }
+html.dark .dark\:border-white\/8   { border-color: #2C3F56 !important; }
+html.dark .dark\:border-white\/10  { border-color: #2C3F56 !important; }
+html.dark .dark\:border-white\/\[0\.02\] { border-color: var(--dm-border) !important; }
+html.dark .dark\:border-white\/\[0\.03\] { border-color: var(--dm-border) !important; }
+html.dark .dark\:border-slate-800  { border-color: var(--dm-border-ui) !important; }
+html.dark .dark\:border-slate-800\/60 { border-color: rgba(52,70,92,0.6) !important; }
+html.dark .dark\:border-slate-700  { border-color: #3A526A !important; }
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — SIDEBAR  (inline-style override via CSS vars)
+   The sidebar uses inline style background, so we override
+   the fixed colour with a CSS variable via a companion rule.
+   ───────────────────────────────────────────────────────────── */
+html.dark aside {
+  background-color: var(--dm-bg-sidebar) !important;
+  border-right-color: var(--dm-border) !important;
+}
+
+/* Sidebar brand text */
+html.dark aside p.text-sm.font-bold {
+  color: var(--dm-text-prim) !important;
+}
+html.dark aside p.text-\[10px\] {
+  color: var(--dm-text-muted) !important;
+}
+
+/* Sidebar nav — inactive items */
+html.dark aside nav a {
+  color: var(--dm-text-nav) !important;
+  font-weight: 600;
+}
+html.dark aside nav a svg {
+  color: var(--dm-icon) !important;
+}
+
+/* Sidebar nav — hover */
+html.dark aside nav a:hover {
+  color: var(--cc-blue-light) !important;
+  background-color: rgba(28,155,218,0.10) !important;
+}
+html.dark aside nav a:hover svg {
+  color: var(--cc-blue-light) !important;
+}
+
+/* Sidebar nav — active item (Calm Capital blue, keep existing style) */
+html.dark aside nav a.text-\[\#1c9bda\],
+html.dark aside nav a.dark\:text-\[\#52b1e4\] {
+  color: #52b1e4 !important;
+}
+html.dark aside nav a.text-\[\#1c9bda\] svg {
+  color: #52b1e4 !important;
+}
+
+/* Sidebar close button */
+html.dark aside button {
+  color: var(--dm-text-muted) !important;
+}
+html.dark aside button:hover {
+  color: var(--dm-text-sec) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — HEADER / TOP BAR
+   ───────────────────────────────────────────────────────────── */
+html.dark header {
+  background: rgba(10,16,28,0.88) !important;
+  border-bottom-color: var(--dm-border) !important;
+}
+
+/* Search input */
+html.dark header input {
+  background-color: #101A29 !important;
+  border-color: var(--dm-border-ui) !important;
+  color: var(--dm-text-prim) !important;
+}
+html.dark header input::placeholder {
+  color: var(--dm-icon) !important;
+}
+html.dark header input:focus {
+  border-color: var(--cc-blue) !important;
+  box-shadow: 0 0 0 3px rgba(28,155,218,0.15) !important;
+}
+html.dark header .dark\:bg-\[\#0e1320\] {
+  background-color: #101A29 !important;
+}
+
+/* Top-right action buttons (Live Prices, Refresh, Bell, Theme) */
+html.dark header button,
+html.dark header .dark\:bg-\[\#121625\]\/30 {
+  background-color: rgba(17,27,43,0.7) !important;
+  border-color: var(--dm-border-ui) !important;
+  color: #C9D6E5 !important;
+}
+html.dark header button:hover {
+  border-color: var(--cc-blue) !important;
+  box-shadow: 0 0 0 2px rgba(28,155,218,0.18) !important;
+  color: var(--dm-text-prim) !important;
+}
+html.dark header .dark\:bg-\[\#121625\]\/30 {
+  color: #C9D6E5 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — HERO SECTION
+   ───────────────────────────────────────────────────────────── */
+html.dark .hero-grid {
+  background-image:
+    linear-gradient(rgba(28,155,218,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28,155,218,0.06) 1px, transparent 1px);
+}
+/* Hero card glass panel */
+html.dark .glass-panel,
+html.dark .glass {
+  background: rgba(17,27,43,0.75) !important;
+  border-color: var(--dm-border) !important;
+}
+
+/* Hero heading */
+html.dark h1.text-2xl,
+html.dark h1.text-3xl,
+html.dark .md\:text-3xl {
+  color: var(--dm-text-prim) !important;
+}
+
+/* Hero sub-text */
+html.dark .dark\:text-slate-400 {
+  color: var(--dm-text-sec) !important;
+}
+
+/* Hero right card ("Institutional Intelligence") */
+html.dark .rounded-2xl.dark\:bg-white\/\[0\.04\],
+html.dark .rounded-2xl.dark\:bg-white\/5 {
+  background-color: #131F30 !important;
+  border-color: #41546B !important;
+}
+
+/* "View Live GMP" secondary button in hero */
+html.dark button.dark\:hover\:bg-white\/5 {
+  color: var(--dm-text-sec) !important;
+}
+html.dark button.dark\:hover\:bg-white\/5:hover {
+  background-color: rgba(255,255,255,0.05) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — STAT CARDS (Open / Upcoming / Closed / Listed)
+   ───────────────────────────────────────────────────────────── */
+/* Stat card container */
+html.dark .dark\:bg-\[\#161c28\],
+html.dark .dark\:bg-\[\#111827\] {
+  background-color: var(--dm-bg-card) !important;
+  border-color: var(--dm-border) !important;
+}
+
+/* Stat number (the big count) */
+html.dark .text-2xl.font-black,
+html.dark .text-3xl.font-black,
+html.dark .text-4xl.font-black,
+html.dark .font-black.dark\:text-white {
+  color: var(--dm-text-prim) !important;
+}
+
+/* Stat title "Open IPOs" etc */
+html.dark .dark\:text-slate-400 {
+  color: var(--dm-text-sec) !important;
+}
+
+/* VIEW ALL link in stat cards */
+html.dark .dark\:text-slate-600,
+html.dark .dark\:text-slate-700 {
+  color: #6F849C !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — ALL CARDS / PANELS (universal card lift)
+   ───────────────────────────────────────────────────────────── */
+/* Any card that has rounded corners + dark bg */
+html.dark [class*="rounded-2xl"][class*="dark:bg-"],
+html.dark [class*="rounded-3xl"][class*="dark:bg-"] {
+  border-color: var(--dm-border);
+}
+
+/* White overlay panels lift */
+html.dark .dark\:bg-white\/10 {
+  background-color: rgba(255,255,255,0.08) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — LIVE GMP STATUS SECTION
+   ───────────────────────────────────────────────────────────── */
+/* Section heading */
+html.dark h3.uppercase,
+html.dark h2.uppercase {
+  color: var(--dm-text-prim) !important;
+}
+
+/* Mainboard / SME toggle buttons (inactive) */
+html.dark .dark\:text-slate-400.cursor-pointer,
+html.dark button.dark\:text-slate-400 {
+  color: var(--dm-text-sec) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — IPO CARDS (GMP cards, list rows)
+   ───────────────────────────────────────────────────────────── */
+/* IPO company name on cards */
+html.dark .text-xs.font-bold.dark\:text-white,
+html.dark .text-sm.font-bold.dark\:text-white {
+  color: #F1F5F9 !important;
+}
+
+/* GMP amount */
+html.dark .font-black.dark\:text-white,
+html.dark .font-bold.dark\:text-white {
+  color: var(--dm-text-prim) !important;
+}
+
+/* Status labels e.g. "Open IPO · SME" */
+html.dark .dark\:text-slate-400.font-semibold {
+  color: #9FB0C4 !important;
+}
+
+/* Positive GMP % badge */
+html.dark .dark\:text-emerald-400 { color: #34D399 !important; }
+html.dark .dark\:text-emerald-300 { color: #6EE7B7 !important; }
+
+/* Negative GMP % badge */
+html.dark .dark\:text-rose-400 { color: #FB7185 !important; }
+html.dark .dark\:text-rose-300 { color: #FDA4AF !important; }
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — TABLES
+   ───────────────────────────────────────────────────────────── */
+html.dark table thead tr {
+  border-bottom-color: var(--dm-border) !important;
+}
+html.dark table tbody tr {
+  border-bottom-color: rgba(38,54,74,0.5) !important;
+}
+html.dark table th {
+  color: var(--dm-text-muted) !important;
+}
+html.dark table td {
+  color: var(--dm-text-sec) !important;
+}
+html.dark table td.dark\:text-white,
+html.dark table .font-bold.dark\:text-white {
+  color: var(--dm-text-prim) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — MODALS / OVERLAYS
+   ───────────────────────────────────────────────────────────── */
+html.dark [class*="fixed"][class*="dark:bg-"] {
+  background-color: var(--dm-bg-card) !important;
+  border-color: var(--dm-border) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — INPUTS & INTERACTIVE ELEMENTS
+   ───────────────────────────────────────────────────────────── */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: #101A29 !important;
+  border-color: var(--dm-border-ui) !important;
+  color: var(--dm-text-prim) !important;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--dm-icon) !important;
+}
+html.dark input:focus,
+html.dark select:focus,
+html.dark textarea:focus {
+  border-color: var(--cc-blue) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(28,155,218,0.18) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — SCROLLBARS
+   ───────────────────────────────────────────────────────────── */
+html.dark ::-webkit-scrollbar-track  { background: transparent; }
+html.dark ::-webkit-scrollbar-thumb  { background: rgba(184,197,214,0.20); border-radius: 99px; }
+html.dark ::-webkit-scrollbar-thumb:hover { background: rgba(184,197,214,0.35); }
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — TOAST
+   ───────────────────────────────────────────────────────────── */
+html.dark .dark\:bg-\[\#161c28\].border.border-emerald-500\/30 {
+  background-color: #111B2B !important;
+  border-color: rgba(34,197,94,0.3) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   LIGHT MODE OVERRIDES (shared utility classes, unchanged)
+   ───────────────────────────────────────────────────────────── */
+
+/* Premium Scrollbars — light */
+::-webkit-scrollbar         { width: 6px; height: 6px; }
+::-webkit-scrollbar-track   { background: transparent; }
+::-webkit-scrollbar-thumb   { background: rgba(148,163,184,0.3); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(148,163,184,0.5); }
+
+/* Glassmorphism */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255,255,255,0.7);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  border: 1px solid rgba(255,255,255,0.6);
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.05);
 }
-
-.dark .glass-panel {
-  background: rgba(22, 28, 42, 0.75);
+html.dark .glass-panel {
+  background: rgba(17,27,43,0.80);
   backdrop-filter: blur(20px) saturate(160%);
   -webkit-backdrop-filter: blur(20px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border: 1px solid rgba(255,255,255,0.07);
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.45);
 }
 
-/* Blue glowing active border classes */
+/* Blue glow */
 .glow-blue {
-  box-shadow: 0 0 14px 2px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 14px 2px rgba(59,130,246,0.25);
   border-color: #3b82f6 !important;
 }
-
-.dark .glow-blue {
-  box-shadow: 0 0 16px 2px rgba(59, 130, 246, 0.4);
-  border-color: #3b82f6 !important;
+html.dark .glow-blue {
+  box-shadow: 0 0 16px 2px rgba(28,155,218,0.4);
+  border-color: var(--cc-blue) !important;
 }
 
-/* Real-time Ticker Price Flash Effects */
-@keyframes flash-up-bg {
-  0% { background-color: rgba(16, 185, 129, 0.35); }
-  100% { background-color: transparent; }
-}
-@keyframes flash-down-bg {
-  0% { background-color: rgba(244, 63, 94, 0.35); }
-  100% { background-color: transparent; }
-}
-.animate-tick-up {
-  animation: flash-up-bg 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-.animate-tick-down {
-  animation: flash-down-bg 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+/* Ticker flash */
+@keyframes flash-up-bg   { 0% { background-color: rgba(16,185,129,0.35); } 100% { background-color: transparent; } }
+@keyframes flash-down-bg  { 0% { background-color: rgba(244,63,94,0.35);  } 100% { background-color: transparent; } }
+.animate-tick-up   { animation: flash-up-bg  1.2s cubic-bezier(0.16,1,0.3,1) forwards; }
+.animate-tick-down { animation: flash-down-bg 1.2s cubic-bezier(0.16,1,0.3,1) forwards; }
 
-/* Calm Capital Premium Redesign Helper Classes */
+/* Hero grid overlay */
 .hero-grid {
   background-size: 32px 32px;
-  background-image: 
-    linear-gradient(rgba(28, 155, 218, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(28, 155, 218, 0.03) 1px, transparent 1px);
-}
-.dark .hero-grid {
-  background-image: 
-    linear-gradient(rgba(28, 155, 218, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(28, 155, 218, 0.05) 1px, transparent 1px);
+  background-image:
+    linear-gradient(rgba(28,155,218,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28,155,218,0.03) 1px, transparent 1px);
 }
 
+/* Gradient text */
 .text-gradient {
   background: linear-gradient(135deg, #1c9bda 0%, #aed768 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
+/* Float animation */
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-4px); }
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-4px); }
   100% { transform: translateY(0px); }
 }
-.animate-float {
-  animation: float 5s ease-in-out infinite;
+.animate-float { animation: float 5s ease-in-out infinite; }
+
+/* Financial bars */
+.financial-bar-container { display: flex; align-items: center; gap: 12px; }
+.financial-bar           { height: 8px; border-radius: 4px; background-color: var(--cc-blue); transition: width 0.6s cubic-bezier(0.16,1,0.3,1); }
+.financial-bar-pat       { background-color: #16A34A; }
+.financial-bar-ebitda    { background-color: #D97706; }
+
+/* ─────────────────────────────────────────────────────────────
+   DARK MODE — ADDITIONAL HIGH-SPECIFICITY OVERRIDES
+   These target the most common problem patterns in the app.
+   ───────────────────────────────────────────────────────────── */
+
+/* Any section/div that has a dark bg class + rounded → ensure border is visible */
+html.dark [class*="rounded"][class*="border"][class*="dark:border-white\/5"],
+html.dark [class*="rounded"][class*="border"][class*="dark:border-white\/10"] {
+  border-color: var(--dm-border) !important;
 }
 
-/* Calm Capital Color Palette Tokens */
-:root {
-  --bg-primary: #F4F8FB;
-  --text-primary: #102A43;
-  --text-secondary: #52667A;
-  --border-primary: #D9E4EC;
-  --color-blue: #1C9BDA;
-  --color-navy: #102A43;
-  --color-green: #AED768;
+/* Headings inside dark cards should be near-white */
+html.dark h1, html.dark h2, html.dark h3, html.dark h4 {
+  color: var(--dm-text-prim);
+}
+/* But allow color utilities to override */
+html.dark h1[class*="text-"],
+html.dark h2[class*="text-"],
+html.dark h3[class*="text-"],
+html.dark h4[class*="text-"] {
+  /* let utility classes win */
 }
 
-/* Light mode overrides for high-contrast professional look */
-html:not(.dark) body {
-  background-color: var(--bg-primary) !important;
-  color: var(--text-primary) !important;
+/* Uppercase section labels (e.g. "LIVE GMP STATUS") */
+html.dark .uppercase.tracking-wider {
+  color: var(--dm-text-sec) !important;
+}
+/* But headings that are uppercase+white should stay white */
+html.dark h2.uppercase.tracking-wider.dark\:text-white,
+html.dark h3.uppercase.tracking-wider.dark\:text-white {
+  color: var(--dm-text-prim) !important;
 }
 
-html:not(.dark) .text-slate-900,
-html:not(.dark) .text-slate-855,
-html:not(.dark) .text-slate-850,
-html:not(.dark) .text-slate-805,
-html:not(.dark) .text-slate-800 {
-  color: #102A43 !important;
+/* paragraph text muted */
+html.dark p.dark\:text-slate-400,
+html.dark p.dark\:text-slate-500 {
+  color: var(--dm-text-sec) !important;
+}
+html.dark span.dark\:text-slate-400,
+html.dark span.dark\:text-slate-500 {
+  color: var(--dm-text-sec) !important;
 }
 
-html:not(.dark) .text-slate-700,
-html:not(.dark) .text-slate-655,
-html:not(.dark) .text-slate-600 {
-  color: #334E68 !important;
+/* ─── IPO detail full page ───────────────────────────────────── */
+html.dark .space-y-6.animate-fade-in h2,
+html.dark .space-y-6.animate-fade-in h3 {
+  color: var(--dm-text-prim) !important;
 }
 
-html:not(.dark) .text-slate-555,
-html:not(.dark) .text-slate-500,
-html:not(.dark) .text-slate-455,
-html:not(.dark) .text-slate-450 {
-  color: #52667A !important;
+/* ─── Tooltip popups ─────────────────────────────────────────── */
+html.dark .shadow-2xl.rounded-2xl.dark\:bg-slate-900 {
+  background-color: #0E1928 !important;
+  border-color: var(--dm-border-ui) !important;
+}
+html.dark .dark\:bg-slate-900 {
+  background-color: #0E1928 !important;
 }
 
-html:not(.dark) .text-slate-400 {
-  color: #627D98 !important;
+/* ─── GMP bar chart rows ─────────────────────────────────────── */
+html.dark .gmp-row:hover,
+html.dark [class*="rounded-xl"].hover\:bg-slate-50:hover {
+  background-color: rgba(17,27,43,0.9) !important;
 }
 
-html:not(.dark) .border-slate-100,
-html:not(.dark) .border-slate-150,
-html:not(.dark) .border-slate-200,
-html:not(.dark) .border-slate-205,
-html:not(.dark) .border-slate-300 {
-  border-color: #D9E4EC !important;
+/* ─── Toggle / tab pills ─────────────────────────────────────── */
+html.dark .dark\:text-slate-400.hover\:text-slate-800 {
+  color: var(--dm-text-sec) !important;
+}
+html.dark .dark\:hover\:text-slate-200:hover {
+  color: var(--dm-text-prim) !important;
 }
 
-html:not(.dark) .bg-slate-50 {
-  background-color: #F4F8FB !important;
+/* ─── "View All →" links ─────────────────────────────────────── */
+html.dark a.text-\[\#1c9bda\],
+html.dark button.text-\[\#1c9bda\] {
+  color: var(--cc-blue) !important;
+}
+html.dark a.text-\[\#1c9bda\]:hover,
+html.dark button.text-\[\#1c9bda\]:hover {
+  color: var(--cc-blue-light) !important;
 }
 
-html:not(.dark) .bg-slate-100 {
-  background-color: #EAF6FC !important;
+/* ─── IPO Calculator inputs ──────────────────────────────────── */
+html.dark .dark\:bg-\[\#111827\] input {
+  background-color: #0E1928 !important;
+  border-color: var(--dm-border-ui) !important;
+  color: var(--dm-text-prim) !important;
 }
 
-/* Financial visual comparison bars styles */
-.financial-bar-container {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+/* ─── About / Legal pages ────────────────────────────────────── */
+html.dark article p,
+html.dark .prose p {
+  color: var(--dm-text-sec) !important;
 }
-.financial-bar {
-  height: 8px;
-  border-radius: 4px;
-  background-color: var(--color-blue);
-  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.financial-bar-pat {
-  background-color: #16A34A;
-}
-.financial-bar-ebitda {
-  background-color: #D97706;
+html.dark article h1,
+html.dark article h2,
+html.dark article h3,
+html.dark .prose h1,
+html.dark .prose h2,
+html.dark .prose h3 {
+  color: var(--dm-text-prim) !important;
 }
 
+/* ─── Footer ─────────────────────────────────────────────────── */
+html.dark footer {
+  background-color: var(--dm-bg-sidebar) !important;
+  border-top-color: var(--dm-border) !important;
+}
+html.dark footer p,
+html.dark footer span,
+html.dark footer a {
+  color: var(--dm-text-muted) !important;
+}
+html.dark footer a:hover {
+  color: var(--cc-blue) !important;
+}
 
+/* ─── Watchlist empty state ──────────────────────────────────── */
+html.dark .dark\:text-slate-600 {
+  color: #6F849C !important;
+}

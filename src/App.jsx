@@ -453,30 +453,62 @@ function getLiveIPOS() {
   return dedupeIpoList(mergedList);
 }
 
+export function normalizeIPO(raw) {
+  if (!raw) return null;
+  const company = String(raw.company || raw.name || raw.id || "IPO").trim();
+  const type = String(raw.type || "Mainboard").toUpperCase().includes("SME") ? "SME" : "Mainboard";
+  const status = getComputedStatus(raw);
+  const id = String(raw.id || "").toLowerCase().trim();
+  const slug = String(raw.slug || id).toLowerCase().trim();
+
+  return {
+    ...raw,
+    id,
+    slug,
+    company,
+    name: displayIpoName(raw),
+    type,
+    status,
+    strengths: Array.isArray(raw.strengths) ? raw.strengths : [],
+    risks: Array.isArray(raw.risks) ? raw.risks : [],
+    gmpHistory: Array.isArray(raw.gmpHistory) ? raw.gmpHistory : [],
+    about: typeof raw.about === "string" ? raw.about : "",
+    priceMin: raw.priceMin != null ? Number(raw.priceMin) : null,
+    priceMax: raw.priceMax != null ? Number(raw.priceMax) : null,
+    lot: raw.lot != null ? Number(raw.lot) : null,
+    gmp: raw.gmp != null ? Number(raw.gmp) : null,
+    issueSize: raw.issueSize != null ? Number(raw.issueSize) : null,
+    freshIssue: raw.freshIssue != null ? Number(raw.freshIssue) : null,
+    ofs: raw.ofs != null ? Number(raw.ofs) : null,
+    sub: raw.sub && typeof raw.sub === "object" ? raw.sub : null,
+    fin: raw.fin && typeof raw.fin === "object" ? raw.fin : null,
+  };
+}
+
 function findIpoByIdOrSlug(idOrSlug) {
   if (!idOrSlug) return null;
   try {
     const all = getLiveIPOS();
     const target = String(idOrSlug).toLowerCase().trim();
 
-    return (
-      all.find((i) => {
-        if (!i) return false;
-        const id = String(i.id || "").toLowerCase();
-        const slug = String(i.slug || "").toLowerCase();
-        if (id === target || slug === target) return true;
-        const cleanId = id.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
-        const cleanTarget = target.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
-        if (cleanId === cleanTarget) return true;
-        
-        const iTokens = companyTokens(i.company || i.name);
-        const targetTokens = companyTokens(target);
-        if (iTokens.length > 0 && targetTokens.length > 0 && iTokens.join("-") === targetTokens.join("-")) {
-          return true;
-        }
-        return false;
-      }) || null
-    );
+    const match = all.find((i) => {
+      if (!i) return false;
+      const id = String(i.id || "").toLowerCase();
+      const slug = String(i.slug || "").toLowerCase();
+      if (id === target || slug === target) return true;
+      const cleanId = id.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
+      const cleanTarget = target.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
+      if (cleanId === cleanTarget) return true;
+      
+      const iTokens = companyTokens(i.company || i.name);
+      const targetTokens = companyTokens(target);
+      if (iTokens.length > 0 && targetTokens.length > 0 && iTokens.join("-") === targetTokens.join("-")) {
+        return true;
+      }
+      return false;
+    });
+
+    return match ? normalizeIPO(match) : null;
   } catch (err) {
     console.error("Error finding IPO by ID/slug:", err);
     return null;
@@ -2503,6 +2535,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
   const isClosed = status === "Closed";
   const isListed = status === "Listed";
   const today = new Date();
+  const biddingDay = getIpoBiddingDay(ipo, today);
 
   const minInvestment = ipo.lot ? (price(ipo) * ipo.lot) : null;
   const cutoffPrice = ipo.priceMax || price(ipo);
@@ -3668,137 +3701,137 @@ function GMPTab({ tick, onOpen }) {
         if (sa !== sb) return sa - sb;
         return gainPct(b) - gainPct(a);
       })
-      .map((i) => ({ 
-        name: i.name, 
+      .map((i) => ({
+        company: i.company || i.name || i.id || "Unknown IPO",
         pct: Number(gainPct(i).toFixed(1)),
         gmp: i.gmp,
         status: getComputedStatus(i),
-        dateRange: `${i.open || 'TBA'} to ${i.close || 'TBA'}`,
         rawIpo: i
       }));
   }, [tick]);
 
+  const [hovered, setHovered] = useState(null);
+  const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
+
+  const maxPct = useMemo(() => {
+    const m = Math.max(...data.map((d) => Math.abs(d.pct)), 1);
+    return Math.ceil(m * 1.12);
+  }, [data]);
+
+  const statusColors = {
+    Open:     { bar: "from-emerald-700 to-emerald-500", badge: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" },
+    Upcoming: { bar: "from-amber-700 to-amber-500",     badge: "bg-amber-500/15 text-amber-600 dark:text-amber-400" },
+    Closed:   { bar: "from-slate-600 to-slate-400",     badge: "bg-slate-500/15 text-slate-500 dark:text-slate-400" },
+  };
+
   return (
     <div className="bg-white dark:bg-[#161c28] border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm dark:shadow-xl">
+      {/* Header */}
       <div className="flex items-center gap-2 mb-6">
         <BarChart3 size={16} className="text-slate-500" />
         <h2 className="text-xs uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">
-          GMP % gain — Upcoming, Open & Closed IPOs (Click to view details)
+          GMP % Gain — Upcoming, Open &amp; Closed IPOs (Click to view details)
         </h2>
       </div>
-      
-      {(() => {
-        const truncateName = (name) => {
-          if (!name) return "";
-          return name.length > 20 ? `${name.slice(0, 18)}...` : name;
-        };
 
-        return (
-          <ResponsiveContainer width="100%" height={Math.max(400, data.length * 36)}>
-            <BarChart data={data} layout="vertical" margin={{ left: 10, right: 70, top: 4, bottom: 4 }}>
-              <defs>
-                <linearGradient id="gmpGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#1a5d3f" />
-                  <stop offset="100%" stopColor="#2eaf73" />
-                </linearGradient>
-                <linearGradient id="neutralGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#64748b" />
-                  <stop offset="100%" stopColor="#94a3b8" />
-                </linearGradient>
-              </defs>
-              
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.12)" horizontal={false} vertical={true} />
-              <XAxis type="number" stroke="#94a3b8" fontSize={11} tickFormatter={(v) => `${v}%`} axisLine={false} tickLine={false} domain={[0, (max) => Math.ceil(max * 1.15)]} />
-              <YAxis 
-                type="category" 
-                dataKey="name" 
-                stroke="#64748b" 
-                fontSize={11} 
-                fontWeight={600} 
-                width={175} 
-                interval={0} 
-                axisLine={false} 
-                tickLine={false}
-                tick={(props) => {
-                  const { x, y, payload } = props;
-                  const item = data.find((d) => d.name === payload.value);
-                  return (
-                    <g 
-                      transform={`translate(${x},${y})`} 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (item?.rawIpo) onOpen?.(item.rawIpo);
-                      }}
-                      className="cursor-pointer group"
-                    >
-                      <text 
-                        x={-165} 
-                        y={0} 
-                        dy={4} 
-                        textAnchor="start" 
-                        fill="currentColor" 
-                        className="text-slate-600 group-hover:text-[#1c9bda] dark:text-slate-400 dark:group-hover:text-[#1c9bda] transition-colors"
-                      >
-                        {truncateName(payload.value)}
-                      </text>
-                    </g>
-                  );
-                }}
-              />
-              
-              <Tooltip 
-                content={({ active, payload }) => {
-                  if (active && payload && payload.length) {
-                    const item = payload[0].payload;
-                    return (
-                      <div className="bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-800 p-3 rounded-2xl shadow-xl text-xs space-y-2">
-                        <div className="flex items-center gap-2">
-                          <CompanyAvatar name={item.name} logoUrl={item.rawIpo?.logoUrl} size={28} />
-                          <p className="font-bold text-slate-800 dark:text-slate-100">{item.name}</p>
-                        </div>
-                        <p className="text-slate-400 dark:text-slate-550 font-mono">{item.dateRange}</p>
-                        <p className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">GMP: {item.pct}% (₹{item.gmp})</p>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 italic">Click to open details</p>
-                      </div>
-                    );
-                  }
-                  return null;
-                }}
-                cursor={{ fill: "rgba(148, 163, 184, 0.04)" }} 
-              />
-              
-              <Bar 
-                dataKey="pct" 
-                radius={[0, 6, 6, 0]} 
-                barSize={20}
-                onClick={(entry) => {
-                  if (entry?.rawIpo) onOpen?.(entry.rawIpo);
-                }}
-                style={{ cursor: "pointer" }}
+      {data.length === 0 ? (
+        <div className="text-center py-12 text-slate-400 dark:text-slate-500 text-sm">
+          No GMP data available for active IPOs right now.
+        </div>
+      ) : (
+        <div className="space-y-1.5" style={{ position: "relative" }}>
+          {data.map((entry, idx) => {
+            const barWidthPct = Math.max((Math.abs(entry.pct) / maxPct) * 100, entry.pct !== 0 ? 1.5 : 0);
+            const colors = statusColors[entry.status] || statusColors.Closed;
+            const isNeg = entry.pct < 0;
+            const isHov = hovered === idx;
+
+            return (
+              <div
+                key={entry.rawIpo?.id || idx}
+                className={"group flex items-center gap-3 py-2 px-3 rounded-xl transition-all cursor-pointer select-none " + (isHov ? "bg-slate-50 dark:bg-white/[0.04] shadow-sm" : "hover:bg-slate-50 dark:hover:bg-white/[0.04]")}
+                style={{ minHeight: "44px" }}
+                onClick={() => { if (entry.rawIpo) onOpen?.(entry.rawIpo); }}
+                onMouseEnter={(e) => { setHovered(idx); setTooltipPos({ x: e.clientX, y: e.clientY }); }}
+                onMouseMove={(e) => setTooltipPos({ x: e.clientX, y: e.clientY })}
+                onMouseLeave={() => setHovered(null)}
               >
-                {data.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={entry.pct > 0 ? "url(#gmpGradient)" : "url(#neutralGradient)"} 
-                  />
-                ))}
-                <LabelList 
-                  dataKey="pct" 
-                  position="right" 
-                  offset={8}
-                  fill="#64748b" 
-                  fontSize={10} 
-                  fontWeight={700} 
-                  formatter={(v) => v > 0 ? `${v}%` : ""} 
-                />
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        );
-      })()}
+                {/* Column 1: Company name — 35% width, wraps to 2 lines */}
+                <div style={{ width: "35%", minWidth: "35%", flexShrink: 0 }}>
+                  <span
+                    className={"text-xs font-semibold leading-snug transition-colors " + (isHov ? "text-[#1c9bda]" : "text-slate-700 dark:text-slate-300 group-hover:text-[#1c9bda]")}
+                    style={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", wordBreak: "break-word" }}
+                  >
+                    {entry.company}
+                  </span>
+                </div>
+
+                {/* Column 2: Bar track — fills remaining space */}
+                <div className="flex-1 flex items-center" style={{ minWidth: 0 }}>
+                  <div className="relative w-full h-5 rounded-full bg-slate-100 dark:bg-white/[0.05] overflow-hidden">
+                    <div
+                      className={"absolute left-0 top-0 h-full rounded-full bg-gradient-to-r transition-all duration-500 " + (isNeg ? "from-rose-700 to-rose-400" : colors.bar)}
+                      style={{ width: barWidthPct + "%" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Column 3: Percentage — fixed 56px, right-aligned */}
+                <div style={{ width: "56px", minWidth: "56px", textAlign: "right", flexShrink: 0 }}>
+                  <span className={"text-xs font-bold font-mono tabular-nums " + (isNeg ? "text-rose-600 dark:text-rose-400" : entry.pct > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-slate-500")}>
+                    {entry.pct > 0 ? "+" : ""}{entry.pct}%
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Hover tooltip — fixed-positioned, follows cursor */}
+          {hovered !== null && data[hovered] && (() => {
+            const entry = data[hovered];
+            const colors = statusColors[entry.status] || statusColors.Closed;
+            const cutoff = entry.rawIpo?.priceMax || (entry.rawIpo ? price(entry.rawIpo) : null);
+            return (
+              <div
+                className="fixed z-[9999] pointer-events-none"
+                style={{ left: tooltipPos.x + 16, top: tooltipPos.y - 16 }}
+              >
+                <div className="bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-700 rounded-2xl shadow-2xl p-3.5 space-y-1.5 min-w-[200px] max-w-[260px]">
+                  <div className="flex items-start gap-2">
+                    <CompanyAvatar name={entry.company} logoUrl={entry.rawIpo?.logoUrl} size={28} />
+                    <p className="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight">{entry.company}</p>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                    <span className={"text-[10px] font-bold px-2 py-0.5 rounded-full " + colors.badge}>{entry.status}</span>
+                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{entry.rawIpo?.type || ""}</span>
+                  </div>
+                  <div className="pt-1 border-t border-slate-100 dark:border-white/10 space-y-1">
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400">GMP</span>
+                      <span className="text-xs font-bold font-mono text-slate-800 dark:text-white">{entry.gmp >= 0 ? "+" : ""}&#8377;{entry.gmp}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[10px] text-slate-500 dark:text-slate-400">GMP %</span>
+                      <span className={"text-xs font-bold font-mono " + (entry.pct < 0 ? "text-rose-500" : "text-emerald-500")}>{entry.pct > 0 ? "+" : ""}{entry.pct}%</span>
+                    </div>
+                    {cutoff && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400">Price</span>
+                        <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">&#8377;{cutoff}</span>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-[9px] text-slate-400 dark:text-slate-500 italic pt-0.5">Click to view full IPO details</p>
+                </div>
+              </div>
+            );
+          })()}
+        </div>
+      )}
     </div>
   );
 }
+
 
 /* =====================================================================
    SUBSCRIPTION DETAILS & ALLOTMENT PROBABILITY ENGINE
@@ -4911,13 +4944,13 @@ function StatCard({ icon: Icon, label, value, tint, onClick }) {
       role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : undefined}
       onKeyDown={clickable ? (e) => (e.key === "Enter" || e.key === " ") && onClick() : undefined}
-      className={`bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all duration-200
-        ${clickable ? "cursor-pointer hover:shadow-lg hover:-translate-y-0.5 hover:border-blue-200 dark:hover:border-blue-900 active:scale-95" : ""}`}
+      className={`bg-white dark:bg-[#111B2B] border border-slate-150 dark:border-[#26364A] rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all duration-200
+        ${clickable ? "cursor-pointer hover:shadow-lg hover:-translate-y-0.5 hover:border-blue-200 dark:hover:border-[#1c9bda]/40 active:scale-95" : ""}`}
     >
       <div>
-        <p className="text-3xl font-extrabold text-slate-850 dark:text-white font-mono tracking-tight leading-none">{value}</p>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 font-semibold tracking-wide">{label}</p>
-        {clickable && <p className="text-[9px] text-slate-400 dark:text-slate-600 mt-1 tracking-wider uppercase">View all →</p>}
+        <p className="text-3xl font-extrabold text-slate-850 dark:text-[#F8FAFC] font-mono tracking-tight leading-none">{value}</p>
+        <p className="text-xs text-slate-500 dark:text-[#B8C5D6] mt-1.5 font-semibold tracking-wide">{label}</p>
+        {clickable && <p className="text-[9px] text-slate-400 dark:text-[#6F849C] mt-1 tracking-wider uppercase">View all →</p>}
       </div>
       <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-110" style={{ background: tint }}>
         <Icon size={18} color="#ffffff" strokeWidth={2.2} />
@@ -5447,8 +5480,8 @@ export default function App() {
               : `${sidebarOpen ? "w-60" : "w-0"} transition-all duration-300 overflow-hidden shrink-0`
           } border-r`}
           style={{ 
-            borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC",
-            background: dark ? "#0a0d16" : "#EAF6FC"
+            borderColor: dark ? "rgba(38,54,74,0.8)" : "#D9E4EC",
+            background: dark ? "#080E19" : "#EAF6FC"
           }}>
           <div className="w-60 p-4 flex flex-col h-full">
             {/* Brand */}
@@ -5456,8 +5489,8 @@ export default function App() {
               <div className="flex items-center gap-3">
                 <img src="/logo.png" alt="Calm Capital Logo" className="w-9 h-9 object-contain rounded-xl" />
                 <div className="flex flex-col">
-                  <p className="text-sm font-bold tracking-tight leading-tight" style={{ color: dark ? "#fff" : "#1e293b" }}>Calm Capital</p>
-                  <p className="text-[10px] font-semibold tracking-wider uppercase mt-0.5" style={{ color: dark ? "#94a3b8" : "#64748b" }}>Designed by Discipline</p>
+                  <p className="text-sm font-bold tracking-tight leading-tight" style={{ color: dark ? "#F8FAFC" : "#1e293b" }}>Calm Capital</p>
+                  <p className="text-[10px] font-semibold tracking-wider uppercase mt-0.5" style={{ color: dark ? "#8293A8" : "#64748b" }}>Designed by Discipline</p>
                 </div>
               </div>
               <button onClick={() => setSidebarOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-black/5 rounded-lg mt-0.5">
@@ -5480,15 +5513,15 @@ export default function App() {
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold relative transition-all no-underline cursor-pointer group ${
                       isActive
-                        ? "bg-[#1c9bda]/12 dark:bg-[#1c9bda]/20 text-[#1c9bda] dark:text-[#52b1e4] font-bold border-l-[3px] border-[#1c9bda] pl-2.5 shadow-xs"
-                        : "text-slate-700 dark:text-slate-200 hover:bg-[#1c9bda]/5 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white pl-3 font-semibold"
+                        ? "bg-[#1c9bda]/15 dark:bg-[#1c9bda]/20 text-[#1c9bda] dark:text-[#52b1e4] font-bold border-l-[3px] border-[#1c9bda] pl-2.5 shadow-xs"
+                        : "text-slate-700 dark:text-[#C2D0E0] hover:bg-[#1c9bda]/8 dark:hover:bg-[#1c9bda]/10 hover:text-slate-900 dark:hover:text-[#38BDF8] pl-3 font-semibold"
                     }`}
                   >
                     <IconComponent
                       size={16}
                       strokeWidth={isActive ? 2.4 : 2.2}
                       className={`shrink-0 transition-colors ${
-                        isActive ? "text-[#1c9bda] dark:text-[#52b1e4]" : "text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200"
+                        isActive ? "text-[#1c9bda] dark:text-[#52b1e4]" : "text-slate-600 dark:text-[#8FA3BA] group-hover:text-slate-800 dark:group-hover:text-[#38BDF8]"
                       }`}
                     />
                     <span className="truncate tracking-tight">{n.label}</span>
@@ -5504,8 +5537,8 @@ export default function App() {
           {/* HEADER */}
           <header className="flex items-center gap-3 px-5 py-4 border-b sticky top-0 z-20 backdrop-blur-lg"
             style={{ 
-              borderColor: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)", 
-              background: dark ? "rgba(10,13,22,0.8)" : "rgba(255,255,255,0.8)" 
+              borderColor: dark ? "rgba(38,54,74,0.9)" : "rgba(0,0,0,0.05)", 
+              background: dark ? "rgba(10,16,28,0.88)" : "rgba(255,255,255,0.88)" 
             }}>
             {!sidebarOpen && (
               <button onClick={() => setSidebarOpen(true)} className="text-slate-400 hover:text-slate-700 p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg mr-1">
@@ -5516,12 +5549,12 @@ export default function App() {
             <div className="relative flex-1 max-w-sm">
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search for company IPOs..."
-                className="w-full bg-white dark:bg-[#0e1320] border border-slate-200 dark:border-slate-800 rounded-2xl pl-9 pr-4 py-2 text-base md:text-sm outline-none shadow-sm focus:glow-blue placeholder:text-slate-400 text-slate-800 dark:text-slate-200" />
+                className="w-full bg-white dark:bg-[#101A29] border border-slate-200 dark:border-[#34465C] rounded-2xl pl-9 pr-4 py-2 text-base md:text-sm outline-none shadow-sm focus:glow-blue placeholder:text-slate-400 dark:placeholder:text-[#8FA3BA] text-slate-800 dark:text-[#F8FAFC]" />
             </div>
 
             <div className="ml-auto flex items-center gap-2.5 relative">
               <div className="hidden sm:flex items-center">
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121625]/30 text-slate-600 dark:text-slate-300 shadow-sm cursor-default">
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#111B2B]/80 text-slate-600 dark:text-[#C9D6E5] shadow-sm cursor-default">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -5530,11 +5563,11 @@ export default function App() {
                 </div>
               </div>
 
-              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121625]/30 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative">
+              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#111B2B]/80 hover:border-slate-300 dark:hover:border-[#1c9bda] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-slate-700 dark:hover:text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative">
                 <RefreshCw size={14} className={refreshing ? "animate-spin text-[#1c9bda]" : ""} />
               </button>
               <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />
-              <button onClick={() => setDark((d) => !d)} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/30 dark:bg-[#121625]/30 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-700 shadow-sm">
+              <button onClick={() => setDark((d) => !d)} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#111B2B]/80 hover:border-slate-300 dark:hover:border-[#1c9bda] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-slate-700 shadow-sm">
                 {dark ? <Sun size={14} /> : <Moon size={14} />}
               </button>
             </div>
@@ -5605,7 +5638,7 @@ export default function App() {
                         Calm Capital — Live GMP & Institutional-Grade IPO Analysis
                       </h1>
                       
-                      <p className="text-sm leading-relaxed text-slate-550 dark:text-slate-400">
+                      <p className="text-sm leading-relaxed text-slate-550 dark:text-[#B8C5D6]">
                         Live GMP, IPO subscriptions, allotment chances, financials, DRHP/RHP, listing data and more, all in one place.
                       </p>
 
@@ -5619,10 +5652,10 @@ export default function App() {
                         </button>
                         <button
                           onClick={() => navigateToTab("gmp")}
-                          className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer hover:bg-slate-50 dark:hover:bg-white/5 hover:scale-[1.02] bg-transparent"
+                          className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer hover:bg-slate-50 dark:hover:bg-[#1c9bda]/8 hover:scale-[1.02] bg-transparent"
                           style={{
-                            borderColor: dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.12)",
-                            color: dark ? "#e2e8f0" : "#475569"
+                            borderColor: dark ? "rgba(52,70,92,0.9)" : "rgba(0,0,0,0.12)",
+                            color: dark ? "#B8C5D6" : "#475569"
                           }}
                         >
                           View Live GMP
@@ -5632,16 +5665,16 @@ export default function App() {
 
                     {/* Right Column: Visual Graphics Card */}
                     <div className="md:col-span-5 hidden md:block">
-                      <div className="relative p-6 rounded-2xl glass border border-slate-205 dark:border-white/5 animate-float flex flex-col items-center text-center space-y-3">
+                      <div className="relative p-6 rounded-2xl border border-[#26364A] dark:border-[#41546B] dark:bg-[#131F30] bg-white/60 animate-float flex flex-col items-center text-center space-y-3" style={dark ? { background: '#131F30' } : {}}>
                         {/* Styled visual chart/avatar represent Calm Capital discipline */}
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1c9bda] to-[#aed768] flex items-center justify-center text-white shadow-lg">
                           <Activity size={22} />
                         </div>
-                        <h4 className="text-sm font-bold text-slate-800 dark:text-white">Institutional Intelligence</h4>
-                        <p className="text-[11px] text-slate-400 dark:text-slate-550 leading-relaxed max-w-[200px]">
+                        <h4 className="text-sm font-bold text-slate-800 dark:text-[#F8FAFC]">Institutional Intelligence</h4>
+                        <p className="text-[11px] text-slate-400 dark:text-[#8FA3BA] leading-relaxed max-w-[200px]">
                           Real-time multi-source verified data, tracked with financial discipline.
                         </p>
-                        <div className="flex gap-2 items-center text-[10px] font-bold text-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/20 px-2.5 py-1 rounded-full border border-emerald-500/10">
+                        <div className="flex gap-2 items-center text-[10px] font-bold text-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/15 px-2.5 py-1 rounded-full border border-emerald-500/20">
                           <span className="relative flex h-1.5 w-1.5">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
