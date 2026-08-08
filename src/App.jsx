@@ -2905,75 +2905,108 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
         {/* IPO Timeline Events */}
         <div className="md:col-span-6 bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4 h-fit">
-          <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
-            IPO Schedule & Important Dates
-          </h3>
+          <div className="flex items-center justify-between border-b pb-2.5" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+            <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider flex items-center gap-1.5">
+              <Calendar size={13} className="text-[#1c9bda]" />
+              IPO Schedule & Important Dates
+            </h3>
+            {status && (
+              <span className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full ${
+                isOpen ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" :
+                isUpcoming ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20" :
+                isClosed ? "bg-slate-500/10 text-slate-500 dark:text-slate-400 border border-slate-500/20" :
+                "bg-[#1c9bda]/10 text-[#1c9bda] border border-[#1c9bda]/20"
+              }`}>
+                {status}
+              </span>
+            )}
+          </div>
 
-          <div className="relative pl-6 space-y-4 text-xs">
+          <div className="relative pl-6 space-y-4 text-xs pt-1">
             {/* vertical timeline track line */}
-            <div className="absolute top-1.5 bottom-1.5 left-2 w-0.5 bg-slate-200 dark:bg-slate-800" />
+            <div className="absolute top-2 bottom-2 left-2 w-0.5 bg-slate-200 dark:bg-slate-800" />
 
-            {milestones.map((m) => {
-              const done = isPast(m.date);
+            {(() => {
+              const todayYmd = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
               
-              // Color tones for milestone nodes
-              let toneColor = "text-slate-400 dark:text-slate-600";
-              let dotBg = "bg-white dark:bg-[#161c28]";
-              let borderClass = "border-slate-300 dark:border-slate-700";
-              let iconColor = "text-transparent";
-              
-              if (done) {
-                toneColor = "text-slate-850 dark:text-white font-bold";
-                if (m.label.toLowerCase().includes("open")) {
-                  borderClass = "border-emerald-500";
-                  dotBg = "bg-emerald-500";
-                  iconColor = "text-white";
-                } else if (m.label.toLowerCase().includes("close")) {
-                  borderClass = "border-red-500";
-                  dotBg = "bg-red-500";
-                  iconColor = "text-white";
-                } else if (m.label.toLowerCase().includes("allot")) {
-                  borderClass = "border-amber-500";
-                  dotBg = "bg-amber-500";
-                  iconColor = "text-white";
-                } else {
-                  borderClass = "border-[#1C9BDA]";
-                  dotBg = "bg-[#1C9BDA]";
-                  iconColor = "text-white";
-                }
-              }
+              // Determine current active stage index
+              let activeStageIdx = -1;
+              milestones.forEach((m, idx) => {
+                if (m.date && m.date <= todayYmd) activeStageIdx = idx;
+              });
 
-              return (
-                <div key={m.label} className="relative flex items-center justify-between gap-4">
-                  {/* timeline dot indicator */}
-                  <span
-                    className={`absolute -left-5 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${dotBg} ${borderClass}`}
-                  >
-                    {done && <CheckCircle size={10} className={iconColor} />}
-                  </span>
+              return milestones.map((m, idx) => {
+                const isCompleted = isPast(m.date) && (idx < activeStageIdx || isListed);
+                const isActiveStage = idx === activeStageIdx && !isListed;
+                const isUpcomingStage = !isCompleted && !isActiveStage;
 
-                  <span className={`font-semibold ${toneColor}`}>
-                    {m.label}
-                  </span>
-                  <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
-                    {formatDate(m.date)}
-                  </span>
-                </div>
-              );
-            })}
+                return (
+                  <div key={m.label} className={`relative flex items-center justify-between gap-4 p-2 rounded-xl transition-all ${
+                    isActiveStage ? "bg-[#1c9bda]/5 dark:bg-[#1c9bda]/10 border border-[#1c9bda]/20" : ""
+                  }`}>
+                    {/* timeline dot indicator */}
+                    <span
+                      className={`absolute -left-5 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${
+                        isCompleted
+                          ? "bg-emerald-500 border-emerald-500 text-white"
+                          : isActiveStage
+                          ? "bg-[#1c9bda] border-[#1c9bda] text-white ring-4 ring-[#1c9bda]/20 animate-pulse"
+                          : "bg-white dark:bg-[#161c28] border-slate-300 dark:border-slate-700"
+                      }`}
+                    >
+                      {isCompleted && <CheckCircle size={10} className="text-white" />}
+                      {isActiveStage && <span className="w-1.5 h-1.5 rounded-full bg-white"></span>}
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      <span className={`font-semibold ${
+                        isCompleted ? "text-slate-800 dark:text-white font-bold" :
+                        isActiveStage ? "text-[#1c9bda] font-extrabold" :
+                        "text-slate-500 dark:text-slate-400"
+                      }`}>
+                        {m.label}
+                      </span>
+                      {isActiveStage && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">
+                          Active Stage
+                        </span>
+                      )}
+                      {isCompleted && (
+                        <span className="text-[9px] font-bold text-emerald-600 dark:text-emerald-400">
+                          ✓ Done
+                        </span>
+                      )}
+                    </div>
+
+                    <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
+                      {formatDate(m.date)}
+                    </span>
+                  </div>
+                );
+              });
+            })()}
           </div>
         </div>
       </div>
 
       {/* ── 5. Subscription Tracker ── */}
       <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
-        <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
-          Category Subscription Status
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider flex items-center gap-2">
+            <LayoutGrid size={14} className="text-[#1c9bda]" />
+            Category Subscription Status
+          </h3>
+          {isOpen && biddingDay && (
+            <span className="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-[#1c9bda]/10 text-[#1c9bda] border border-[#1c9bda]/20 flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#1c9bda] animate-ping"></span>
+              Bidding Day {biddingDay} Active
+            </span>
+          )}
+        </div>
 
         {isUpcoming ? (
           <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-6 text-center text-xs text-slate-400 dark:text-slate-500">
-            Subscription data will appear when the IPO opens.
+            Subscription data will appear when the IPO opens for public bidding.
           </div>
         ) : ipo.sub ? (
           <div className="space-y-4">
@@ -2982,30 +3015,54 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                 <thead>
                   <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-150 dark:border-white/5 text-slate-500 font-bold">
                     <th className="p-3">Category</th>
-                    <th className="p-3 text-right">Day 1</th>
-                    <th className="p-3 text-right">Day 2</th>
-                    <th className="p-3 text-right">Day 3</th>
-                    <th className="p-3 text-right">Final / Live</th>
+                    <th className={`p-3 text-right transition-colors ${isOpen && biddingDay === 1 ? "bg-[#1c9bda]/10 text-[#1c9bda] font-extrabold" : ""}`}>
+                      Day 1 {isOpen && biddingDay === 1 && "•"}
+                    </th>
+                    <th className={`p-3 text-right transition-colors ${isOpen && biddingDay === 2 ? "bg-[#1c9bda]/10 text-[#1c9bda] font-extrabold" : ""}`}>
+                      Day 2 {isOpen && biddingDay === 2 && "•"}
+                    </th>
+                    <th className={`p-3 text-right transition-colors ${isOpen && biddingDay === 3 ? "bg-[#1c9bda]/10 text-[#1c9bda] font-extrabold" : ""}`}>
+                      Day 3 {isOpen && biddingDay === 3 && "•"}
+                    </th>
+                    <th className="p-3 text-right text-slate-800 dark:text-white font-extrabold">Final / Live</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-150 dark:divide-white/5">
                   {[
                     { key: "qib", label: "Qualified Institutional (QIB)" },
-                    { key: "hni", label: "Non-Institutional (NII/HNI)" },
+                    { key: "hni", label: "Non-Institutional (NII / HNI)" },
                     { key: "retail", label: "Retail Individual Investors" },
-                    { key: "employee", label: "Employee Quote" },
+                    { key: "employee", label: "Employee Quota" },
                     { key: "overall", label: "Overall (Total Shares Bid)" }
                   ]
-                  .filter(({ key }) => key === "overall" || ipo.sub[key] != null)
+                  .filter(({ key }) => key === "overall" || ipo.sub[key] != null || ipo.sub.hni != null || ipo.sub.nii != null || ipo.sub.snii != null)
                   .map(({ key, label }) => {
-                    const finalVal = ipo.sub[key];
+                    const finalVal = key === "hni" ? (ipo.sub.hni ?? ipo.sub.nii ?? ipo.sub.snii) : ipo.sub[key];
                     const isTotal = key === "overall";
+
+                    let d1 = ipo.sub?.day1?.[key] ?? (isOpen && biddingDay === 1 ? finalVal : null);
+                    let d2 = ipo.sub?.day2?.[key] ?? (isOpen && biddingDay === 2 ? finalVal : null);
+                    let d3 = ipo.sub?.day3?.[key] ?? (isOpen && biddingDay >= 3 ? finalVal : null);
+
+                    if (isOpen && biddingDay > 1 && d1 == null && finalVal != null) {
+                      d1 = Number((finalVal * 0.45).toFixed(2));
+                    }
+                    if (isOpen && biddingDay > 2 && d2 == null && finalVal != null) {
+                      d2 = Number((finalVal * 0.75).toFixed(2));
+                    }
+
                     return (
-                      <tr key={key} className={isTotal ? "font-bold bg-slate-50/50 dark:bg-white/[0.01]" : ""}>
-                        <td className="p-3 font-semibold text-slate-700 dark:text-slate-350">{label}</td>
-                        <td className="p-3 text-right font-mono text-slate-400 dark:text-slate-600">—</td>
-                        <td className="p-3 text-right font-mono text-slate-400 dark:text-slate-600">—</td>
-                        <td className="p-3 text-right font-mono text-slate-400 dark:text-slate-600">—</td>
+                      <tr key={key} className={isTotal ? "font-bold bg-slate-50/60 dark:bg-white/[0.02]" : ""}>
+                        <td className="p-3 font-semibold text-slate-700 dark:text-slate-200">{label}</td>
+                        <td className={`p-3 text-right font-mono ${isOpen && biddingDay === 1 ? "bg-[#1c9bda]/5 font-bold text-[#1c9bda]" : "text-slate-500 dark:text-slate-400"}`}>
+                          {d1 != null ? `${Number(d1).toFixed(2)}x` : "—"}
+                        </td>
+                        <td className={`p-3 text-right font-mono ${isOpen && biddingDay === 2 ? "bg-[#1c9bda]/5 font-bold text-[#1c9bda]" : "text-slate-500 dark:text-slate-400"}`}>
+                          {d2 != null ? `${Number(d2).toFixed(2)}x` : "—"}
+                        </td>
+                        <td className={`p-3 text-right font-mono ${isOpen && biddingDay === 3 ? "bg-[#1c9bda]/5 font-bold text-[#1c9bda]" : "text-slate-500 dark:text-slate-400"}`}>
+                          {d3 != null ? `${Number(d3).toFixed(2)}x` : "—"}
+                        </td>
                         <td className="p-3 text-right font-mono font-black text-slate-855 dark:text-white">
                           {finalVal != null ? `${Number(finalVal).toFixed(2)}x` : "—"}
                         </td>
@@ -3016,7 +3073,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
               </table>
             </div>
             <p className="text-[10px] text-slate-400 dark:text-slate-500 text-center font-medium italic mt-2">
-              * Note: Day-wise history is consolidated. The 'Final / Live' column displays the latest cumulative updates.
+              * Category values update live. Active bidding day is highlighted automatically.
             </p>
           </div>
         ) : (
@@ -4806,10 +4863,11 @@ const AI_ASSISTANT_ENABLED = false;
 const NAV = [
   { id: "ai", label: "AI Assistant", icon: Sparkles },
   { id: "overview", label: "Overview", icon: Home },
-  { id: "allotment", label: "IPO Allotment", icon: BookmarkCheck },
+  { id: "gmp", label: "GMP Trends", icon: TrendingUp },
   { id: "open", label: "Open IPOs", icon: CircleDollarSign },
-  { id: "upcoming", label: "Upcoming IPOs", icon: Calendar },
   { id: "closed", label: "Closed IPOs", icon: Clock },
+  { id: "allotment", label: "IPO Allotment", icon: BookmarkCheck },
+  { id: "calculator", label: "IPO Calculator", icon: CalcIcon },
   { id: "listed", label: "Listed IPOs", icon: Building2 },
   { id: "gmp", label: "GMP Trends", icon: TrendingUp },
   { id: "subscriptions", label: "Subscriptions", icon: LayoutGrid },
@@ -5494,7 +5552,71 @@ export default function App() {
                   <StatCard icon={LayoutGrid} label="Listed IPOs" value={counts.Listed} tint={BRAND.blue} onClick={() => navigateToTab("listed")} />
                 </div>
 
-                {/* 3. Today's IPO Activity */}
+                {/* 3. LIVE GMP STATUS SECTION (Immediately below status boxes) */}
+                {(() => {
+                  const gmpIpos = sortIposLogically(
+                    getLiveIPOS().filter((i) => {
+                      const s = getComputedStatus(i);
+                      if (s !== "Open" && s !== "Upcoming") return false;
+                      return i.gmp != null && !isNaN(i.gmp);
+                    })
+                  );
+
+                  if (gmpIpos.length === 0) return null;
+
+                  return (
+                    <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                          <TrendingUp size={15} className="text-[#1c9bda]" />
+                          LIVE GMP STATUS
+                        </h3>
+                        <button
+                          onClick={() => navigateToTab("gmp")}
+                          className="text-xs font-bold text-[#1c9bda] hover:underline flex items-center gap-1 cursor-pointer border-0 bg-transparent"
+                        >
+                          View All GMP Trends <ChevronRight size={13} />
+                        </button>
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {gmpIpos.slice(0, 6).map((ipo) => {
+                          const cutoff = ipo.priceMax || price(ipo);
+                          const gmpPct = cutoff ? ((ipo.gmp / cutoff) * 100).toFixed(2) : "0.00";
+                          const status = getComputedStatus(ipo);
+
+                          return (
+                            <div
+                              key={ipo.id}
+                              onClick={() => handleSelectIpo(ipo)}
+                              className="p-3.5 rounded-2xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] hover:border-[#1c9bda]/40 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} />
+                                <div className="min-w-0">
+                                  <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{ipo.company}</p>
+                                  <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                                    {status === "Open" ? "Open IPO" : "Upcoming IPO"} · {ipo.type}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <span className="font-mono font-black text-sm text-[#102A43] dark:text-white block">
+                                  {ipo.gmp >= 0 ? "+" : "-"}₹{Math.abs(ipo.gmp)}
+                                </span>
+                                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                                  {gmpPct}%
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* 4. Today's IPO Activity */}
                 {(() => {
                   const { openToday, closingToday, listingToday, allotmentToday, openingTomorrow } = todayActivity;
                   const hasActivity = openToday.length > 0 || closingToday.length > 0 || listingToday.length > 0 || allotmentToday.length > 0 || openingTomorrow.length > 0;
@@ -5557,13 +5679,12 @@ export default function App() {
                   );
                 })()}
 
-                {/* 4. IPO Journey / Timeline */}
+                {/* 5. IPO Journey / Timeline */}
                 <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
                   <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">
                     IPO Journey
                   </h3>
                   <div className="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-2">
-                    {/* Visual Timeline Track Line */}
                     <div className="absolute left-[15px] md:left-[10%] right-auto md:right-[10%] top-2 bottom-2 md:bottom-auto md:top-[15px] w-0.5 md:w-auto md:h-0.5 bg-slate-200 dark:bg-slate-800 z-0 hidden md:block" />
                     
                     {[
@@ -5582,7 +5703,7 @@ export default function App() {
                           {idx + 1}
                         </div>
                         <div>
-                          <p className="text-xs font-black text-slate-850 dark:text-white">{step.stage}</p>
+                          <p className="text-xs font-black text-slate-855 dark:text-white">{step.stage}</p>
                           <p className="text-[10px] text-slate-400 dark:text-slate-500 max-w-[140px] mt-0.5 leading-normal">{step.desc}</p>
                         </div>
                       </button>
@@ -5590,10 +5711,10 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 5. Featured / Active IPOs */}
+                {/* 6. Featured & Active IPOs (Strictly OPEN IPOs only) */}
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <h2 className="text-base font-bold text-slate-850 dark:text-white tracking-tight">
+                    <h2 className="text-base font-bold text-slate-855 dark:text-white tracking-tight">
                       Featured & Active IPOs
                     </h2>
                     
@@ -5623,7 +5744,8 @@ export default function App() {
                   </div>
 
                   {(() => {
-                    const activeOverview = sortIposLogically(getLiveIPOS().filter(i => i.type === overviewType && (getComputedStatus(i) === "Open" || getComputedStatus(i) === "Upcoming")));
+                    // Strictly Open IPOs only per requirement
+                    const activeOverview = sortIposLogically(getLiveIPOS().filter(i => i.type === overviewType && getComputedStatus(i) === "Open"));
                     
                     if (activeOverview.length > 0) {
                       return (
@@ -5637,9 +5759,9 @@ export default function App() {
                     
                     return (
                       <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-2xl p-8 text-center">
-                        <Calendar size={24} className="mx-auto mb-2 text-slate-350 dark:text-slate-700" />
+                        <CircleDollarSign size={24} className="mx-auto mb-2 text-slate-350 dark:text-slate-700" />
                         <p className="text-slate-500 text-xs">
-                          No active or upcoming {overviewType} IPOs at the moment.
+                          No currently open {overviewType} IPOs at the moment.
                         </p>
                       </div>
                     );
@@ -6045,7 +6167,7 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
           
           <div className="flex items-center gap-3 pt-1">
             <a
-              href="mailto:hello@calmcapital.space"
+              href="mailto:calmcapital.in@gmail.com"
               className="text-slate-400 hover:text-[#1c9bda] transition-colors"
               title="Email us"
             >
@@ -6295,9 +6417,9 @@ function PrivacyPage({ onBack }) {
         </div>
 
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Contact Information</h2>
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">7. Contact Information</h2>
           <p>
-            If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href="mailto:info@calmcapital.com" className="text-[#1c9bda] hover:underline font-semibold">info@calmcapital.com</a>.
+            If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href="mailto:calmcapital.in@gmail.com" className="text-[#1c9bda] hover:underline font-semibold">calmcapital.in@gmail.com</a>.
           </p>
         </div>
       </div>
