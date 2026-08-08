@@ -24,6 +24,8 @@ import {
   displayIpoName,
 } from "./seo.js";
 
+import initialIpoData from "../public/ipos.json";
+
 /* =====================================================================
    BRAND TOKENS
 ===================================================================== */
@@ -33,7 +35,7 @@ const BRAND = { blue: "#1c9bda", green: "#aed768", white: "#ffffff" };
    DATA — real, researched figures. Data as of July 3, 2026.
    Estimated profit = GMP × lot size.
 ===================================================================== */
-let IPOS_BASE = [];
+let IPOS_BASE = Array.isArray(initialIpoData) ? initialIpoData : [];
 
 const DATA_AS_OF = "July 3, 2026";
 const rupee = (n) => (n == null || isNaN(n)) ? "-" : (n < 0 ? `-₹${Number(Math.abs(n)).toLocaleString("en-IN")}` : `₹${Number(n).toLocaleString("en-IN")}`);
