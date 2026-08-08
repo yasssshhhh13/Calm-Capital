@@ -10,15 +10,24 @@ try {
   console.warn("Analytics init skipped:", e);
 }
 
-function mount() {
-  const rootEl = document.getElementById("root");
-  if (!rootEl) return;
-
+function hideSplash() {
   const seoContent = document.getElementById("seo-content");
   if (seoContent) {
     seoContent.setAttribute("hidden", "");
     seoContent.style.display = "none";
   }
+}
+
+// Global maximum fallback timeout: force release splash/prerender elements after 3s max
+if (typeof window !== "undefined") {
+  setTimeout(hideSplash, 3000);
+}
+
+function mount() {
+  const rootEl = document.getElementById("root");
+  if (!rootEl) return;
+
+  hideSplash();
 
   try {
     ReactDOM.createRoot(rootEl).render(

@@ -455,22 +455,32 @@ function getLiveIPOS() {
 
 function findIpoByIdOrSlug(idOrSlug) {
   if (!idOrSlug) return null;
-  const all = getLiveIPOS();
-  const target = String(idOrSlug).toLowerCase().trim();
+  try {
+    const all = getLiveIPOS();
+    const target = String(idOrSlug).toLowerCase().trim();
 
-  return (
-    all.find((i) => {
-      if (!i) return false;
-      const id = String(i.id || "").toLowerCase();
-      const slug = String(i.slug || "").toLowerCase();
-      if (id === target || slug === target) return true;
-      const cleanId = id.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
-      const cleanTarget = target.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
-      if (cleanId === cleanTarget) return true;
-      if (companyTokens(i.company || i.name).join("-") === companyTokens(target).join("-")) return true;
-      return false;
-    }) || null
-  );
+    return (
+      all.find((i) => {
+        if (!i) return false;
+        const id = String(i.id || "").toLowerCase();
+        const slug = String(i.slug || "").toLowerCase();
+        if (id === target || slug === target) return true;
+        const cleanId = id.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
+        const cleanTarget = target.replace(/-(limited|ltd|bse-sme|nse-sme|sme|mainboard)$/g, "");
+        if (cleanId === cleanTarget) return true;
+        
+        const iTokens = companyTokens(i.company || i.name);
+        const targetTokens = companyTokens(target);
+        if (iTokens.length > 0 && targetTokens.length > 0 && iTokens.join("-") === targetTokens.join("-")) {
+          return true;
+        }
+        return false;
+      }) || null
+    );
+  } catch (err) {
+    console.error("Error finding IPO by ID/slug:", err);
+    return null;
+  }
 }
 
 const sortIposLogically = (ipos) => {
@@ -5075,16 +5085,23 @@ export default function App() {
   }, [loadingDb]);
 
   useEffect(() => {
-    fetch(`/ipos.json?t=${Date.now()}`)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+    fetch(`/ipos.json?t=${Date.now()}`, { signal: controller.signal })
       .then((res) => res.json())
       .then((data) => {
-        IPOS_BASE = data;
-        setLoadingDb(false);
-        setTick((t) => t + 1);
-        setLiveDataVersion((v) => v + 1);
+        if (Array.isArray(data) && data.length > 0) {
+          IPOS_BASE = data;
+          setTick((t) => t + 1);
+          setLiveDataVersion((v) => v + 1);
+        }
       })
       .catch((err) => {
-        console.error("Failed to load dynamic IPO database:", err?.message || "[REDACTED]");
+        console.warn("Background fetch of ipos.json skipped/timed out:", err?.message);
+      })
+      .finally(() => {
+        clearTimeout(timeoutId);
         setLoadingDb(false);
       });
   }, []);
