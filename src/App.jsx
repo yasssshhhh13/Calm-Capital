@@ -4962,6 +4962,7 @@ export default function App() {
   const [overviewType, setOverviewType] = useState("Mainboard");
   const [gmpMarket, setGmpMarket] = useState("Mainboard");
   const lastTabPathRef = useRef(TAB_PATHS["overview"] || "/");
+  const currentPathIpoId = parseLocation(typeof window !== "undefined" ? window.location.pathname : "/", typeof window !== "undefined" ? window.location.search : "").ipoId;
 
   const handleSelectIpo = (ipo, mode = "modal") => {
     try {
@@ -5429,9 +5430,10 @@ export default function App() {
               </button>
             </div>
 
-            <nav className="mt-4 space-y-0.5 flex-1 overflow-y-auto">
+            <nav className="mt-4 space-y-1 flex-1 overflow-y-auto">
               {NAV.map((n) => {
                 const isActive = tab === n.id && !selected;
+                const IconComponent = n.icon;
                 return (
                   <a
                     key={n.id}
@@ -5441,29 +5443,20 @@ export default function App() {
                       e.preventDefault();
                       setTab(n.id);
                     }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm relative transition-colors no-underline cursor-pointer"
-                    style={isActive
-                      ? {
-                          background: dark ? "rgba(28,155,218,0.12)" : "rgba(28,155,218,0.08)",
-                          color: BRAND.blue,
-                          fontWeight: 700,
-                          borderLeft: `3px solid ${BRAND.blue}`,
-                          paddingLeft: "9px",
-                        }
-                      : {
-                          color: dark ? "#94a3b8" : "#475569",
-                          fontWeight: 500,
-                          paddingLeft: "12px",
-                        }}
-                    onMouseEnter={(e) => {
-                      if (!isActive) e.currentTarget.style.background = dark ? "rgba(255,255,255,0.04)" : "rgba(28,155,218,0.05)";
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!isActive) e.currentTarget.style.background = "transparent";
-                    }}
+                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold relative transition-all no-underline cursor-pointer group ${
+                      isActive
+                        ? "bg-[#1c9bda]/12 dark:bg-[#1c9bda]/20 text-[#1c9bda] dark:text-[#52b1e4] font-bold border-l-3 border-[#1c9bda] pl-2.5 shadow-xs"
+                        : "text-slate-700 dark:text-slate-200 hover:bg-[#1c9bda]/5 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white pl-3 font-semibold"
+                    }`}
                   >
-                    <n.icon size={15} strokeWidth={isActive ? 2.5 : 2} />
-                    {n.label}
+                    <IconComponent
+                      size={16}
+                      strokeWidth={isActive ? 2.4 : 2.2}
+                      className={`shrink-0 transition-colors ${
+                        isActive ? "text-[#1c9bda] dark:text-[#52b1e4]" : "text-slate-600 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-200"
+                      }`}
+                    />
+                    <span className="truncate tracking-tight">{n.label}</span>
                   </a>
                 );
               })}
@@ -5522,17 +5515,37 @@ export default function App() {
 
           <main className="flex-1 overflow-y-auto px-5 py-5 max-w-5xl w-full mx-auto">
             {selected && viewMode === "full" ? (
-              <IPODetailFullPage
-                ipo={selected}
-                onClose={() => handleSelectIpo(null)}
-                watchlist={watchlist}
-                dark={dark}
-                onOpen={(i) => handleSelectIpo(i, "full")}
-                onNavigateTab={(t) => {
-                  handleSelectIpo(null);
-                  setTab(t);
-                }}
-              />
+              <IpoErrorBoundary onBack={() => handleSelectIpo(null)}>
+                <IPODetailFullPage
+                  ipo={selected}
+                  onClose={() => handleSelectIpo(null)}
+                  watchlist={watchlist}
+                  dark={dark}
+                  onOpen={(i) => handleSelectIpo(i, "full")}
+                  onNavigateTab={(t) => {
+                    handleSelectIpo(null);
+                    setTab(t);
+                  }}
+                />
+              </IpoErrorBoundary>
+            ) : currentPathIpoId && !selected ? (
+              <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-10 text-center space-y-4 my-8 shadow-sm">
+                <Building2 size={44} className="mx-auto text-[#1c9bda]" />
+                <h2 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
+                  IPO Details Loaded
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed font-medium">
+                  Viewing information for <strong className="text-slate-800 dark:text-white font-bold">{currentPathIpoId}</strong>.
+                </p>
+                <div className="flex justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => navigateToTab("overview")}
+                    className="px-5 py-2.5 rounded-xl bg-[#1c9bda] text-white text-xs font-bold shadow-md hover:brightness-110 cursor-pointer border-0"
+                  >
+                    ← Return to Overview
+                  </button>
+                </div>
+              </div>
             ) : (
               <div key={tab} className="tab-enter">
                 {tab === "overview" && (
@@ -6394,6 +6407,58 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
       </p>
     </footer>
   );
+}
+
+/* =====================================================================
+   REACT ERROR BOUNDARY FOR IPO DETAILS
+===================================================================== */
+class IpoErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("[IpoErrorBoundary] Caught error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-10 text-center space-y-4 my-6 shadow-sm">
+          <AlertTriangle size={42} className="mx-auto text-amber-500" />
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
+            Unable to load this IPO
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed font-medium">
+            We couldn't display some details for this IPO right now. Please try again or return to the main dashboard.
+          </p>
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <button
+              onClick={() => {
+                this.setState({ hasError: false, error: null });
+                if (this.props.onBack) this.props.onBack();
+              }}
+              className="px-5 py-2.5 rounded-xl bg-[#1c9bda] text-white text-xs font-bold shadow-md hover:brightness-110 cursor-pointer border-0"
+            >
+              Back to IPOs
+            </button>
+            <button
+              onClick={() => this.setState({ hasError: false, error: null })}
+              className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white text-xs font-bold hover:bg-slate-200 cursor-pointer border border-slate-200 dark:border-white/10"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
 }
 
 /* =====================================================================
