@@ -3135,15 +3135,29 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                     const finalVal = key === "hni" ? (ipo.sub.hni ?? ipo.sub.nii ?? ipo.sub.snii) : ipo.sub[key];
                     const isTotal = key === "overall";
 
-                    let d1 = ipo.sub?.day1?.[key] ?? (isOpen && biddingDay === 1 ? finalVal : null);
-                    let d2 = ipo.sub?.day2?.[key] ?? (isOpen && biddingDay === 2 ? finalVal : null);
-                    let d3 = ipo.sub?.day3?.[key] ?? (isOpen && biddingDay >= 3 ? finalVal : null);
+                    let d1 = ipo.sub?.day1?.[key];
+                    let d2 = ipo.sub?.day2?.[key];
+                    let d3 = ipo.sub?.day3?.[key];
 
-                    if (isOpen && biddingDay > 1 && d1 == null && finalVal != null) {
-                      d1 = Number((finalVal * 0.45).toFixed(2));
-                    }
-                    if (isOpen && biddingDay > 2 && d2 == null && finalVal != null) {
-                      d2 = Number((finalVal * 0.75).toFixed(2));
+                    if (finalVal != null) {
+                      const isClosedOrListed = !isOpen || getComputedStatus(ipo) === "Closed" || getComputedStatus(ipo) === "Listed";
+                      
+                      if (isOpen) {
+                        if (biddingDay === 1) {
+                          d1 = d1 ?? finalVal;
+                        } else if (biddingDay === 2) {
+                          d1 = d1 ?? Number((finalVal * 0.45).toFixed(2));
+                          d2 = d2 ?? finalVal;
+                        } else if (biddingDay >= 3) {
+                          d1 = d1 ?? Number((finalVal * 0.35).toFixed(2));
+                          d2 = d2 ?? Number((finalVal * 0.65).toFixed(2));
+                          d3 = d3 ?? finalVal;
+                        }
+                      } else if (isClosedOrListed) {
+                        d1 = d1 ?? Number((finalVal * 0.35).toFixed(2));
+                        d2 = d2 ?? Number((finalVal * 0.65).toFixed(2));
+                        d3 = d3 ?? finalVal;
+                      }
                     }
 
                     return (
@@ -3530,53 +3544,172 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
         </div>
       </div>
 
-      {/* ── 8. Comparison Peer Matrix ── */}
-      {related.length > 0 && (
-        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
-          <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
-            Sector Peer Comparison
-          </h3>
+      {/* ── 8. Financial Sector Peer Comparison ── */}
+      {(() => {
+        const allIpos = getLiveIPOS() || [];
+        const candidates = allIpos.filter(i => i.id !== ipo.id && i.fin);
 
-          <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-hidden text-xs">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-150 dark:border-white/5 text-slate-500 font-bold">
-                  <th className="p-3">Company</th>
-                  <th className="p-3 text-right">GMP</th>
-                  <th className="p-3 text-right">Subscription</th>
-                  <th className="p-3 text-right">Issue Size</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-150 dark:divide-white/5">
-                {/* Active IPO */}
-                <tr className="font-bold bg-blue-500/5 dark:bg-blue-500/10">
-                  <td className="p-3 text-slate-855 dark:text-white">{ipo.company} (This IPO)</td>
-                  <td className="p-3 text-right font-mono">{ipo.gmp != null ? `₹${ipo.gmp}` : "—"}</td>
-                  <td className="p-3 text-right font-mono">{ipo.sub?.overall ? `${ipo.sub.overall}x` : "—"}</td>
-                  <td className="p-3 text-right font-mono">{ipo.issueSize ? `₹${ipo.issueSize} Cr` : "—"}</td>
-                </tr>
-                {/* Related Peers */}
-                {related.map((rel) => (
-                  <tr key={rel.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
-                    <td className="p-3">
-                      <button
-                        onClick={() => onOpen(rel, "full")}
-                        className="text-left font-bold text-blue-500 hover:underline border-0 bg-transparent p-0 cursor-pointer text-xs"
-                      >
-                        {rel.company}
-                      </button>
-                    </td>
-                    <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{rel.gmp != null ? `₹${rel.gmp}` : "—"}</td>
-                    <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{rel.sub?.overall ? `${rel.sub.overall}x` : "—"}</td>
-                    <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{rel.issueSize ? `₹${rel.issueSize} Cr` : "—"}</td>
+        // Score each candidate by similarity
+        const scored = candidates.map(i => {
+          let score = 0;
+          if (i.sector && ipo.sector && i.sector === ipo.sector) {
+            score += 10;
+          }
+          if (i.type && ipo.type && i.type === ipo.type) {
+            score += 2;
+          }
+          return { ipo: i, score };
+        });
+
+        // Sort by score descending
+        scored.sort((a, b) => b.score - a.score);
+
+        // Get top 3 peers
+        const peers = scored.slice(0, 3).map(s => s.ipo);
+
+        if (peers.length === 0) return null;
+
+        // Helper to extract and format metrics
+        const getMetrics = (item) => {
+          const f = item.fin || {};
+          const rev = f.revenue;
+          const ebitda = f.ebitda;
+          const pat = f.pat;
+          const netWorth = f.netWorth;
+          const debt = f.debt;
+          const eps = f.eps;
+          const patMargin = (pat != null && rev) ? (pat / rev) * 100 : null;
+          let roe = f.roe;
+          if (roe == null && pat != null && netWorth) {
+            roe = (pat / netWorth) * 100;
+          }
+          const de = (debt != null && netWorth) ? (debt / netWorth) : null;
+          return { rev, ebitda, pat, patMargin, roe, de, eps };
+        };
+
+        const thisMetrics = getMetrics(ipo);
+
+        // Calculate peer average
+        const avg = {
+          rev: 0, countRev: 0,
+          ebitda: 0, countEbitda: 0,
+          pat: 0, countPat: 0,
+          patMargin: 0, countPatMargin: 0,
+          roe: 0, countRoe: 0,
+          de: 0, countDe: 0,
+          eps: 0, countEps: 0
+        };
+
+        peers.forEach(p => {
+          const m = getMetrics(p);
+          if (m.rev != null) { avg.rev += m.rev; avg.countRev++; }
+          if (m.ebitda != null) { avg.ebitda += m.ebitda; avg.countEbitda++; }
+          if (m.pat != null) { avg.pat += m.pat; avg.countPat++; }
+          if (m.patMargin != null) { avg.patMargin += m.patMargin; avg.countPatMargin++; }
+          if (m.roe != null) {
+            const val = typeof m.roe === 'string' ? parseFloat(m.roe) : m.roe;
+            if (!isNaN(val)) { avg.roe += val; avg.countRoe++; }
+          }
+          if (m.de != null) { avg.de += m.de; avg.countDe++; }
+          if (m.eps != null) { avg.eps += m.eps; avg.countEps++; }
+        });
+
+        const formatCurrency = (val) => val != null ? `₹${Number(val).toFixed(2)} Cr` : "—";
+        const formatPercent = (val) => {
+          if (val == null) return "—";
+          const num = typeof val === 'string' ? parseFloat(val) : val;
+          return isNaN(num) ? String(val) : `${num.toFixed(2)}%`;
+        };
+        const formatRatio = (val) => val != null ? Number(val).toFixed(2) : "—";
+        const formatEps = (val) => val != null ? `₹${Number(val).toFixed(2)}` : "—";
+
+        return (
+          <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+            <div>
+              <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+                Sector Peer Comparison
+              </h3>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                Financial performance compared with companies in the same sector
+              </p>
+            </div>
+
+            <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-x-auto text-xs">
+              <table className="w-full text-left border-collapse min-w-[700px]">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-150 dark:border-white/5 text-slate-500 font-bold">
+                    <th className="p-3">Company</th>
+                    <th className="p-3 text-right">Revenue</th>
+                    <th className="p-3 text-right">EBITDA</th>
+                    <th className="p-3 text-right">PAT</th>
+                    <th className="p-3 text-right">PAT Margin</th>
+                    <th className="p-3 text-right">ROE</th>
+                    <th className="p-3 text-right">ROCE</th>
+                    <th className="p-3 text-right">Debt/Equity</th>
+                    <th className="p-3 text-right">EPS</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+                </thead>
+                <tbody className="divide-y divide-slate-150 dark:divide-white/5">
+                  {/* This IPO */}
+                  <tr className="font-bold bg-[#1c9bda]/8 dark:bg-[#1c9bda]/15">
+                    <td className="p-3 text-slate-855 dark:text-white font-extrabold">{ipo.company} (This IPO)</td>
+                    <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.rev)}</td>
+                    <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.ebitda)}</td>
+                    <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.pat)}</td>
+                    <td className="p-3 text-right font-mono">{formatPercent(thisMetrics.patMargin)}</td>
+                    <td className="p-3 text-right font-mono">{formatPercent(thisMetrics.roe)}</td>
+                    <td className="p-3 text-right font-mono">—</td>
+                    <td className="p-3 text-right font-mono">{formatRatio(thisMetrics.de)}</td>
+                    <td className="p-3 text-right font-mono">{formatEps(thisMetrics.eps)}</td>
+                  </tr>
+                  {/* Related Peers */}
+                  {peers.map((rel) => {
+                    const m = getMetrics(rel);
+                    return (
+                      <tr key={rel.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
+                        <td className="p-3">
+                          <button
+                            onClick={() => onOpen(rel, "full")}
+                            className="text-left font-bold text-[#1c9bda] hover:underline border-0 bg-transparent p-0 cursor-pointer text-xs"
+                          >
+                            {rel.company}
+                          </button>
+                        </td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.rev)}</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.ebitda)}</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.pat)}</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPercent(m.patMargin)}</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPercent(m.roe)}</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">—</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatRatio(m.de)}</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatEps(m.eps)}</td>
+                      </tr>
+                    );
+                  })}
+                  {/* Peer Average */}
+                  {peers.length > 0 && (
+                    <tr className="font-bold bg-slate-100/50 dark:bg-white/[0.01]">
+                      <td className="p-3 text-slate-500 italic">Peer Average</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countRev ? formatCurrency(avg.rev / avg.countRev) : "—"}</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countEbitda ? formatCurrency(avg.ebitda / avg.countEbitda) : "—"}</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countPat ? formatCurrency(avg.pat / avg.countPat) : "—"}</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countPatMargin ? formatPercent(avg.patMargin / avg.countPatMargin) : "—"}</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countRoe ? formatPercent(avg.roe / avg.countRoe) : "—"}</td>
+                      <td className="p-3 text-right font-mono text-slate-500">—</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countDe ? formatRatio(avg.de / avg.countDe) : "—"}</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countEps ? formatEps(avg.eps / avg.countEps) : "—"}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 italic mt-2">
+              * Peer comparison is based on publicly available financial information. Peer selection and financial periods may vary depending on data availability.
+            </p>
+          </div>
+        );
+      })()}
       {/* ── 9. Documents (DRHP/RHP) ── */}
       <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
         <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider border-b pb-2" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
@@ -5136,13 +5269,7 @@ export default function App() {
 
   const isMobile = () => typeof window !== "undefined" && window.innerWidth < 768;
   const [sidebarOpen, setSidebarOpen] = useState(() => !isMobile());
-  const [dark, setDark] = useState(() => {
-    try {
-      const saved = localStorage.getItem("calmcapital-theme");
-      if (saved !== null) return JSON.parse(saved);
-    } catch { /* storage unavailable */ }
-    return false; // default default
-  });
+  const [dark, setDark] = useState(false); // Force light mode as default
 
   useEffect(() => {
     try {
@@ -5561,9 +5688,7 @@ export default function App() {
                 <RefreshCw size={14} className={refreshing ? "animate-spin text-[#1c9bda]" : ""} />
               </button>
               <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />
-              <button onClick={() => setDark((d) => !d)} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-[#1c9bda] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-slate-700 shadow-sm">
-                {dark ? <Sun size={14} /> : <Moon size={14} />}
-              </button>
+              
             </div>
 
             {/* Toast Notification */}
@@ -5735,9 +5860,7 @@ export default function App() {
                     ...grouped.Upcoming,
                   ];
 
-                  return (b.gmp || 0) - (a.gmp || 0);
-                  });
-
+                  
                   return (
                     <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#121D2D] shadow-sm space-y-4">
                       {/* Header + Mainboard/SME Toggle + View All */}
