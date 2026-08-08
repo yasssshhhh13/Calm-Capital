@@ -3546,28 +3546,66 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
       {/* ── 8. Financial Sector Peer Comparison ── */}
       {(() => {
+        const classifyBusiness = (item) => {
+          const name = (item.company || item.name || "").toLowerCase();
+          const sector = (item.sector || "").toLowerCase();
+          
+          if (name.includes("logistics") || name.includes("warehouse") || name.includes("transport") || name.includes("shiprocket") || name.includes("cargo") || name.includes("supply chain") || name.includes("fleet")) {
+            return { id: "logistics", desc: "Supply-chain, logistics, and warehousing solutions" };
+          }
+          if (name.includes("medicare") || name.includes("diagnostics") || name.includes("pharma") || name.includes("health") || name.includes("clinical") || name.includes("biotech") || name.includes("medical") || sector.includes("pharma") || sector.includes("health")) {
+            return { id: "healthcare", desc: "Healthcare, clinical, and medical diagnostics services" };
+          }
+          if (name.includes("foods") || name.includes("dairy") || name.includes("milk") || name.includes("agro") || name.includes("agri") || name.includes("beverage")) {
+            return { id: "food", desc: "Food processing, dairy products, and agricultural distribution" };
+          }
+          if (name.includes("textiles") || name.includes("garment") || name.includes("fabrics") || name.includes("yarn") || name.includes("apparel") || sector.includes("textiles")) {
+            return { id: "textiles", desc: "Textile manufacturing, weaving, and apparel production" };
+          }
+          if (name.includes("technology") || name.includes("techno") || name.includes("software") || name.includes("digital") || name.includes("it services") || name.includes("cloud") || name.includes("infotech") || name.includes("systems") || name.includes("xtranet") || name.includes("pragyawan") || sector.includes("it services") || sector.includes("technology")) {
+            return { id: "it", desc: "Enterprise IT services, software development, and digital transformation" };
+          }
+          if (name.includes("engineering") || name.includes("infrastructure") || name.includes("construction") || name.includes("build") || name.includes("power") || name.includes("energy") || name.includes("solar") || name.includes("electricals") || name.includes("steel") || name.includes("metal") || name.includes("forging") || sector.includes("energy") || sector.includes("power") || sector.includes("infrastructure") || sector.includes("metal")) {
+            return { id: "engineering", desc: "Engineering, infrastructure development, and industrial manufacturing" };
+          }
+          if (name.includes("automotive") || name.includes("auto") || name.includes("motors") || name.includes("transmission") || name.includes("gears")) {
+            return { id: "automotive", desc: "Automotive engineering and component manufacturing" };
+          }
+          if (name.includes("finance") || name.includes("fintech") || name.includes("wealth") || name.includes("capital") || name.includes("securities") || name.includes("banking") || name.includes("credit") || sector.includes("financial")) {
+            return { id: "finance", desc: "Financial services, credit facilities, and wealth management" };
+          }
+          
+          return { id: "general", desc: "Diversified business operations and general commercial services" };
+        };
+
+        const currentBiz = classifyBusiness(ipo);
         const allIpos = getLiveIPOS() || [];
-        const candidates = allIpos.filter(i => i.id !== ipo.id && i.fin);
 
-        // Score each candidate by similarity
-        const scored = candidates.map(i => {
-          let score = 0;
-          if (i.sector && ipo.sector && i.sector === ipo.sector) {
-            score += 10;
-          }
-          if (i.type && ipo.type && i.type === ipo.type) {
-            score += 2;
-          }
-          return { ipo: i, score };
-        });
+        // Select peers that have fin data and share the exact same classified business activity
+        // (excluding "general" fallback group to avoid comparing completely unrelated businesses)
+        const peers = allIpos.filter(i => {
+          if (i.id === ipo.id || !i.fin) return false;
+          const peerBiz = classifyBusiness(i);
+          return peerBiz.id === currentBiz.id && currentBiz.id !== "general";
+        }).slice(0, 3);
 
-        // Sort by score descending
-        scored.sort((a, b) => b.score - a.score);
-
-        // Get top 3 peers
-        const peers = scored.slice(0, 3).map(s => s.ipo);
-
-        if (peers.length === 0) return null;
+        if (peers.length < 2) {
+          return (
+            <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+              <div>
+                <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+                  Sector Peer Comparison
+                </h3>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                  Financial comparison with companies operating in a similar business
+                </p>
+              </div>
+              <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-8 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">
+                No closely comparable listed peers with sufficient public financial data were identified.
+              </div>
+            </div>
+          );
+        }
 
         const formatComparisonPeriod = (fy) => {
           if (!fy) return "Latest Restated";
@@ -3594,7 +3632,6 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
         const ipoPeriod = ipo.finMeta?.fy;
 
-        // Helper to extract and format metrics
         const getMetrics = (item) => {
           const itemPeriod = item.finMeta?.fy;
           if (item.id !== ipo.id && !isPeriodComparable(ipoPeriod, itemPeriod)) {
@@ -3661,7 +3698,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                   Sector Peer Comparison
                 </h3>
                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
-                  Financial performance compared with companies in the same sector
+                  Financial comparison with companies operating in a similar business
                 </p>
               </div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#1c9bda]/10 text-[#1c9bda] border border-[#1c9bda]/20 self-start sm:self-auto shadow-sm">
@@ -3689,7 +3726,10 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                   <tr className="font-bold bg-[#1c9bda]/8 dark:bg-[#1c9bda]/15">
                     <td className="p-3 text-slate-855 dark:text-white">
                       <div className="font-extrabold">{ipo.company} (This IPO)</div>
-                      <div className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">
+                      <div className="text-[10px] text-slate-550 dark:text-slate-400 font-medium italic mt-0.5">
+                        "{currentBiz.desc}"
+                      </div>
+                      <div className="text-[10px] text-[#1c9bda] font-semibold mt-0.5">
                         Period: {formatComparisonPeriod(ipo.finMeta?.fy)}
                       </div>
                     </td>
@@ -3706,6 +3746,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                   {peers.map((rel) => {
                     const m = getMetrics(rel);
                     const isSamePeriod = !rel.finMeta?.fy || !ipo.finMeta?.fy || rel.finMeta.fy === ipo.finMeta.fy;
+                    const peerBiz = classifyBusiness(rel);
                     return (
                       <tr key={rel.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
                         <td className="p-3">
@@ -3715,7 +3756,10 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                           >
                             {rel.company}
                           </button>
-                          <div className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold mt-0.5">
+                          <div className="text-[10px] text-slate-550 dark:text-slate-400 font-medium italic mt-0.5">
+                            "{peerBiz.desc}"
+                          </div>
+                          <div className="text-[10px] text-slate-400 dark:text-slate-550 font-semibold mt-0.5">
                             Period: {formatComparisonPeriod(rel.finMeta?.fy)} {!isSamePeriod && rel.finMeta?.fy && "(Comparable)"}
                           </div>
                         </td>
