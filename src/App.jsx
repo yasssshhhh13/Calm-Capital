@@ -2760,26 +2760,30 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
               <table className="w-full text-left border-collapse">
                 <tbody>
                   <tr className="border-b border-slate-150 dark:border-white/5">
-                    <td className="p-2.5 font-semibold text-slate-500">IPO Window:</td>
-                    <td className="p-2.5 font-semibold text-slate-850 dark:text-white">{formatDate(ipo.open)} – {formatDate(ipo.close)}</td>
+                    <td className="p-2.5 font-medium text-slate-500">IPO Window:</td>
+                    <td className="p-2.5 font-bold text-slate-850 dark:text-white">{formatDate(ipo.open)} – {formatDate(ipo.close)}</td>
                   </tr>
                   <tr className="border-b border-slate-150 dark:border-white/5">
-                    <td className="p-2.5 font-semibold text-slate-500">Price Band:</td>
+                    <td className="p-2.5 font-medium text-slate-500">Price Band:</td>
                     <td className="p-2.5 font-mono font-bold text-slate-850 dark:text-white">{formatPriceBand(ipo.priceMin, ipo.priceMax)}</td>
                   </tr>
                   <tr className="border-b border-slate-150 dark:border-white/5">
-                    <td className="p-2.5 font-semibold text-slate-500">Lot Size:</td>
-                    <td className="p-2.5 font-mono text-slate-850 dark:text-white">{ipo.lot ? `${ipo.lot} Shares (Min Investment: ${minInvestment ? rupee(minInvestment) : "—"})` : "—"}</td>
+                    <td className="p-2.5 font-medium text-slate-500">Lot Size:</td>
+                    <td className="p-2.5 font-mono font-bold text-slate-850 dark:text-white">{ipo.lot ? `${ipo.lot} Shares` : "—"}</td>
                   </tr>
                   <tr className="border-b border-slate-150 dark:border-white/5">
-                    <td className="p-2.5 font-semibold text-slate-500">GMP Today:</td>
+                    <td className="p-2.5 font-medium text-slate-500">Minimum Investment:</td>
+                    <td className="p-2.5 font-mono font-bold text-slate-850 dark:text-white">{minInvestment ? rupee(minInvestment) : "—"}</td>
+                  </tr>
+                  <tr className="border-b border-slate-150 dark:border-white/5">
+                    <td className="p-2.5 font-medium text-slate-500">GMP Today:</td>
                     <td className="p-2.5 font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                      {ipo.gmp != null ? `₹${ipo.gmp} (${((ipo.gmp / cutoffPrice) * 100).toFixed(2)}%)` : "—"}
+                      {ipo.gmp != null ? `+₹${ipo.gmp} (${((ipo.gmp / cutoffPrice) * 100).toFixed(2)}%)` : "—"}
                     </td>
                   </tr>
                   <tr>
-                    <td className="p-2.5 font-semibold text-slate-500">Expected Listing:</td>
-                    <td className="p-2.5 font-semibold text-slate-850 dark:text-white">{formatDate(ipo.listing)}</td>
+                    <td className="p-2.5 font-medium text-slate-500">Expected Listing:</td>
+                    <td className="p-2.5 font-bold text-slate-850 dark:text-white">{formatDate(ipo.listing)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -2789,9 +2793,9 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
       </div>
 
       {/* ── 4. About & Timeline ── */}
-      <div className="grid md:grid-cols-12 gap-6 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
         {/* About the Company — rich multi-section layout using all available data */}
-        <div className="md:col-span-6 bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-5">
+        <div className="h-full bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-5 flex flex-col justify-between">
 
           {/* Section: About the Company */}
           <div>
@@ -2918,7 +2922,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
         </div>
 
         {/* IPO Timeline Events */}
-        <div className="md:col-span-6 bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4 h-fit">
+        <div className="h-full bg-white dark:bg-[#161c28] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4 flex flex-col justify-between">
           <div className="flex items-center justify-between border-b pb-2.5" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
             <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider flex items-center gap-1.5">
               <Calendar size={13} className="text-[#1c9bda]" />
@@ -4918,6 +4922,7 @@ export default function App() {
   const [listedType, setListedType] = useState("Mainboard");
   const [closedType, setClosedType] = useState("Mainboard");
   const [overviewType, setOverviewType] = useState("Mainboard");
+  const [gmpMarket, setGmpMarket] = useState("Mainboard");
   const lastTabPathRef = useRef(TAB_PATHS["overview"] || "/");
 
   const handleSelectIpo = (ipo, mode = "modal") => {
@@ -5578,6 +5583,7 @@ export default function App() {
                   const eligibleGmpIpos = getLiveIPOS().filter((ipo) => {
                     const s = getComputedStatus(ipo);
                     if (s !== "Open" && s !== "Upcoming" && s !== "Closed") return false;
+                    if (ipo.type !== gmpMarket) return false;
                     return ipo.gmp != null && !isNaN(ipo.gmp);
                   });
 
@@ -5592,7 +5598,7 @@ export default function App() {
                     }
                   }
 
-                  // Sort by Priority: OPEN -> UPCOMING -> CLOSED
+                  // Sort by Priority: OPEN (1) -> UPCOMING (2) -> CLOSED (3)
                   uniqueGmpIpos.sort((a, b) => {
                     const sa = STATUS_ORDER[getComputedStatus(a)] || 99;
                     const sb = STATUS_ORDER[getComputedStatus(b)] || 99;
@@ -5600,69 +5606,102 @@ export default function App() {
                     return (b.gmp || 0) - (a.gmp || 0);
                   });
 
-                  if (uniqueGmpIpos.length === 0) return null;
-
                   return (
                     <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#161c28] shadow-sm space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                          <TrendingUp size={15} className="text-[#1c9bda]" />
-                          LIVE GMP STATUS
-                        </h3>
+                      {/* Header + Mainboard/SME Toggle + View All */}
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: dark ? "rgba(255,255,255,0.06)" : "#D9E4EC" }}>
+                        <div className="flex flex-wrap items-center justify-between sm:justify-start gap-3 sm:gap-4">
+                          <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                            <TrendingUp size={15} className="text-[#1c9bda]" />
+                            LIVE GMP STATUS
+                          </h3>
+
+                          {/* MAINBOARD | SME Tabs */}
+                          <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5">
+                            <button
+                              onClick={() => setGmpMarket("Mainboard")}
+                              className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+                                gmpMarket === "Mainboard"
+                                  ? "bg-[#1c9bda] text-white shadow-sm"
+                                  : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 bg-transparent"
+                              }`}
+                            >
+                              MAINBOARD
+                            </button>
+                            <button
+                              onClick={() => setGmpMarket("SME")}
+                              className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+                                gmpMarket === "SME"
+                                  ? "bg-[#1c9bda] text-white shadow-sm"
+                                  : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 bg-transparent"
+                              }`}
+                            >
+                              SME
+                            </button>
+                          </div>
+                        </div>
+
                         <button
                           onClick={() => navigateToTab("gmp")}
-                          className="text-xs font-bold text-[#1c9bda] hover:underline flex items-center gap-1 cursor-pointer border-0 bg-transparent"
+                          className="text-xs font-bold text-[#1c9bda] hover:underline flex items-center gap-1 cursor-pointer border-0 bg-transparent self-end sm:self-auto"
                         >
                           View All GMP Trends <ChevronRight size={13} />
                         </button>
                       </div>
 
-                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {uniqueGmpIpos.slice(0, 9).map((ipo) => {
-                          const cutoff = ipo.priceMax || price(ipo);
-                          const gmpPct = cutoff ? ((ipo.gmp / cutoff) * 100).toFixed(2) : "0.00";
-                          const status = getComputedStatus(ipo);
+                      {/* Cards Grid or Empty State */}
+                      {uniqueGmpIpos.length > 0 ? (
+                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                          {uniqueGmpIpos.slice(0, 9).map((ipo) => {
+                            const cutoff = ipo.priceMax || price(ipo);
+                            const gmpPct = cutoff ? ((ipo.gmp / cutoff) * 100).toFixed(2) : "0.00";
+                            const status = getComputedStatus(ipo);
 
-                          const isPos = ipo.gmp > 0;
-                          const isNeg = ipo.gmp < 0;
+                            const isPos = ipo.gmp > 0;
+                            const isNeg = ipo.gmp < 0;
 
-                          return (
-                            <div
-                              key={ipo.id}
-                              onClick={() => handleSelectIpo(ipo)}
-                              className="p-3.5 rounded-2xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] hover:border-[#1c9bda]/40 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
-                            >
-                              <div className="flex items-center gap-3 min-w-0">
-                                <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} />
-                                <div className="min-w-0">
-                                  <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{ipo.company}</p>
-                                  <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
-                                    <span className="text-[#1c9bda] font-bold">
-                                      {status === "Open" ? "Open IPO" : status === "Upcoming" ? "Upcoming IPO" : "Closed IPO"}
-                                    </span>
-                                    <span>·</span>
-                                    <span>{ipo.type}</span>
-                                  </p>
+                            return (
+                              <div
+                                key={ipo.id}
+                                onClick={() => handleSelectIpo(ipo)}
+                                className="p-3.5 rounded-2xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] hover:border-[#1c9bda]/40 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} />
+                                  <div className="min-w-0">
+                                    <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{ipo.company}</p>
+                                    <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                                      <span className="text-[#1c9bda] font-bold">
+                                        {status === "Open" ? "Open IPO" : status === "Upcoming" ? "Upcoming IPO" : "Closed IPO"}
+                                      </span>
+                                      <span>·</span>
+                                      <span>{ipo.type}</span>
+                                    </p>
+                                  </div>
+                                </div>
+                                <div className="text-right shrink-0">
+                                  <span className={`font-mono font-black text-sm block ${
+                                    isPos ? "text-slate-850 dark:text-white" : isNeg ? "text-red-500" : "text-slate-500"
+                                  }`}>
+                                    {ipo.gmp >= 0 ? "+" : "-"}₹{Math.abs(ipo.gmp)}
+                                  </span>
+                                  <span className={`text-[11px] font-bold font-mono px-1.5 py-0.5 rounded ${
+                                    isPos ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
+                                    isNeg ? "bg-rose-500/10 text-rose-600 dark:text-rose-400" :
+                                    "bg-slate-500/10 text-slate-500"
+                                  }`}>
+                                    {gmpPct}%
+                                  </span>
                                 </div>
                               </div>
-                              <div className="text-right shrink-0">
-                                <span className={`font-mono font-black text-sm block ${
-                                  isPos ? "text-slate-850 dark:text-white" : isNeg ? "text-red-500" : "text-slate-500"
-                                }`}>
-                                  {ipo.gmp >= 0 ? "+" : "-"}₹{Math.abs(ipo.gmp)}
-                                </span>
-                                <span className={`text-[11px] font-bold font-mono px-1.5 py-0.5 rounded ${
-                                  isPos ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
-                                  isNeg ? "bg-rose-500/10 text-rose-600 dark:text-rose-400" :
-                                  "bg-slate-500/10 text-slate-500"
-                                }`}>
-                                  {gmpPct}%
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <div className="bg-slate-50/50 dark:bg-white/[0.01] border border-dashed border-slate-200 dark:border-white/10 rounded-2xl p-6 text-center text-xs text-slate-400 dark:text-slate-500">
+                          No live GMP data available for active/upcoming/closed {gmpMarket} IPOs right now.
+                        </div>
+                      )}
                     </div>
                   );
                 })()}
