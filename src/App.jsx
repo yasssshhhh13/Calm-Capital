@@ -35,7 +35,23 @@ const BRAND = { blue: "#1c9bda", green: "#aed768", white: "#ffffff" };
    DATA — real, researched figures. Data as of July 3, 2026.
    Estimated profit = GMP × lot size.
 ===================================================================== */
-let IPOS_BASE = Array.isArray(initialIpoData) ? initialIpoData : [];
+const cleanCompanyName = (name) => {
+  if (!name) return "";
+  return name
+    .replace(/\s+(?:BSE|NSE)\s+SME\s*CALLOTTED/i, "")
+    .replace(/\s+(?:BSE|NSE)\s+SME\s*CALLOTED/i, "")
+    .replace(/\s+(?:BSE|NSE)\s+SME/i, "")
+    .replace(/\s+NSE\s+Emerge/i, "")
+    .replace(/\s+CALLOTTED/i, "")
+    .replace(/\s+CALLOTED/i, "")
+    .trim();
+};
+
+let IPOS_BASE = (Array.isArray(initialIpoData) ? initialIpoData : []).map(ipo => ({
+  ...ipo,
+  company: cleanCompanyName(ipo.company || ipo.name),
+  name: cleanCompanyName(ipo.name || ipo.company)
+}));
 
 const DATA_AS_OF = "July 3, 2026";
 const rupee = (n) => (n == null || isNaN(n)) ? "-" : (n < 0 ? `-₹${Number(Math.abs(n)).toLocaleString("en-IN")}` : `₹${Number(n).toLocaleString("en-IN")}`);
@@ -3563,16 +3579,19 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             return { id: "textiles", desc: "Textile manufacturing, weaving, and apparel production" };
           }
           if (name.includes("technology") || name.includes("techno") || name.includes("software") || name.includes("digital") || name.includes("it services") || name.includes("cloud") || name.includes("infotech") || name.includes("systems") || name.includes("xtranet") || name.includes("pragyawan") || sector.includes("it services") || sector.includes("technology")) {
-            return { id: "it", desc: "Enterprise IT services, software development, and digital transformation" };
+            return { id: "it", desc: "Enterprise IT services, software and technology solutions" };
           }
           if (name.includes("engineering") || name.includes("infrastructure") || name.includes("construction") || name.includes("build") || name.includes("power") || name.includes("energy") || name.includes("solar") || name.includes("electricals") || name.includes("steel") || name.includes("metal") || name.includes("forging") || sector.includes("energy") || sector.includes("power") || sector.includes("infrastructure") || sector.includes("metal")) {
-            return { id: "engineering", desc: "Engineering, infrastructure development, and industrial manufacturing" };
+            return { id: "engineering", desc: "Engineering, industrial components, and equipment manufacturing" };
           }
           if (name.includes("automotive") || name.includes("auto") || name.includes("motors") || name.includes("transmission") || name.includes("gears")) {
             return { id: "automotive", desc: "Automotive engineering and component manufacturing" };
           }
           if (name.includes("finance") || name.includes("fintech") || name.includes("wealth") || name.includes("capital") || name.includes("securities") || name.includes("banking") || name.includes("credit") || sector.includes("financial")) {
             return { id: "finance", desc: "Financial services, credit facilities, and wealth management" };
+          }
+          if (name.includes("events") || name.includes("exhibitions") || name.includes("propshop") || name.includes("parks") || name.includes("resorts") || name.includes("silverstorm") || name.includes("stays") || name.includes("oravel") || name.includes("tourism")) {
+            return { id: "services", desc: "Hospitality, event management, and business services" };
           }
           
           return { id: "general", desc: "Diversified business operations and general commercial services" };
@@ -3581,23 +3600,33 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
         const currentBiz = classifyBusiness(ipo);
         const allIpos = getLiveIPOS() || [];
 
-        // Select peers that have fin data and share the exact same classified business activity
-        // (excluding "general" fallback group to avoid comparing completely unrelated businesses)
+        // Peer Selection Engine:
+        // - Segment validation: must be EXACT same type (Mainboard vs SME)
+        // - Status validation: must be already LISTED
+        // - Business classification: must match target classified business activity
+        // - Exclude IPO itself
         const peers = allIpos.filter(i => {
           if (i.id === ipo.id || !i.fin) return false;
+          
+          // segment type check (Mainboard vs SME hard filter)
+          if (i.type !== ipo.type) return false;
+          
+          // must be listed
+          if (getComputedStatus(i) !== "Listed") return false;
+          
           const peerBiz = classifyBusiness(i);
           return peerBiz.id === currentBiz.id && currentBiz.id !== "general";
-        }).slice(0, 3);
+        }).slice(0, 5);
 
-        if (peers.length < 2) {
+        if (peers.length === 0) {
           return (
             <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
               <div>
                 <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
-                  Sector Peer Comparison
+                  Comparable Company Analysis
                 </h3>
                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
-                  Financial comparison with companies operating in a similar business
+                  Financial performance compared with relevant listed companies operating in similar businesses
                 </p>
               </div>
               <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-8 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">
@@ -3654,9 +3683,31 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
           return { rev, ebitda, pat, patMargin, roe, de, eps };
         };
 
-        const thisMetrics = getMetrics(ipo);
+        const calculateValuation = (item, isPeer) => {
+          const f = item.fin || {};
+          const priceVal = isPeer ? (item.currentPrice || item.priceMax) : ipo.priceMax;
+          
+          let pe = f.pe;
+          let mcap = null;
+          let pb = null;
+          
+          if (f.pat && f.eps && priceVal) {
+            const shares = f.pat / f.eps; 
+            mcap = shares * priceVal;
+          }
+          if (pe == null && f.eps && priceVal) {
+            pe = priceVal / f.eps;
+          }
+          if (mcap && f.netWorth) {
+            pb = mcap / f.netWorth;
+          }
+          return { pe, mcap, pb };
+        };
 
-        // Calculate peer average
+        const thisMetrics = getMetrics(ipo);
+        const thisVal = calculateValuation(ipo, false);
+
+        // Calculate averages for peers only
         const avg = {
           rev: 0, countRev: 0,
           ebitda: 0, countEbitda: 0,
@@ -3664,21 +3715,28 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
           patMargin: 0, countPatMargin: 0,
           roe: 0, countRoe: 0,
           de: 0, countDe: 0,
-          eps: 0, countEps: 0
+          eps: 0, countEps: 0,
+          pe: 0, countPe: 0,
+          mcap: 0, countMcap: 0,
+          pb: 0, countPb: 0
         };
 
         peers.forEach(p => {
           const m = getMetrics(p);
+          const val = calculateValuation(p, true);
           if (m.rev != null) { avg.rev += m.rev; avg.countRev++; }
           if (m.ebitda != null) { avg.ebitda += m.ebitda; avg.countEbitda++; }
           if (m.pat != null) { avg.pat += m.pat; avg.countPat++; }
           if (m.patMargin != null) { avg.patMargin += m.patMargin; avg.countPatMargin++; }
           if (m.roe != null) {
-            const val = typeof m.roe === 'string' ? parseFloat(m.roe) : m.roe;
-            if (!isNaN(val)) { avg.roe += val; avg.countRoe++; }
+            const num = typeof m.roe === 'string' ? parseFloat(m.roe) : m.roe;
+            if (!isNaN(num)) { avg.roe += num; avg.countRoe++; }
           }
           if (m.de != null) { avg.de += m.de; avg.countDe++; }
           if (m.eps != null) { avg.eps += m.eps; avg.countEps++; }
+          if (val.pe != null) { avg.pe += val.pe; avg.countPe++; }
+          if (val.mcap != null) { avg.mcap += val.mcap; avg.countMcap++; }
+          if (val.pb != null) { avg.pb += val.pb; avg.countPb++; }
         });
 
         const formatCurrency = (val) => val != null ? `₹${Number(val).toFixed(2)} Cr` : "—";
@@ -3689,16 +3747,26 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
         };
         const formatRatio = (val) => val != null ? Number(val).toFixed(2) : "—";
         const formatEps = (val) => val != null ? `₹${Number(val).toFixed(2)}` : "—";
+        const formatPE = (val) => val != null ? `${Number(val).toFixed(2)}x` : "—";
+        const formatPB = (val) => val != null ? `${Number(val).toFixed(2)}x` : "—";
+        const formatMCap = (val) => val != null ? `₹${Number(val).toFixed(2)} Cr` : "—";
 
         return (
-          <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+          <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
               <div>
-                <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
-                  Sector Peer Comparison
-                </h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
+                    Comparable Company Analysis
+                  </h3>
+                  {peers.length < 3 && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                      Limited comparable listed peers available
+                    </span>
+                  )}
+                </div>
                 <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
-                  Financial comparison with companies operating in a similar business
+                  Financial performance compared with relevant listed companies operating in similar businesses
                 </p>
               </div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#1c9bda]/10 text-[#1c9bda] border border-[#1c9bda]/20 self-start sm:self-auto shadow-sm">
@@ -3707,10 +3775,13 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             </div>
 
             <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-x-auto text-xs">
-              <table className="w-full text-left border-collapse min-w-[700px]">
+              <table className="w-full text-left border-collapse min-w-[900px]">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-150 dark:border-white/5 text-slate-500 font-bold">
                     <th className="p-3">Company</th>
+                    <th className="p-3 text-right">Market Cap</th>
+                    <th className="p-3 text-right">P/E</th>
+                    <th className="p-3 text-right">P/B</th>
                     <th className="p-3 text-right">Revenue</th>
                     <th className="p-3 text-right">EBITDA</th>
                     <th className="p-3 text-right">PAT</th>
@@ -3733,6 +3804,9 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                         Period: {formatComparisonPeriod(ipo.finMeta?.fy)}
                       </div>
                     </td>
+                    <td className="p-3 text-right font-mono">{formatMCap(thisVal.mcap)}</td>
+                    <td className="p-3 text-right font-mono">{formatPE(thisVal.pe)}</td>
+                    <td className="p-3 text-right font-mono">{formatPB(thisVal.pb)}</td>
                     <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.rev)}</td>
                     <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.ebitda)}</td>
                     <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.pat)}</td>
@@ -3747,6 +3821,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                     const m = getMetrics(rel);
                     const isSamePeriod = !rel.finMeta?.fy || !ipo.finMeta?.fy || rel.finMeta.fy === ipo.finMeta.fy;
                     const peerBiz = classifyBusiness(rel);
+                    const val = calculateValuation(rel, true);
                     return (
                       <tr key={rel.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
                         <td className="p-3">
@@ -3759,10 +3834,13 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                           <div className="text-[10px] text-slate-550 dark:text-slate-400 font-medium italic mt-0.5">
                             "{peerBiz.desc}"
                           </div>
-                          <div className="text-[10px] text-slate-400 dark:text-slate-550 font-semibold mt-0.5">
+                          <div className="text-[10px] text-slate-400 dark:text-slate-555 font-semibold mt-0.5">
                             Period: {formatComparisonPeriod(rel.finMeta?.fy)} {!isSamePeriod && rel.finMeta?.fy && "(Comparable)"}
                           </div>
                         </td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatMCap(val.mcap)}</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPE(val.pe)}</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPB(val.pb)}</td>
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.rev)}</td>
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.ebitda)}</td>
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.pat)}</td>
@@ -3778,6 +3856,9 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                   {peers.length > 0 && (
                     <tr className="font-bold bg-slate-100/50 dark:bg-white/[0.01]">
                       <td className="p-3 text-slate-500 italic">Peer Average</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countMcap ? formatMCap(avg.mcap / avg.countMcap) : "—"}</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countPe ? formatPE(avg.pe / avg.countPe) : "—"}</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countPb ? formatPB(avg.pb / avg.countPb) : "—"}</td>
                       <td className="p-3 text-right font-mono text-slate-500">{avg.countRev ? formatCurrency(avg.rev / avg.countRev) : "—"}</td>
                       <td className="p-3 text-right font-mono text-slate-500">{avg.countEbitda ? formatCurrency(avg.ebitda / avg.countEbitda) : "—"}</td>
                       <td className="p-3 text-right font-mono text-slate-500">{avg.countPat ? formatCurrency(avg.pat / avg.countPat) : "—"}</td>
@@ -3792,8 +3873,50 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
               </table>
             </div>
 
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 italic mt-2">
-              *Peer comparison uses the latest comparable publicly available financial data for the stated comparison period. Peer selection and financial periods may vary depending on data availability.
+            {/* Valuation & Efficiency Summary */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div className="bg-slate-50/70 dark:bg-white/[0.01] border border-slate-150 dark:border-white/5 rounded-2xl p-4 flex flex-col justify-between">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">P/E Valuation Ratio</span>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <span className="text-lg font-black text-slate-800 dark:text-white">{formatPE(thisVal.pe)}</span>
+                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">IPO PE</span>
+                  </div>
+                </div>
+                <div className="text-[10px] text-slate-550 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-white/5">
+                  Peer Average: <span className="font-bold">{formatPE(avg.countPe ? avg.pe / avg.countPe : null)}</span>
+                </div>
+              </div>
+
+              <div className="bg-slate-50/70 dark:bg-white/[0.01] border border-slate-150 dark:border-white/5 rounded-2xl p-4 flex flex-col justify-between">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">Return on Equity (ROE)</span>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{formatPercent(thisMetrics.roe)}</span>
+                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">IPO ROE</span>
+                  </div>
+                </div>
+                <div className="text-[10px] text-slate-550 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-white/5">
+                  Peer Average: <span className="font-bold">{formatPercent(avg.countRoe ? avg.roe / avg.countRoe : null)}</span>
+                </div>
+              </div>
+
+              <div className="bg-slate-50/70 dark:bg-white/[0.01] border border-slate-150 dark:border-white/5 rounded-2xl p-4 flex flex-col justify-between">
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">Market Cap Scale</span>
+                  <div className="flex items-baseline gap-2 mt-1">
+                    <span className="text-lg font-black text-[#1c9bda]">{formatMCap(thisVal.mcap)}</span>
+                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">IPO Cap</span>
+                  </div>
+                </div>
+                <div className="text-[10px] text-slate-555 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-white/5">
+                  Peer Average: <span className="font-bold">{formatMCap(avg.countMcap ? avg.mcap / avg.countMcap : null)}</span>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 italic">
+              *Peers are selected from listed companies operating in comparable businesses. Financial figures are based on the stated comparison period and publicly available data.
             </p>
           </div>
         );
@@ -5539,7 +5662,11 @@ export default function App() {
       const dbRes = await fetch(`/ipos.json?t=${Date.now()}`);
       if (dbRes.ok) {
         const dbData = await dbRes.json();
-        IPOS_BASE = dbData;
+        IPOS_BASE = dbData.map(ipo => ({
+          ...ipo,
+          company: cleanCompanyName(ipo.company || ipo.name),
+          name: cleanCompanyName(ipo.name || ipo.company)
+        }));
       }
       
       await syncNow();
