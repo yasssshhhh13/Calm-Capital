@@ -5488,6 +5488,23 @@ export default function App() {
     } catch { /* storage unavailable */ }
   }, [dark]);
 
+  // Global Navigation Scroll Reset
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: "instant"
+    });
+    const mainEl = document.querySelector("main");
+    if (mainEl) {
+      mainEl.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: "instant"
+      });
+    }
+  }, [tab]);
+
   // Persist active tab across refreshes + path URL + GA4 SPA tab tracking
   const setTab = (id) => {
     setSelected(null);
