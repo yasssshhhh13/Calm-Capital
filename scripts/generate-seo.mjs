@@ -161,7 +161,7 @@ Sitemap: ${SITE_URL}/sitemap.xml
 function sectionSummaryHtml(tabId) {
   const meta = buildSectionMeta(tabId, SITE_URL);
   return `
-<main id="seo-content" style="max-width:720px;margin:1.5rem auto;padding:0 1rem;font-family:system-ui,sans-serif;line-height:1.5;color:#0f172a">
+<main id="seo-content" style="display:none" aria-hidden="true">
   <h1>${escapeHtml(meta.title)}</h1>
   <p>${escapeHtml(meta.description)}</p>
   <p>

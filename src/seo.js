@@ -570,7 +570,7 @@ export function buildIpoCrawlSummaryHtml(ipo) {
     .join("");
 
   return `
-<main id="seo-content" style="max-width:720px;margin:1.5rem auto;padding:0 1rem;font-family:system-ui,sans-serif;line-height:1.5;color:#0f172a">
+<main id="seo-content" style="display:none" aria-hidden="true">
   <nav aria-label="Breadcrumb"><a href="/">Home</a> / <a href="${escapeHtml(
     TAB_PATHS[String(ipo.status || "").toLowerCase()] || "/"
   )}">${escapeHtml(ipo.status || "IPO")}</a> / <span>${name}</span></nav>

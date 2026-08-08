@@ -7,6 +7,11 @@
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
+/* Hide prerendered crawler HTML container from visual display */
+#seo-content {
+  display: none !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.02em;
 }
