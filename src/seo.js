@@ -120,9 +120,9 @@ export const SECTION_META = {
     path: "/docs",
   },
   calculator: {
-    title: "IPO Lot Size & Investment Calculator | Calm Capital",
+    title: "IPO Profit Calculator | Calm Capital",
     description:
-      "Calculate IPO investment amount by lot size and category on Calm Capital.",
+      "Calculate IPO investment amount, grey market premium (GMP) profit estimates, and returns by lot size.",
     path: "/calculator",
   },
   watchlist: {

@@ -1554,7 +1554,7 @@ function CalculatorTab({ onOpen }) {
           <CalcIcon size={16} />
         </div>
         <div>
-          <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">IPO Profit / Loss Calculator</h1>
+          <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">IPO Profit Calculator</h1>
           <p className="text-[11px] text-slate-455 dark:text-slate-500">Estimate your grey market returns before applying to any IPO</p>
         </div>
       </div>
@@ -1576,7 +1576,7 @@ function CalculatorTab({ onOpen }) {
                 </button>
               )}
             </div>
-
+ 
             {/* Selected IPO preview pill */}
             <button
               onClick={() => setListOpen((v) => !v)}
@@ -1591,8 +1591,14 @@ function CalculatorTab({ onOpen }) {
                 <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{ipo.company}</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusColors[ipo.status]?.color || "#64748b" }}></span>
-                  <span className="text-[10px] font-semibold" style={{ color: statusColors[ipo.status]?.color || "#64748b" }}>{ipo.status}</span>
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500">· {ipo.type}</span>
+                  <span className="text-[10px] font-semibold mr-1" style={{ color: statusColors[ipo.status]?.color || "#64748b" }}>{ipo.status}</span>
+                  <span className={`text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.5 rounded-full ${
+                    ipo.type === "SME"
+                      ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20"
+                      : "bg-amber-500/10 text-amber-600 dark:text-amber-450 border border-amber-500/20"
+                  }`}>
+                    {ipo.type}
+                  </span>
                 </div>
               </div>
               <ChevronRight size={14} className={`text-slate-400 transition-transform shrink-0 ${listOpen ? "rotate-90" : ""}`} />
@@ -1667,7 +1673,18 @@ function CalculatorTab({ onOpen }) {
                           <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={30} />
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">{i.company}</p>
-                            <p className="text-[10px] text-slate-400 dark:text-slate-500">{i.type} · {i.priceMin || i.priceMax ? formatPriceBand(i.priceMin, i.priceMax) : "TBA"}</p>
+                            <div className="flex items-center gap-1.5 mt-0.5">
+                              <span className={`text-[8px] uppercase tracking-wide font-extrabold px-1.5 py-0.2 rounded-full ${
+                                i.type === "SME"
+                                  ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20"
+                                  : "bg-amber-500/10 text-amber-600 dark:text-amber-450 border border-amber-500/20"
+                              }`}>
+                                {i.type}
+                              </span>
+                              <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                                · {i.priceMin || i.priceMax ? formatPriceBand(i.priceMin, i.priceMax) : "TBA"}
+                              </span>
+                            </div>
                           </div>
                           {i.id === ipoId && (
                             <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
@@ -4095,11 +4112,14 @@ function GMPTab({ tick, onOpen, query }) {
   return (
     <div className="bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-3xl p-6 shadow-sm dark:shadow-xl">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-6">
-        <BarChart3 size={16} className="text-slate-500" />
-        <h2 className="text-xs uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">
-          GMP % Gain — Upcoming, Open &amp; Closed IPOs (Click to view details)
-        </h2>
+      <div className="flex items-center gap-2.5 mb-6">
+        <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400">
+          <BarChart3 size={16} />
+        </div>
+        <div>
+          <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">GMP % Gain</h1>
+          <p className="text-[11px] text-slate-455 dark:text-slate-500">Upcoming, Open &amp; Closed IPOs (Click to view details)</p>
+        </div>
       </div>
 
       {data.length === 0 ? (
@@ -5403,7 +5423,7 @@ const NAV = [
   { id: "closed", label: "Closed IPOs", icon: Clock },
   { id: "listed", label: "Listed IPOs", icon: Building2 },
   { id: "allotment", label: "IPO Allotment", icon: BookmarkCheck },
-  { id: "calculator", label: "IPO Calculator", icon: CalcIcon },
+  { id: "calculator", label: "Profit Calculator", icon: CalcIcon },
   { id: "subscriptions", label: "Subscriptions", icon: LayoutGrid },
   { id: "financials", label: "Financials", icon: BarChart3 },
   { id: "docs", label: "DRHP / RHP", icon: FileText },
@@ -6544,7 +6564,7 @@ export default function App() {
                       { label: "IPO Allotment", icon: BookmarkCheck, tabId: "allotment" },
                       { label: "Financials", icon: BarChart3, tabId: "financials" },
                       { label: "DRHP / RHP", icon: FileText, tabId: "docs" },
-                      { label: "Profit/Loss Calculator", icon: CalcIcon, tabId: "calculator" },
+                      { label: "Profit Calculator", icon: CalcIcon, tabId: "calculator" },
                     ].map((tool) => (
                       <button
                         key={tool.label}
@@ -6911,8 +6931,7 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
               { label: "Live GMP", tabId: "gmp" },
               { label: "IPO Subscription", tabId: "subscriptions" },
               { label: "Financials", tabId: "financials" },
-              { label: "IPO Calculator", tabId: "calculator" },
-              { label: "Profit/Loss Calculator", tabId: "calculator" },
+              { label: "Profit Calculator", tabId: "calculator" },
               { label: "Watchlist", tabId: "watchlist" },
             ].map(lnk => (
               <li key={lnk.label}>
