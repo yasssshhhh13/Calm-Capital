@@ -3154,7 +3154,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
       </div>
 
             {/* ── 5. Subscription Tracker ── */}
-      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-4 sm:p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider flex items-center gap-2">
             <LayoutGrid size={14} className="text-[#1c9bda]" />
@@ -3174,21 +3174,21 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
           </div>
         ) : ipo.sub ? (
           <div className="space-y-4">
-            <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-hidden text-xs">
-              <table className="w-full text-left border-collapse">
+            <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-x-auto text-xs">
+              <table className="w-full min-w-[480px] sm:min-w-0 text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-150 dark:border-white/5 text-slate-500 font-bold">
-                    <th className="p-3">Category</th>
-                    <th className={`p-3 text-right transition-colors ${isOpen && biddingDay === 1 ? "bg-[#1c9bda]/10 text-[#1c9bda] font-extrabold" : ""}`}>
+                    <th className="px-2.5 py-3 sm:p-3">Category</th>
+                    <th className={`px-2.5 py-3 sm:p-3 text-right whitespace-nowrap transition-colors ${isOpen && biddingDay === 1 ? "bg-[#1c9bda]/10 text-[#1c9bda] font-extrabold" : ""}`}>
                       Day 1 {isOpen && biddingDay === 1 && "•"}
                     </th>
-                    <th className={`p-3 text-right transition-colors ${isOpen && biddingDay === 2 ? "bg-[#1c9bda]/10 text-[#1c9bda] font-extrabold" : ""}`}>
+                    <th className={`px-2.5 py-3 sm:p-3 text-right whitespace-nowrap transition-colors ${isOpen && biddingDay === 2 ? "bg-[#1c9bda]/10 text-[#1c9bda] font-extrabold" : ""}`}>
                       Day 2 {isOpen && biddingDay === 2 && "•"}
                     </th>
-                    <th className={`p-3 text-right transition-colors ${isOpen && biddingDay === 3 ? "bg-[#1c9bda]/10 text-[#1c9bda] font-extrabold" : ""}`}>
+                    <th className={`px-2.5 py-3 sm:p-3 text-right whitespace-nowrap transition-colors ${isOpen && biddingDay === 3 ? "bg-[#1c9bda]/10 text-[#1c9bda] font-extrabold" : ""}`}>
                       Day 3 {isOpen && biddingDay === 3 && "•"}
                     </th>
-                    <th className="p-3 text-right text-slate-800 dark:text-white font-extrabold">Final / Live</th>
+                    <th className="px-2.5 py-3 sm:p-3 text-right whitespace-nowrap text-slate-800 dark:text-white font-extrabold">Final / Live</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-150 dark:divide-white/5">
@@ -3231,17 +3231,17 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
                     return (
                       <tr key={key} className={isTotal ? "font-bold bg-slate-50/60 dark:bg-white/[0.02]" : ""}>
-                        <td className="p-3 font-semibold text-slate-700 dark:text-slate-200">{label}</td>
-                        <td className={`p-3 text-right font-mono ${isOpen && biddingDay === 1 ? "bg-[#1c9bda]/5 font-bold text-[#1c9bda]" : "text-slate-500 dark:text-slate-400"}`}>
+                        <td className="px-2.5 py-3 sm:p-3 font-semibold text-slate-700 dark:text-slate-200">{label}</td>
+                        <td className={`px-2.5 py-3 sm:p-3 text-right font-mono whitespace-nowrap ${isOpen && biddingDay === 1 ? "bg-[#1c9bda]/5 font-bold text-[#1c9bda]" : "text-slate-500 dark:text-slate-400"}`}>
                           {d1 != null ? `${Number(d1).toFixed(2)}x` : "—"}
                         </td>
-                        <td className={`p-3 text-right font-mono ${isOpen && biddingDay === 2 ? "bg-[#1c9bda]/5 font-bold text-[#1c9bda]" : "text-slate-500 dark:text-slate-400"}`}>
+                        <td className={`px-2.5 py-3 sm:p-3 text-right font-mono whitespace-nowrap ${isOpen && biddingDay === 2 ? "bg-[#1c9bda]/5 font-bold text-[#1c9bda]" : "text-slate-500 dark:text-slate-400"}`}>
                           {d2 != null ? `${Number(d2).toFixed(2)}x` : "—"}
                         </td>
-                        <td className={`p-3 text-right font-mono ${isOpen && biddingDay === 3 ? "bg-[#1c9bda]/5 font-bold text-[#1c9bda]" : "text-slate-500 dark:text-slate-400"}`}>
+                        <td className={`px-2.5 py-3 sm:p-3 text-right font-mono whitespace-nowrap ${isOpen && biddingDay === 3 ? "bg-[#1c9bda]/5 font-bold text-[#1c9bda]" : "text-slate-500 dark:text-slate-400"}`}>
                           {d3 != null ? `${Number(d3).toFixed(2)}x` : "—"}
                         </td>
-                        <td className="p-3 text-right font-mono font-black text-slate-855 dark:text-white">
+                        <td className="px-2.5 py-3 sm:p-3 text-right font-mono font-black whitespace-nowrap text-slate-855 dark:text-white">
                           {finalVal != null ? `${Number(finalVal).toFixed(2)}x` : "—"}
                         </td>
                       </tr>
