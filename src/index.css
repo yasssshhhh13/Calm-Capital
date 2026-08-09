@@ -25,18 +25,21 @@ h1, h2, h3, h4, h5, h6 { letter-spacing: -0.02em; }
 
 /* ─── CSS Design Tokens ─────────────────────────────────────────────────── */
 :root {
-  /* Brand */
-  --cc-blue:        #1C9BDA;
-  --cc-blue-bright: #38BDF8;
-  --cc-green:       #AED768;
-  --cc-green-vivid: #22C55E;
-  --cc-warning:     #F59E0B;
+  /* Brand & Semantic Palette */
+  --cc-blue:        #1C9BDA; /* Calm Capital Blue */
+  --cc-navy-deep:   #0B1F33; /* Deep Navy */
+  --cc-navy:        #102A43; /* Navy Blue */
+  --cc-teal-deep:   #0F766E; /* Deep Teal */
+  --cc-teal:        #14B8A6; /* Teal */
+  --cc-green:       #16A34A; /* Positive Green */
+  --cc-warning:     #F59E0B; /* Warning Amber */
+  --cc-danger:      #DC2626; /* Negative Red */
 
   /* Light mode */
-  --bg-primary:     #F4F8FB;
-  --text-primary:   #102A43;
+  --bg-primary:     #F5F7F4; /* Very subtle warm/neutral off-white background */
+  --text-primary:   #0B1F33; /* Deep Navy for headings and key info */
   --text-secondary: #52667A;
-  --border-primary: #D9E4EC;
+  --border-primary: rgba(11, 31, 51, 0.08); /* Clean modern thin border */
 
   /* Dark mode tokens */
   --dm-page:        #0B1220;
@@ -62,17 +65,49 @@ html:not(.dark) body {
 }
 html:not(.dark) .text-slate-900, html:not(.dark) .text-slate-855,
 html:not(.dark) .text-slate-850, html:not(.dark) .text-slate-805,
-html:not(.dark) .text-slate-800 { color: #102A43 !important; }
+html:not(.dark) .text-slate-800 { color: #0B1F33 !important; }
 html:not(.dark) .text-slate-700, html:not(.dark) .text-slate-655,
-html:not(.dark) .text-slate-600 { color: #334E68 !important; }
+html:not(.dark) .text-slate-600 { color: #102A43 !important; }
 html:not(.dark) .text-slate-555, html:not(.dark) .text-slate-500,
 html:not(.dark) .text-slate-455, html:not(.dark) .text-slate-450 { color: #52667A !important; }
-html:not(.dark) .text-slate-400 { color: #627D98 !important; }
+html:not(.dark) .text-slate-400 { color: #8EA1B7 !important; }
 html:not(.dark) .border-slate-100, html:not(.dark) .border-slate-150,
 html:not(.dark) .border-slate-200, html:not(.dark) .border-slate-205,
-html:not(.dark) .border-slate-300 { border-color: #D9E4EC !important; }
-html:not(.dark) .bg-slate-50  { background-color: #F4F8FB !important; }
-html:not(.dark) .bg-slate-100 { background-color: #EAF6FC !important; }
+html:not(.dark) .border-slate-300 { border-color: rgba(11, 31, 51, 0.08) !important; }
+html:not(.dark) .bg-slate-50  { background-color: #FAFBF9 !important; }
+html:not(.dark) .bg-slate-100 { background-color: #EAECE9 !important; }
+
+/* Custom box shadows for light mode cards and elements */
+html:not(.dark) .shadow-sm { box-shadow: 0 8px 24px rgba(11, 31, 51, 0.04) !important; }
+html:not(.dark) .shadow-md { box-shadow: 0 12px 32px rgba(11, 31, 51, 0.06) !important; }
+html:not(.dark) .shadow-lg { box-shadow: 0 16px 40px rgba(11, 31, 51, 0.08) !important; }
+
+/* Premium Segmented Controls styling */
+.segmented-control-btn {
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.875rem;
+  transition: all 0.15s ease;
+  border: none;
+  cursor: pointer;
+}
+html:not(.dark) .segmented-control-btn.selected {
+  background-color: #0B1F33 !important;
+  color: #FFFFFF !important;
+}
+html.dark .segmented-control-btn.selected {
+  background-color: #0F766E !important;
+  color: #FFFFFF !important;
+}
+html:not(.dark) .segmented-control-btn:not(.selected) {
+  background-color: transparent !important;
+  color: #52667A !important;
+}
+html.dark .segmented-control-btn:not(.selected) {
+  background-color: transparent !important;
+  color: #A8BECE !important;
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DARK MODE — COMPLETE OVERRIDE SYSTEM

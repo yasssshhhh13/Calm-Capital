@@ -1549,9 +1549,14 @@ function CalculatorTab({ onOpen }) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">IPO Profit / Loss Calculator</h1>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Estimate your grey market returns before applying to any IPO</p>
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400">
+          <CalcIcon size={16} />
+        </div>
+        <div>
+          <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">IPO Profit / Loss Calculator</h1>
+          <p className="text-[11px] text-slate-455 dark:text-slate-500">Estimate your grey market returns before applying to any IPO</p>
+        </div>
       </div>
       
       <div className="grid md:grid-cols-2 gap-6 items-start">
@@ -1899,10 +1904,35 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
   };
   const ss = statusStyle[ipo.status] || statusStyle.Closed;
 
+  // Custom formats for left vertical accent bar, border highlights, and shadow glow
+  const formatStyle = {
+    Open: {
+      bar: "bg-gradient-to-b from-[#10b981] to-[#059669]",
+      border: "rgba(16,185,129,0.35)",
+      shadow: "0 0 0 1px rgba(16,185,129,0.12), 0 4px 16px -4px rgba(16,185,129,0.15)"
+    },
+    Upcoming: {
+      bar: "bg-gradient-to-b from-[#f0a202] to-[#d97706]",
+      border: "rgba(240,162,2,0.35)",
+      shadow: "0 0 0 1px rgba(240,162,2,0.12), 0 4px 16px -4px rgba(240,162,2,0.15)"
+    },
+    Closed: {
+      bar: "bg-gradient-to-b from-[#64748b] to-[#475569]",
+      border: "rgba(148,163,184,0.35)",
+      shadow: "0 0 0 1px rgba(148,163,184,0.12), 0 4px 16px -4px rgba(148,163,184,0.15)"
+    },
+    Listed: {
+      bar: "bg-gradient-to-b from-[#1c9bda] to-[#0a66c2]",
+      border: "rgba(28,155,218,0.35)",
+      shadow: "0 0 0 1px rgba(28,155,218,0.12), 0 4px 16px -4px rgba(28,155,218,0.15)"
+    }
+  };
+  const fs = formatStyle[ipo.status] || formatStyle.Closed;
+
   return (
     <div
       className="bg-white dark:bg-[#121D2D] border rounded-2xl overflow-hidden relative group transition-all hover:shadow-md"
-      style={{ borderColor: isOpen ? "rgba(28,155,218,0.35)" : "rgba(0,0,0,0.06)", boxShadow: isOpen ? "0 0 0 1px rgba(28,155,218,0.12), 0 4px 16px -4px rgba(28,155,218,0.15)" : "0 1px 4px rgba(0,0,0,0.04)" }}
+      style={{ borderColor: fs.border, boxShadow: fs.shadow }}
     >
       {/* Stretch link for SEO + open details (bookmark sits above this) */}
       <a
@@ -1915,10 +1945,8 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
           onOpen(ipo);
         }}
       />
-      {/* Blue left accent bar for Open IPOs */}
-      {isOpen && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 z-[1] bg-gradient-to-b from-[#1c9bda] to-[#0a66c2] pointer-events-none" />
-      )}
+      {/* Left accent vertical indicator bar */}
+      <div className={`absolute left-0 top-0 bottom-0 w-1 z-[1] ${fs.bar} pointer-events-none`} />
 
       <div className="p-5 relative z-[1] pointer-events-none">
         {/* Row 1: Company Logo, Name, Sector and Bookmark */}
@@ -1992,7 +2020,7 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
             ? "text-emerald-800 dark:text-emerald-300"
             : isNeg
             ? "text-rose-700 dark:text-rose-300"
-            : "text-slate-700 dark:text-slate-200";
+            : "text-slate-700 dark:text-slate-205";
           const gmpBgClass = isPos
             ? "bg-emerald-500/[0.12] dark:bg-emerald-400/20"
             : isNeg
@@ -2014,7 +2042,7 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
                   </span>
                 </span>
               ) : (
-                <span className="font-mono text-sm font-semibold text-slate-500 dark:text-slate-400">N/A</span>
+                <span className="font-mono text-sm font-semibold text-slate-550 dark:text-slate-400">N/A</span>
               )}
             </div>
           );
@@ -2039,7 +2067,7 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
 
           {/* Est. profit pill — only for non-listed IPOs with GMP */}
           {!isListed && ipo.lot > 0 && ipo.gmp > 0 && (
-            <div className="rounded-xl px-3 py-2 text-right shrink-0" style={{ background: "#16a34a" }}>
+            <div className="rounded-xl px-3 py-2 text-right shrink-0" style={{ background: "#0f9d68" }}>
               <p className="text-[10px] text-emerald-100 font-semibold leading-none mb-1">Est. profit / lot</p>
               <p className="font-mono font-bold text-white text-sm">+{rupee(profitPerLot(ipo))}</p>
             </div>
@@ -2051,7 +2079,7 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
             const pnl = listingProfitLossPerLot(ipo);
             let bg, textClass, prefix = "";
             if (gain > 0) {
-              bg = `${BRAND.green}22`;
+              bg = "rgba(16,185,129,0.12)";
               textClass = "text-profit";
               prefix = "+";
             } else if (gain < 0) {
@@ -2460,7 +2488,7 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
         <div className="px-6 pt-3 pb-6 flex flex-col gap-2">
           <button
             onClick={() => onOpen(ipo, "full")}
-            className="w-full py-3 bg-[#1c9bda] hover:bg-[#1589c4] text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer border-0 text-sm"
+            className="w-full py-3 bg-gradient-to-r from-[#1C9BDA] to-[#0F766E] hover:from-[#1C9BDA]/90 hover:to-[#0F766E]/90 text-white font-bold rounded-2xl flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer border-0 text-sm"
           >
             View Full IPO Details →
           </button>
@@ -3957,7 +3985,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                 href={ipo.rhp}
                 target="_blank"
                 rel="noreferrer"
-                className="w-full py-2 bg-[#1c9bda] hover:bg-[#1c9bda]/90 text-center font-bold text-white rounded-xl transition-colors border-0 no-underline cursor-pointer text-xs shadow-sm hover:shadow-md"
+                className="w-full py-2 bg-gradient-to-r from-[#1C9BDA] to-[#0F766E] hover:from-[#1C9BDA]/90 hover:to-[#0F766E]/90 text-center font-bold text-white rounded-xl transition-colors border-0 no-underline cursor-pointer text-xs shadow-sm hover:shadow-md hover:scale-[1.01] active:scale-[0.98]"
               >
                 Open RHP Document ↗
               </a>
@@ -4024,14 +4052,16 @@ function SectionLabel({ icon: Icon, children }) {
 /* =====================================================================
    GMP TRENDS TAB
 ===================================================================== */
-function GMPTab({ tick, onOpen }) {
+function GMPTab({ tick, onOpen, query }) {
   const data = useMemo(() => {
     const STATUS_ORDER = { Open: 1, Closed: 2, Upcoming: 3 };
+    const q = query?.trim() ? query.toLowerCase() : "";
 
     return [...getLiveIPOS()]
       .filter((i) => {
         const s = getComputedStatus(i);
-        return (s === "Open" || s === "Upcoming" || s === "Closed") && i.gmp != null && !isNaN(i.gmp);
+        const matchesSearch = !q || (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q);
+        return matchesSearch && (s === "Open" || s === "Upcoming" || s === "Closed") && i.gmp != null && !isNaN(i.gmp);
       })
       .sort((a, b) => {
         const sa = STATUS_ORDER[getComputedStatus(a)] || 99;
@@ -4089,7 +4119,7 @@ function GMPTab({ tick, onOpen }) {
                 key={entry.rawIpo?.id || idx}
                 className={"group flex items-center gap-3 py-2 px-3 rounded-xl transition-all cursor-pointer select-none " + (isHov ? "bg-slate-50 dark:bg-white/[0.04] shadow-sm" : "hover:bg-slate-50 dark:hover:bg-white/[0.04]")}
                 style={{ minHeight: "44px" }}
-                onClick={() => { if (entry.rawIpo) onOpen?.(entry.rawIpo); }}
+                onClick={() => { setHovered(null); if (entry.rawIpo) onOpen?.(entry.rawIpo); }}
                 onMouseEnter={(e) => { setHovered(idx); setTooltipPos({ x: e.clientX, y: e.clientY }); }}
                 onMouseMove={(e) => setTooltipPos({ x: e.clientX, y: e.clientY })}
                 onMouseLeave={() => setHovered(null)}
@@ -4693,7 +4723,7 @@ function AllotmentTab({ query, onOpen, watchlist, dark, tick }) {
 /* =====================================================================
    SUBSCRIPTIONS TAB
 ===================================================================== */
-function SubscriptionsTab({ dark }) {
+function SubscriptionsTab({ dark, query }) {
   const [filterType, setFilterType] = useState(() => {
     try {
       return localStorage.getItem("calmcapital-subscriptions-filter") || "Mainboard";
@@ -4713,7 +4743,15 @@ function SubscriptionsTab({ dark }) {
   const mainboardCount = allIpos.filter((i) => i.type === "Mainboard").length;
   const smeCount = allIpos.filter((i) => i.type === "SME").length;
   
-  const displayedIpos = sortIposLogically(allIpos.filter((i) => i.type === filterType));
+  const displayedIpos = sortIposLogically(
+    allIpos.filter(
+      (i) =>
+        i.type === filterType &&
+        (!query?.trim() ||
+          (i.company || i.name || "").toLowerCase().includes(query.toLowerCase()) ||
+          (i.sector || "").toLowerCase().includes(query.toLowerCase()))
+    )
+  );
 
   const statusBadge = {
     Open:     { bg: dark ? "rgba(16,185,129,0.15)" : "rgba(16,185,129,0.1)", color: "#10b981", border: dark ? "1px solid rgba(16,185,129,0.25)" : "1px solid rgba(16,185,129,0.2)" },
@@ -4727,30 +4765,33 @@ function SubscriptionsTab({ dark }) {
   return (
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
-            IPO Subscriptions & Allotment Odds
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400">
+            <LayoutGrid size={16} />
+          </div>
+          <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">
+            IPO Subscriptions &amp; Allotment Odds
           </h1>
         </div>
 
         {/* Mainboard | SME Toggle */}
-        <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5 self-start sm:self-auto">
+        <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5 self-start sm:self-auto">
           <button
             onClick={() => handleFilterChange("Mainboard")}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
               filterType === "Mainboard"
-                ? "bg-[#1c9bda] text-white shadow-sm"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
             }`}
           >
             Mainboard ({mainboardCount})
           </button>
           <button
             onClick={() => handleFilterChange("SME")}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
               filterType === "SME"
-                ? "bg-[#1c9bda] text-white shadow-sm"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
             }`}
           >
             SME ({smeCount})
@@ -4830,7 +4871,7 @@ function SubscriptionsTab({ dark }) {
 /* =====================================================================
    FINANCIALS TAB
 ===================================================================== */
-function FinancialsTab({ onOpen, dark }) {
+function FinancialsTab({ onOpen, dark, query }) {
   const [filterType, setFilterType] = useState(() => {
     try {
       return localStorage.getItem("calmcapital-financials-filter") || "Mainboard";
@@ -4850,7 +4891,15 @@ function FinancialsTab({ onOpen, dark }) {
   const mainboardCount = allIpos.filter((i) => i.type === "Mainboard").length;
   const smeCount = allIpos.filter((i) => i.type === "SME").length;
   
-  const displayedIpos = sortIposLogically(allIpos.filter((i) => i.type === filterType));
+  const displayedIpos = sortIposLogically(
+    allIpos.filter(
+      (i) =>
+        i.type === filterType &&
+        (!query?.trim() ||
+          (i.company || i.name || "").toLowerCase().includes(query.toLowerCase()) ||
+          (i.sector || "").toLowerCase().includes(query.toLowerCase()))
+    )
+  );
 
   const MetricBox = ({ label, value, isNA, span = 1 }) => (
     <div
@@ -4873,30 +4922,33 @@ function FinancialsTab({ onOpen, dark }) {
   return (
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400">
+            <BarChart3 size={16} />
+          </div>
+          <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">
             Company Financial Metrics Grid
           </h1>
         </div>
 
         {/* Mainboard | SME Toggle */}
-        <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5 self-start sm:self-auto">
+        <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5 self-start sm:self-auto">
           <button
             onClick={() => handleFilterChange("Mainboard")}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
               filterType === "Mainboard"
-                ? "bg-[#1c9bda] text-white shadow-sm"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
             }`}
           >
             Mainboard ({mainboardCount})
           </button>
           <button
             onClick={() => handleFilterChange("SME")}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
               filterType === "SME"
-                ? "bg-[#1c9bda] text-white shadow-sm"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
             }`}
           >
             SME ({smeCount})
@@ -4980,7 +5032,7 @@ function FinancialsTab({ onOpen, dark }) {
 /* =====================================================================
    DOCUMENTS TAB
 ===================================================================== */
-function DocumentsTab({ onOpen }) {
+function DocumentsTab({ onOpen, query }) {
   const [filterType, setFilterType] = useState(() => {
     try {
       return localStorage.getItem("calmcapital-documents-filter") || "Mainboard";
@@ -5000,34 +5052,47 @@ function DocumentsTab({ onOpen }) {
   const mainboardCount = allIpos.filter((i) => i.type === "Mainboard").length;
   const smeCount = allIpos.filter((i) => i.type === "SME").length;
 
-  const displayedIpos = sortDocumentsLogically(allIpos.filter((i) => i.type === filterType));
+  const displayedIpos = sortDocumentsLogically(
+    allIpos.filter(
+      (i) =>
+        i.type === filterType &&
+        (!query?.trim() ||
+          (i.company || i.name || "").toLowerCase().includes(query.toLowerCase()) ||
+          (i.sector || "").toLowerCase().includes(query.toLowerCase()))
+    )
+  );
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2">
-        <div>
-          <h1 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight">Official Filings & Documents</h1>
-          <p className="text-xs text-slate-450 dark:text-slate-500 mt-1">Mainboard IPOs link to official SEBI filings. SME IPOs link to exchange offer documents.</p>
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400">
+            <FileText size={16} />
+          </div>
+          <div>
+            <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">Official Filings &amp; Documents</h1>
+            <p className="text-[11px] text-slate-455 dark:text-slate-500">Mainboard IPOs link to official SEBI filings. SME IPOs link to exchange offer documents.</p>
+          </div>
         </div>
 
         {/* Mainboard | SME Toggle */}
-        <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5 self-start sm:self-auto">
+        <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5 self-start sm:self-auto">
           <button
             onClick={() => handleFilterChange("Mainboard")}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
               filterType === "Mainboard"
-                ? "bg-[#1c9bda] text-white shadow-sm"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
             }`}
           >
             Mainboard ({mainboardCount})
           </button>
           <button
             onClick={() => handleFilterChange("SME")}
-            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
               filterType === "SME"
-                ? "bg-[#1c9bda] text-white shadow-sm"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
             }`}
           >
             SME ({smeCount})
@@ -5096,8 +5161,16 @@ function DocumentsTab({ onOpen }) {
 /* =====================================================================
    WATCHLIST TAB
 ===================================================================== */
-function WatchlistTab({ watchlist, onOpen, dark }) {
-  const items = sortIposLogically(getLiveIPOS().filter((i) => watchlist.ids.includes(i.id)));
+function WatchlistTab({ watchlist, onOpen, dark, query }) {
+  const items = sortIposLogically(
+    getLiveIPOS().filter(
+      (i) =>
+        watchlist.ids.includes(i.id) &&
+        (!query?.trim() ||
+          (i.company || i.name || "").toLowerCase().includes(query.toLowerCase()) ||
+          (i.sector || "").toLowerCase().includes(query.toLowerCase()))
+    )
+  );
   if (!watchlist.ready) return <p className="text-sm text-slate-400">Loading watchlist…</p>;
   
   if (items.length === 0) {
@@ -5276,14 +5349,30 @@ function DematTab({ dark }) {
 ===================================================================== */
 function StatCard({ icon: Icon, label, value, tint, onClick }) {
   const clickable = typeof onClick === "function";
+  const labelLower = label.toLowerCase();
+  
+  let cardClass = "";
+  
+  if (labelLower.includes("open")) {
+    cardClass = "bg-[#F0FDF4] dark:bg-emerald-950/10 border-emerald-100 dark:border-emerald-800/10 border-t-2 border-t-emerald-500";
+  } else if (labelLower.includes("upcoming")) {
+    cardClass = "bg-[#F0FDFA] dark:bg-teal-950/10 border-teal-100 dark:border-teal-800/10 border-t-2 border-t-teal-500";
+  } else if (labelLower.includes("closed")) {
+    cardClass = "bg-[#FFFBEB] dark:bg-amber-950/10 border-amber-100 dark:border-amber-800/10 border-t-2 border-t-amber-500";
+  } else if (labelLower.includes("listed")) {
+    cardClass = "bg-[#FAF5FF] dark:bg-purple-950/10 border-purple-100 dark:border-purple-800/10 border-t-2 border-t-purple-500";
+  } else {
+    cardClass = "bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-[#26364A]";
+  }
+
   return (
     <div
       onClick={onClick}
       role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : undefined}
       onKeyDown={clickable ? (e) => (e.key === "Enter" || e.key === " ") && onClick() : undefined}
-      className={`bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-[#26364A] rounded-2xl p-4 flex items-center justify-between shadow-sm transition-all duration-200
-        ${clickable ? "cursor-pointer hover:shadow-lg hover:-translate-y-0.5 hover:border-blue-200 dark:hover:border-[#1c9bda]/40 active:scale-95" : ""}`}
+      className={`border p-4 flex items-center justify-between rounded-2xl shadow-sm transition-all duration-200 ${cardClass}
+        ${clickable ? "cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]" : ""}`}
     >
       <div>
         <p className="text-3xl font-extrabold text-slate-850 dark:text-[#F8FAFC] font-mono tracking-tight leading-none">{value}</p>
@@ -5764,8 +5853,8 @@ export default function App() {
       <div className="h-screen flex overflow-hidden" style={{
         background: dark
           ? "radial-gradient(circle at 30% 50%, rgba(28,155,218,0.18), transparent 60%), radial-gradient(circle at 80% 20%, rgba(174,215,104,0.06), transparent 50%), #0A1020"
-          : "#F4F8FB",
-        color: dark ? "#e2e8f0" : "#102A43",
+          : "radial-gradient(circle at 50% 0%, rgba(11, 31, 51, 0.03), transparent 60%), #F5F7F4",
+        color: dark ? "#e2e8f0" : "#0B1F33",
       }}>
         <style>{`
           .glass {
@@ -5866,15 +5955,15 @@ export default function App() {
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold relative transition-all no-underline cursor-pointer group ${
                       isActive
-                        ? "bg-[#1c9bda]/15 dark:bg-[#1c9bda]/20 text-[#1c9bda] dark:text-[#52b1e4] font-bold border-l-[3px] border-[#1c9bda] pl-2.5 shadow-xs"
-                        : "text-slate-700 dark:text-[#C2D0E0] hover:bg-[#1c9bda]/8 dark:hover:bg-[#1c9bda]/10 hover:text-slate-900 dark:hover:text-[#38BDF8] pl-3 font-semibold"
+                        ? "bg-[#0B1F33]/5 dark:bg-[#14B8A6]/10 text-[#0B1F33] dark:text-[#14B8A6] font-bold border-l-[3px] border-[#0F766E] dark:border-[#14B8A6] pl-2.5 shadow-xs"
+                        : "text-slate-700 dark:text-[#C2D0E0] hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-[#38BDF8] pl-3 font-semibold"
                     }`}
                   >
                     <IconComponent
                       size={16}
                       strokeWidth={isActive ? 2.4 : 2.2}
                       className={`shrink-0 transition-colors ${
-                        isActive ? "text-[#1c9bda] dark:text-[#52b1e4]" : "text-slate-600 dark:text-[#8FA3BA] group-hover:text-slate-800 dark:group-hover:text-[#38BDF8]"
+                        isActive ? "text-[#0F766E] dark:text-[#14B8A6]" : "text-slate-600 dark:text-[#8FA3BA] group-hover:text-[#0B1F33] dark:group-hover:text-[#38BDF8]"
                       }`}
                     />
                     <span className="truncate tracking-tight">{n.label}</span>
@@ -5888,13 +5977,13 @@ export default function App() {
         {/* MAIN */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* HEADER */}
-          <header className="flex items-center gap-3 px-5 py-4 border-b sticky top-0 z-20 backdrop-blur-lg"
+          <header className="flex items-center gap-3 px-5 py-3.5 border-b sticky top-0 z-20 backdrop-blur-lg"
             style={{ 
-              borderColor: dark ? "rgba(45,64,86,0.9)" : "rgba(0,0,0,0.05)", 
-              background: dark ? "rgba(13,21,36,0.92)" : "rgba(255,255,255,0.88)" 
+              borderColor: dark ? "rgba(45,64,86,0.9)" : "rgba(11, 31, 51, 0.08)", 
+              background: dark ? "rgba(13,21,36,0.92)" : "rgba(245, 247, 244, 0.85)" 
             }}>
             {!sidebarOpen && (
-              <button onClick={() => setSidebarOpen(true)} className="text-slate-400 hover:text-slate-700 p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg mr-1">
+              <button onClick={() => setSidebarOpen(true)} className="text-slate-500 hover:text-[#0B1F33] dark:text-[#8EA1B7] dark:hover:text-white p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl mr-1 transition-all cursor-pointer border-0">
                 <Menu size={18} />
               </button>
             )}
@@ -5902,12 +5991,12 @@ export default function App() {
             <div className="relative flex-1 max-w-sm">
               <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search for company IPOs..."
-                className="w-full bg-white dark:bg-[#1A293D] border border-slate-200 dark:border-[#34465C] rounded-2xl pl-9 pr-4 py-2 text-base md:text-sm outline-none shadow-sm focus:glow-blue placeholder:text-slate-400 dark:placeholder:text-[#8FA3BA] text-slate-800 dark:text-[#F8FAFC]" />
+                className="w-full bg-[#FAFBF9]/80 focus:bg-[#FFFFFF] dark:bg-[#1A293D] border border-slate-200 dark:border-[#34465C] rounded-xl pl-9 pr-4 py-2 text-sm outline-none shadow-sm transition-all focus:border-[#0F766E] focus:ring-1 focus:ring-[#0F766E] text-[#0B1F33] dark:text-[#F8FAFC] placeholder:text-slate-400 dark:placeholder:text-[#8FA3BA]" />
             </div>
 
             <div className="ml-auto flex items-center gap-2.5 relative">
               <div className="hidden sm:flex items-center">
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#121D2D]/80 text-slate-600 dark:text-[#C9D6E5] shadow-sm cursor-default">
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-205 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 text-[#0B1F33] dark:text-[#C9D6E5] shadow-sm cursor-default">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
@@ -5916,8 +6005,8 @@ export default function App() {
                 </div>
               </div>
 
-              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-white/30 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-[#1c9bda] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-slate-700 dark:hover:text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative">
-                <RefreshCw size={14} className={refreshing ? "animate-spin text-[#1c9bda]" : ""} />
+              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-[#14B8A6] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-[#0B1F33] dark:hover:text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative cursor-pointer border-0">
+                <RefreshCw size={14} className={refreshing ? "animate-spin text-[#14B8A6]" : ""} />
               </button>
               <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />
               
@@ -5967,47 +6056,95 @@ export default function App() {
               </div>
             ) : (
               <div key={tab} className="tab-enter">
-                {tab === "overview" && (
+                {query.trim() ? (
+                  <div className="space-y-6 animate-fade-in">
+                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-4">
+                      <div>
+                        <h2 className="text-base font-bold text-slate-850 dark:text-white tracking-tight">
+                          Search Results
+                        </h2>
+                        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                          Showing matches for &ldquo;<span className="font-semibold text-slate-750 dark:text-slate-300">{query}</span>&rdquo; across all categories &amp; statuses
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setQuery("")}
+                        className="text-xs text-[#1c9bda] hover:underline font-bold cursor-pointer border-0 bg-transparent"
+                      >
+                        Clear search
+                      </button>
+                    </div>
+
+                    {filtered.length > 0 ? (
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        {sortIposLogically(filtered).map((ipo) => (
+                          <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
+                        <Building2 size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
+                        <p className="text-slate-500 text-sm">No matching IPOs found in our database.</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    {tab === "overview" && (
               <div className="space-y-6">
                 {/* 1. Hero Section */}
-                <div className="relative rounded-3xl overflow-hidden glass border border-slate-205 dark:border-white/5 p-6 md:p-8 hero-grid shadow-lg">
-                  {/* Background Radial Glow */}
-                  <div className="absolute inset-0 z-0 pointer-events-none opacity-50 dark:opacity-70" style={{
-                    background: dark
-                      ? "radial-gradient(circle at 70% 30%, rgba(28, 155, 218, 0.15) 0%, rgba(174, 217, 104, 0.04) 50%, transparent 80%)"
-                      : "radial-gradient(circle at 70% 30%, rgba(28, 155, 218, 0.08) 0%, rgba(174, 217, 104, 0.02) 50%, transparent 80%)"
+                <div className="relative rounded-3xl overflow-hidden p-6 md:p-8 shadow-xl border"
+                  style={{
+                    background: "linear-gradient(135deg, #0B1F33 0%, #123B4A 100%)",
+                    borderColor: "rgba(20, 184, 166, 0.15)"
+                  }}
+                >
+                  {/* Decorative faint financial/candlestick pattern & grid */}
+                  <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" style={{
+                    backgroundImage: `
+                      linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px)
+                    `,
+                    backgroundSize: '24px 24px'
+                  }} />
+                  {/* Faint financial wavy graph background line (using an SVG overlay) */}
+                  <div className="absolute bottom-0 right-0 left-0 h-24 z-0 opacity-5 pointer-events-none">
+                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                      <path d="M0,80 Q25,30 50,70 T100,20 L100,100 L0,100 Z" fill="rgba(20, 184, 166, 0.4)" stroke="rgba(20, 184, 166, 0.8)" strokeWidth="1" />
+                    </svg>
+                  </div>
+                  {/* Teal/Blue radial soft glow */}
+                  <div className="absolute inset-0 z-0 pointer-events-none opacity-40" style={{
+                    background: "radial-gradient(circle at 80% 20%, rgba(20, 184, 166, 0.18) 0%, rgba(28, 155, 218, 0.1) 40%, transparent 70%)"
                   }} />
 
                   <div className="relative z-10 grid md:grid-cols-12 gap-6 items-center">
                     {/* Left Column: Heading and Tagline */}
-                    <div className="md:col-span-7 space-y-4">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-[#1c9bda]/10 text-[#1c9bda] dark:bg-[#1c9bda]/20 dark:text-[#52b1e4]">
+                    <div className="md:col-span-7 space-y-4 text-left">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-white/5 text-[#14B8A6] border border-white/10 shadow-[0_0_12px_rgba(20,184,166,0.15)] backdrop-blur-md">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#14B8A6] animate-pulse"></span>
                         Designed by Discipline
                       </div>
                       
-                      <h1 className="text-2xl md:text-3xl font-black tracking-tight leading-[1.15] text-slate-800 dark:text-white">
-                        Calm Capital — Live GMP & Institutional-Grade IPO Analysis
+                      <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-[1.2] text-white">
+                        Calm Capital — Live GMP &amp; Institutional-Grade IPO Analysis
                       </h1>
                       
-                      <p className="text-sm leading-relaxed text-slate-550 dark:text-[#B8C5D6]">
+                      <p className="text-sm leading-relaxed text-[#B8C5D6] max-w-xl">
                         Live GMP, IPO subscriptions, allotment chances, financials, DRHP/RHP, listing data and more, all in one place.
                       </p>
 
                       <div className="flex flex-wrap gap-3 pt-2">
                         <button
                           onClick={() => navigateToTab("open")}
-                          className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#1c9bda] hover:bg-[#1c9bda]/90 hover:scale-[1.02] shadow-md shadow-[#1c9bda]/15 cursor-pointer flex items-center gap-1.5 border-0"
+                          className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#1C9BDA] to-[#0F766E] hover:from-[#1C9BDA]/90 hover:to-[#0F766E]/90 shadow-md shadow-[#1c9bda]/10 cursor-pointer flex items-center gap-1.5 border-0 hover:scale-[1.01] active:scale-[0.98] transition-all"
                         >
                           Explore Open IPOs
                           <ChevronRight size={14} />
                         </button>
                         <button
                           onClick={() => navigateToTab("gmp")}
-                          className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border cursor-pointer hover:bg-slate-50 dark:hover:bg-[#1c9bda]/8 hover:scale-[1.02] bg-transparent"
-                          style={{
-                            borderColor: dark ? "rgba(52,74,97,0.9)" : "rgba(0,0,0,0.12)",
-                            color: dark ? "#B8C5D6" : "#475569"
-                          }}
+                          className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border border-white/15 bg-white/5 hover:bg-white/10 text-[#E2E8F0] hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
                         >
                           View Live GMP
                         </button>
@@ -6016,19 +6153,19 @@ export default function App() {
 
                     {/* Right Column: Visual Graphics Card */}
                     <div className="md:col-span-5 hidden md:block">
-                      <div className="relative p-6 rounded-2xl border border-[#26364A] dark:border-[#41546B] dark:bg-[#131F30] bg-white/60 animate-float flex flex-col items-center text-center space-y-3" style={dark ? { background: '#131F30' } : {}}>
+                      <div className="relative p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md animate-float flex flex-col items-center text-center space-y-3">
                         {/* Styled visual chart/avatar represent Calm Capital discipline */}
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1c9bda] to-[#aed768] flex items-center justify-center text-white shadow-lg">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1C9BDA] to-[#14B8A6] flex items-center justify-center text-white shadow-lg shadow-[#1C9BDA]/20">
                           <Activity size={22} />
                         </div>
-                        <h4 className="text-sm font-bold text-slate-800 dark:text-[#F8FAFC]">Institutional Intelligence</h4>
-                        <p className="text-[11px] text-slate-400 dark:text-[#8FA3BA] leading-relaxed max-w-[200px]">
+                        <h4 className="text-sm font-bold text-white">Institutional Intelligence</h4>
+                        <p className="text-[11px] text-[#8FA3BA] leading-relaxed max-w-[200px]">
                           Real-time multi-source verified data, tracked with financial discipline.
                         </p>
-                        <div className="flex gap-2 items-center text-[10px] font-bold text-emerald-500 bg-emerald-500/10 dark:bg-emerald-500/15 px-2.5 py-1 rounded-full border border-emerald-500/20">
+                        <div className="flex gap-2 items-center text-[10px] font-bold text-[#14B8A6] bg-[#14B8A6]/10 px-2.5 py-1 rounded-full border border-[#14B8A6]/20">
                           <span className="relative flex h-1.5 w-1.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#14B8A6] opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#14B8A6]"></span>
                           </span>
                           Live Data Synced
                         </div>
@@ -6051,7 +6188,7 @@ export default function App() {
                   const STATUS_ORDER = { Open: 1, Closed: 2, Upcoming: 3 };
 
                   // Step 1: filter by type (Mainboard/SME) and exclude Listed + no-GMP
-                  const eligibleGmpIpos = getLiveIPOS().filter((ipo) => {
+                  const eligibleGmpIpos = filtered.filter((ipo) => {
                     const s = getComputedStatus(ipo);
                     if (s !== "Open" && s !== "Closed" && s !== "Upcoming") return false;
                     if (ipo.type !== gmpMarket) return false;
@@ -6094,22 +6231,33 @@ export default function App() {
 
                   
                   return (
-                    <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#121D2D] shadow-sm space-y-4">
+                    <div className="rounded-2xl p-5 border border-slate-200 dark:border-white/5 bg-white dark:bg-[#121D2D] shadow-sm space-y-4">
                       {/* Header + Mainboard/SME Toggle + View All */}
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3.5" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#EAEFF2" }}>
                         <div className="flex flex-wrap items-center justify-between sm:justify-start gap-3 sm:gap-4">
-                          <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                            <TrendingUp size={15} className="text-[#1c9bda]" />
-                            LIVE GMP STATUS
-                          </h3>
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400">
+                              <TrendingUp size={15} />
+                            </div>
+                            <h3 className="text-sm font-bold text-[#0B1F33] dark:text-white uppercase tracking-wide">
+                              LIVE GMP STATUS
+                            </h3>
+                            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[9px] font-bold tracking-wider uppercase">
+                              <span className="relative flex h-1.5 w-1.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                              </span>
+                              LIVE
+                            </div>
+                          </div>
 
-                          {/* MAINBOARD | SME Tabs */}
-                          <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5">
+                          {/* MAINBOARD | SME Tabs Segmented Control */}
+                          <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5">
                             <button
                               onClick={() => setGmpMarket("Mainboard")}
-                              className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+                              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
                                 gmpMarket === "Mainboard"
-                                  ? "bg-[#1c9bda] text-white shadow-sm"
+                                  ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
                                   : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 bg-transparent"
                               }`}
                             >
@@ -6117,9 +6265,9 @@ export default function App() {
                             </button>
                             <button
                               onClick={() => setGmpMarket("SME")}
-                              className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+                              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
                                 gmpMarket === "SME"
-                                  ? "bg-[#1c9bda] text-white shadow-sm"
+                                  ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
                                   : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 bg-transparent"
                               }`}
                             >
@@ -6130,7 +6278,7 @@ export default function App() {
 
                         <button
                           onClick={() => navigateToTab("gmp")}
-                          className="text-xs font-bold text-[#1c9bda] hover:underline flex items-center gap-1 cursor-pointer border-0 bg-transparent self-end sm:self-auto"
+                          className="text-xs font-bold text-[#0F766E] dark:text-[#14B8A6] hover:underline flex items-center gap-1 cursor-pointer border-0 bg-transparent self-end sm:self-auto"
                         >
                           View All GMP Trends <ChevronRight size={13} />
                         </button>
@@ -6147,37 +6295,45 @@ export default function App() {
                             const isPos = ipo.gmp > 0;
                             const isNeg = ipo.gmp < 0;
 
+                            const statusDotColor =
+                              status === "Open" ? "text-emerald-500" :
+                              status === "Upcoming" ? "text-teal-500" :
+                              "text-amber-500";
+
                             return (
                               <div
                                 key={ipo.id}
                                 onClick={() => handleSelectIpo(ipo)}
-                                className="p-3.5 rounded-2xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] hover:border-[#1c9bda]/40 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
+                                className="p-3.5 rounded-2xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] hover:border-[#1C9BDA]/40 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
                               >
                                 <div className="flex items-center gap-3 min-w-0">
                                   <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} />
                                   <div className="min-w-0">
-                                    <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{ipo.company}</p>
-                                    <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
-                                      <span className="text-[#1c9bda] font-bold">
-                                        {status === "Open" ? "Open IPO" : status === "Upcoming" ? "Upcoming IPO" : "Closed IPO"}
+                                    <p className="text-xs font-bold text-[#0B1F33] dark:text-white truncate">{ipo.company}</p>
+                                    <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                                      <span className={`${statusDotColor} text-[8px] leading-none`}>●</span>
+                                      <span className="font-bold text-[#102A43] dark:text-slate-200">
+                                        {status === "Open" ? "Open" : status === "Upcoming" ? "Upcoming" : "Closed"}
                                       </span>
-                                      <span>·</span>
+                                      <span className="text-slate-300 dark:text-slate-600">|</span>
                                       <span>{ipo.type}</span>
                                     </p>
                                   </div>
                                 </div>
                                 <div className="text-right shrink-0">
-                                  <span className={`font-mono font-black text-sm block ${
-                                    isPos ? "text-slate-850 dark:text-white" : isNeg ? "text-red-500" : "text-slate-500"
+                                  <span className={`font-mono font-bold text-sm block ${
+                                    isPos ? "text-emerald-600 dark:text-emerald-400" :
+                                    isNeg ? "text-[#DC2626] dark:text-rose-400" :
+                                    "text-slate-500 dark:text-slate-450"
                                   }`}>
-                                    {ipo.gmp >= 0 ? "+" : "-"}₹{Math.abs(ipo.gmp)}
+                                    {ipo.gmp > 0 ? "+" : ipo.gmp < 0 ? "-" : ""}₹{Math.abs(ipo.gmp || 0)}
                                   </span>
-                                  <span className={`text-[11px] font-bold font-mono px-1.5 py-0.5 rounded ${
-                                    isPos ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
-                                    isNeg ? "bg-rose-500/10 text-rose-600 dark:text-rose-400" :
-                                    "bg-slate-500/10 text-slate-500"
+                                  <span className={`text-[10px] font-semibold font-mono px-1.5 py-0.5 rounded ${
+                                    isPos ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
+                                    isNeg ? "bg-rose-50 dark:bg-rose-500/10 text-[#DC2626] dark:text-rose-400" :
+                                    "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400"
                                   }`}>
-                                    {gmpPct}%
+                                    {isPos ? "+" : ""}{gmpPct}%
                                   </span>
                                 </div>
                               </div>
@@ -6322,7 +6478,7 @@ export default function App() {
 
                   {(() => {
                     // Strictly Open IPOs only per requirement
-                    const activeOverview = sortIposLogically(getLiveIPOS().filter(i => i.type === overviewType && getComputedStatus(i) === "Open"));
+                    const activeOverview = sortIposLogically(filtered.filter(i => i.type === overviewType && getComputedStatus(i) === "Open"));
                     
                     if (activeOverview.length > 0) {
                       return (
@@ -6461,26 +6617,31 @@ export default function App() {
               return (
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <h1 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight">Closed IPOs</h1>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
+                        <Clock size={16} />
+                      </div>
+                      <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">Closed IPOs</h1>
+                    </div>
                     
                     {/* Mainboard | SME Toggle */}
-                    <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5 self-start sm:self-auto">
+                    <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5 self-start sm:self-auto">
                       <button
                         onClick={() => setClosedType("Mainboard")}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
                           closedType === "Mainboard"
-                            ? "bg-[#1c9bda] text-white shadow-sm"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                            ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
                         }`}
                       >
                         Mainboard ({closedMainboardCount})
                       </button>
                       <button
                         onClick={() => setClosedType("SME")}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
                           closedType === "SME"
-                            ? "bg-[#1c9bda] text-white shadow-sm"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                            ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
                         }`}
                       >
                         SME ({closedSmeCount})
@@ -6515,26 +6676,31 @@ export default function App() {
               return (
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <h1 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight">Upcoming IPOs</h1>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400">
+                        <Calendar size={16} />
+                      </div>
+                      <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">Upcoming IPOs</h1>
+                    </div>
                     
                     {/* Mainboard | SME Toggle */}
-                    <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5 self-start sm:self-auto">
+                    <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5 self-start sm:self-auto">
                       <button
                         onClick={() => setUpcomingType("Mainboard")}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
                           upcomingType === "Mainboard"
-                            ? "bg-[#1c9bda] text-white shadow-sm"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                            ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
                         }`}
                       >
                         Mainboard ({upcomingMainboardCount})
                       </button>
                       <button
                         onClick={() => setUpcomingType("SME")}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
                           upcomingType === "SME"
-                            ? "bg-[#1c9bda] text-white shadow-sm"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                            ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
                         }`}
                       >
                         SME ({upcomingSmeCount})
@@ -6579,26 +6745,31 @@ export default function App() {
               return (
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <h1 className="text-lg font-bold text-slate-800 dark:text-white tracking-tight">Listed IPOs</h1>
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                        <LayoutGrid size={16} />
+                      </div>
+                      <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">Listed IPOs</h1>
+                    </div>
                     
                     {/* Mainboard | SME Toggle */}
-                    <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5 self-start sm:self-auto">
+                    <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5 self-start sm:self-auto">
                       <button
                         onClick={() => setListedType("Mainboard")}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
                           listedType === "Mainboard"
-                            ? "bg-[#1c9bda] text-white shadow-sm"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                            ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
                         }`}
                       >
                         Mainboard ({listedMainboardCount})
                       </button>
                       <button
                         onClick={() => setListedType("SME")}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
                           listedType === "SME"
-                            ? "bg-[#1c9bda] text-white shadow-sm"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200"
+                            ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
                         }`}
                       >
                         SME ({listedSmeCount})
@@ -6622,19 +6793,21 @@ export default function App() {
               );
             })()}
 
-            {tab === "gmp" && <GMPTab tick={tick} onOpen={handleSelectIpo} />}
-            {tab === "subscriptions" && <SubscriptionsTab dark={dark} />}
-            {tab === "financials" && <FinancialsTab onOpen={handleSelectIpo} dark={dark} />}
-            {tab === "docs" && <DocumentsTab onOpen={handleSelectIpo} />}
+            {tab === "gmp" && <GMPTab tick={tick} onOpen={handleSelectIpo} query={query} />}
+            {tab === "subscriptions" && <SubscriptionsTab dark={dark} query={query} />}
+            {tab === "financials" && <FinancialsTab onOpen={handleSelectIpo} dark={dark} query={query} />}
+            {tab === "docs" && <DocumentsTab onOpen={handleSelectIpo} query={query} />}
             {tab === "calculator" && <CalculatorTab onOpen={handleSelectIpo} />}
-            {tab === "watchlist" && <WatchlistTab watchlist={watchlist} onOpen={handleSelectIpo} dark={dark} />}
+            {tab === "watchlist" && <WatchlistTab watchlist={watchlist} onOpen={handleSelectIpo} dark={dark} query={query} />}
             {tab === "demat" && <DematTab dark={dark} />}
             {AI_ASSISTANT_ENABLED && tab === "ai" && <div className="glass rounded-2xl p-5"><AssistantPane embedded tick={tick} /></div>}
             {tab === "about" && <AboutPage navigateToTab={navigateToTab} />}
             {tab === "privacy" && <PrivacyPage onBack={() => navigateToTab("overview")} />}
             {tab === "terms" && <TermsPage onBack={() => navigateToTab("overview")} />}
             {tab === "disclaimer" && <DisclaimerPage onBack={() => navigateToTab("overview")} />}
-            </div>
+                  </>
+                )}
+              </div>
             )}
             <Footer dark={dark} navigateToTab={navigateToTab} setOverviewType={setOverviewType} />
           </main>
