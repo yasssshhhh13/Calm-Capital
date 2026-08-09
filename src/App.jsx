@@ -5579,20 +5579,19 @@ export default function App() {
 
   // Global Navigation Scroll Reset
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant"
-    });
-    const mainEl = document.querySelector("main");
-    if (mainEl) {
-      mainEl.scrollTo({
-        top: 0,
-        left: 0,
-        behavior: "instant"
-      });
-    }
-  }, [tab]);
+    const resetScroll = () => {
+      const mainEl = document.querySelector("main");
+      if (mainEl) {
+        mainEl.scrollTop = 0;
+      }
+      window.scrollTo(0, 0);
+    };
+
+    resetScroll();
+    requestAnimationFrame(resetScroll);
+    setTimeout(resetScroll, 30);
+    setTimeout(resetScroll, 100);
+  }, [tab, selected]);
 
   // Persist active tab across refreshes + path URL + GA4 SPA tab tracking
   const setTab = (id) => {
@@ -5613,10 +5612,12 @@ export default function App() {
 
   const navigateToTab = (id) => {
     setTab(id);
+    setQuery(""); // Clear search when switching tabs
     const mainEl = document.querySelector("main");
     if (mainEl) {
-      mainEl.scrollTo({ top: 0, behavior: "smooth" });
+      mainEl.scrollTop = 0;
     }
+    window.scrollTo(0, 0);
   };
 
   // Close sidebar when viewport shrinks to mobile
@@ -5951,7 +5952,7 @@ export default function App() {
                     onClick={(e) => {
                       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
                       e.preventDefault();
-                      setTab(n.id);
+                      navigateToTab(n.id);
                     }}
                     className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold relative transition-all no-underline cursor-pointer group ${
                       isActive
@@ -6031,8 +6032,7 @@ export default function App() {
                   dark={dark}
                   onOpen={(i) => handleSelectIpo(i, "full")}
                   onNavigateTab={(t) => {
-                    handleSelectIpo(null);
-                    setTab(t);
+                    navigateToTab(t);
                   }}
                 />
               </IpoErrorBoundary>
