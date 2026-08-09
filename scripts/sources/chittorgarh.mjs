@@ -187,7 +187,55 @@ async function scrapeDetail(page, url) {
         }
       }
 
-      return { fields, fin: Object.keys(fin).length ? fin : null, website };
+      // Scrape investor allocation/reservation table
+      // Look for table with header "Investor Category" and "% of Net Issue"
+      let allocation = null;
+      for (const table of rows.length ? [] : []) { /* already have rows variable */ }
+      // Re-scan all tables for the allocation one
+      const allTables = Array.from(document.querySelectorAll('table'));
+      for (const tbl of allTables) {
+        const ths = Array.from(tbl.querySelectorAll('th')).map(th => th.innerText.trim().toLowerCase());
+        const hasCategory = ths.some(h => h.includes('investor category') || h.includes('category'));
+        const hasPctNet = ths.some(h => h.includes('% of net issue') || h.includes('net issue'));
+        if (!hasCategory || !hasPctNet) continue;
+
+        const pctColIdx = ths.findIndex(h => h.includes('% of net issue') || h.includes('net issue'));
+        const catColIdx = ths.findIndex(h => h.includes('investor category') || h.includes('category'));
+        if (pctColIdx === -1 || catColIdx === -1) continue;
+
+        allocation = {};
+        const tblRows = Array.from(tbl.querySelectorAll('tr'));
+        for (const tr of tblRows) {
+          const tds = Array.from(tr.querySelectorAll('td')).map(td => td.innerText.trim());
+          if (tds.length <= Math.max(pctColIdx, catColIdx)) continue;
+          const cat = tds[catColIdx] || '';
+          const pctStr = tds[pctColIdx] || '';
+          if (!pctStr || !cat) continue;
+
+          // Parse percentage
+          const pctMatch = pctStr.match(/([\d.]+)\s*%/);
+          if (!pctMatch) continue;
+          const pct = parseFloat(pctMatch[1]);
+          if (!Number.isFinite(pct) || pct <= 0) continue;
+
+          // Normalise category name to a key
+          const catLower = cat.toLowerCase();
+          let key = null;
+          if (catLower.startsWith('qib') || catLower === 'qualified institutional') key = 'qib';
+          else if (catLower.startsWith('nii') || catLower.startsWith('hni') || catLower.startsWith('non-institutional') || catLower.startsWith('non institutional')) key = 'nii';
+          else if (catLower.startsWith('retail')) key = 'retail';
+          else if (catLower.startsWith('employee')) key = 'employee';
+          else if (catLower.startsWith('shareholder')) key = 'shareholder';
+          else if (catLower.startsWith('policyholder')) key = 'policyholder';
+          // Skip anchor / sub-items (they start with '−' or '-')
+          if (!key || cat.startsWith('−') || cat.startsWith('-') || cat.startsWith('\u2212')) continue;
+          allocation[key] = pct;
+        }
+        if (Object.keys(allocation).length === 0) allocation = null;
+        break;
+      }
+
+      return { fields, fin: Object.keys(fin).length ? fin : null, website, allocation };
     });
   } catch (err) {
     console.warn(`[Chittorgarh] detail failed (${url}):`, err.message);
@@ -247,6 +295,7 @@ export async function fetchAll(browser, iposBase) {
         fields: detail.fields,
         fin: detail.fin,
         website: detail.website,
+        allocation: detail.allocation || null,
         meta: { source: "chittorgarh", url: l.url, capturedAt: new Date().toISOString() },
       });
     }

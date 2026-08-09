@@ -166,6 +166,25 @@ export function reconcile(iposBase, sourceRecords) {
       }
     }
 
+    // Apply investor allocation percentages from Chittorgarh.
+    // These are the actual SEBI-filed quota splits (QIB/NII/Retail etc.) scraped
+    // from the reservation table on the CG detail page. They override the UI
+    // fallback defaults (50/15/35) so only real, source-backed numbers are shown.
+    if (matches.chittorgarh?.allocation) {
+      const cgAlloc = matches.chittorgarh.allocation;
+      const hasMinimumKeys = cgAlloc.qib != null || cgAlloc.retail != null;
+      if (hasMinimumKeys) {
+        const existing = ipo.allocation;
+        const serialised = JSON.stringify(cgAlloc);
+        if (!existing || JSON.stringify(existing) !== serialised) {
+          ipo.allocation = cgAlloc;
+          changed++;
+          const parts = Object.entries(cgAlloc).map(([k, v]) => `${k.toUpperCase()}:${v}%`).join(', ');
+          console.log(`[ALLOCATION] "${ipo.name}" -> ${parts}`);
+        }
+      }
+    }
+
     // Promote to Verified when numbers pass sanity checks (UI requires finMeta.status).
     if (isValidFin(ipo.fin) && !isVerifiedFin(ipo)) {
       ipo.fin = enrichFinDerived(ipo, ipo.fin);

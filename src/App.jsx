@@ -443,12 +443,17 @@ function getLiveIPOS() {
       const existing = baseMap.get(id);
       if (existing) {
         let merged = { ...existing, ...patch };
+        merged.company = cleanCompanyName(merged.company);
+        merged.name = cleanCompanyName(merged.name);
         if (patch.sub) {
           merged.sub = { ...(existing.sub || {}), ...patch.sub };
         }
         baseMap.set(id, merged);
       } else {
-        baseMap.set(id, { id, company: patch.company || patch.name || id, type: patch.type || "SME", ...patch });
+        let merged = { id, company: patch.company || patch.name || id, type: patch.type || "SME", ...patch };
+        merged.company = cleanCompanyName(merged.company);
+        merged.name = cleanCompanyName(merged.name);
+        baseMap.set(id, merged);
       }
     });
   }
@@ -471,7 +476,7 @@ function getLiveIPOS() {
 
 export function normalizeIPO(raw) {
   if (!raw) return null;
-  const company = String(raw.company || raw.name || raw.id || "IPO").trim();
+  const company = cleanCompanyName(raw.company || raw.name || raw.id || "IPO");
   const type = String(raw.type || "Mainboard").toUpperCase().includes("SME") ? "SME" : "Mainboard";
   const status = getComputedStatus(raw);
   const id = String(raw.id || "").toLowerCase().trim();
@@ -2640,7 +2645,10 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
         }));
       }
       if (typeof ipo.allocation === "object") {
-        return Object.entries(ipo.allocation).map(([key, val]) => {
+        const entries = Object.entries(ipo.allocation)
+          .filter(([, val]) => Number(val) >= 1)  // drop tiny preferential slices (< 1%)
+          .sort(([, a], [, b]) => Number(b) - Number(a)); // largest first
+        return entries.map(([key, val]) => {
           const k = key.toLowerCase();
           let short = key.toUpperCase();
           let desc = key;
@@ -6096,7 +6104,7 @@ export default function App() {
                     </div>
 
                     {filtered.length > 0 ? (
-                      <div className="grid sm:grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {sortIposLogically(filtered).map((ipo) => (
                           <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />
                         ))}
@@ -6306,7 +6314,7 @@ export default function App() {
 
                       {/* Cards Grid or Empty State */}
                       {uniqueGmpIpos.length > 0 ? (
-                        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                           {uniqueGmpIpos.slice(0, 9).map((ipo) => {
                             const cutoff = ipo.priceMax || price(ipo);
                             const gmpPct = cutoff ? ((ipo.gmp / cutoff) * 100).toFixed(2) : "0.00";
@@ -6381,7 +6389,7 @@ export default function App() {
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         Today's IPO Activity
                       </h3>
-                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         {openToday.map(i => (
                           <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
                             <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
