@@ -5472,6 +5472,7 @@ export default function App() {
     return "modal";
   }); // "modal" | "full"
   const [query, setQuery] = useState("");
+  const [openType, setOpenType] = useState("Mainboard");
   const [upcomingType, setUpcomingType] = useState("Mainboard");
   const [listedType, setListedType] = useState("Mainboard");
   const [closedType, setClosedType] = useState("Mainboard");
@@ -6619,22 +6620,64 @@ export default function App() {
               </div>
             )}
 
-            {tab === "open" && (
-              <div>
-                {groupedFiltered("Open").length > 0 ? (
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    {groupedFiltered("Open").map((ipo) => <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />)}
+            {tab === "open" && (() => {
+              const openIpos = groupedFiltered("Open");
+              const openMainboardCount = openIpos.filter(i => i.type === "Mainboard").length;
+              const openSmeCount = openIpos.filter(i => i.type === "SME").length;
+              const displayedOpenIpos = openIpos.filter(i => i.type === openType);
+
+              return (
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                        <CircleDollarSign size={16} />
+                      </div>
+                      <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">Open IPOs</h1>
+                    </div>
+                    
+                    {/* Mainboard | SME Toggle */}
+                    <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5 self-start sm:self-auto">
+                      <button
+                        onClick={() => setOpenType("Mainboard")}
+                        className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+                          openType === "Mainboard"
+                            ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
+                        }`}
+                      >
+                        Mainboard ({openMainboardCount})
+                      </button>
+                      <button
+                        onClick={() => setOpenType("SME")}
+                        className={`px-3.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+                          openType === "SME"
+                            ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                            : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
+                        }`}
+                      >
+                        SME ({openSmeCount})
+                      </button>
+                    </div>
                   </div>
-                ) : (
-                  <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
-                    <Calendar size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
-                    <p className="text-slate-500 text-sm">
-                      There are currently no open IPOs.
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
+
+                  {displayedOpenIpos.length > 0 ? (
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {displayedOpenIpos.map((ipo) => (
+                        <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
+                      <CircleDollarSign size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
+                      <p className="text-slate-500 text-sm">
+                        There are currently no open {openType} IPOs.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {tab === "closed" && (() => {
               const closedIpos = groupedFiltered("Closed");
