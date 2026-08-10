@@ -2879,10 +2879,6 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                   <span className="text-slate-400 dark:text-slate-500 block font-semibold">Premium over Upper Band</span>
                   <span className="font-mono font-semibold text-slate-800 dark:text-white mt-0.5 block">{gainPct(ipo).toFixed(2)}%</span>
                 </div>
-                <div>
-                  <span className="text-slate-400 dark:text-slate-500 block font-semibold">Last Updated</span>
-                  <span className="font-semibold text-slate-800 dark:text-white mt-0.5 block">{DATA_AS_OF}</span>
-                </div>
               </div>
 
               <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight italic">
@@ -6631,9 +6627,6 @@ export default function App() {
                       <p className="text-xs leading-relaxed text-slate-600 dark:text-slate-350">
                         {bodyText}
                       </p>
-                      <p className="text-[9px] text-slate-400 dark:text-slate-500 pt-1 font-medium">
-                        Last refreshed: {formatDataAsOf()}
-                      </p>
                     </div>
                   );
                 })()}
@@ -7287,7 +7280,7 @@ function AboutPage({ navigateToTab }) {
 /* =====================================================================
    LEGAL INFORMATION PAGES (Privacy, Terms, Disclaimer)
 ===================================================================== */
-function LegalHeader({ title, lastUpdated, onBack }) {
+function LegalHeader({ title, onBack }) {
   return (
     <div className="border-b border-slate-150 dark:border-white/5 pb-4 mb-6">
       <button
@@ -7299,9 +7292,6 @@ function LegalHeader({ title, lastUpdated, onBack }) {
       <h1 className="text-2xl md:text-3xl font-black text-slate-850 dark:text-white tracking-tight leading-tight">
         {title}
       </h1>
-      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1.5 font-semibold uppercase tracking-wider">
-        Last Updated: {lastUpdated}
-      </p>
     </div>
   );
 }
@@ -7309,7 +7299,7 @@ function LegalHeader({ title, lastUpdated, onBack }) {
 function PrivacyPage({ onBack }) {
   return (
     <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
-      <LegalHeader title="Privacy Policy" lastUpdated="August 8, 2026" onBack={onBack} />
+      <LegalHeader title="Privacy Policy" onBack={onBack} />
       
       <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
         <p>
@@ -7376,7 +7366,7 @@ function PrivacyPage({ onBack }) {
 function TermsPage({ onBack }) {
   return (
     <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
-      <LegalHeader title="Terms of Use" lastUpdated="August 8, 2026" onBack={onBack} />
+      <LegalHeader title="Terms of Use" onBack={onBack} />
       
       <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
         <p>
@@ -7436,7 +7426,7 @@ function TermsPage({ onBack }) {
 function DisclaimerPage({ onBack }) {
   return (
     <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
-      <LegalHeader title="Regulatory Disclaimer" lastUpdated="August 8, 2026" onBack={onBack} />
+      <LegalHeader title="Regulatory Disclaimer" onBack={onBack} />
       
       <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
         <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl">
