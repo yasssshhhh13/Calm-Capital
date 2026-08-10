@@ -2611,8 +2611,8 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
     { label: "IPO Opens", date: ipo.open },
     { label: "Last Day", date: ipo.close },
     { label: "Allotment", date: ipo.allotment },
-    { label: "Refund", date: ipo.refund },
-    { label: "Demat Credit", date: ipo.demat },
+    { label: "Refund", date: ipo.allotment ? addDays(ipo.allotment, 1) : ipo.refund },
+    { label: "Demat Credit", date: ipo.allotment ? addDays(ipo.allotment, 1) : ipo.demat },
     { label: "Listing", date: ipo.listing },
   ].filter(m => m.date);
 

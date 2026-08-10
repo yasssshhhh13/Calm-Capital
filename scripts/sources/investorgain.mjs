@@ -147,9 +147,10 @@ export function parseInvestorGainDate(dateText) {
 export function addDays(dateStr, days) {
   if (!dateStr) return null;
   try {
-    const d = new Date(dateStr + "T00:00:00+05:30");
-    d.setDate(d.getDate() + days);
-    return d.toISOString().slice(0, 10);
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d + days));
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${dt.getUTCFullYear()}-${pad(dt.getUTCMonth() + 1)}-${pad(dt.getUTCDate())}`;
   } catch {
     return null;
   }

@@ -399,7 +399,13 @@ async function main() {
 
         if (open && existingIpo.open !== open) { existingIpo.open = open; changed = true; }
         if (close && existingIpo.close !== close) { existingIpo.close = close; changed = true; }
-        if (allotment && existingIpo.allotment !== allotment) { existingIpo.allotment = allotment; changed = true; }
+        if (allotment) {
+          const expectedRefund = addDays(allotment, 1);
+          const expectedDemat = addDays(allotment, 1);
+          if (existingIpo.allotment !== allotment) { existingIpo.allotment = allotment; changed = true; }
+          if (existingIpo.refund !== expectedRefund) { existingIpo.refund = expectedRefund; changed = true; }
+          if (existingIpo.demat !== expectedDemat) { existingIpo.demat = expectedDemat; changed = true; }
+        }
         if (listing && existingIpo.listing !== listing) { existingIpo.listing = listing; changed = true; }
 
         const rowPrice = toNumber(cells[4]);
