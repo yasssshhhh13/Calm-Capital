@@ -3950,7 +3950,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                   </div>
                 </div>
                 <div className="text-[10px] text-slate-550 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-white/5">
-                  Peer Average: <span className="font-bold">{formatPE(avg.countPe ? avg.pe / avg.countPe : null)}</span>
+                  {peers.length === 1 ? `Peer (${peers[0].company || peers[0].name})` : 'Peer Average'}: <span className="font-bold">{formatPE(avg.countPe ? avg.pe / avg.countPe : null)}</span>
                 </div>
               </div>
 
@@ -3963,7 +3963,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                   </div>
                 </div>
                 <div className="text-[10px] text-slate-550 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-white/5">
-                  Peer Average: <span className="font-bold">{formatPercent(avg.countRoe ? avg.roe / avg.countRoe : null)}</span>
+                  {peers.length === 1 ? `Peer (${peers[0].company || peers[0].name})` : 'Peer Average'}: <span className="font-bold">{formatPercent(avg.countRoe ? avg.roe / avg.countRoe : null)}</span>
                 </div>
               </div>
 
@@ -3976,7 +3976,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                   </div>
                 </div>
                 <div className="text-[10px] text-slate-555 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-white/5">
-                  Peer Average: <span className="font-bold">{formatMCap(avg.countMcap ? avg.mcap / avg.countMcap : null)}</span>
+                  {peers.length === 1 ? `Peer (${peers[0].company || peers[0].name})` : 'Peer Average'}: <span className="font-bold">{formatMCap(avg.countMcap ? avg.mcap / avg.countMcap : null)}</span>
                 </div>
               </div>
             </div>
@@ -5624,15 +5624,22 @@ export default function App() {
     const resetScroll = () => {
       const mainEl = document.querySelector("main");
       if (mainEl) {
+        mainEl.scrollTo({ top: 0, behavior: "instant" });
         mainEl.scrollTop = 0;
       }
-      window.scrollTo(0, 0);
+      window.scrollTo({ top: 0, behavior: "instant" });
     };
 
     resetScroll();
     requestAnimationFrame(resetScroll);
-    setTimeout(resetScroll, 30);
-    setTimeout(resetScroll, 100);
+    
+    // Clear and schedule multiple scroll resets to cover delayed layout/rendering shifts
+    const timeouts = [10, 30, 50, 100, 200, 300, 500];
+    const timerIds = timeouts.map(delay => setTimeout(resetScroll, delay));
+
+    return () => {
+      timerIds.forEach(id => clearTimeout(id));
+    };
   }, [tab, selected]);
 
   // Persist active tab across refreshes + path URL + GA4 SPA tab tracking
@@ -6064,7 +6071,7 @@ export default function App() {
             )}
           </header>
 
-          <main className="flex-1 overflow-y-auto px-5 py-5 max-w-5xl w-full mx-auto">
+          <main className="flex-1 overflow-y-auto px-5 py-5 max-w-5xl w-full mx-auto" style={{ overflowAnchor: "none" }}>
             {selected && viewMode === "full" ? (
               <IpoErrorBoundary onBack={() => handleSelectIpo(null)}>
                 <IPODetailFullPage
