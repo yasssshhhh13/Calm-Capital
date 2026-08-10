@@ -159,10 +159,31 @@ async function scrapeDetail(page, url) {
 
       // Prospectus financials — first data column = most recent period.
       const fin = {};
+      let fy = null;
       for (const row of rows) {
         const cells = Array.from(row.querySelectorAll("th, td")).map((c) => c.innerText.trim());
         if (cells.length < 2) continue;
         const label = cells[0].toLowerCase();
+        
+        // Extract fiscal year from date headers
+        if (label.includes("particulars") || label.includes("period ended") || label.includes("year/period ended") || label === "for") {
+          const dateStr = cells[1];
+          if (dateStr) {
+            const yearMatch = dateStr.match(/(?:20)?(\d{2})$/) || dateStr.match(/20(\d{2})\b/);
+            if (yearMatch) {
+              const year = parseInt(yearMatch[1]);
+              const isMarch = /mar/i.test(dateStr) || /\/03\//.test(dateStr);
+              if (isMarch) {
+                fy = `FY20${year}`;
+              } else {
+                const monthMatch = dateStr.match(/([a-zA-Z]{3,})/);
+                const month = monthMatch ? monthMatch[1] : "";
+                fy = `FY20${year} (${month})`;
+              }
+            }
+          }
+        }
+        
         const val = firstNum(cells[1]);
         if (val == null) continue;
         if (fin.revenue == null && (label.includes("revenue") || label.includes("total income"))) fin.revenue = val;
@@ -170,6 +191,7 @@ async function scrapeDetail(page, url) {
         if (fin.ebitda == null && label.includes("ebitda")) fin.ebitda = val;
         if (fin.netWorth == null && label.includes("net worth")) fin.netWorth = val;
         if (fin.debt == null && label.includes("total borrowing")) fin.debt = val;
+        if (fin.roce == null && (label.includes("roce") || label.includes("return on capital employed"))) fin.roce = val;
       }
 
       // Scrape company website
@@ -235,7 +257,7 @@ async function scrapeDetail(page, url) {
         break;
       }
 
-      return { fields, fin: Object.keys(fin).length ? fin : null, website, allocation };
+      return { fields, fin: Object.keys(fin).length ? fin : null, website, allocation, fy };
     });
   } catch (err) {
     console.warn(`[Chittorgarh] detail failed (${url}):`, err.message);
@@ -294,6 +316,7 @@ export async function fetchAll(browser, iposBase) {
         name: l.name,
         fields: detail.fields,
         fin: detail.fin,
+        fy: detail.fy,
         website: detail.website,
         allocation: detail.allocation || null,
         meta: { source: "chittorgarh", url: l.url, capturedAt: new Date().toISOString() },

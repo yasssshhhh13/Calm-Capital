@@ -3691,11 +3691,12 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
 
         const formatComparisonPeriod = (fy) => {
           if (!fy) return "Latest Restated";
-          const match = fy.match(/FY(?:20)?(\d{2})/i);
+          const match = fy.match(/FY(?:20)?(\d{2})(.*)/i);
           if (match) {
             const endYear = parseInt(match[1]);
             const startYear = endYear - 1;
-            return `FY20${startYear}–${endYear}`;
+            const extra = match[2] || "";
+            return `FY20${startYear}–${endYear}${extra}`;
           }
           return fy;
         };
@@ -3717,7 +3718,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
         const getMetrics = (item) => {
           const itemPeriod = item.finMeta?.fy;
           if (item.id !== ipo.id && !isPeriodComparable(ipoPeriod, itemPeriod)) {
-            return { rev: null, ebitda: null, pat: null, patMargin: null, roe: null, de: null, eps: null };
+            return { rev: null, ebitda: null, pat: null, patMargin: null, roe: null, roce: null, de: null, eps: null };
           }
 
           const f = item.fin || {};
@@ -3732,8 +3733,9 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
           if (roe == null && pat != null && netWorth) {
             roe = (pat / netWorth) * 100;
           }
+          const roce = f.roce;
           const de = (debt != null && netWorth) ? (debt / netWorth) : null;
-          return { rev, ebitda, pat, patMargin, roe, de, eps };
+          return { rev, ebitda, pat, patMargin, roe, roce, de, eps };
         };
 
         const calculateValuation = (item, isPeer) => {
@@ -3748,8 +3750,14 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
             const shares = f.pat / f.eps; 
             mcap = shares * priceVal;
           }
-          if (pe == null && f.eps && priceVal) {
-            pe = priceVal / f.eps;
+          if (isPeer) {
+            if (f.eps && priceVal) {
+              pe = priceVal / f.eps;
+            }
+          } else {
+            if (pe == null && f.eps && priceVal) {
+              pe = priceVal / f.eps;
+            }
           }
           if (mcap && f.netWorth) {
             pb = mcap / f.netWorth;
@@ -3767,6 +3775,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
           pat: 0, countPat: 0,
           patMargin: 0, countPatMargin: 0,
           roe: 0, countRoe: 0,
+          roce: 0, countRoce: 0,
           de: 0, countDe: 0,
           eps: 0, countEps: 0,
           pe: 0, countPe: 0,
@@ -3784,6 +3793,10 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
           if (m.roe != null) {
             const num = typeof m.roe === 'string' ? parseFloat(m.roe) : m.roe;
             if (!isNaN(num)) { avg.roe += num; avg.countRoe++; }
+          }
+          if (m.roce != null) {
+            const num = typeof m.roce === 'string' ? parseFloat(m.roce) : m.roce;
+            if (!isNaN(num)) { avg.roce += num; avg.countRoce++; }
           }
           if (m.de != null) { avg.de += m.de; avg.countDe++; }
           if (m.eps != null) { avg.eps += m.eps; avg.countEps++; }
@@ -3865,7 +3878,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                     <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.pat)}</td>
                     <td className="p-3 text-right font-mono">{formatPercent(thisMetrics.patMargin)}</td>
                     <td className="p-3 text-right font-mono">{formatPercent(thisMetrics.roe)}</td>
-                    <td className="p-3 text-right font-mono">—</td>
+                    <td className="p-3 text-right font-mono">{formatPercent(thisMetrics.roce)}</td>
                     <td className="p-3 text-right font-mono">{formatRatio(thisMetrics.de)}</td>
                     <td className="p-3 text-right font-mono">{formatEps(thisMetrics.eps)}</td>
                   </tr>
@@ -3899,7 +3912,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.pat)}</td>
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPercent(m.patMargin)}</td>
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPercent(m.roe)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">—</td>
+                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPercent(m.roce)}</td>
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatRatio(m.de)}</td>
                         <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatEps(m.eps)}</td>
                       </tr>
@@ -3917,7 +3930,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                       <td className="p-3 text-right font-mono text-slate-500">{avg.countPat ? formatCurrency(avg.pat / avg.countPat) : "—"}</td>
                       <td className="p-3 text-right font-mono text-slate-500">{avg.countPatMargin ? formatPercent(avg.patMargin / avg.countPatMargin) : "—"}</td>
                       <td className="p-3 text-right font-mono text-slate-500">{avg.countRoe ? formatPercent(avg.roe / avg.countRoe) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">—</td>
+                      <td className="p-3 text-right font-mono text-slate-500">{avg.countRoce ? formatPercent(avg.roce / avg.countRoce) : "—"}</td>
                       <td className="p-3 text-right font-mono text-slate-500">{avg.countDe ? formatRatio(avg.de / avg.countDe) : "—"}</td>
                       <td className="p-3 text-right font-mono text-slate-500">{avg.countEps ? formatEps(avg.eps / avg.countEps) : "—"}</td>
                     </tr>

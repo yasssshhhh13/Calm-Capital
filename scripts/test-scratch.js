@@ -3,30 +3,28 @@ import { chromium } from "playwright";
 async function run() {
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
-  const url = "https://www.chittorgarh.com/ipo/manipal-health-enterprises-ipo/2956/";
-  console.log("Going to:", url);
+  const url = "http://localhost:5173/ipo/molbio-diagnostics";
+  console.log("Navigating to:", url);
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(3000);
 
   const tables = await page.evaluate(() => {
-    const results = [];
-    const tableEls = document.querySelectorAll("table");
-    tableEls.forEach((table, idx) => {
+    return Array.from(document.querySelectorAll("table")).map((table, idx) => {
       const headers = Array.from(table.querySelectorAll("th")).map(th => th.innerText.trim());
-      const rows = Array.from(table.querySelectorAll("tr")).map(tr => 
-        Array.from(tr.querySelectorAll("td")).map(td => td.innerText.trim())
-      ).filter(r => r.length > 0);
-      
-      const text = table.innerText.toLowerCase();
-      if (text.includes("qib") || text.includes("retail") || text.includes("reservation") || text.includes("shares offered")) {
-        results.push({ idx, headers, rowsSnippet: rows.slice(0, 15) });
-      }
+      const rows = Array.from(table.querySelectorAll("tbody tr")).map(tr => {
+        return Array.from(tr.querySelectorAll("td")).map(td => td.innerText.trim().replace(/\n+/g, " "));
+      });
+      return { idx, headers, rows };
     });
-    return results;
   });
 
-  console.log("Found tables related to reservations:");
-  console.log(JSON.stringify(tables, null, 2));
+  tables.forEach((tbl) => {
+    console.log(`\nTable #${tbl.idx}:`);
+    console.log("Headers:", tbl.headers);
+    tbl.rows.slice(0, 5).forEach((row, i) => {
+      console.log(`Row ${i + 1}:`, row);
+    });
+  });
 
   await browser.close();
 }

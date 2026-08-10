@@ -38,13 +38,13 @@ export function resolveFinSource(ipo) {
 }
 
 /** Build a Verified finMeta block for UI display. */
-export function buildVerifiedFinMeta(ipo, { method = "Chittorgarh + DRHP/RHP cross-check", chittorgarhUrl = null } = {}) {
+export function buildVerifiedFinMeta(ipo, { method = "Chittorgarh + DRHP/RHP cross-check", chittorgarhUrl = null, fy = null } = {}) {
   const now = new Date().toISOString();
   const { sourceDoc, sourceUrl } = resolveFinSource(ipo);
   const meta = {
     sourceDoc,
     sourceUrl,
-    fy: "FY2026",
+    fy: fy || ipo.finMeta?.fy || "FY2026",
     pageNum: "Financials",
     verifiedAt: now,
     method,

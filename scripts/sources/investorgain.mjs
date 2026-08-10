@@ -551,14 +551,37 @@ export async function scrapeFinancials(page, iposBase) {
           return m ? parseFloat(m[0]) : null;
         };
         const fin = {};
+        let fy = null;
         const tables = Array.from(document.querySelectorAll("table"));
         for (const table of tables) {
           const header = table.innerText.toLowerCase();
           if (!header.includes("total income") && !header.includes("profit after tax")) continue;
+          
+          let tableFy = null;
           for (const row of Array.from(table.querySelectorAll("tr"))) {
             const cells = Array.from(row.querySelectorAll("th, td")).map((c) => c.innerText.trim());
             if (cells.length < 2) continue;
             const label = cells[0].toLowerCase();
+            
+            // Extract fiscal year from date headers
+            if (label.includes("particulars") || label.includes("period ended") || label.includes("year/period ended") || label === "for") {
+              const dateStr = cells[1];
+              if (dateStr) {
+                const yearMatch = dateStr.match(/(?:20)?(\d{2})$/) || dateStr.match(/20(\d{2})\b/);
+                if (yearMatch) {
+                  const year = parseInt(yearMatch[1]);
+                  const isMarch = /mar/i.test(dateStr) || /\/03\//.test(dateStr);
+                  if (isMarch) {
+                    tableFy = `FY20${year}`;
+                  } else {
+                    const monthMatch = dateStr.match(/([a-zA-Z]{3,})/);
+                    const month = monthMatch ? monthMatch[1] : "";
+                    tableFy = `FY20${year} (${month})`;
+                  }
+                }
+              }
+            }
+            
             const val = firstNum(cells[1]);
             if (val == null) continue;
             if (fin.revenue == null && (label.includes("total income") || label.includes("revenue"))) fin.revenue = val;
@@ -566,25 +589,32 @@ export async function scrapeFinancials(page, iposBase) {
             if (fin.ebitda == null && label.includes("ebitda")) fin.ebitda = val;
             if (fin.netWorth == null && label.includes("net worth")) fin.netWorth = val;
             if (fin.debt == null && label.includes("total borrowing")) fin.debt = val;
+            if (fin.roce == null && (label.includes("roce") || label.includes("return on capital employed"))) fin.roce = val;
           }
+          if (tableFy) fy = tableFy;
           if (fin.revenue != null && fin.pat != null) break;
         }
-        // KPI block: EPS / ROE
+        // KPI block: EPS / ROE / ROCE
         const body = document.body.innerText || "";
         const epsM = body.match(/EPS\s*\(₹\)\s*\|\s*([\d.]+)/i) || body.match(/EPS\s*\(₹\)[^\d]*([\d.]+)/i);
         if (epsM) fin.eps = parseFloat(epsM[1]);
         const roeM = body.match(/ROE\s*\|\s*([\d.]+)\s*%/i) || body.match(/ROE[^\d]*([\d.]+)\s*%/i);
         if (roeM) fin.roe = parseFloat(roeM[1]);
+        const roceM = body.match(/ROCE\s*\|\s*([\d.]+)\s*%/i) || body.match(/ROCE[^\d]*([\d.]+)\s*%/i);
+        if (roceM) fin.roce = parseFloat(roceM[1]);
+        
+        if (fy) fin.fy = fy;
         return Object.keys(fin).length ? fin : null;
       });
 
       if (!parsed || parsed.pat == null || parsed.revenue == null || parsed.pat > parsed.revenue) continue;
 
-      ipo.fin = parsed;
+      const { fy, ...finData } = parsed;
+      ipo.fin = finData;
       ipo.finMeta = {
         sourceDoc: ipo.rhp ? "RHP" : "DRHP",
         sourceUrl: ipo.rhp || ipo.drhp || ipo.investorgainUrl,
-        fy: "FY2026",
+        fy: fy || ipo.finMeta?.fy || "FY2026",
         pageNum: "Financials",
         verifiedAt: new Date().toISOString(),
         method: "InvestorGain prospectus table + DRHP/RHP",

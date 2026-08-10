@@ -105,12 +105,12 @@ def resolve_source(ipo: dict) -> tuple[str, str]:
     return "Prospectus", drhp or ig
 
 
-def build_meta(ipo: dict, method: str) -> dict:
+def build_meta(ipo: dict, method: str, fy: str | None = None) -> dict:
     doc, url = resolve_source(ipo)
     return {
         "sourceDoc": doc,
         "sourceUrl": url,
-        "fy": "FY2026",
+        "fy": fy or (ipo.get("finMeta") or {}).get("fy") or "FY2026",
         "pageNum": "Financials",
         "verifiedAt": now_iso(),
         "method": method,
@@ -125,18 +125,34 @@ def fetch_html(url: str) -> str:
         return resp.read().decode("utf-8", errors="replace")
 
 
-def parse_financial_table(html: str) -> dict | None:
+def parse_financial_table(html: str) -> tuple[dict, str | None] | None:
     """Parse Chittorgarh Next.js financialTable (2025+ layout)."""
     m = re.search(r"id=['\"]financialTable['\"].*?</table>", html, re.S)
     if not m:
         return None
     fin: dict[str, float] = {}
+    fy = None
     for row in re.findall(r"<tr>(.*?)</tr>", m.group(0), re.S):
         cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", row, re.S)
         clean = [re.sub(r"<[^>]+>", "", c).strip() for c in cells]
         if len(clean) < 2:
             continue
         label = clean[0].lower()
+        
+        # Extract fiscal year
+        if "particulars" in label or "period ended" in label or "year/period ended" in label or label == "for":
+            date_str = clean[1]
+            year_match = re.search(r"(?:20)?(\d{2})$", date_str) or re.search(r"20(\d{2})\b", date_str)
+            if year_match:
+                year = int(year_match.group(1))
+                is_march = "mar" in date_str.lower() or "/03/" in date_str
+                if is_march:
+                    fy = f"FY20{year}"
+                else:
+                    month_match = re.search(r"([a-zA-Z]{3,})", date_str)
+                    month = month_match.group(1) if month_match else ""
+                    fy = f"FY20{year} ({month})"
+                    
         try:
             val = float(clean[1].replace(",", ""))
         except ValueError:
@@ -151,15 +167,39 @@ def parse_financial_table(html: str) -> dict | None:
             fin["netWorth"] = val
         elif fin.get("debt") is None and "total borrowing" in label:
             fin["debt"] = val
-    return fin if is_valid_fin(fin) else None
+        elif fin.get("roce") is None and ("roce" in label or "return on capital employed" in label):
+            fin["roce"] = val
+    return (fin, fy) if is_valid_fin(fin) else None
 
 
-def parse_fin_from_html(html: str) -> dict | None:
-    fin = parse_financial_table(html)
-    if fin:
-        return fin
+def parse_fin_from_html(html: str) -> tuple[dict, str | None] | None:
+    res = parse_financial_table(html)
+    if res:
+        return res
 
     fin = {}
+    fy = None
+
+    # Try to find header date for non-table layouts
+    header_patterns = [
+        r"Period Ended\s*</t[dh][^>]*>\s*<t[dh][^>]*>\s*([^<]+)",
+        r"Particulars\s*</t[dh][^>]*>\s*<t[dh][^>]*>\s*([^<]+)",
+    ]
+    for pat in header_patterns:
+        m = re.search(pat, html, re.I)
+        if m:
+            date_str = m.group(1).strip()
+            year_match = re.search(r"(?:20)?(\d{2})$", date_str) or re.search(r"20(\d{2})\b", date_str)
+            if year_match:
+                year = int(year_match.group(1))
+                is_march = "mar" in date_str.lower() or "/03/" in date_str
+                if is_march:
+                    fy = f"FY20{year}"
+                else:
+                    month_match = re.search(r"([a-zA-Z]{3,})", date_str)
+                    month = month_match.group(1) if month_match else ""
+                    fy = f"FY20{year} ({month})"
+            break
 
     def row_val(label: str) -> float | None:
         patterns = [
@@ -179,6 +219,7 @@ def parse_fin_from_html(html: str) -> dict | None:
         ("ebitda", r"EBITDA"),
         ("netWorth", r"NET Worth"),
         ("debt", r"Total Borrowing"),
+        ("roce", r"ROCE"),
     ]:
         v = row_val(pat)
         if v is not None:
@@ -190,10 +231,13 @@ def parse_fin_from_html(html: str) -> dict | None:
     roe_m = re.search(r"ROE[^0-9<]*([\d.]+)\s*%", html, re.I)
     if roe_m:
         fin["roe"] = float(roe_m.group(1))
+    roce_m = re.search(r"ROCE[^0-9<]*([\d.]+)\s*%", html, re.I)
+    if roce_m:
+        fin["roce"] = float(roce_m.group(1))
 
     if not is_valid_fin(fin):
         return None
-    return fin
+    return fin, fy
 
 
 def chittorgarh_search_url(company: str) -> str | None:
@@ -214,7 +258,7 @@ def find_chittorgarh_ipo_link(html: str) -> str | None:
     return m.group(1) if m else None
 
 
-def fetch_fin_for_ipo(ipo: dict) -> dict | None:
+def fetch_fin_for_ipo(ipo: dict) -> tuple[dict, str | None] | None:
     urls = []
     iid = ipo.get("id") or ""
     if iid in CHITTORGARH_URLS:
@@ -237,9 +281,9 @@ def fetch_fin_for_ipo(ipo: dict) -> dict | None:
     for url in urls:
         try:
             html = fetch_html(url)
-            fin = parse_fin_from_html(html)
-            if fin:
-                return fin
+            res = parse_fin_from_html(html)
+            if res:
+                return res
         except Exception:
             continue
     return None
@@ -288,11 +332,12 @@ def main() -> None:
         if has_drhp and not ipo.get("investorgainUrl") and ipo.get("id") in CHITTORGARH_URLS:
             try:
                 html = fetch_html(CHITTORGARH_URLS[ipo["id"]])
-                fin = parse_fin_from_html(html)
-                if fin:
+                res = parse_fin_from_html(html)
+                if res:
+                    fin, fy = res
                     enrich_pe(ipo, fin)
                     ipo["fin"] = fin
-                    ipo["finMeta"] = build_meta(ipo, "Chittorgarh prospectus table + DRHP/RHP")
+                    ipo["finMeta"] = build_meta(ipo, "Chittorgarh prospectus table + DRHP/RHP", fy=fy)
                     scraped += 1
                     print(f"chittorgarh {ipo.get('id')}: rev={fin.get('revenue')} pat={fin.get('pat')}")
                     time.sleep(0.5)
@@ -307,11 +352,12 @@ def main() -> None:
                     link = find_chittorgarh_ipo_link(search_html)
                     if link:
                         html = fetch_html(link)
-                        fin = parse_fin_from_html(html)
-                        if fin:
+                        res = parse_fin_from_html(html)
+                        if res:
+                            fin, fy = res
                             enrich_pe(ipo, fin)
                             ipo["fin"] = fin
-                            ipo["finMeta"] = build_meta(ipo, "Chittorgarh prospectus table + DRHP/RHP")
+                            ipo["finMeta"] = build_meta(ipo, "Chittorgarh prospectus table + DRHP/RHP", fy=fy)
                             scraped += 1
                             print(f"chittorgarh {ipo.get('id')}: rev={fin.get('revenue')} pat={fin.get('pat')}")
                             time.sleep(0.5)
@@ -319,12 +365,13 @@ def main() -> None:
                 except Exception:
                     pass
         try:
-            fin = fetch_fin_for_ipo(ipo)
-            if not fin:
+            res = fetch_fin_for_ipo(ipo)
+            if not res:
                 continue
+            fin, fy = res
             enrich_pe(ipo, fin)
             ipo["fin"] = fin
-            ipo["finMeta"] = build_meta(ipo, "InvestorGain / Chittorgarh prospectus table + DRHP/RHP")
+            ipo["finMeta"] = build_meta(ipo, "InvestorGain / Chittorgarh prospectus table + DRHP/RHP", fy=fy)
             scraped += 1
             print(f"scraped {ipo.get('id')}: rev={fin.get('revenue')} pat={fin.get('pat')}")
             time.sleep(0.5)

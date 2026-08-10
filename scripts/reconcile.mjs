@@ -153,7 +153,16 @@ export function reconcile(iposBase, sourceRecords) {
           source: "chittorgarh",
           capturedAt: now,
           chittorgarhUrl: matches.chittorgarh.meta?.url,
+          fy: matches.chittorgarh.fy || ipo.finMeta?.fy,
         };
+        changed++;
+      }
+    }
+
+    if (matches.chittorgarh?.fy && (!ipo.finMeta?.fy || ipo.finMeta?.fy === "FY2026")) {
+      if (!ipo.finMeta) ipo.finMeta = {};
+      if (ipo.finMeta.fy !== matches.chittorgarh.fy) {
+        ipo.finMeta.fy = matches.chittorgarh.fy;
         changed++;
       }
     }
@@ -191,6 +200,7 @@ export function reconcile(iposBase, sourceRecords) {
       ipo.finMeta = buildVerifiedFinMeta(ipo, {
         method: "Chittorgarh prospectus table + regulatory filing",
         chittorgarhUrl: ipo.finMeta?.chittorgarhUrl || matches.chittorgarh?.meta?.url,
+        fy: ipo.finMeta?.fy || matches.chittorgarh?.fy,
       });
       changed++;
     }
