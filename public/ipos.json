@@ -76,31 +76,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 115,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1200,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 26.25,
+        "status": "verified",
+        "value": 26,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -108,13 +111,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -122,35 +125,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-12",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-12": [
+            "investorgain"
+          ],
+          "2001-12-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-14",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-17",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-19",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/qt-foods-ipo/3145/",
@@ -234,31 +246,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 118,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1200,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 69.04,
+        "status": "verified",
+        "value": 69,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -266,7 +281,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -274,7 +289,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -282,35 +297,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-12",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-12": [
+            "investorgain"
+          ],
+          "2001-12-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-14",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-17",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-19",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/pramodini-medicare-ipo/3088/",
@@ -391,31 +415,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 97,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 154,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 1617.48,
+        "status": "verified",
+        "value": 1617,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -423,7 +450,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -431,7 +458,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -439,35 +466,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-12",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-12": [
+            "investorgain"
+          ],
+          "2001-12-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-14",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-17",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-19",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -559,31 +595,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 285,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 52,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 301.62,
+        "status": "verified",
+        "value": 302,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -591,7 +630,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -599,7 +638,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -607,35 +646,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-12",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-12": [
+            "investorgain"
+          ],
+          "2001-12-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-14",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-17",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-19",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -729,31 +777,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 140,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 107,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1553,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -761,7 +812,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -769,7 +820,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -777,35 +828,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-11",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-11": [
+            "investorgain"
+          ],
+          "2001-11-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-13",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-18",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -897,31 +957,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 130,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1000,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 40.48,
+        "status": "verified",
+        "value": 40,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -929,13 +992,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -943,35 +1006,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-11",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-11": [
+            "investorgain"
+          ],
+          "2001-11-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-13",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-18",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/sham-foam-ipo/2869/",
@@ -1054,31 +1126,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 156,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 800,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 66.98,
+        "status": "verified",
+        "value": 67,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -1086,7 +1161,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -1094,7 +1169,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -1102,35 +1177,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-11",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-11": [
+            "investorgain"
+          ],
+          "2001-11-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-13",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-18",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/fascinate-textiles-ipo/2734/",
@@ -1213,31 +1297,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 807,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 18,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 939.7,
+        "status": "verified",
+        "value": 940,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -1245,7 +1332,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -1253,7 +1340,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -1261,35 +1348,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-10",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-10": [
+            "investorgain"
+          ],
+          "2001-10-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-12",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-13",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-17",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -1382,31 +1478,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 871,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 17,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 3066.89,
+        "status": "verified",
+        "value": 3067,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -1414,7 +1513,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -1422,7 +1521,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -1430,35 +1529,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-10",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-10": [
+            "investorgain"
+          ],
+          "2001-10-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-12",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-13",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-17",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -1550,31 +1658,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 212,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 70,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 251.88,
+        "status": "verified",
+        "value": 252,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -1582,7 +1693,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -1590,7 +1701,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -1598,35 +1709,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-07",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-07": [
+            "investorgain"
+          ],
+          "2001-07-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-11",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-12",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -1713,31 +1833,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 159,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 94,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 2480,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -1745,7 +1868,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -1753,7 +1876,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -1761,35 +1884,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-07",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-07": [
+            "investorgain"
+          ],
+          "2001-07-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-11",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-12",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -1881,31 +2013,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 159,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 94,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 2480,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -1913,7 +2048,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -1921,7 +2056,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -1929,35 +2064,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-07",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-07": [
+            "investorgain"
+          ],
+          "2001-07-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-11",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-12",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -2056,31 +2200,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 175,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 800,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 108.5,
+        "status": "verified",
+        "value": 109,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -2088,7 +2235,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -2096,7 +2243,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -2104,35 +2251,44 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-07",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-07": [
+            "investorgain"
+          ],
+          "2001-07-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-11",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-12",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/optimystix-entertainment-ipo/2755/",
@@ -2222,31 +2378,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 94,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1200,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 32.4,
+        "status": "verified",
+        "value": 32,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -2254,13 +2413,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -2268,37 +2427,45 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-06",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-06": [
+            "investorgain"
+          ],
+          "2001-06-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-10",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-11",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-13",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/lapl-automotive-ipo/2300/",
@@ -2389,31 +2556,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 130,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1000,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 42.25,
+        "status": "verified",
+        "value": 42,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -2421,7 +2591,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -2429,7 +2599,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -2437,37 +2607,45 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-07-31",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-07-31": [
+            "investorgain"
+          ],
+          "2001-07-31": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-07",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-10",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-12",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/gv-electricals-ipo/2985/",
@@ -2558,31 +2736,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 130,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1000,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 42.25,
+        "status": "verified",
+        "value": 42,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -2590,7 +2771,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -2598,7 +2779,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -2606,37 +2787,45 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-07-31",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-07-31": [
+            "investorgain"
+          ],
+          "2001-07-31": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-07",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-10",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-12",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/gv-electricals-ipo/2985/",
@@ -2719,31 +2908,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 53,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 281,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 425.87,
+        "status": "verified",
+        "value": 426,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -2751,7 +2943,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -2759,7 +2951,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -2767,37 +2959,45 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-08-05",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-08-05": [
+            "investorgain"
+          ],
+          "2001-05-01": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-07",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-10",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-12",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -2891,86 +3091,82 @@
       "priceMin": {
         "status": "unverified",
         "value": 100,
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
         "status": "unverified",
         "value": 105,
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "unverified",
         "value": 1200,
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "unverified",
         "value": 23.71,
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
         "value": 23.71,
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-04",
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
         "status": "unverified",
         "value": "2026-08-06",
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-07",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-11",
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "allocation": {
@@ -3058,88 +3254,82 @@
       "priceMin": {
         "status": "unverified",
         "value": 257,
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
         "status": "unverified",
         "value": 270,
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "unverified",
         "value": 400,
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "unverified",
         "value": 177.81,
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
         "value": 177.81,
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-03",
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
         "status": "unverified",
         "value": "2026-08-05",
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-06",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-10",
         "sources": [
-          "chittorgarh"
+          "investorgain"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "allocation": {
@@ -3224,31 +3414,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 159,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 800,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 39.04,
+        "status": "verified",
+        "value": 39,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -3256,7 +3449,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -3264,7 +3457,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -3272,37 +3465,45 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-07-31",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-07-31": [
+            "investorgain"
+          ],
+          "2001-07-31": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-04",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-05",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-07",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/fusion-klassroom-edutech-ipo/2867/",
@@ -3393,31 +3594,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 96,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1200,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 27.65,
+        "status": "verified",
+        "value": 28,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -3425,13 +3629,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -3439,37 +3643,45 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-07-30",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-07-30": [
+            "investorgain"
+          ],
+          "2001-07-30": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-03",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-04",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-06",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/oneindig-technologies-ipo/2646/",
@@ -3553,31 +3765,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 425,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 34,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 290,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -3585,13 +3800,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -3599,37 +3814,45 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-07-30",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-07-30": [
+            "investorgain"
+          ],
+          "2001-07-30": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-03",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-04",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-06",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -3717,31 +3940,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 225,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 66,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1800,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -3749,13 +3975,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -3763,37 +3989,45 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-07-30",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-07-30": [
+            "investorgain"
+          ],
+          "2001-07-30": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-03",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-04",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-06",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -3894,31 +4128,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 97,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1200,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 36.36,
+        "status": "verified",
+        "value": 36,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -3926,13 +4163,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -3940,37 +4177,45 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
-        "status": "unverified",
-        "value": "2026-07-30",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "status": "conflict",
+        "candidates": {
+          "2026-07-30": [
+            "investorgain"
+          ],
+          "2001-07-30": [
+            "chittorgarh"
+          ]
+        },
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-03",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-04",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-06",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/dhaval-packaging-ipo/2835/",
@@ -4061,7 +4306,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
         "status": "unverified",
@@ -4069,7 +4314,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "unverified",
@@ -4077,7 +4322,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "unverified",
@@ -4085,7 +4330,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -4093,7 +4338,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -4101,7 +4346,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4109,13 +4354,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-29",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
         "status": "unverified",
@@ -4123,13 +4368,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-03",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
@@ -4137,7 +4382,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/hr-hygiene-products-ipo/2713/",
@@ -4227,7 +4472,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
         "status": "unverified",
@@ -4235,7 +4480,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "unverified",
@@ -4243,7 +4488,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "unverified",
@@ -4251,7 +4496,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -4259,7 +4504,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -4267,7 +4512,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4275,13 +4520,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-29",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
         "status": "unverified",
@@ -4289,13 +4534,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-03",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
@@ -4303,7 +4548,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -4400,7 +4645,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
         "status": "unverified",
@@ -4408,7 +4653,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "unverified",
@@ -4416,7 +4661,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "unverified",
@@ -4424,7 +4669,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -4432,13 +4677,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4446,13 +4691,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-28",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
         "status": "unverified",
@@ -4460,13 +4705,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-31",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
@@ -4474,7 +4719,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/poojaa-precision-engg-ipo/2954/",
@@ -4559,7 +4804,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
         "status": "unverified",
@@ -4567,7 +4812,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "unverified",
@@ -4575,7 +4820,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "unverified",
@@ -4583,7 +4828,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -4591,7 +4836,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -4599,7 +4844,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4607,13 +4852,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-27",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
         "status": "unverified",
@@ -4621,13 +4866,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-30",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
@@ -4635,7 +4880,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/propshop-events-exhibitions-ipo/2732/",
@@ -4723,7 +4968,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
         "status": "unverified",
@@ -4731,7 +4976,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "unverified",
@@ -4739,7 +4984,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "unverified",
@@ -4747,7 +4992,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -4755,13 +5000,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4769,13 +5014,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-27",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
         "status": "unverified",
@@ -4783,13 +5028,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-30",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
@@ -4797,7 +5042,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/advance-technoforge-ipo/2307/",
@@ -4882,7 +5127,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
         "status": "unverified",
@@ -4890,7 +5135,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "unverified",
@@ -4898,7 +5143,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "unverified",
@@ -4906,7 +5151,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -4914,13 +5159,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4928,13 +5173,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-24",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
         "status": "unverified",
@@ -4942,13 +5187,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-29",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
@@ -4956,7 +5201,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/silverstorm-parks-resorts-ipo/2824/",
@@ -5035,7 +5280,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
         "status": "unverified",
@@ -5043,7 +5288,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "unverified",
@@ -5051,7 +5296,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "unverified",
@@ -5059,7 +5304,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -5067,13 +5312,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5081,13 +5326,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-07-23",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
         "status": "unverified",
@@ -5095,13 +5340,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-07-28",
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
@@ -5109,7 +5354,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -5194,18 +5439,18 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -5213,7 +5458,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5221,7 +5466,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -5293,28 +5538,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5322,7 +5567,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -5395,25 +5640,25 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -5421,7 +5666,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5429,7 +5674,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -5503,25 +5748,25 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -5529,7 +5774,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5537,7 +5782,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -5611,28 +5856,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5640,7 +5885,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -5714,28 +5959,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5743,7 +5988,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -5816,21 +6061,21 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5838,7 +6083,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -5911,25 +6156,25 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -5937,7 +6182,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5945,7 +6190,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6019,21 +6264,21 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6041,7 +6286,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6115,28 +6360,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6144,7 +6389,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6218,28 +6463,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6247,7 +6492,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6320,31 +6565,31 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6352,7 +6597,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6426,28 +6671,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6455,7 +6700,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6529,28 +6774,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6558,7 +6803,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6632,25 +6877,25 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -6658,7 +6903,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6666,7 +6911,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6740,28 +6985,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6769,7 +7014,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6843,21 +7088,21 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6865,7 +7110,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -6938,28 +7183,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6967,7 +7212,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -7041,28 +7286,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7070,7 +7315,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -7144,28 +7389,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7173,7 +7418,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -7247,28 +7492,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7276,7 +7521,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -7350,21 +7595,21 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7372,7 +7617,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -7446,31 +7691,31 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7478,7 +7723,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -7552,21 +7797,21 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7574,7 +7819,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -7645,31 +7890,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 189,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 600,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 93.9,
+        "status": "verified",
+        "value": 94,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -7677,13 +7925,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7691,33 +7939,40 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-13",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-17",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-18",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-20",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/credent-connect-ipo/2991/",
@@ -7796,21 +8051,21 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7818,7 +8073,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -7876,28 +8131,31 @@
     ],
     "verification": {
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 201,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 74,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1700,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -7905,7 +8163,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -7913,7 +8171,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7921,33 +8179,40 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-17",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-19",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-20",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-24",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMin": {
         "status": "unverified",
@@ -7955,7 +8220,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -8040,31 +8305,31 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8072,7 +8337,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -8145,28 +8410,31 @@
     },
     "verification": {
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 77,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1600,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 23,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -8174,13 +8442,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8188,33 +8456,40 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-18",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-19",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-21",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMin": {
         "status": "unverified",
@@ -8222,7 +8497,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/skytech-infinite-platform-ipo/2739/"
@@ -8282,28 +8557,31 @@
     ],
     "verification": {
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 93,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 160,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 367,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -8311,7 +8589,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -8319,7 +8597,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8327,33 +8605,40 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-18",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-20",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-21",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-25",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMin": {
         "status": "unverified",
@@ -8361,7 +8646,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -8445,31 +8730,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 92,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1200,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 33.14,
+        "status": "verified",
+        "value": 33,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -8477,13 +8765,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8491,33 +8779,40 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-18",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-19",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-21",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/ens-enterprises-ipo/2792/"
@@ -8583,31 +8878,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 360,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 41,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 282.14,
+        "status": "verified",
+        "value": 282,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -8615,7 +8913,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
@@ -8623,7 +8921,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8631,33 +8929,40 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-18",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-20",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-21",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-25",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
@@ -8746,31 +9051,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 132,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1000,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 60.98,
+        "status": "verified",
+        "value": 61,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -8778,13 +9086,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8792,33 +9100,40 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-14",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-18",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-19",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-21",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/technocrats-plasma-systems-ipo/2840/"
@@ -8893,28 +9208,28 @@
     "verification": {
       "priceMax": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
         "status": "pending",
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "pending",
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8922,7 +9237,7 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     }
   },
@@ -8985,31 +9300,34 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "priceMax": {
-        "status": "unverified",
+        "status": "verified",
         "value": 60,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "lot": {
-        "status": "unverified",
+        "status": "verified",
         "value": 250,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 2600,
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "freshIssue": {
         "status": "unverified",
@@ -9017,13 +9335,13 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "ofs": {
         "status": "unverified",
         "value": 0,
         "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -9031,33 +9349,40 @@
         "sources": [
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "open": {
         "status": "unverified",
         "value": "2026-08-17",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "close": {
-        "status": "unverified",
+        "status": "verified",
         "value": "2026-08-19",
         "sources": [
+          "investorgain",
           "chittorgarh"
         ],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "allotment": {
         "status": "unverified",
         "value": "2026-08-20",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       },
       "listing": {
         "status": "unverified",
         "value": "2026-08-24",
-        "sources": [],
-        "updatedAt": "2026-08-12T21:45:24.654Z"
+        "sources": [
+          "investorgain"
+        ],
+        "updatedAt": "2026-08-12T22:40:59.987Z"
       }
     },
     "finMeta": {
