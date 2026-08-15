@@ -37,14 +37,21 @@ const BRAND = { blue: "#1c9bda", green: "#aed768", white: "#ffffff" };
 ===================================================================== */
 const cleanCompanyName = (name) => {
   if (!name) return "";
-  return name
+  let s = name
+    .replace(/\s*[-–—]?\s*u?drhp(?:\s*[-–—\s]*[ivxlcdm0-9]+)?/gi, "")
+    .replace(/\s*[-–—]?\s*rhp/gi, "")
+    .replace(/\s*corrigendum\s+to\s+drhp/gi, "")
+    .replace(/\s*addendum\s+to\s+drhp/gi, "")
     .replace(/\s+(?:BSE|NSE)\s+SME\s*CALLOTTED/i, "")
     .replace(/\s+(?:BSE|NSE)\s+SME\s*CALLOTED/i, "")
     .replace(/\s+(?:BSE|NSE)\s+SME/i, "")
     .replace(/\s+NSE\s+Emerge/i, "")
     .replace(/\s+CALLOTTED/i, "")
     .replace(/\s+CALLOTED/i, "")
+    .replace(/\s+/g, " ")
     .trim();
+
+  return s.replace(/(Limited|Ltd\.?)\s+(Limited|Ltd\.?)/gi, "$1").trim();
 };
 
 let IPOS_BASE = (Array.isArray(initialIpoData) ? initialIpoData : []).map(ipo => ({
