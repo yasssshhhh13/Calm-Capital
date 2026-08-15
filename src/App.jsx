@@ -5493,11 +5493,19 @@ export default function App() {
   const prevSelectedRef = useRef(selected);
 
   const scrollToTop = useCallback(() => {
-    if (mainScrollRef.current) {
-      mainScrollRef.current.scrollTo({ top: 0, left: 0, behavior: "instant" });
-      mainScrollRef.current.scrollTop = 0;
+    try {
+      const el = mainScrollRef.current || (typeof document !== "undefined" ? document.querySelector("main") : null);
+      if (el) {
+        el.scrollTop = 0;
+      }
+      if (typeof window !== "undefined") {
+        window.scrollTo(0, 0);
+      }
+    } catch {
+      if (typeof window !== "undefined") {
+        window.scrollTo(0, 0);
+      }
     }
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, []);
 
   const handleSelectIpo = (ipo, mode = "modal") => {
