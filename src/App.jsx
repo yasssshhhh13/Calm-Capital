@@ -4570,7 +4570,6 @@ function CompareTab({ onOpen }) {
                 {renderSectionHeader("Market Signals & Returns", TrendingUp)}
                 {renderMetricRow("Current GMP", gmpVal1 != null ? rupee(gmpVal1) : "—", gmpVal2 != null ? rupee(gmpVal2) : "—", { higherIsBetter: true, rawA: gmpVal1, rawB: gmpVal2 })}
                 {renderMetricRow("GMP %", gmpPct1 != null ? `${gmpPct1.toFixed(2)}%` : "—", gmpPct2 != null ? `${gmpPct2.toFixed(2)}%` : "—", { higherIsBetter: true, rawA: gmpPct1, rawB: gmpPct2 })}
-                {renderMetricRow("AI Prediction", "—", "—")}
                 {renderMetricRow("Est. Profit (1 Lot)", profit1 > 0 ? `+${rupee(profit1)}` : "—", profit2 > 0 ? `+${rupee(profit2)}` : "—", { higherIsBetter: true, rawA: profit1, rawB: profit2 })}
 
                 {/* ── Section B: IPO STRUCTURE ── */}
@@ -6011,8 +6010,8 @@ const NAV = [
   { id: "upcoming", label: "Upcoming IPOs", icon: Calendar },
   { id: "closed", label: "Closed IPOs", icon: Clock },
   { id: "listed", label: "Listed IPOs", icon: Building2 },
-  { id: "compare", label: "IPO Comparison", icon: ArrowLeftRight },
   { id: "allotment", label: "IPO Allotment", icon: BookmarkCheck },
+  { id: "compare", label: "IPO Comparison", icon: ArrowLeftRight },
   { id: "calculator", label: "Profit Calculator", icon: CalcIcon },
   { id: "subscriptions", label: "Subscriptions", icon: LayoutGrid },
   { id: "financials", label: "Financials", icon: BarChart3 },
@@ -7073,62 +7072,64 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 6. Featured & Active IPOs (Strictly OPEN IPOs only) */}
-                <div className="space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <h2 className="text-base font-bold text-slate-855 dark:text-white tracking-tight">
-                      Featured & Active IPOs
-                    </h2>
-                    
-                    {/* Mainboard | SME Toggle */}
-                    <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5 self-start sm:self-auto">
-                      <button
-                        onClick={() => setOverviewType("Mainboard")}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          overviewType === "Mainboard"
-                            ? "bg-[#1c9bda] text-white shadow-sm"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-855 dark:hover:text-slate-200"
-                        }`}
-                      >
-                        Mainboard
-                      </button>
-                      <button
-                        onClick={() => setOverviewType("SME")}
-                        className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          overviewType === "SME"
-                            ? "bg-[#1c9bda] text-white shadow-sm"
-                            : "text-slate-500 dark:text-slate-400 hover:text-slate-855 dark:hover:text-slate-200"
-                        }`}
-                      >
-                        SME
-                      </button>
-                    </div>
-                  </div>
-
                   {(() => {
-                    // Strictly Open IPOs only per requirement
-                    const activeOverview = sortIposLogically(filtered.filter(i => i.type === overviewType && getComputedStatus(i) === "Open"));
-                    
-                    if (activeOverview.length > 0) {
-                      return (
-                        <div className="grid sm:grid-cols-2 gap-3">
-                          {activeOverview.map(ipo => (
-                            <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />
-                          ))}
-                        </div>
-                      );
-                    }
-                    
+                    const openMainboardIpos = sortIposLogically(filtered.filter(i => i.type === "Mainboard" && getComputedStatus(i) === "Open"));
+                    const openSmeIpos = sortIposLogically(filtered.filter(i => i.type === "SME" && getComputedStatus(i) === "Open"));
+
+                    const activeOverview = overviewType === "SME"
+                      ? openSmeIpos
+                      : (overviewType === "Mainboard" && openMainboardIpos.length === 0 && openSmeIpos.length > 0 ? openSmeIpos : openMainboardIpos);
+                    const effectiveType = (overviewType === "Mainboard" && openMainboardIpos.length === 0 && openSmeIpos.length > 0) ? "SME" : overviewType;
+
                     return (
-                      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-8 text-center">
-                        <CircleDollarSign size={24} className="mx-auto mb-2 text-slate-350 dark:text-slate-700" />
-                        <p className="text-slate-500 text-xs">
-                          No currently open {overviewType} IPOs at the moment.
-                        </p>
+                      <div className="space-y-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                          <h2 className="text-base font-bold text-slate-855 dark:text-white tracking-tight">
+                            Featured & Active IPOs
+                          </h2>
+                          
+                          {/* Mainboard | SME Toggle with counts */}
+                          <div className="bg-slate-100 dark:bg-white/5 p-1 rounded-xl flex items-center border border-slate-150 dark:border-white/5 self-start sm:self-auto">
+                            <button
+                              onClick={() => setOverviewType("Mainboard")}
+                              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+                                effectiveType === "Mainboard"
+                                  ? "bg-[#1c9bda] text-white shadow-sm"
+                                  : "text-slate-500 dark:text-slate-400 hover:text-slate-855 dark:hover:text-slate-200 bg-transparent"
+                              }`}
+                            >
+                              Mainboard ({openMainboardIpos.length})
+                            </button>
+                            <button
+                              onClick={() => setOverviewType("SME")}
+                              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+                                effectiveType === "SME"
+                                  ? "bg-[#1c9bda] text-white shadow-sm"
+                                  : "text-slate-500 dark:text-slate-400 hover:text-slate-855 dark:hover:text-slate-200 bg-transparent"
+                              }`}
+                            >
+                              SME ({openSmeIpos.length})
+                            </button>
+                          </div>
+                        </div>
+
+                        {activeOverview.length > 0 ? (
+                          <div className="grid sm:grid-cols-2 gap-3">
+                            {activeOverview.map(ipo => (
+                              <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-8 text-center">
+                            <CircleDollarSign size={24} className="mx-auto mb-2 text-slate-350 dark:text-slate-700" />
+                            <p className="text-slate-500 text-xs">
+                              No currently open {effectiveType} IPOs at the moment.
+                            </p>
+                          </div>
+                        )}
                       </div>
                     );
                   })()}
-                </div>
 
                 {/* 7. Recent IPO Activity Announcements */}
                 <div className="rounded-2xl p-5 border border-slate-205 dark:border-white/5 bg-white dark:bg-[#121D2D] shadow-sm space-y-4">
