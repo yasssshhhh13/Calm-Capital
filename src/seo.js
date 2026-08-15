@@ -23,6 +23,7 @@ export const TAB_PATHS = {
   financials: "/financials",
   docs: "/docs",
   calculator: "/calculator",
+  compare: "/compare",
   watchlist: "/watchlist",
   demat: "/demat",
   about: "/about",
@@ -46,6 +47,8 @@ export const PATH_TO_TAB = {
   "/financials": "financials",
   "/docs": "docs",
   "/calculator": "calculator",
+  "/compare": "compare",
+  "/compare-ipos": "compare",
   "/watchlist": "watchlist",
   "/demat": "demat",
   "/about": "about",
@@ -55,6 +58,11 @@ export const PATH_TO_TAB = {
 };
 
 export const SECTION_META = {
+  compare: {
+    title: "Side-by-Side IPO Comparison Tool | Calm Capital",
+    description: "Compare two IPOs side-by-side with live GMP, financials, subscription status, issue structure, valuation metrics and allotment odds on Calm Capital.",
+    path: "/compare",
+  },
   about: {
     title: "About Calm Capital | Independent Indian IPO Research & Analytics Platform",
     description: "Learn about Calm Capital—an independent information and research platform built to make Indian IPO research simpler, clearer, and easier to access.",

@@ -43,6 +43,8 @@ const SECTION_PATHS = [
   "/subscriptions",
   "/allotment",
   "/financials",
+  "/calculator",
+  "/compare",
   "/privacy",
   "/terms",
   "/disclaimer",
