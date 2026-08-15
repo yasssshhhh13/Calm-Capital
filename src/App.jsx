@@ -4135,7 +4135,7 @@ function GMPTab({ tick, onOpen, query }) {
         </div>
         <div>
           <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">GMP % Gain</h1>
-          <p className="text-[11px] text-slate-455 dark:text-slate-500">Upcoming, Open &amp; Closed IPOs (Click to view details)</p>
+          <p className="text-[11px] text-slate-455 dark:text-slate-500">Open, Closed &amp; Upcoming IPOs — Listed IPOs excluded (Click to view details)</p>
         </div>
       </div>
 
@@ -5488,7 +5488,17 @@ export default function App() {
   const [overviewType, setOverviewType] = useState("Mainboard");
   const [gmpMarket, setGmpMarket] = useState("Mainboard");
   const lastTabPathRef = useRef(TAB_PATHS["overview"] || "/");
-  const currentPathIpoId = parseLocation(typeof window !== "undefined" ? window.location.pathname : "/", typeof window !== "undefined" ? window.location.search : "").ipoId;
+  const mainScrollRef = useRef(null);
+  const prevTabRef = useRef(tab);
+  const prevSelectedRef = useRef(selected);
+
+  const scrollToTop = useCallback(() => {
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      mainScrollRef.current.scrollTop = 0;
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
 
   const handleSelectIpo = (ipo, mode = "modal") => {
     try {
@@ -5577,10 +5587,11 @@ export default function App() {
         try { localStorage.setItem("calmcapital-tab", parsed.tabId); } catch { /* ignore */ }
         applyTabSeo(parsed.tabId);
       }
+      scrollToTop();
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [loadingDb]);
+  }, [loadingDb, scrollToTop]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -5617,26 +5628,21 @@ export default function App() {
 
   // Global Navigation Scroll Reset
   useEffect(() => {
-    const resetScroll = () => {
-      const mainEl = document.querySelector("main");
-      if (mainEl) {
-        mainEl.scrollTo({ top: 0, behavior: "instant" });
-        mainEl.scrollTop = 0;
-      }
-      window.scrollTo({ top: 0, behavior: "instant" });
-    };
+    const tabChanged = prevTabRef.current !== tab;
+    const selectedClosed = prevSelectedRef.current !== null && selected === null;
 
-    resetScroll();
-    requestAnimationFrame(resetScroll);
-    
-    // Clear and schedule multiple scroll resets to cover delayed layout/rendering shifts
-    const timeouts = [10, 30, 50, 100, 200, 300, 500];
-    const timerIds = timeouts.map(delay => setTimeout(resetScroll, delay));
+    if (tabChanged || selectedClosed) {
+      scrollToTop();
+      requestAnimationFrame(scrollToTop);
+      const timer = setTimeout(scrollToTop, 50);
+      prevTabRef.current = tab;
+      prevSelectedRef.current = selected;
+      return () => clearTimeout(timer);
+    }
 
-    return () => {
-      timerIds.forEach(id => clearTimeout(id));
-    };
-  }, [tab, selected]);
+    prevTabRef.current = tab;
+    prevSelectedRef.current = selected;
+  }, [tab, selected, scrollToTop]);
 
   // Persist active tab across refreshes + path URL + GA4 SPA tab tracking
   const setTab = (id) => {
@@ -5658,11 +5664,7 @@ export default function App() {
   const navigateToTab = (id) => {
     setTab(id);
     setQuery(""); // Clear search when switching tabs
-    const mainEl = document.querySelector("main");
-    if (mainEl) {
-      mainEl.scrollTop = 0;
-    }
-    window.scrollTo(0, 0);
+    scrollToTop();
   };
 
   // Close sidebar when viewport shrinks to mobile
@@ -6067,7 +6069,7 @@ export default function App() {
             )}
           </header>
 
-          <main className="flex-1 overflow-y-auto px-5 py-5 max-w-5xl w-full mx-auto" style={{ overflowAnchor: "none" }}>
+          <main ref={mainScrollRef} className="flex-1 overflow-y-auto px-5 py-5 max-w-5xl w-full mx-auto" style={{ overflowAnchor: "none" }}>
             {selected && viewMode === "full" ? (
               <IpoErrorBoundary onBack={() => handleSelectIpo(null)}>
                 <IPODetailFullPage
