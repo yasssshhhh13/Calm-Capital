@@ -6061,6 +6061,7 @@ export default function App() {
   const [overviewType, setOverviewType] = useState("Mainboard");
   const [gmpMarket, setGmpMarket] = useState("Mainboard");
   const lastTabPathRef = useRef(TAB_PATHS["overview"] || "/");
+  const currentPathIpoId = parseLocation(typeof window !== "undefined" ? window.location.pathname : "/", typeof window !== "undefined" ? window.location.search : "").ipoId;
   const mainScrollRef = useRef(null);
   const prevTabRef = useRef(tab);
   const prevSelectedRef = useRef(selected);
