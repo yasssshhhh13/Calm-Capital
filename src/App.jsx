@@ -10,7 +10,7 @@ import {
   LayoutGrid, Activity, PieChart as PieIcon, BarChart3, Landmark,
   ExternalLink, Clock, ArrowUpRight, ArrowDownRight,
   Home, CircleDollarSign, ChevronsLeft, PlusCircle, Award, CheckCircle, Inbox,
-  ShieldCheck, AlertTriangle, HelpCircle
+  ShieldCheck, AlertTriangle, HelpCircle, ArrowLeftRight, GitCompare
 } from "lucide-react";
 import { trackTabView, trackPageView } from "./analytics.js";
 import {
@@ -213,6 +213,44 @@ function liveStatus(ipo, today) {
 
 function getComputedStatus(ipo, now = new Date()) {
   return liveStatus(ipo, now);
+}
+
+/**
+ * Automated Sentiment Resolver based on GMP %:
+ * - GMP % ≤ 0% → 🔴 Bearish
+ * - 0% < GMP % ≤ 10% → 🟡 Neutral
+ * - GMP % > 10% → 🟢 Bullish
+ * - Missing/invalid GMP → null
+ */
+function getSentiment(ipo) {
+  if (!ipo) return null;
+  const gmpVal = ipo.gmp;
+  if (gmpVal == null || isNaN(gmpVal)) return null;
+  const p = ipo.priceMax || ipo.priceMin;
+  if (!p || isNaN(p) || p <= 0) return null;
+  const gmpPct = (gmpVal / p) * 100;
+  if (gmpPct <= 0) {
+    return {
+      label: "Bearish",
+      emoji: "🔴",
+      color: "text-rose-600 dark:text-rose-400",
+      badge: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+    };
+  }
+  if (gmpPct <= 10) {
+    return {
+      label: "Neutral",
+      emoji: "🟡",
+      color: "text-amber-600 dark:text-amber-400",
+      badge: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+    };
+  }
+  return {
+    label: "Bullish",
+    emoji: "🟢",
+    color: "text-emerald-600 dark:text-emerald-400",
+    badge: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+  };
 }
 
 /** IST calendar Y-M-D parts for a Date. */
@@ -4084,6 +4122,540 @@ function SectionLabel({ icon: Icon, children }) {
 }
 
 /* =====================================================================
+   IPO COMPARISON TAB
+===================================================================== */
+function getEligibleCompareIPOS(marketType) {
+  const all = getLiveIPOS();
+  const STATUS_PRIORITY = { Open: 1, Closed: 2, Upcoming: 3 };
+
+  return all
+    .filter((ipo) => {
+      if (!ipo || ipo.type !== marketType) return false;
+      const s = getComputedStatus(ipo);
+      if (s === "Open" || s === "Closed") return true;
+      if (s === "Upcoming") {
+        // Upcoming IPOs ONLY IF CURRENT GMP IS AVAILABLE
+        return ipo.gmp != null && !isNaN(ipo.gmp);
+      }
+      return false;
+    })
+    .sort((a, b) => {
+      const sa = STATUS_PRIORITY[getComputedStatus(a)] || 99;
+      const sb = STATUS_PRIORITY[getComputedStatus(b)] || 99;
+      if (sa !== sb) return sa - sb;
+      return (a.company || a.name || "").localeCompare(b.company || b.name || "");
+    });
+}
+
+function getCompareAllotmentOdds(ipo) {
+  if (!ipo || !ipo.sub) return "—";
+  const s = ipo.sub;
+  let sharesSub = s.retail;
+  let appsSub = s.retail_apps;
+  const isSME = ipo.type === "SME";
+  if ((appsSub == null || appsSub <= 0) && sharesSub != null && sharesSub > 0) {
+    appsSub = estimateAppsFromShares("Retail", sharesSub, isSME);
+  }
+  if (appsSub != null && appsSub > 0) {
+    if (appsSub <= 1.0) return "Guaranteed";
+    const rounded = Math.round(appsSub);
+    return rounded <= 1 ? `~1 in ${Number(appsSub).toFixed(1)}` : `~1 in ${rounded}`;
+  }
+  return "—";
+}
+
+function getCompareRetailIssueSize(ipo) {
+  if (!ipo || !ipo.issueSize) return "—";
+  if (ipo.retailIssueSize) return cr(ipo.retailIssueSize);
+  const pct = ipo.type === "SME" ? 0.50 : 0.35;
+  return cr(ipo.issueSize * pct);
+}
+
+function CompareTab({ onOpen }) {
+  const [market, setMarket] = useState("Mainboard");
+  const [search1, setSearch1] = useState("");
+  const [search2, setSearch2] = useState("");
+  const [modalOpen1, setModalOpen1] = useState(false);
+  const [modalOpen2, setModalOpen2] = useState(false);
+
+  const eligibleList = useMemo(() => getEligibleCompareIPOS(market), [market]);
+
+  const [id1, setId1] = useState("");
+  const [id2, setId2] = useState("");
+
+  // Ensure selected IDs are always valid for the active market
+  useEffect(() => {
+    if (eligibleList.length > 0) {
+      const valid1 = eligibleList.some((i) => i.id === id1);
+      const valid2 = eligibleList.some((i) => i.id === id2);
+
+      const next1 = valid1 ? id1 : eligibleList[0]?.id || "";
+      let next2 = valid2 ? id2 : eligibleList[1]?.id || eligibleList[0]?.id || "";
+      if (next1 === next2 && eligibleList.length > 1) {
+        next2 = eligibleList.find((i) => i.id !== next1)?.id || next1;
+      }
+
+      if (next1 !== id1) setId1(next1);
+      if (next2 !== id2) setId2(next2);
+    }
+  }, [market, eligibleList, id1, id2]);
+
+  const ipo1 = eligibleList.find((i) => i.id === id1) || eligibleList[0] || null;
+  const ipo2 = eligibleList.find((i) => i.id === id2) || eligibleList[1] || eligibleList[0] || null;
+
+  const swapSelection = () => {
+    const temp = id1;
+    setId1(id2);
+    setId2(temp);
+  };
+
+  const filtered1 = useMemo(() => {
+    if (!search1.trim()) return eligibleList;
+    const q = search1.toLowerCase();
+    return eligibleList.filter((i) => (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q));
+  }, [eligibleList, search1]);
+
+  const filtered2 = useMemo(() => {
+    if (!search2.trim()) return eligibleList;
+    const q = search2.toLowerCase();
+    return eligibleList.filter((i) => (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q));
+  }, [eligibleList, search2]);
+
+  // Determine financial comparison period
+  const finPeriod = ipo1?.finMeta?.period || ipo1?.finYear || ipo2?.finMeta?.period || ipo2?.finYear || "FY2025–26";
+
+  const renderMetricRow = (label, valA, valB, options = {}) => {
+    const { rawA, rawB, higherIsBetter, lowerIsBetter, note } = options;
+    let highlightA = false;
+    let highlightB = false;
+
+    if (rawA != null && rawB != null && typeof rawA === "number" && typeof rawB === "number" && !isNaN(rawA) && !isNaN(rawB)) {
+      if (higherIsBetter) {
+        if (rawA > rawB) highlightA = true;
+        else if (rawB > rawA) highlightB = true;
+      } else if (lowerIsBetter) {
+        if (rawA > 0 && (rawB <= 0 || rawA < rawB)) highlightA = true;
+        else if (rawB > 0 && (rawA <= 0 || rawB < rawA)) highlightB = true;
+      }
+    }
+
+    return (
+      <tr className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/[0.015] transition-colors">
+        <td className="py-3 px-4 text-xs font-bold text-slate-700 dark:text-slate-300 w-1/3 min-w-[140px]">
+          <div className="flex flex-col">
+            <span>{label}</span>
+            {note && <span className="text-[10px] font-normal text-slate-400 dark:text-slate-500">{note}</span>}
+          </div>
+        </td>
+        <td className={`py-3 px-4 text-xs font-mono font-bold w-1/3 text-center ${highlightA ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "text-slate-800 dark:text-slate-200"}`}>
+          <div className="flex items-center justify-center gap-1">
+            <span>{valA}</span>
+            {highlightA && <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold uppercase">Higher</span>}
+          </div>
+        </td>
+        <td className={`py-3 px-4 text-xs font-mono font-bold w-1/3 text-center ${highlightB ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "text-slate-800 dark:text-slate-200"}`}>
+          <div className="flex items-center justify-center gap-1">
+            <span>{valB}</span>
+            {highlightB && <span className="text-[9px] px-1 py-0.2 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-extrabold uppercase">Higher</span>}
+          </div>
+        </td>
+      </tr>
+    );
+  };
+
+  const renderSectionHeader = (title, icon, subtitle = null) => {
+    const Icon = icon;
+    return (
+      <tr className="bg-slate-100/70 dark:bg-white/[0.04]">
+        <td colSpan={3} className="py-2.5 px-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {Icon && <Icon size={14} className="text-[#1c9bda]" />}
+              <span className="text-xs font-extrabold uppercase tracking-wider text-[#0B1F33] dark:text-white">{title}</span>
+            </div>
+            {subtitle && (
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#1c9bda]/10 text-[#1c9bda] border border-[#1c9bda]/20">
+                {subtitle}
+              </span>
+            )}
+          </div>
+        </td>
+      </tr>
+    );
+  };
+
+  // Metrics extractors for IPO 1 and IPO 2
+  const gmpVal1 = ipo1?.gmp;
+  const gmpVal2 = ipo2?.gmp;
+  const price1 = ipo1 ? (ipo1.priceMax || ipo1.priceMin) : null;
+  const price2 = ipo2 ? (ipo2.priceMax || ipo2.priceMin) : null;
+  const gmpPct1 = gmpVal1 != null && price1 ? (gmpVal1 / price1) * 100 : null;
+  const gmpPct2 = gmpVal2 != null && price2 ? (gmpVal2 / price2) * 100 : null;
+
+  const profit1 = profitPerLot(ipo1);
+  const profit2 = profitPerLot(ipo2);
+
+  const freshPct1 = ipo1?.freshIssue && ipo1?.issueSize ? (ipo1.freshIssue / ipo1.issueSize) * 100 : null;
+  const freshPct2 = ipo2?.freshIssue && ipo2?.issueSize ? (ipo2.freshIssue / ipo2.issueSize) * 100 : null;
+
+  const sent1 = getSentiment(ipo1);
+  const sent2 = getSentiment(ipo2);
+
+  return (
+    <div className="space-y-6">
+      {/* ── Header & Category Switcher ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400">
+            <ArrowLeftRight size={16} />
+          </div>
+          <div>
+            <h1 className="text-base font-extrabold text-[#0B1F33] dark:text-white tracking-tight">IPO Comparison</h1>
+            <p className="text-[11px] text-slate-455 dark:text-slate-500">Side-by-side comparative research terminal for Indian IPOs</p>
+          </div>
+        </div>
+
+        {/* Mainboard | SME Segmented Control */}
+        <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5 self-start sm:self-auto">
+          <button
+            onClick={() => setMarket("Mainboard")}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+              market === "Mainboard"
+                ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
+            }`}
+          >
+            MAINBOARD
+          </button>
+          <button
+            onClick={() => setMarket("SME")}
+            className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+              market === "SME"
+                ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-slate-200 bg-transparent"
+            }`}
+          >
+            SME
+          </button>
+        </div>
+      </div>
+
+      {/* ── Selection Cards Grid ── */}
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+        {/* IPO 1 Card */}
+        <div className="md:col-span-5 bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-3xl p-5 shadow-sm space-y-3 relative">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-450 dark:text-slate-500">SELECT IPO 1</span>
+            {ipo1 && onOpen && (
+              <button onClick={() => onOpen(ipo1)} className="text-[10px] text-[#1c9bda] hover:underline font-bold flex items-center gap-1 cursor-pointer bg-transparent border-0">
+                Details <ExternalLink size={10} />
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={() => setModalOpen1(true)}
+            className="w-full flex items-center gap-3 p-3 rounded-2xl border transition-all text-left bg-slate-50/70 dark:bg-white/[0.02] border-slate-200 dark:border-white/10 hover:border-[#1c9bda]/40 cursor-pointer"
+          >
+            {ipo1 ? (
+              <>
+                <CompanyAvatar name={ipo1.company} logoUrl={ipo1.logoUrl} size={40} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{ipo1.company}</p>
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                    <span className="text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                      {ipo1.type}
+                    </span>
+                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{getComputedStatus(ipo1)}</span>
+                    {ipo1.gmp != null && (
+                      <span className="text-[10px] font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                        GMP +₹{ipo1.gmp} ({gmpPct1 != null ? `${gmpPct1.toFixed(1)}%` : ""})
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <span className="text-sm text-slate-400 font-semibold p-2">Select first IPO…</span>
+            )}
+            <ChevronRight size={16} className="text-slate-400 shrink-0 ml-auto" />
+          </button>
+        </div>
+
+        {/* Swap Button (Middle) */}
+        <div className="md:col-span-2 flex justify-center">
+          <button
+            onClick={swapSelection}
+            title="Swap IPO 1 and IPO 2"
+            className="w-10 h-10 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#121D2D] hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-slate-300 flex items-center justify-center shadow-md transition-transform hover:scale-105 cursor-pointer border-0"
+          >
+            <ArrowLeftRight size={16} />
+          </button>
+        </div>
+
+        {/* IPO 2 Card */}
+        <div className="md:col-span-5 bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-3xl p-5 shadow-sm space-y-3 relative">
+          <div className="flex justify-between items-center">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-450 dark:text-slate-500">SELECT IPO 2</span>
+            {ipo2 && onOpen && (
+              <button onClick={() => onOpen(ipo2)} className="text-[10px] text-[#1c9bda] hover:underline font-bold flex items-center gap-1 cursor-pointer bg-transparent border-0">
+                Details <ExternalLink size={10} />
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={() => setModalOpen2(true)}
+            className="w-full flex items-center gap-3 p-3 rounded-2xl border transition-all text-left bg-slate-50/70 dark:bg-white/[0.02] border-slate-200 dark:border-white/10 hover:border-[#1c9bda]/40 cursor-pointer"
+          >
+            {ipo2 ? (
+              <>
+                <CompanyAvatar name={ipo2.company} logoUrl={ipo2.logoUrl} size={40} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{ipo2.company}</p>
+                  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                    <span className="text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                      {ipo2.type}
+                    </span>
+                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{getComputedStatus(ipo2)}</span>
+                    {ipo2.gmp != null && (
+                      <span className="text-[10px] font-bold font-mono text-emerald-600 dark:text-emerald-400">
+                        GMP +₹{ipo2.gmp} ({gmpPct2 != null ? `${gmpPct2.toFixed(1)}%` : ""})
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <span className="text-sm text-slate-400 font-semibold p-2">Select second IPO…</span>
+            )}
+            <ChevronRight size={16} className="text-slate-400 shrink-0 ml-auto" />
+          </button>
+        </div>
+      </div>
+
+      {/* ── Selection Modals ── */}
+      {modalOpen1 && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/10 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4 p-5 max-h-[85vh] flex flex-col">
+            <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-white/5">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-wider">Select IPO 1 ({market})</h3>
+              <button onClick={() => setModalOpen1(false)} className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer bg-transparent border-0">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="relative">
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                value={search1}
+                onChange={(e) => setSearch1(e.target.value)}
+                placeholder={`Search eligible ${market} IPOs…`}
+                className="w-full bg-slate-50 dark:bg-[#1A293D] border border-slate-200 dark:border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 dark:text-white outline-none"
+              />
+            </div>
+            <div className="overflow-y-auto flex-1 space-y-1 pr-1">
+              {filtered1.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => { setId1(item.id); setModalOpen1(false); setSearch1(""); }}
+                  className={`w-full flex items-center justify-between p-3 rounded-2xl transition-colors cursor-pointer text-left border-0 ${
+                    item.id === id1 ? "bg-[#1c9bda]/10 text-[#1c9bda]" : "bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <CompanyAvatar name={item.company} logoUrl={item.logoUrl} size={34} />
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold truncate">{item.company}</p>
+                      <p className="text-[10px] text-slate-400">{getComputedStatus(item)} · {formatPriceBand(item.priceMin, item.priceMax)}</p>
+                    </div>
+                  </div>
+                  {item.gmp != null && (
+                    <span className="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400 shrink-0 ml-2">
+                      +₹{item.gmp}
+                    </span>
+                  )}
+                </button>
+              ))}
+              {filtered1.length === 0 && <p className="text-xs text-slate-400 text-center py-6">No eligible IPOs found</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {modalOpen2 && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/10 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl space-y-4 p-5 max-h-[85vh] flex flex-col">
+            <div className="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-white/5">
+              <h3 className="text-sm font-bold text-slate-800 dark:text-white uppercase tracking-wider">Select IPO 2 ({market})</h3>
+              <button onClick={() => setModalOpen2(false)} className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer bg-transparent border-0">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="relative">
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                value={search2}
+                onChange={(e) => setSearch2(e.target.value)}
+                placeholder={`Search eligible ${market} IPOs…`}
+                className="w-full bg-slate-50 dark:bg-[#1A293D] border border-slate-200 dark:border-white/10 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-800 dark:text-white outline-none"
+              />
+            </div>
+            <div className="overflow-y-auto flex-1 space-y-1 pr-1">
+              {filtered2.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => { setId2(item.id); setModalOpen2(false); setSearch2(""); }}
+                  className={`w-full flex items-center justify-between p-3 rounded-2xl transition-colors cursor-pointer text-left border-0 ${
+                    item.id === id2 ? "bg-[#1c9bda]/10 text-[#1c9bda]" : "bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 text-slate-700 dark:text-slate-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <CompanyAvatar name={item.company} logoUrl={item.logoUrl} size={34} />
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold truncate">{item.company}</p>
+                      <p className="text-[10px] text-slate-400">{getComputedStatus(item)} · {formatPriceBand(item.priceMin, item.priceMax)}</p>
+                    </div>
+                  </div>
+                  {item.gmp != null && (
+                    <span className="text-xs font-bold font-mono text-emerald-600 dark:text-emerald-400 shrink-0 ml-2">
+                      +₹{item.gmp}
+                    </span>
+                  )}
+                </button>
+              ))}
+              {filtered2.length === 0 && <p className="text-xs text-slate-400 text-center py-6">No eligible IPOs found</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Comparison Table View ── */}
+      {ipo1 && ipo2 ? (
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-3xl overflow-hidden shadow-sm dark:shadow-xl">
+          {/* Header Card Summary */}
+          <div className="grid grid-cols-3 border-b border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.02] p-4 items-center">
+            <div className="text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Metric Comparison
+            </div>
+
+            {/* IPO 1 Info Card */}
+            <div className="flex flex-col items-center text-center px-2 space-y-1.5">
+              <CompanyAvatar name={ipo1.company} logoUrl={ipo1.logoUrl} size={44} />
+              <p className="text-xs font-bold text-slate-800 dark:text-white leading-tight">{ipo1.company}</p>
+              <div className="flex items-center gap-1 flex-wrap justify-center">
+                <span className="text-[9px] uppercase tracking-wide font-extrabold px-1.5 py-0.2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                  {ipo1.type}
+                </span>
+                <span className="text-[9px] uppercase font-bold text-slate-500 dark:text-slate-400">{getComputedStatus(ipo1)}</span>
+              </div>
+            </div>
+
+            {/* IPO 2 Info Card */}
+            <div className="flex flex-col items-center text-center px-2 space-y-1.5">
+              <CompanyAvatar name={ipo2.company} logoUrl={ipo2.logoUrl} size={44} />
+              <p className="text-xs font-bold text-slate-800 dark:text-white leading-tight">{ipo2.company}</p>
+              <div className="flex items-center gap-1 flex-wrap justify-center">
+                <span className="text-[9px] uppercase tracking-wide font-extrabold px-1.5 py-0.2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                  {ipo2.type}
+                </span>
+                <span className="text-[9px] uppercase font-bold text-slate-500 dark:text-slate-400">{getComputedStatus(ipo2)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <tbody>
+                {/* ── Section A: MARKET SIGNALS ── */}
+                {renderSectionHeader("Market Signals & Returns", TrendingUp)}
+                {renderMetricRow("Current GMP", gmpVal1 != null ? rupee(gmpVal1) : "—", gmpVal2 != null ? rupee(gmpVal2) : "—", { higherIsBetter: true, rawA: gmpVal1, rawB: gmpVal2 })}
+                {renderMetricRow("GMP %", gmpPct1 != null ? `${gmpPct1.toFixed(2)}%` : "—", gmpPct2 != null ? `${gmpPct2.toFixed(2)}%` : "—", { higherIsBetter: true, rawA: gmpPct1, rawB: gmpPct2 })}
+                {renderMetricRow("AI Prediction", "—", "—")}
+                {renderMetricRow("Est. Profit (1 Lot)", profit1 > 0 ? `+${rupee(profit1)}` : "—", profit2 > 0 ? `+${rupee(profit2)}` : "—", { higherIsBetter: true, rawA: profit1, rawB: profit2 })}
+
+                {/* ── Section B: IPO STRUCTURE ── */}
+                {renderSectionHeader("IPO Structure & Valuation", Building2)}
+                {renderMetricRow("Issue Size", ipo1.issueSize ? cr(ipo1.issueSize) : "—", ipo2.issueSize ? cr(ipo2.issueSize) : "—", { higherIsBetter: true, rawA: ipo1.issueSize, rawB: ipo2.issueSize })}
+                {renderMetricRow("Retail Issue Size", getCompareRetailIssueSize(ipo1), getCompareRetailIssueSize(ipo2))}
+                {renderMetricRow("Fresh Issue %", freshPct1 != null ? `${freshPct1.toFixed(2)}%` : "—", freshPct2 != null ? `${freshPct2.toFixed(2)}%` : "—")}
+                {renderMetricRow("Fresh Issue", ipo1.freshIssue ? cr(ipo1.freshIssue) : "—", ipo2.freshIssue ? cr(ipo2.freshIssue) : "—")}
+                {renderMetricRow("Offer for Sale (OFS)", ipo1.ofs ? cr(ipo1.ofs) : "—", ipo2.ofs ? cr(ipo2.ofs) : "—")}
+                {renderMetricRow("Face Value", ipo1.faceValue ? `₹${ipo1.faceValue}` : "—", ipo2.faceValue ? `₹${ipo2.faceValue}` : "—")}
+                {renderMetricRow("Price Band", formatPriceBand(ipo1.priceMin, ipo1.priceMax), formatPriceBand(ipo2.priceMin, ipo2.priceMax))}
+                {renderMetricRow("Lot Size", ipo1.lot ? `${ipo1.lot} shares` : "—", ipo2.lot ? `${ipo2.lot} shares` : "—")}
+                {renderMetricRow("Min. Investment", investment(ipo1) ? rupee(investment(ipo1)) : "—", investment(ipo2) ? rupee(investment(ipo2)) : "—")}
+
+                {/* ── Section C: IPO TIMELINE ── */}
+                {renderSectionHeader("IPO Schedule & Dates", Calendar)}
+                {renderMetricRow("Open Date", formatDate(ipo1.open), formatDate(ipo2.open))}
+                {renderMetricRow("Close Date", formatDate(ipo1.close), formatDate(ipo2.close))}
+                {renderMetricRow("Listing Date", formatDate(ipo1.listing), formatDate(ipo2.listing))}
+
+                {/* ── Section D: DEMAND & ALLOTMENT ── */}
+                {renderSectionHeader("Demand & Allotment Odds", Activity)}
+                {renderMetricRow("Total Subscription", ipo1.sub?.overall != null ? `${formatDecimal(ipo1.sub.overall)}×` : "—", ipo2.sub?.overall != null ? `${formatDecimal(ipo2.sub.overall)}×` : "—", { higherIsBetter: true, rawA: ipo1.sub?.overall, rawB: ipo2.sub?.overall })}
+                {renderMetricRow("Retail Subscription", ipo1.sub?.retail != null ? `${formatDecimal(ipo1.sub.retail)}×` : "—", ipo2.sub?.retail != null ? `${formatDecimal(ipo2.sub.retail)}×` : "—", { higherIsBetter: true, rawA: ipo1.sub?.retail, rawB: ipo2.sub?.retail })}
+                {renderMetricRow("QIB Subscription", ipo1.sub?.qib != null ? `${formatDecimal(ipo1.sub.qib)}×` : "—", ipo2.sub?.qib != null ? `${formatDecimal(ipo2.sub.qib)}×` : "—", { higherIsBetter: true, rawA: ipo1.sub?.qib, rawB: ipo2.sub?.qib })}
+                {renderMetricRow("NII Subscription", (ipo1.sub?.nii || ipo1.sub?.hni) != null ? `${formatDecimal(ipo1.sub?.nii || ipo1.sub?.hni)}×` : "—", (ipo2.sub?.nii || ipo2.sub?.hni) != null ? `${formatDecimal(ipo2.sub?.nii || ipo2.sub?.hni)}×` : "—")}
+                {renderMetricRow("Allotment Chance", getCompareAllotmentOdds(ipo1), getCompareAllotmentOdds(ipo2))}
+
+                {/* ── Section E: FINANCIAL PERFORMANCE ── */}
+                {renderSectionHeader("Financial Performance", BarChart3, `Comparison Period: ${finPeriod}`)}
+                {renderMetricRow("Revenue", ipo1.fin?.revenue != null ? cr(ipo1.fin.revenue) : "—", ipo2.fin?.revenue != null ? cr(ipo2.fin.revenue) : "—", { higherIsBetter: true, rawA: ipo1.fin?.revenue, rawB: ipo2.fin?.revenue })}
+                {renderMetricRow("EBITDA", ipo1.fin?.ebitda != null ? cr(ipo1.fin.ebitda) : "—", ipo2.fin?.ebitda != null ? cr(ipo2.fin.ebitda) : "—", { higherIsBetter: true, rawA: ipo1.fin?.ebitda, rawB: ipo2.fin?.ebitda })}
+                {renderMetricRow("PAT / Net Profit", ipo1.fin?.pat != null ? cr(ipo1.fin.pat) : "—", ipo2.fin?.pat != null ? cr(ipo2.fin.pat) : "—", { higherIsBetter: true, rawA: ipo1.fin?.pat, rawB: ipo2.fin?.pat })}
+                {renderMetricRow("PAT Margin", ipo1.fin?.patMargin != null ? `${ipo1.fin.patMargin}%` : (ipo1.fin?.pat != null && ipo1.fin?.revenue ? `${((ipo1.fin.pat / ipo1.fin.revenue) * 100).toFixed(2)}%` : "—"), ipo2.fin?.patMargin != null ? `${ipo2.fin.patMargin}%` : (ipo2.fin?.pat != null && ipo2.fin?.revenue ? `${((ipo2.fin.pat / ipo2.fin.revenue) * 100).toFixed(2)}%` : "—"), { higherIsBetter: true, rawA: ipo1.fin?.patMargin, rawB: ipo2.fin?.patMargin })}
+                {renderMetricRow("ROE %", ipo1.fin?.roe != null ? `${ipo1.fin.roe}%` : "—", ipo2.fin?.roe != null ? `${ipo2.fin.roe}%` : "—", { higherIsBetter: true, rawA: ipo1.fin?.roe, rawB: ipo2.fin?.roe })}
+                {renderMetricRow("ROCE %", ipo1.fin?.roce != null ? `${ipo1.fin.roce}%` : "—", ipo2.fin?.roce != null ? `${ipo2.fin.roce}%` : "—", { higherIsBetter: true, rawA: ipo1.fin?.roce, rawB: ipo2.fin?.roce })}
+                {renderMetricRow("Debt / Equity", ipo1.fin?.de != null ? ipo1.fin.de : "—", ipo2.fin?.de != null ? ipo2.fin.de : "—", { lowerIsBetter: true, rawA: ipo1.fin?.de, rawB: ipo2.fin?.de })}
+                {renderMetricRow("EPS", ipo1.fin?.eps != null ? `₹${ipo1.fin.eps}` : "—", ipo2.fin?.eps != null ? `₹${ipo2.fin.eps}` : "—", { higherIsBetter: true, rawA: ipo1.fin?.eps, rawB: ipo2.fin?.eps })}
+
+                {/* ── Section F: VALUATION & SENTIMENT ── */}
+                {renderSectionHeader("Valuation & Market Sentiment", Award)}
+                {renderMetricRow("IPO PE Ratio", ipo1.fin?.pe != null ? `${ipo1.fin.pe}x` : "—", ipo2.fin?.pe != null ? `${ipo2.fin.pe}x` : "—", { lowerIsBetter: true, rawA: ipo1.fin?.pe, rawB: ipo2.fin?.pe })}
+                <tr className="border-b border-slate-100 dark:border-white/5 hover:bg-slate-50/50 dark:hover:bg-white/[0.015] transition-colors">
+                  <td className="py-3 px-4 text-xs font-bold text-slate-700 dark:text-slate-300 w-1/3 min-w-[140px]">
+                    <div className="flex flex-col">
+                      <span>Sentiment</span>
+                      <span className="text-[10px] font-normal text-slate-400 dark:text-slate-500">Based on GMP %</span>
+                    </div>
+                  </td>
+                  <td className="py-3 px-4 text-xs font-mono font-bold w-1/3 text-center">
+                    {sent1 ? (
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${sent1.badge}`}>
+                        <span>{sent1.emoji}</span>
+                        <span>{sent1.label}</span>
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                  <td className="py-3 px-4 text-xs font-mono font-bold w-1/3 text-center">
+                    {sent2 ? (
+                      <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${sent2.badge}`}>
+                        <span>{sent2.emoji}</span>
+                        <span>{sent2.label}</span>
+                      </span>
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      ) : (
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-200 dark:border-white/5 rounded-3xl p-12 text-center">
+          <ArrowLeftRight size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
+          <p className="text-slate-500 text-sm font-semibold">Select two eligible {market} IPOs above to compare them side-by-side.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =====================================================================
    GMP TRENDS TAB
 ===================================================================== */
 function GMPTab({ tick, onOpen, query }) {
@@ -5439,6 +6011,7 @@ const NAV = [
   { id: "upcoming", label: "Upcoming IPOs", icon: Calendar },
   { id: "closed", label: "Closed IPOs", icon: Clock },
   { id: "listed", label: "Listed IPOs", icon: Building2 },
+  { id: "compare", label: "IPO Comparison", icon: ArrowLeftRight },
   { id: "allotment", label: "IPO Allotment", icon: BookmarkCheck },
   { id: "calculator", label: "Profit Calculator", icon: CalcIcon },
   { id: "subscriptions", label: "Subscriptions", icon: LayoutGrid },
@@ -6596,6 +7169,7 @@ export default function App() {
                       { label: "Live GMP", icon: TrendingUp, tabId: "gmp" },
                       { label: "GMP Trends", icon: BarChart3, tabId: "gmp" },
                       { label: "IPO Subscription", icon: LayoutGrid, tabId: "subscriptions" },
+                      { label: "IPO Comparison", icon: ArrowLeftRight, tabId: "compare" },
                       { label: "IPO Allotment", icon: BookmarkCheck, tabId: "allotment" },
                       { label: "Financials", icon: BarChart3, tabId: "financials" },
                       { label: "DRHP / RHP", icon: FileText, tabId: "docs" },
@@ -6888,6 +7462,7 @@ export default function App() {
             })()}
 
             {tab === "gmp" && <GMPTab tick={tick} onOpen={handleSelectIpo} query={query} />}
+            {tab === "compare" && <CompareTab onOpen={handleSelectIpo} />}
             {tab === "subscriptions" && <SubscriptionsTab dark={dark} query={query} />}
             {tab === "financials" && <FinancialsTab onOpen={handleSelectIpo} dark={dark} query={query} />}
             {tab === "docs" && <DocumentsTab onOpen={handleSelectIpo} query={query} />}
@@ -7003,6 +7578,7 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
           <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
             {[
               { label: "Live GMP", tabId: "gmp" },
+              { label: "IPO Comparison", tabId: "compare" },
               { label: "IPO Subscription", tabId: "subscriptions" },
               { label: "Financials", tabId: "financials" },
               { label: "Profit Calculator", tabId: "calculator" },
