@@ -58,8 +58,8 @@ const REPLACEMENT = `        {/* IPO Timeline Events */}
                 if (m.date && m.date <= todayYmd) activeStageIdx = idx;
               });
               return milestones.map((m, idx) => {
-                const isCompleted = isPast(m.date) && (idx < activeStageIdx || isListed);
-                const isActiveStage = idx === activeStageIdx && !isListed;
+                const isCompleted = m.date < todayYmd || (isListed && m.date <= todayYmd);
+                const isActiveStage = idx === activeStageIdx && !isCompleted && !isListed;
                 return (
                   <div
                     key={m.label}
@@ -77,25 +77,18 @@ const REPLACEMENT = `        {/* IPO Timeline Events */}
                         {isActiveStage && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                       </span>
                     </div>
-                    {/* Col 2: label + subtext + badges */}
-                    <div className="flex flex-col justify-center min-w-0">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className={`text-[13px] font-semibold truncate ${
-                          isCompleted ? "text-slate-800 dark:text-white font-bold" :
-                          isActiveStage ? "text-[#1c9bda] font-extrabold" :
-                          "text-slate-600 dark:text-slate-400"
-                        }`}>{m.label}</span>
-                        {isActiveStage && (
-                          <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">Active</span>
-                        )}
-                        {isCompleted && (
-                          <span className="shrink-0 text-[9px] font-bold text-emerald-500 dark:text-emerald-400">✓ Done</span>
-                        )}
-                      </div>
-                      {m.subtext && (
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium leading-tight">
-                          {m.subtext}
-                        </span>
+                    {/* Col 2: label + badges (flex-1) */}
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className={`text-[13px] font-semibold truncate ${
+                        isCompleted ? "text-slate-800 dark:text-white font-bold" :
+                        isActiveStage ? "text-[#1c9bda] font-extrabold" :
+                        "text-slate-600 dark:text-slate-400"
+                      }`}>{m.label}</span>
+                      {isActiveStage && (
+                        <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">Active</span>
+                      )}
+                      {isCompleted && (
+                        <span className="shrink-0 text-[9px] font-bold text-emerald-500 dark:text-emerald-400">✓ Done</span>
                       )}
                     </div>
                     {/* Col 3: date (120px, right-aligned, fixed) */}

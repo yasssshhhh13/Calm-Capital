@@ -2657,10 +2657,10 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
   const milestones = [
     { label: "IPO Opens", date: ipo.open },
     { label: "Last Day", date: ipo.close },
-    { label: "Allotment", date: ipo.allotment, subtext: "Out late night (~10–11 PM)" },
-    { label: "Refund", date: ipo.refund || (ipo.allotment ? addDays(ipo.allotment, 1) : null), subtext: "Initiated next morning" },
-    { label: "Demat Credit", date: ipo.demat || (ipo.allotment ? addDays(ipo.allotment, 1) : null) },
+    { label: "Allotment", date: ipo.allotment },
+    { label: "Refund", date: ipo.refund || (ipo.allotment ? addDays(ipo.allotment, 1) : null) },
     { label: "Listing", date: ipo.listing },
+    { label: "Demat Credit", date: ipo.demat && ipo.listing && ipo.demat > ipo.listing ? ipo.demat : (ipo.listing ? addDays(ipo.listing, 1) : (ipo.allotment ? addDays(ipo.allotment, 2) : ipo.demat)) },
   ].filter(m => m.date);
 
   const isPast = (dateStr) => {
@@ -3149,8 +3149,8 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                 if (m.date && m.date <= todayYmd) activeStageIdx = idx;
               });
               return milestones.map((m, idx) => {
-                const isCompleted = isPast(m.date) && (idx < activeStageIdx || isListed);
-                const isActiveStage = idx === activeStageIdx && !isListed;
+                const isCompleted = m.date < todayYmd || (isListed && m.date <= todayYmd);
+                const isActiveStage = idx === activeStageIdx && !isCompleted && !isListed;
                 return (
                   <div
                     key={m.label}
@@ -3169,24 +3169,17 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                       </span>
                     </div>
                     {/* Col 2: label + badges (flex-1) */}
-                    <div className="flex flex-col justify-center min-w-0">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className={`text-[13px] font-semibold truncate ${
-                          isCompleted ? "text-slate-800 dark:text-white font-bold" :
-                          isActiveStage ? "text-[#1c9bda] font-extrabold" :
-                          "text-slate-600 dark:text-slate-400"
-                        }`}>{m.label}</span>
-                        {isActiveStage && (
-                          <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">Active</span>
-                        )}
-                        {isCompleted && (
-                          <span className="shrink-0 text-[9px] font-bold text-emerald-500 dark:text-emerald-400">✓ Done</span>
-                        )}
-                      </div>
-                      {m.subtext && (
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium leading-tight">
-                          {m.subtext}
-                        </span>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className={`text-[13px] font-semibold truncate ${
+                        isCompleted ? "text-slate-800 dark:text-white font-bold" :
+                        isActiveStage ? "text-[#1c9bda] font-extrabold" :
+                        "text-slate-600 dark:text-slate-400"
+                      }`}>{m.label}</span>
+                      {isActiveStage && (
+                        <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">Active</span>
+                      )}
+                      {isCompleted && (
+                        <span className="shrink-0 text-[9px] font-bold text-emerald-500 dark:text-emerald-400">✓ Done</span>
                       )}
                     </div>
                     {/* Col 3: date (120px, right-aligned, fixed) */}
