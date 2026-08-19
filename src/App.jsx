@@ -757,17 +757,19 @@ function hydrateNotificationsFromStorage() {
   }
 }
 
-function ymd(d) { return d.toISOString().slice(0, 10); }
-
-function addDays(dateStr, days) {
-  if (!dateStr) return null;
-  const d = new Date(dateStr + "T00:00:00+05:30");
-  d.setDate(d.getDate() + days);
-  return ymd(d);
-}
-
 function pad2(n) {
   return String(n).padStart(2, "0");
+}
+
+function ymd(d = new Date()) {
+  if (!d) return "";
+  if (typeof d === "string") return d.slice(0, 10);
+  const p = istClockParts(d);
+  return `${p.y}-${pad2(p.m)}-${pad2(p.d)}`;
+}
+
+function addDays(dateStr, days) {
+  return addCalendarDaysYmd(dateStr, days);
 }
 
 /** IST calendar parts for a Date. */
@@ -2655,9 +2657,9 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
   const milestones = [
     { label: "IPO Opens", date: ipo.open },
     { label: "Last Day", date: ipo.close },
-    { label: "Allotment", date: ipo.allotment },
-    { label: "Refund", date: ipo.allotment ? addDays(ipo.allotment, 1) : ipo.refund },
-    { label: "Demat Credit", date: ipo.allotment ? addDays(ipo.allotment, 1) : ipo.demat },
+    { label: "Allotment", date: ipo.allotment, subtext: "Out late night (~10–11 PM)" },
+    { label: "Refund", date: ipo.refund || (ipo.allotment ? addDays(ipo.allotment, 1) : null), subtext: "Initiated next morning" },
+    { label: "Demat Credit", date: ipo.demat || (ipo.allotment ? addDays(ipo.allotment, 1) : null) },
     { label: "Listing", date: ipo.listing },
   ].filter(m => m.date);
 
@@ -3141,7 +3143,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
               style={{ left: 13, top: 22, bottom: 22, width: 2 }}
             />
             {(() => {
-              const todayYmd = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+              const todayYmd = ymd(today);
               let activeStageIdx = -1;
               milestones.forEach((m, idx) => {
                 if (m.date && m.date <= todayYmd) activeStageIdx = idx;
@@ -3167,17 +3169,24 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
                       </span>
                     </div>
                     {/* Col 2: label + badges (flex-1) */}
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className={`text-[13px] font-semibold truncate ${
-                        isCompleted ? "text-slate-800 dark:text-white font-bold" :
-                        isActiveStage ? "text-[#1c9bda] font-extrabold" :
-                        "text-slate-600 dark:text-slate-400"
-                      }`}>{m.label}</span>
-                      {isActiveStage && (
-                        <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">Active</span>
-                      )}
-                      {isCompleted && (
-                        <span className="shrink-0 text-[9px] font-bold text-emerald-500 dark:text-emerald-400">✓ Done</span>
+                    <div className="flex flex-col justify-center min-w-0">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`text-[13px] font-semibold truncate ${
+                          isCompleted ? "text-slate-800 dark:text-white font-bold" :
+                          isActiveStage ? "text-[#1c9bda] font-extrabold" :
+                          "text-slate-600 dark:text-slate-400"
+                        }`}>{m.label}</span>
+                        {isActiveStage && (
+                          <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">Active</span>
+                        )}
+                        {isCompleted && (
+                          <span className="shrink-0 text-[9px] font-bold text-emerald-500 dark:text-emerald-400">✓ Done</span>
+                        )}
+                      </div>
+                      {m.subtext && (
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium leading-tight">
+                          {m.subtext}
+                        </span>
                       )}
                     </div>
                     {/* Col 3: date (120px, right-aligned, fixed) */}
@@ -3653,381 +3662,6 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
           </div>
         </div>
       </div>
-
-      {/* ── 8. Financial Sector Peer Comparison ── */}
-      {(() => {
-        const classifyBusiness = (item) => {
-          const name = (item.company || item.name || "").toLowerCase();
-          const sector = (item.sector || "").toLowerCase();
-          
-          if (name.includes("logistics") || name.includes("warehouse") || name.includes("transport") || name.includes("shiprocket") || name.includes("cargo") || name.includes("supply chain") || name.includes("fleet")) {
-            return { id: "logistics", desc: "Supply-chain, logistics, and warehousing solutions" };
-          }
-          if (name.includes("medicare") || name.includes("diagnostics") || name.includes("pharma") || name.includes("health") || name.includes("clinical") || name.includes("biotech") || name.includes("medical") || sector.includes("pharma") || sector.includes("health")) {
-            return { id: "healthcare", desc: "Healthcare, clinical, and medical diagnostics services" };
-          }
-          if (name.includes("foods") || name.includes("dairy") || name.includes("milk") || name.includes("agro") || name.includes("agri") || name.includes("beverage")) {
-            return { id: "food", desc: "Food processing, dairy products, and agricultural distribution" };
-          }
-          if (name.includes("textiles") || name.includes("garment") || name.includes("fabrics") || name.includes("yarn") || name.includes("apparel") || sector.includes("textiles")) {
-            return { id: "textiles", desc: "Textile manufacturing, weaving, and apparel production" };
-          }
-          if (name.includes("technology") || name.includes("techno") || name.includes("software") || name.includes("digital") || name.includes("it services") || name.includes("cloud") || name.includes("infotech") || name.includes("systems") || name.includes("xtranet") || name.includes("pragyawan") || sector.includes("it services") || sector.includes("technology")) {
-            return { id: "it", desc: "Enterprise IT services, software and technology solutions" };
-          }
-          if (name.includes("engineering") || name.includes("infrastructure") || name.includes("construction") || name.includes("build") || name.includes("power") || name.includes("energy") || name.includes("solar") || name.includes("electricals") || name.includes("steel") || name.includes("metal") || name.includes("forging") || sector.includes("energy") || sector.includes("power") || sector.includes("infrastructure") || sector.includes("metal")) {
-            return { id: "engineering", desc: "Engineering, industrial components, and equipment manufacturing" };
-          }
-          if (name.includes("automotive") || name.includes("auto") || name.includes("motors") || name.includes("transmission") || name.includes("gears")) {
-            return { id: "automotive", desc: "Automotive engineering and component manufacturing" };
-          }
-          if (name.includes("finance") || name.includes("fintech") || name.includes("wealth") || name.includes("capital") || name.includes("securities") || name.includes("banking") || name.includes("credit") || sector.includes("financial")) {
-            return { id: "finance", desc: "Financial services, credit facilities, and wealth management" };
-          }
-          if (name.includes("events") || name.includes("exhibitions") || name.includes("propshop") || name.includes("parks") || name.includes("resorts") || name.includes("silverstorm") || name.includes("stays") || name.includes("oravel") || name.includes("tourism")) {
-            return { id: "services", desc: "Hospitality, event management, and business services" };
-          }
-          
-          return { id: "general", desc: "Diversified business operations and general commercial services" };
-        };
-
-        const currentBiz = classifyBusiness(ipo);
-        const allIpos = getLiveIPOS() || [];
-
-        // Peer Selection Engine:
-        // - Segment validation: must be EXACT same type (Mainboard vs SME)
-        // - Status validation: must be already LISTED
-        // - Business classification: must match target classified business activity
-        // - Exclude IPO itself
-        const peers = allIpos.filter(i => {
-          if (i.id === ipo.id || !i.fin) return false;
-          
-          // segment type check (Mainboard vs SME hard filter)
-          if (i.type !== ipo.type) return false;
-          
-          // must be listed
-          if (getComputedStatus(i) !== "Listed") return false;
-          
-          const peerBiz = classifyBusiness(i);
-          return peerBiz.id === currentBiz.id && currentBiz.id !== "general";
-        }).slice(0, 5);
-
-        if (peers.length === 0) {
-          return (
-            <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
-              <div>
-                <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
-                  Comparable Company Analysis
-                </h3>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
-                  Financial performance compared with relevant listed companies operating in similar businesses
-                </p>
-              </div>
-              <div className="rounded-2xl border border-dashed border-slate-200 dark:border-white/10 p-8 text-center text-xs text-slate-400 dark:text-slate-500 font-medium">
-                No closely comparable listed peers with sufficient public financial data were identified.
-              </div>
-            </div>
-          );
-        }
-
-        const formatComparisonPeriod = (fy) => {
-          if (!fy) return "Latest Restated";
-          const match = fy.match(/FY(?:20)?(\d{2})(.*)/i);
-          if (match) {
-            const endYear = parseInt(match[1]);
-            const startYear = endYear - 1;
-            const extra = match[2] || "";
-            return `FY20${startYear}–${endYear}${extra}`;
-          }
-          return fy;
-        };
-
-        const isPeriodComparable = (p1, p2) => {
-          if (!p1 || !p2) return true;
-          const getYear = (p) => {
-            const m = p.match(/(?:FY)?(?:20)?(\d{2})/i);
-            return m ? parseInt(m[1]) : null;
-          };
-          const y1 = getYear(p1);
-          const y2 = getYear(p2);
-          if (y1 === null || y2 === null) return true;
-          return Math.abs(y1 - y2) <= 1;
-        };
-
-        const ipoPeriod = ipo.finMeta?.fy;
-
-        const getMetrics = (item) => {
-          const itemPeriod = item.finMeta?.fy;
-          if (item.id !== ipo.id && !isPeriodComparable(ipoPeriod, itemPeriod)) {
-            return { rev: null, ebitda: null, pat: null, patMargin: null, roe: null, roce: null, de: null, eps: null };
-          }
-
-          const f = item.fin || {};
-          const rev = f.revenue;
-          const ebitda = f.ebitda;
-          const pat = f.pat;
-          const netWorth = f.netWorth;
-          const debt = f.debt;
-          const eps = f.eps;
-          const patMargin = (pat != null && rev) ? (pat / rev) * 100 : null;
-          let roe = f.roe;
-          if (roe == null && pat != null && netWorth) {
-            roe = (pat / netWorth) * 100;
-          }
-          const roce = f.roce;
-          const de = (debt != null && netWorth) ? (debt / netWorth) : null;
-          return { rev, ebitda, pat, patMargin, roe, roce, de, eps };
-        };
-
-        const calculateValuation = (item, isPeer) => {
-          const f = item.fin || {};
-          const priceVal = isPeer ? (item.currentPrice || item.priceMax) : ipo.priceMax;
-          
-          let pe = f.pe;
-          let mcap = null;
-          let pb = null;
-          
-          if (f.pat && f.eps && priceVal) {
-            const shares = f.pat / f.eps; 
-            mcap = shares * priceVal;
-          }
-          if (isPeer) {
-            if (f.eps && priceVal) {
-              pe = priceVal / f.eps;
-            }
-          } else {
-            if (pe == null && f.eps && priceVal) {
-              pe = priceVal / f.eps;
-            }
-          }
-          if (mcap && f.netWorth) {
-            pb = mcap / f.netWorth;
-          }
-          return { pe, mcap, pb };
-        };
-
-        const thisMetrics = getMetrics(ipo);
-        const thisVal = calculateValuation(ipo, false);
-
-        // Calculate averages for peers only
-        const avg = {
-          rev: 0, countRev: 0,
-          ebitda: 0, countEbitda: 0,
-          pat: 0, countPat: 0,
-          patMargin: 0, countPatMargin: 0,
-          roe: 0, countRoe: 0,
-          roce: 0, countRoce: 0,
-          de: 0, countDe: 0,
-          eps: 0, countEps: 0,
-          pe: 0, countPe: 0,
-          mcap: 0, countMcap: 0,
-          pb: 0, countPb: 0
-        };
-
-        peers.forEach(p => {
-          const m = getMetrics(p);
-          const val = calculateValuation(p, true);
-          if (m.rev != null) { avg.rev += m.rev; avg.countRev++; }
-          if (m.ebitda != null) { avg.ebitda += m.ebitda; avg.countEbitda++; }
-          if (m.pat != null) { avg.pat += m.pat; avg.countPat++; }
-          if (m.patMargin != null) { avg.patMargin += m.patMargin; avg.countPatMargin++; }
-          if (m.roe != null) {
-            const num = typeof m.roe === 'string' ? parseFloat(m.roe) : m.roe;
-            if (!isNaN(num)) { avg.roe += num; avg.countRoe++; }
-          }
-          if (m.roce != null) {
-            const num = typeof m.roce === 'string' ? parseFloat(m.roce) : m.roce;
-            if (!isNaN(num)) { avg.roce += num; avg.countRoce++; }
-          }
-          if (m.de != null) { avg.de += m.de; avg.countDe++; }
-          if (m.eps != null) { avg.eps += m.eps; avg.countEps++; }
-          if (val.pe != null) { avg.pe += val.pe; avg.countPe++; }
-          if (val.mcap != null) { avg.mcap += val.mcap; avg.countMcap++; }
-          if (val.pb != null) { avg.pb += val.pb; avg.countPb++; }
-        });
-
-        const formatCurrency = (val) => val != null ? `₹${Number(val).toFixed(2)} Cr` : "—";
-        const formatPercent = (val) => {
-          if (val == null) return "—";
-          const num = typeof val === 'string' ? parseFloat(val) : val;
-          return isNaN(num) ? String(val) : `${num.toFixed(2)}%`;
-        };
-        const formatRatio = (val) => val != null ? Number(val).toFixed(2) : "—";
-        const formatEps = (val) => val != null ? `₹${Number(val).toFixed(2)}` : "—";
-        const formatPE = (val) => val != null ? `${Number(val).toFixed(2)}x` : "—";
-        const formatPB = (val) => val != null ? `${Number(val).toFixed(2)}x` : "—";
-        const formatMCap = (val) => val != null ? `₹${Number(val).toFixed(2)} Cr` : "—";
-
-        return (
-          <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider">
-                    Comparable Company Analysis
-                  </h3>
-                  {peers.length < 3 && (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                      Limited comparable listed peers available
-                    </span>
-                  )}
-                </div>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
-                  Financial performance compared with relevant listed companies operating in similar businesses
-                </p>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#1c9bda]/10 text-[#1c9bda] border border-[#1c9bda]/20 self-start sm:self-auto shadow-sm">
-                Comparison Period: {formatComparisonPeriod(ipo.finMeta?.fy)}
-              </div>
-            </div>
-
-            <div className="border border-slate-150 dark:border-white/5 rounded-2xl overflow-x-auto text-xs">
-              <table className="w-full text-left border-collapse min-w-[900px]">
-                <thead>
-                  <tr className="bg-slate-50 dark:bg-white/[0.02] border-b border-slate-150 dark:border-white/5 text-slate-500 font-bold">
-                    <th className="p-3">Company</th>
-                    <th className="p-3 text-right">Market Cap</th>
-                    <th className="p-3 text-right">P/E</th>
-                    <th className="p-3 text-right">P/B</th>
-                    <th className="p-3 text-right">Revenue</th>
-                    <th className="p-3 text-right">EBITDA</th>
-                    <th className="p-3 text-right">PAT</th>
-                    <th className="p-3 text-right">PAT Margin</th>
-                    <th className="p-3 text-right">ROE</th>
-                    <th className="p-3 text-right">ROCE</th>
-                    <th className="p-3 text-right">Debt/Equity</th>
-                    <th className="p-3 text-right">EPS</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-150 dark:divide-white/5">
-                  {/* This IPO */}
-                  <tr className="font-bold bg-[#1c9bda]/8 dark:bg-[#1c9bda]/15">
-                    <td className="p-3 text-slate-855 dark:text-white">
-                      <div className="font-extrabold">{ipo.company} (This IPO)</div>
-                      <div className="text-[10px] text-slate-550 dark:text-slate-400 font-medium italic mt-0.5">
-                        "{currentBiz.desc}"
-                      </div>
-                      <div className="text-[10px] text-[#1c9bda] font-semibold mt-0.5">
-                        Period: {formatComparisonPeriod(ipo.finMeta?.fy)}
-                      </div>
-                    </td>
-                    <td className="p-3 text-right font-mono">{formatMCap(thisVal.mcap)}</td>
-                    <td className="p-3 text-right font-mono">{formatPE(thisVal.pe)}</td>
-                    <td className="p-3 text-right font-mono">{formatPB(thisVal.pb)}</td>
-                    <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.rev)}</td>
-                    <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.ebitda)}</td>
-                    <td className="p-3 text-right font-mono">{formatCurrency(thisMetrics.pat)}</td>
-                    <td className="p-3 text-right font-mono">{formatPercent(thisMetrics.patMargin)}</td>
-                    <td className="p-3 text-right font-mono">{formatPercent(thisMetrics.roe)}</td>
-                    <td className="p-3 text-right font-mono">{formatPercent(thisMetrics.roce)}</td>
-                    <td className="p-3 text-right font-mono">{formatRatio(thisMetrics.de)}</td>
-                    <td className="p-3 text-right font-mono">{formatEps(thisMetrics.eps)}</td>
-                  </tr>
-                  {/* Related Peers */}
-                  {peers.map((rel) => {
-                    const m = getMetrics(rel);
-                    const isSamePeriod = !rel.finMeta?.fy || !ipo.finMeta?.fy || rel.finMeta.fy === ipo.finMeta.fy;
-                    const peerBiz = classifyBusiness(rel);
-                    const val = calculateValuation(rel, true);
-                    return (
-                      <tr key={rel.id} className="hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors">
-                        <td className="p-3">
-                          <button
-                            onClick={() => onOpen(rel, "full")}
-                            className="text-left font-bold text-[#1c9bda] hover:underline border-0 bg-transparent p-0 cursor-pointer text-xs block"
-                          >
-                            {rel.company}
-                          </button>
-                          <div className="text-[10px] text-slate-550 dark:text-slate-400 font-medium italic mt-0.5">
-                            "{peerBiz.desc}"
-                          </div>
-                          <div className="text-[10px] text-slate-400 dark:text-slate-555 font-semibold mt-0.5">
-                            Period: {formatComparisonPeriod(rel.finMeta?.fy)} {!isSamePeriod && rel.finMeta?.fy && "(Comparable)"}
-                          </div>
-                        </td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatMCap(val.mcap)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPE(val.pe)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPB(val.pb)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.rev)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.ebitda)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatCurrency(m.pat)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPercent(m.patMargin)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPercent(m.roe)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatPercent(m.roce)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatRatio(m.de)}</td>
-                        <td className="p-3 text-right font-mono text-slate-655 dark:text-slate-455">{formatEps(m.eps)}</td>
-                      </tr>
-                    );
-                  })}
-                  {/* Peer Average */}
-                  {peers.length > 0 && (
-                    <tr className="font-bold bg-slate-100/50 dark:bg-white/[0.01]">
-                      <td className="p-3 text-slate-500 italic">Peer Average</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countMcap ? formatMCap(avg.mcap / avg.countMcap) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countPe ? formatPE(avg.pe / avg.countPe) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countPb ? formatPB(avg.pb / avg.countPb) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countRev ? formatCurrency(avg.rev / avg.countRev) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countEbitda ? formatCurrency(avg.ebitda / avg.countEbitda) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countPat ? formatCurrency(avg.pat / avg.countPat) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countPatMargin ? formatPercent(avg.patMargin / avg.countPatMargin) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countRoe ? formatPercent(avg.roe / avg.countRoe) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countRoce ? formatPercent(avg.roce / avg.countRoce) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countDe ? formatRatio(avg.de / avg.countDe) : "—"}</td>
-                      <td className="p-3 text-right font-mono text-slate-500">{avg.countEps ? formatEps(avg.eps / avg.countEps) : "—"}</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Valuation & Efficiency Summary */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-              <div className="bg-slate-50/70 dark:bg-white/[0.01] border border-slate-150 dark:border-white/5 rounded-2xl p-4 flex flex-col justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">P/E Valuation Ratio</span>
-                  <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-lg font-black text-slate-800 dark:text-white">{formatPE(thisVal.pe)}</span>
-                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">IPO PE</span>
-                  </div>
-                </div>
-                <div className="text-[10px] text-slate-550 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-white/5">
-                  {peers.length === 1 ? `Peer (${peers[0].company || peers[0].name})` : 'Peer Average'}: <span className="font-bold">{formatPE(avg.countPe ? avg.pe / avg.countPe : null)}</span>
-                </div>
-              </div>
-
-              <div className="bg-slate-50/70 dark:bg-white/[0.01] border border-slate-150 dark:border-white/5 rounded-2xl p-4 flex flex-col justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">Return on Equity (ROE)</span>
-                  <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-lg font-black text-emerald-600 dark:text-emerald-400">{formatPercent(thisMetrics.roe)}</span>
-                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">IPO ROE</span>
-                  </div>
-                </div>
-                <div className="text-[10px] text-slate-550 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-white/5">
-                  {peers.length === 1 ? `Peer (${peers[0].company || peers[0].name})` : 'Peer Average'}: <span className="font-bold">{formatPercent(avg.countRoe ? avg.roe / avg.countRoe : null)}</span>
-                </div>
-              </div>
-
-              <div className="bg-slate-50/70 dark:bg-white/[0.01] border border-slate-150 dark:border-white/5 rounded-2xl p-4 flex flex-col justify-between">
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider">Market Cap Scale</span>
-                  <div className="flex items-baseline gap-2 mt-1">
-                    <span className="text-lg font-black text-[#1c9bda]">{formatMCap(thisVal.mcap)}</span>
-                    <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">IPO Cap</span>
-                  </div>
-                </div>
-                <div className="text-[10px] text-slate-555 dark:text-slate-400 mt-2 pt-2 border-t border-slate-100 dark:border-white/5">
-                  {peers.length === 1 ? `Peer (${peers[0].company || peers[0].name})` : 'Peer Average'}: <span className="font-bold">{formatMCap(avg.countMcap ? avg.mcap / avg.countMcap : null)}</span>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-[10px] text-slate-400 dark:text-slate-500 italic">
-              *Peers are selected from listed companies operating in comparable businesses. Financial figures are based on the stated comparison period and publicly available data.
-            </p>
-          </div>
-        );
-      })()}
       {/* ── 9. Documents (DRHP/RHP) ── */}
       <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 space-y-4">
         <h3 className="text-xs font-bold uppercase text-slate-455 dark:text-slate-500 tracking-wider border-b pb-2" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>

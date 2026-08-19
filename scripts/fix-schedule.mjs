@@ -52,7 +52,7 @@ const REPLACEMENT = `        {/* IPO Timeline Events */}
               style={{ left: 13, top: 22, bottom: 22, width: 2 }}
             />
             {(() => {
-              const todayYmd = \`\${today.getFullYear()}-\${String(today.getMonth() + 1).padStart(2, "0")}-\${String(today.getDate()).padStart(2, "0")}\`;
+              const todayYmd = ymd(today);
               let activeStageIdx = -1;
               milestones.forEach((m, idx) => {
                 if (m.date && m.date <= todayYmd) activeStageIdx = idx;
@@ -63,32 +63,39 @@ const REPLACEMENT = `        {/* IPO Timeline Events */}
                 return (
                   <div
                     key={m.label}
-                    className={\`relative flex items-center gap-2 py-1 \${isActiveStage ? "rounded-xl bg-[#1c9bda]/5 dark:bg-[#1c9bda]/10 border border-[#1c9bda]/20 px-1" : ""}\`}
+                    className={`relative flex items-center gap-2 py-1 ${isActiveStage ? "rounded-xl bg-[#1c9bda]/5 dark:bg-[#1c9bda]/10 border border-[#1c9bda]/20 px-1" : ""}`}
                     style={{ display: "grid", gridTemplateColumns: "28px minmax(0,1fr) 120px", alignItems: "center", zIndex: 1, minHeight: 46 }}
                   >
                     {/* Col 1: dot (28px) */}
                     <div className="flex items-center justify-center">
-                      <span className={\`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 \${
+                      <span className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
                         isCompleted ? "bg-emerald-500 border-emerald-500" :
                         isActiveStage ? "bg-[#1c9bda] border-[#1c9bda] ring-4 ring-[#1c9bda]/20" :
                         "bg-white dark:bg-[#121D2D] border-slate-300 dark:border-slate-600"
-                      }\`}>
+                      }`}>
                         {isCompleted && <CheckCircle size={9} className="text-white" />}
                         {isActiveStage && <span className="w-1.5 h-1.5 rounded-full bg-white" />}
                       </span>
                     </div>
-                    {/* Col 2: label + badges (flex-1) */}
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className={\`text-[13px] font-semibold truncate \${
-                        isCompleted ? "text-slate-800 dark:text-white font-bold" :
-                        isActiveStage ? "text-[#1c9bda] font-extrabold" :
-                        "text-slate-600 dark:text-slate-400"
-                      }\`}>{m.label}</span>
-                      {isActiveStage && (
-                        <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">Active</span>
-                      )}
-                      {isCompleted && (
-                        <span className="shrink-0 text-[9px] font-bold text-emerald-500 dark:text-emerald-400">✓ Done</span>
+                    {/* Col 2: label + subtext + badges */}
+                    <div className="flex flex-col justify-center min-w-0">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`text-[13px] font-semibold truncate ${
+                          isCompleted ? "text-slate-800 dark:text-white font-bold" :
+                          isActiveStage ? "text-[#1c9bda] font-extrabold" :
+                          "text-slate-600 dark:text-slate-400"
+                        }`}>{m.label}</span>
+                        {isActiveStage && (
+                          <span className="shrink-0 text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[#1c9bda] text-white">Active</span>
+                        )}
+                        {isCompleted && (
+                          <span className="shrink-0 text-[9px] font-bold text-emerald-500 dark:text-emerald-400">✓ Done</span>
+                        )}
+                      </div>
+                      {m.subtext && (
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium leading-tight">
+                          {m.subtext}
+                        </span>
                       )}
                     </div>
                     {/* Col 3: date (120px, right-aligned, fixed) */}
