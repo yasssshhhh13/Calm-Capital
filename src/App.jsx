@@ -556,9 +556,9 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
                     </p>
                   </div>
 
-                  {/* Score Circle Gauge */}
+                  {/* Score Gauge Badge */}
                   <div className="shrink-0 flex flex-col items-center">
-                    <div className={`w-13 h-13 rounded-2xl flex items-center justify-center font-mono font-black text-base border shadow-md ${gaugeStyle}`}>
+                    <div className={`min-w-[58px] h-10 px-3 py-1.5 rounded-2xl flex items-center justify-center font-mono font-black text-sm border shadow-md tracking-tight shrink-0 ${gaugeStyle}`}>
                       {score}%
                     </div>
                   </div>
@@ -6168,6 +6168,8 @@ function StatCard({ icon: Icon, label, value, tint, onClick }) {
     cardClass = "bg-[#FFFBEB] dark:bg-amber-950/10 border-amber-100 dark:border-amber-800/10 border-t-2 border-t-amber-500";
   } else if (labelLower.includes("listed")) {
     cardClass = "bg-[#FAF5FF] dark:bg-purple-950/10 border-purple-100 dark:border-purple-800/10 border-t-2 border-t-purple-500";
+  } else if (labelLower.includes("score") || labelLower.includes("calmcapital")) {
+    cardClass = "bg-[#F0F9FF] dark:bg-sky-950/10 border-sky-100 dark:border-sky-800/10 border-t-2 border-t-[#1c9bda]";
   } else {
     cardClass = "bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-[#26364A]";
   }
@@ -7008,36 +7010,7 @@ export default function App() {
                   <StatCard icon={Calendar} label="Upcoming IPOs" value={counts.Upcoming} tint={BRAND.blue} onClick={() => navigateToTab("upcoming")} />
                   <StatCard icon={Clock} label="Closed IPOs" value={counts.Closed} tint={BRAND.blue} onClick={() => navigateToTab("closed")} />
                   <StatCard icon={LayoutGrid} label="Listed IPOs" value={counts.Listed} tint={BRAND.blue} onClick={() => navigateToTab("listed")} />
-                  
-                  {/* Custom Featured Card for CalmCapital Score */}
-                  <div
-                    onClick={() => navigateToTab("score")}
-                    className="col-span-2 sm:col-span-1 relative overflow-hidden rounded-2xl border p-3.5 sm:p-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg bg-gradient-to-br from-cyan-50 via-sky-50 to-blue-50 dark:from-[#0F2236] dark:via-[#132A42] dark:to-[#0B1724] border-cyan-300/80 dark:border-cyan-500/40 text-slate-850 dark:text-white flex items-center justify-between group"
-                  >
-                    {/* Subtle Ambient Glow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#1c9bda]/10 via-transparent to-[#14B8A6]/10 opacity-70 pointer-events-none" />
-
-                    <div className="flex items-center gap-2.5 relative z-10 min-w-0">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-[#1c9bda] to-[#0ea5e9] text-white flex items-center justify-center font-black shadow-md shadow-[#1c9bda]/30 shrink-0">
-                        <ShieldCheck size={19} className="text-white" />
-                      </div>
-                      <div className="space-y-0.5 min-w-0">
-                        <div className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-[#1c9bda] dark:text-[#52b1e4] flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#1c9bda] dark:bg-[#52b1e4] animate-pulse"></span>
-                          CalmCapital Score
-                        </div>
-                        <div className="text-xs sm:text-sm font-black text-[#0B1F33] dark:text-white truncate">
-                          3-Factor Engine
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="relative z-10 shrink-0 ml-1.5">
-                      <span className="px-2.5 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider bg-[#1c9bda] text-white shadow-sm hover:bg-[#1681b8] transition-all flex items-center gap-0.5 border-0">
-                        Rating <ChevronRight size={11} />
-                      </span>
-                    </div>
-                  </div>
+                  <StatCard icon={ShieldCheck} label="CalmCapital Score" value="3-Factor" tint={BRAND.blue} onClick={() => navigateToTab("score")} />
                 </div>
 
                 {/* 3. LIVE GMP STATUS SECTION (Immediately below status boxes) */}
