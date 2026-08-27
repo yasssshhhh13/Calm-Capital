@@ -131,8 +131,19 @@ export function reconcile(iposBase, sourceRecords) {
           sources: votes.map((v) => v.source),
           updatedAt: now,
         };
+      } else if (best && best.members.length === 1) {
+        // A single source, no prior value: populate the value (unverified) so UI displays complete IPO details.
+        const value = representative(best);
+        ipo[field] = value;
+        changed++;
+        verification[field] = {
+          status: "unverified",
+          value,
+          sources: best.members.map((m) => m.source),
+          updatedAt: now,
+        };
       } else {
-        // A single source, no prior value: withhold the number until confirmed.
+        // No source, no prior value: withhold.
         verification[field] = {
           status: "pending",
           sources: votes.map((v) => v.source),
@@ -191,6 +202,25 @@ export function reconcile(iposBase, sourceRecords) {
           const parts = Object.entries(cgAlloc).map(([k, v]) => `${k.toUpperCase()}:${v}%`).join(', ');
           console.log(`[ALLOCATION] "${ipo.name}" -> ${parts}`);
         }
+      }
+    // Merge live subscription multiples from Chittorgarh (QIB/NII/Retail/Total)
+    if (matches.chittorgarh?.sub) {
+      const cgSub = matches.chittorgarh.sub;
+      const prevSub = ipo.sub || {};
+      let subUpdated = false;
+      const updatedSub = { ...prevSub };
+
+      for (const [k, v] of Object.entries(cgSub)) {
+        if (v != null && Number.isFinite(v) && (prevSub[k] == null || v > prevSub[k])) {
+          updatedSub[k] = v;
+          subUpdated = true;
+        }
+      }
+
+      if (subUpdated) {
+        ipo.sub = updatedSub;
+        changed++;
+        console.log(`[SUBSCRIPTION] "${ipo.name}" -> QIB:${ipo.sub.qib}x, NII:${ipo.sub.nii}x, Retail:${ipo.sub.retail}x, Total:${ipo.sub.total}x`);
       }
     }
 

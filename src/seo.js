@@ -13,6 +13,7 @@ const HOME_DESCRIPTION =
 /** Tab id → public path (no trailing slash except root). */
 export const TAB_PATHS = {
   overview: "/",
+  score: "/score",
   open: "/open",
   upcoming: "/upcoming",
   closed: "/closed",
@@ -36,6 +37,8 @@ export const TAB_PATHS = {
 export const PATH_TO_TAB = {
   "/": "overview",
   "/overview": "overview",
+  "/score": "score",
+  "/calmcapital-score": "score",
   "/open": "open",
   "/upcoming": "upcoming",
   "/closed": "closed",
@@ -72,6 +75,11 @@ export const SECTION_META = {
     title: HOME_TITLE,
     description: HOME_DESCRIPTION,
     path: "/",
+  },
+  score: {
+    title: "CalmCapital Score Ratings | 3-Parameter Quantitative IPO Analysis | Calm Capital",
+    description: "View CalmCapital Score ratings for Indian IPOs based on 3 quantitative parameters: GMP momentum (≥20%), financial health & fair valuation, and QIB institutional demand (≥50X).",
+    path: "/score",
   },
   open: {
     title: "Open IPOs | Live GMP & Subscription | Calm Capital",

@@ -35,6 +35,7 @@ const SITE_URL = getSiteUrl(process.env.VITE_SITE_URL);
 
 const SECTION_PATHS = [
   "/",
+  "/score",
   "/open",
   "/upcoming",
   "/closed",

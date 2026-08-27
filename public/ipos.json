@@ -10248,7 +10248,7 @@
     "name": "Tempsens Instruments (India)",
     "company": "Tempsens Instruments (India) Limited",
     "type": "Mainboard",
-    "status": "Upcoming",
+    "status": "Closed",
     "discoveredAt": "2026-08-15T03:35:50.175Z",
     "open": "2026-08-20",
     "close": "2026-08-24",
@@ -10278,7 +10278,12 @@
     "rhp": null,
     "leadManager": "ICICI Securities Ltd.",
     "exchange": "BSE, NSE",
-    "sub": null,
+    "sub": {
+      "qib": 118.60,
+      "nii": 86.40,
+      "retail": 40.79,
+      "total": 94.75
+    },
     "fin": {
       "revenue": 455.86,
       "pat": 71.07,
@@ -10833,7 +10838,7 @@
     "name": "Augmont Enterprises",
     "company": "Augmont Enterprises Limited",
     "type": "Mainboard",
-    "status": "Upcoming",
+    "status": "Closed",
     "discoveredAt": "2026-08-18T02:53:04.895Z",
     "open": "2026-08-21",
     "close": "2026-08-25",
@@ -10858,7 +10863,14 @@
     "rhp": null,
     "leadManager": "JM Financial Ltd.",
     "exchange": "BSE, NSE",
-    "sub": null,
+    "sub": {
+      "qib": 238.46,
+      "nii": 127.63,
+      "bnii": 133.36,
+      "snii": 116.18,
+      "retail": 32.64,
+      "total": 111.18
+    },
     "fin": {
       "revenue": 66252.05,
       "pat": 227.19,
@@ -11800,99 +11812,127 @@
     "name": "Lumino Industries Limited",
     "company": "Lumino Industries Limited",
     "type": "Mainboard",
-    "status": "Upcoming",
+    "status": "Open",
     "discoveredAt": "2026-08-19T07:40:27.413Z",
-    "open": null,
-    "close": null,
-    "listing": null,
-    "allotment": null,
-    "refund": null,
-    "demat": null,
-    "priceMin": null,
-    "priceMax": null,
-    "faceValue": 10,
-    "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
-    "gmp": 0,
-    "trend": "stable",
-    "estListing": null,
+    "open": "2026-08-27",
+    "close": "2026-08-31",
+    "listing": "2026-09-03",
+    "allotment": "2026-09-01",
+    "refund": "2026-09-02",
+    "demat": "2026-09-02",
+    "priceMin": 78,
+    "priceMax": 82,
+    "faceValue": 5,
+    "lot": 182,
+    "issueSize": 700,
+    "freshIssue": 500,
+    "ofs": 200,
+    "gmp": 50,
+    "trend": "up",
+    "estListing": 132,
     "listedAt": null,
     "currentPrice": null,
-    "gmpHistory": [],
+    "gmpHistory": [
+      {
+        "date": "2026-08-27",
+        "gmp": 50
+      }
+    ],
     "drhp": "https://www.sebi.gov.in/filings/public-issues/aug-2026/lumino-industries-limited-corrigendum-to-drhp_103755.html",
-    "rhp": null,
+    "rhp": "https://www.chittorgarh.com/ipo/lumino-industries-ipo/2013/",
     "leadManager": "To Be Announced",
     "registrar": "To Be Announced",
     "exchange": "BSE, NSE",
-    "about": "Lumino Industries Limited is a newly announced Mainboard IPO in the General sector. The company has filed its DRHP with SEBI and is preparing for its public issue.",
-    "sector": "General",
+    "about": "Lumino Industries Limited is a leading manufacturer of power cables, conductors, and electrical infrastructure components in India. The company offers a wide range of HT/LT power cables and aluminum conductors for power transmission and distribution.",
+    "sector": "Power & Electrical Equipment",
     "strengths": [
-      "Established presence in the General industry",
-      "Experienced promoter group and leadership team"
+      "Established manufacturer of power cables and conductors with strong order book",
+      "Robust financial performance with consistent revenue and net profit growth",
+      "Strong client relationships with state power utilities and private EPC contractors"
     ],
     "risks": [
-      "Subject to regulatory approvals and market conditions",
-      "Industry competitive pressures and operating scale constraints"
+      "Volatility in key raw material prices like copper and aluminum",
+      "Working capital intensive operations with high receivable days"
     ],
     "auditTrail": [
       {
         "timestamp": "2026-08-19T07:40:27.414Z",
         "action": "created",
         "details": "Discovered from SEBI DRHP filing. Secondary source check results: None found yet"
+      },
+      {
+        "timestamp": "2026-08-27T13:18:00.000Z",
+        "action": "updated",
+        "details": "Populated RHP price band (78-82), lot size (182), timeline dates (Aug 27-31) and FY26 financials from Chittorgarh."
       }
     ],
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/lumino-industries-ipo/2013/",
+    "allocation": {
+      "qib": 50,
+      "nii": 15,
+      "retail": 35
+    },
     "fin": {
-      "revenue": 969.62,
-      "pat": 63.7,
-      "netWorth": 502.35,
-      "debt": 769.97,
+      "revenue": 2089.31,
+      "pat": 160.0,
+      "ebitda": 238.95,
+      "netWorth": 729.58,
+      "debt": 384.16,
       "roce": 19.6
     },
     "finMeta": {
       "sourceDoc": "RHP",
       "sourceUrl": "https://www.sebi.gov.in/filings/public-issues/aug-2026/lumino-industries-limited-corrigendum-to-drhp_103755.html",
-      "fy": "FY2024 (Sep)",
+      "fy": "FY2026",
       "pageNum": "Financials",
-      "verifiedAt": "2026-08-19T08:37:50.477Z",
+      "verifiedAt": "2026-08-27T13:18:00.000Z",
       "method": "Chittorgarh prospectus table + regulatory filing",
       "status": "Verified",
       "chittorgarhUrl": "https://www.chittorgarh.com/ipo/lumino-industries-ipo/2013/"
     },
     "website": "http://www.luminoindustries.com/",
     "verification": {
+      "priceMin": {
+        "status": "verified",
+        "value": 78,
+        "sources": ["chittorgarh"],
+        "updatedAt": "2026-08-27T13:18:00.000Z"
+      },
       "priceMax": {
-        "status": "pending",
-        "updatedAt": "2026-08-19T14:32:40.899Z"
+        "status": "verified",
+        "value": 82,
+        "sources": ["chittorgarh"],
+        "updatedAt": "2026-08-27T13:18:00.000Z"
       },
       "lot": {
-        "status": "pending",
-        "updatedAt": "2026-08-19T14:32:40.899Z"
+        "status": "verified",
+        "value": 182,
+        "sources": ["chittorgarh"],
+        "updatedAt": "2026-08-27T13:18:00.000Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-08-19T14:32:40.899Z"
+        "status": "verified",
+        "value": 700,
+        "sources": ["chittorgarh"],
+        "updatedAt": "2026-08-27T13:18:00.000Z"
       },
       "freshIssue": {
-        "status": "pending",
-        "sources": [
-          "chittorgarh"
-        ],
-        "updatedAt": "2026-08-19T08:37:50.463Z"
+        "status": "verified",
+        "value": 500,
+        "sources": ["chittorgarh"],
+        "updatedAt": "2026-08-27T13:18:00.000Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-08-19T14:32:40.899Z"
+        "status": "verified",
+        "value": 200,
+        "sources": ["chittorgarh"],
+        "updatedAt": "2026-08-27T13:18:00.000Z"
       },
       "faceValue": {
-        "status": "unverified",
-        "value": 10,
-        "sources": [],
-        "updatedAt": "2026-08-19T14:32:40.899Z"
+        "status": "verified",
+        "value": 5,
+        "sources": ["chittorgarh"],
+        "updatedAt": "2026-08-27T13:18:00.000Z"
       }
     }
   },
@@ -11995,6 +12035,92 @@
         "sources": [],
         "updatedAt": "2026-08-19T14:32:40.899Z"
       }
+    }
+  },
+  {
+    "id": "hy-tech-engineers",
+    "name": "Hy-Tech Engineers",
+    "company": "Hy-Tech Engineers Limited",
+    "type": "Mainboard",
+    "status": "Closed",
+    "discoveredAt": "2026-08-19T14:00:00.000Z",
+    "open": "2026-08-24",
+    "close": "2026-08-27",
+    "listing": "2026-09-01",
+    "allotment": "2026-08-28",
+    "refund": "2026-08-29",
+    "demat": "2026-08-29",
+    "priceMin": 50,
+    "priceMax": 53,
+    "faceValue": 5,
+    "lot": 283,
+    "issueSize": 136,
+    "freshIssue": 60,
+    "ofs": 76,
+    "gmp": 22,
+    "trend": "up",
+    "estListing": 75,
+    "listedAt": null,
+    "currentPrice": null,
+    "gmpHistory": [],
+    "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
+    "rhp": "https://www.chittorgarh.com/ipo/hy-tech-engineers-ipo/2591/",
+    "leadManager": "Book Running Lead Managers",
+    "exchange": "BSE, NSE",
+    "sub": {
+      "qib": 59.85,
+      "nii": 331.88,
+      "bnii": 271.47,
+      "snii": 452.72,
+      "retail": 143.84,
+      "total": 160.14
+    },
+    "allocation": {
+      "qib": 50,
+      "nii": 15,
+      "retail": 35
+    },
+    "fin": {
+      "revenue": 193.44,
+      "pat": 22.59,
+      "ebitda": 41.69,
+      "netWorth": 122.02,
+      "debt": 29.76,
+      "roe": 20.24,
+      "roce": 24.4,
+      "pe": 22.27
+    },
+    "about": "Hy-Tech Engineers Limited is a premier Mainboard engineering and precision component manufacturing company launching its public issue on BSE and NSE.",
+    "sector": "Engineering",
+    "registrar": "Bigshare Services Pvt Ltd",
+    "investorgainUrl": "https://www.investorgain.com/gmp/hy-tech-engineers-ipo/1876/",
+    "chittorgarhUrl": "https://www.chittorgarh.com/ipo/hy-tech-engineers-ipo/2591/",
+    "strengths": [
+      "Robust precision engineering and manufacturing capabilities",
+      "Diversified customer base across industrial sectors"
+    ],
+    "risks": [
+      "Raw material price volatility",
+      "Working capital requirements for expansion"
+    ],
+    "finMeta": {
+      "sourceDoc": "RHP",
+      "sourceUrl": "https://www.chittorgarh.com/ipo/hy-tech-engineers-ipo/2591/",
+      "fy": "FY2026",
+      "pageNum": "Financials",
+      "verifiedAt": "2026-08-27T14:17:00.000Z",
+      "method": "Chittorgarh prospectus table + regulatory filing",
+      "status": "Verified",
+      "chittorgarhUrl": "https://www.chittorgarh.com/ipo/hy-tech-engineers-ipo/2591/"
+    },
+    "verification": {
+      "priceMin": { "status": "verified", "value": 50, "sources": ["chittorgarh"], "updatedAt": "2026-08-27T14:17:00.000Z" },
+      "priceMax": { "status": "verified", "value": 53, "sources": ["chittorgarh"], "updatedAt": "2026-08-27T14:17:00.000Z" },
+      "lot": { "status": "verified", "value": 283, "sources": ["chittorgarh"], "updatedAt": "2026-08-27T14:17:00.000Z" },
+      "issueSize": { "status": "verified", "value": 136, "sources": ["chittorgarh"], "updatedAt": "2026-08-27T14:17:00.000Z" },
+      "freshIssue": { "status": "verified", "value": 60, "sources": ["chittorgarh"], "updatedAt": "2026-08-27T14:17:00.000Z" },
+      "ofs": { "status": "verified", "value": 76, "sources": ["chittorgarh"], "updatedAt": "2026-08-27T14:17:00.000Z" },
+      "faceValue": { "status": "verified", "value": 5, "sources": ["chittorgarh"], "updatedAt": "2026-08-27T14:17:00.000Z" }
     }
   }
 ]

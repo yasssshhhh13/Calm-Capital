@@ -254,10 +254,47 @@ async function scrapeDetail(page, url) {
           allocation[key] = pct;
         }
         if (Object.keys(allocation).length === 0) allocation = null;
-        break;
+      // Scrape live subscription table (QIB / NII / Retail / Total multiples)
+      let sub = null;
+      for (const tbl of allTables) {
+        const ths = Array.from(tbl.querySelectorAll('th, td')).map(th => th.innerText.trim().toLowerCase());
+        const hasCategory = ths.some(h => h.includes('category'));
+        const hasSub = ths.some(h => h.includes('subscription'));
+        if (!hasCategory || !hasSub) continue;
+
+        const catColIdx = ths.findIndex(h => h.includes('category'));
+        const subColIdx = ths.findIndex(h => h.includes('subscription'));
+        if (catColIdx === -1 || subColIdx === -1 || catColIdx === subColIdx) continue;
+
+        sub = {};
+        const tblRows = Array.from(tbl.querySelectorAll('tr'));
+        for (const tr of tblRows) {
+          const tds = Array.from(tr.querySelectorAll('th, td')).map(td => td.innerText.trim());
+          if (tds.length <= Math.max(subColIdx, catColIdx)) continue;
+          const cat = tds[catColIdx] || '';
+          const subStr = tds[subColIdx] || '';
+          if (!subStr || !cat) continue;
+
+          const numMatch = subStr.replace(/,/g, '').match(/-?[\d.]+/);
+          if (!numMatch) continue;
+          const val = parseFloat(numMatch[0]);
+          if (!Number.isFinite(val) || val < 0) continue;
+
+          const catLower = cat.toLowerCase();
+          if (catLower.includes('qib')) sub.qib = val;
+          else if (catLower.startsWith('bnii') || catLower.includes('> ₹10l') || catLower.includes('> 10l')) sub.bnii = val;
+          else if (catLower.startsWith('snii') || catLower.includes('< ₹10l') || catLower.includes('< 10l')) sub.snii = val;
+          else if (catLower.startsWith('nii') || catLower.startsWith('hni') || catLower.includes('non-institutional')) sub.nii = val;
+          else if (catLower.startsWith('retail')) sub.retail = val;
+          else if (catLower.startsWith('employee')) sub.employee = val;
+          else if (catLower.startsWith('shareholder')) sub.shareholder = val;
+          else if (catLower === 'total') sub.total = val;
+        }
+        if (Object.keys(sub).length > 0) break;
+        else sub = null;
       }
 
-      return { fields, fin: Object.keys(fin).length ? fin : null, website, allocation, fy };
+      return { fields, fin: Object.keys(fin).length ? fin : null, website, allocation, sub, fy };
     });
   } catch (err) {
     console.warn(`[Chittorgarh] detail failed (${url}):`, err.message);
@@ -299,10 +336,11 @@ export async function fetchAll(browser, iposBase) {
 
     const priority = (entry) => {
       const ipo = entry.match;
-      if (isVerifiedFin(ipo)) return 3;
+      if (!ipo.lot || !ipo.open || !ipo.close || !ipo.priceMax) return 0;
       const st = ipo.status || "";
       if (st === "Open" || st === "Closed") return 0;
       if (st === "Upcoming") return 1;
+      if (isVerifiedFin(ipo)) return 3;
       return 2;
     };
     relevant.sort((a, b) => priority(a) - priority(b));
@@ -319,6 +357,7 @@ export async function fetchAll(browser, iposBase) {
         fy: detail.fy,
         website: detail.website,
         allocation: detail.allocation || null,
+        sub: detail.sub || null,
         meta: { source: "chittorgarh", url: l.url, capturedAt: new Date().toISOString() },
       });
     }

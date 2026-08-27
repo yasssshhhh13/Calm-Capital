@@ -79,6 +79,537 @@ const currentReturnPct = (i) => (i.currentPrice && i.priceMax) ? ((i.currentPric
 const listingProfitLossPerLot = (i) => (i.listedAt && i.priceMax && i.lot) ? (i.listedAt - i.priceMax) * i.lot : null;
 
 /* =====================================================================
+   CALMCAPITAL SCORE CALCULATION & COMPONENTS
+   Evaluates an IPO out of 100% based on 3 core quantitative parameters (33.33% each):
+   1. GMP > 20% (+33.33%)
+   2. Good Financials & Reasonable Valuation (+33.33%) (PAT > 0, Margin >= 8%/ROE >= 12%, PE <= 45x)
+   3. QIB Subscription >= 50X (+33.33%)
+===================================================================== */
+export function calculateCalmCapitalScore(ipo) {
+  if (!ipo) {
+    return {
+      score: 0,
+      breakdown: { gmpPassed: false, gmpPct: 0, finPassed: false, finReason: "", peVal: null, qibPassed: false, qibVal: 0 }
+    };
+  }
+
+  let score = 0;
+  const cutoff = ipo.priceMax || (typeof price === "function" ? price(ipo) : 0);
+  const gmpPct = (ipo.gmp != null && cutoff > 0) ? (ipo.gmp / cutoff) * 100 : 0;
+  const gmpPassed = gmpPct >= 20;
+  if (gmpPassed) score += 33.33;
+
+  let finPassed = false;
+  let finReason = "";
+  let peVal = null;
+
+  if (ipo.fin && ipo.fin.pat != null && ipo.fin.pat > 0) {
+    const patMargin = ipo.fin.revenue ? (ipo.fin.pat / ipo.fin.revenue) * 100 : 0;
+    const roe = ipo.fin.roe || 0;
+    peVal = ipo.fin.pe || (cutoff && ipo.fin.eps ? cutoff / ipo.fin.eps : null);
+
+    const isValuationFair = peVal != null ? (peVal > 0 && peVal <= 45) : true;
+    const isPerformanceGood = roe >= 12 || patMargin >= 8;
+
+    if (isPerformanceGood && isValuationFair) {
+      finPassed = true;
+      score += 33.33;
+      finReason = `PAT ₹${ipo.fin.pat}Cr (${patMargin.toFixed(1)}% margin)${roe ? `, ROE ${roe}%` : ""}${peVal ? `, P/E ${peVal.toFixed(1)}x` : ""}`;
+    } else if (!isValuationFair) {
+      finReason = `High Valuation (P/E ${peVal.toFixed(1)}x > 45x limit)`;
+    } else {
+      finReason = `Low Margin (${patMargin.toFixed(1)}%) / ROE (${roe}%)`;
+    }
+  } else if (ipo.fin && ipo.fin.pat <= 0) {
+    finReason = "Loss-making (Negative PAT)";
+  } else {
+    finReason = "Financials pending verification";
+  }
+
+  const qibVal = ipo.sub?.qib || 0;
+  const qibPassed = qibVal >= 50;
+  if (qibPassed) score += 33.33;
+
+  const finalScore = Math.min(100, Math.round(score));
+
+  return {
+    score: finalScore,
+    breakdown: {
+      gmpPassed,
+      gmpPct: Math.round(gmpPct * 10) / 10,
+      finPassed,
+      finReason,
+      peVal: peVal ? Math.round(peVal * 10) / 10 : null,
+      qibPassed,
+      qibVal: Math.round(qibVal * 10) / 10,
+    }
+  };
+}
+
+export function isFinalScoreReady(ipo) {
+  if (!ipo) return false;
+  const status = typeof getComputedStatus === "function" ? getComputedStatus(ipo) : (ipo.status || "Upcoming");
+  if (status === "Closed" || status === "Listed") return true;
+
+  // Real-time evaluation: If QIB subscription is scraped & present (>0), mark score as final immediately!
+  if (ipo.sub?.qib != null && ipo.sub.qib > 0) return true;
+
+  if (!ipo.close) return false;
+  const now = new Date();
+  const closeDeadline = new Date(ipo.close + "T15:00:00+05:30");
+  return now >= closeDeadline;
+}
+
+function CalmCapitalScoreCard({ ipo, dark }) {
+  const { score, breakdown } = calculateCalmCapitalScore(ipo);
+  const finalReady = isFinalScoreReady(ipo);
+
+  const theme = !finalReady
+    ? {
+        bg: dark ? "rgba(28,155,218,0.08)" : "rgba(28,155,218,0.05)",
+        border: "rgba(28,155,218,0.25)",
+        badgeBg: "rgba(28,155,218,0.15)",
+        badgeText: "#1c9bda",
+        label: "PROVISIONAL RATING",
+      }
+    : score >= 80
+    ? {
+        bg: dark ? "rgba(16,185,129,0.08)" : "rgba(16,185,129,0.06)",
+        border: "rgba(16,185,129,0.25)",
+        badgeBg: "rgba(16,185,129,0.15)",
+        badgeText: "#10b981",
+        label: "STRONG CONVICTION",
+      }
+    : score >= 50
+    ? {
+        bg: dark ? "rgba(245,158,11,0.08)" : "rgba(245,158,11,0.06)",
+        border: "rgba(245,158,11,0.25)",
+        badgeBg: "rgba(245,158,11,0.15)",
+        badgeText: "#f59e0b",
+        label: "MODERATE RATING",
+      }
+    : {
+        bg: dark ? "rgba(239,68,68,0.08)" : "rgba(239,68,68,0.05)",
+        border: "rgba(239,68,68,0.2)",
+        badgeBg: "rgba(239,68,68,0.12)",
+        badgeText: "#ef4444",
+        label: "CAUTIOUS / HIGH RISK",
+      };
+
+  return (
+    <div
+      className="mx-6 my-3 rounded-2xl p-4 border transition-all shadow-sm space-y-3"
+      style={{ background: theme.bg, borderColor: theme.border }}
+    >
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-8 h-8 rounded-xl flex items-center justify-center border shrink-0"
+            style={{ background: theme.badgeBg, borderColor: theme.border, color: theme.badgeText }}
+          >
+            <ShieldCheck size={18} />
+          </div>
+          <div>
+            <h4 className="text-xs font-black uppercase tracking-wider text-slate-850 dark:text-white flex items-center gap-1.5">
+              CalmCapital Score
+            </h4>
+            <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
+              3-Parameter Quantitative Rating
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span
+            className="text-[9px] font-extrabold uppercase px-2.5 py-1 rounded-full border tracking-wide"
+            style={{ background: theme.badgeBg, color: theme.badgeText, borderColor: theme.border }}
+          >
+            {theme.label}
+          </span>
+          <div className="flex items-baseline font-mono font-black text-xl text-slate-850 dark:text-white">
+            <span style={{ color: theme.badgeText }}>{score}</span>
+            <span className="text-xs text-slate-400 font-bold ml-0.5">%</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 3 Parameter Status Row */}
+      <div className="grid grid-cols-3 gap-2 text-[10px] pt-1">
+        {/* Param 1: GMP */}
+        <div className={`p-2 rounded-xl border flex flex-col items-center justify-center text-center ${
+          breakdown.gmpPassed ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400"
+        }`}>
+          <span className="font-extrabold uppercase text-[9px] text-slate-500 dark:text-slate-400">1. GMP (33.3%)</span>
+          <span className="font-mono font-bold text-[11px] mt-0.5 flex items-center gap-1">
+            {breakdown.gmpPassed ? <CheckCircle size={10} className="text-emerald-500" /> : <X size={10} className="text-slate-400" />}
+            {breakdown.gmpPct > 0 ? `+${breakdown.gmpPct}%` : "Low"}
+          </span>
+        </div>
+
+        {/* Param 2: Financials & PE */}
+        <div className={`p-2 rounded-xl border flex flex-col items-center justify-center text-center ${
+          breakdown.finPassed ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400"
+        }`}>
+          <span className="font-extrabold uppercase text-[9px] text-slate-500 dark:text-slate-400">2. Fin & P/E (33.3%)</span>
+          <span className="font-mono font-bold text-[11px] mt-0.5 flex items-center gap-1 truncate max-w-full">
+            {breakdown.finPassed ? <CheckCircle size={10} className="text-emerald-500 shrink-0" /> : <X size={10} className="text-slate-400 shrink-0" />}
+            {breakdown.finPassed ? (breakdown.peVal ? `${breakdown.peVal}x` : "Pass") : "Fair"}
+          </span>
+        </div>
+
+        {/* Param 3: QIB */}
+        <div className={`p-2 rounded-xl border flex flex-col items-center justify-center text-center ${
+          breakdown.qibPassed ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : !finalReady ? "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400" : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400"
+        }`}>
+          <span className="font-extrabold uppercase text-[9px] text-slate-500 dark:text-slate-400">3. QIB (33.3%)</span>
+          <span className="font-mono font-bold text-[11px] mt-0.5 flex items-center gap-1">
+            {breakdown.qibPassed ? <CheckCircle size={10} className="text-emerald-500" /> : !finalReady ? <Clock size={10} className="text-blue-500 animate-pulse" /> : <X size={10} className="text-slate-400" />}
+            {breakdown.qibVal > 0 ? `${breakdown.qibVal}×` : !finalReady ? "3 PM Live" : "Low"}
+          </span>
+        </div>
+      </div>
+
+      {!finalReady ? (
+        <div className="pt-2 border-t border-blue-500/10 flex items-center justify-between text-[10px] font-medium text-[#1c9bda] dark:text-[#52b1e4]">
+          <span className="flex items-center gap-1.5 font-bold">
+            <Clock size={12} className="shrink-0 animate-pulse" />
+            Provisional Score
+          </span>
+          <span className="text-[10px] text-slate-400">Final Analysis Live on Last Offer Day by 3:00 PM</span>
+        </div>
+      ) : (
+        <div className="pt-2 border-t border-emerald-500/10 flex items-center gap-1.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+          <CheckCircle size={12} className="shrink-0 text-emerald-500" />
+          <span>Final Analysis Verified</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CalmCapitalScoreBadge({ ipo }) {
+  const { score } = calculateCalmCapitalScore(ipo);
+  const finalReady = isFinalScoreReady(ipo);
+
+  const colorClass = !finalReady
+    ? "bg-[#1c9bda]/15 text-[#1c9bda] dark:text-[#52b1e4] border-[#1c9bda]/30"
+    : score >= 80
+    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30"
+    : score >= 50
+    ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30"
+    : "bg-slate-200 dark:bg-slate-800 text-slate-500 border-slate-300 dark:border-slate-700";
+
+  return (
+    <span className={`inline-flex items-center gap-1 font-mono text-[10px] font-black px-2.5 py-0.5 rounded-full border ${colorClass}`}>
+      <ShieldCheck size={10} />
+      <span>Score: {score}% {!finalReady ? "(Prov)" : ""}</span>
+    </span>
+  );
+}
+
+/* =====================================================================
+   CALMCAPITAL SCORE DASHBOARD & MAIN PAGE SHOWCASE
+   Quantitative Rating Engine
+===================================================================== */
+function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
+  const [marketFilter, setMarketFilter] = useState("All");
+  const [tierFilter, setTierFilter] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const scoredIpos = useMemo(() => {
+    return (allIpos || [])
+      .map(ipo => {
+        const { score, breakdown } = calculateCalmCapitalScore(ipo);
+        const finalReady = isFinalScoreReady(ipo);
+        return { ipo, score, breakdown, finalReady };
+      })
+      .filter(({ ipo, score, finalReady }) => {
+        if (marketFilter !== "All" && ipo.type !== marketFilter) return false;
+        if (tierFilter === "Strong" && score < 80) return false;
+        if (tierFilter === "Moderate" && (score < 50 || score >= 80)) return false;
+        if (tierFilter === "Risk" && score >= 50) return false;
+        if (tierFilter === "Provisional" && finalReady) return false;
+        if (searchTerm) {
+          const q = searchTerm.toLowerCase();
+          const nameMatch = (ipo.name || "").toLowerCase().includes(q) || (ipo.company || "").toLowerCase().includes(q);
+          const sectorMatch = (ipo.sector || "").toLowerCase().includes(q);
+          return nameMatch || sectorMatch;
+        }
+        return true;
+      })
+      .sort((a, b) => b.score - a.score || (b.ipo.gmp || 0) - (a.ipo.gmp || 0));
+  }, [allIpos, marketFilter, tierFilter, searchTerm]);
+
+  return (
+    <div className="rounded-3xl border p-6 md:p-8 space-y-6 transition-all shadow-xl bg-white dark:bg-[#0B1724]/90 border-slate-200 dark:border-white/10">
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-150 dark:border-white/10 pb-6">
+        <div className="space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-[#1c9bda]/10 text-[#1c9bda] dark:text-[#52b1e4] border border-[#1c9bda]/20">
+            <ShieldCheck size={12} />
+            3-Parameter Quantitative Engine
+          </div>
+          <h2 className="text-xl md:text-2xl font-black text-slate-850 dark:text-white tracking-tight flex items-center gap-2">
+            CalmCapital Score
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed font-medium">
+            Quantitative rating system evaluating every IPO out of 100% using 3 core parameters. Institutional QIB bidding analysis is finalized live on the final offer day by 3:00 PM IST.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
+          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 font-mono px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+            {scoredIpos.length} Rated IPOs
+          </span>
+        </div>
+      </div>
+
+      {/* 3 Parameter Explainer Cards - Compact & Snug */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Parameter 1 */}
+        <div className="p-4 rounded-2xl border bg-slate-50/70 dark:bg-white/[0.02] border-slate-200/80 dark:border-white/5 space-y-2 hover:border-[#1c9bda]/30 transition-all">
+          <div className="flex items-center justify-between">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black text-xs font-mono border border-emerald-500/20">
+              1
+            </div>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              33.3% Weight
+            </span>
+          </div>
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-black text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <TrendingUp size={13} className="text-emerald-500 shrink-0" />
+              1. GMP Momentum (≥ 20%)
+            </h4>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug font-medium">
+              Grey Market Premium cap must be 20% or higher above issue price cap, indicating strong market demand.
+            </p>
+          </div>
+        </div>
+
+        {/* Parameter 2 */}
+        <div className="p-4 rounded-2xl border bg-slate-50/70 dark:bg-white/[0.02] border-slate-200/80 dark:border-white/5 space-y-2 hover:border-[#1c9bda]/30 transition-all">
+          <div className="flex items-center justify-between">
+            <div className="w-7 h-7 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-xs font-mono border border-blue-500/20">
+              2
+            </div>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+              33.3% Weight
+            </span>
+          </div>
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-black text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <BarChart3 size={13} className="text-blue-500 shrink-0" />
+              2. Financials &amp; Fair Valuation
+            </h4>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug font-medium">
+              Positive PAT profit with strong ROE (≥ 12%) or margins (≥ 8%), and fair P/E valuation (≤ 45x).
+            </p>
+          </div>
+        </div>
+
+        {/* Parameter 3 */}
+        <div className="p-4 rounded-2xl border bg-slate-50/70 dark:bg-white/[0.02] border-slate-200/80 dark:border-white/5 space-y-2 hover:border-[#1c9bda]/30 transition-all">
+          <div className="flex items-center justify-between">
+            <div className="w-7 h-7 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 flex items-center justify-center font-black text-xs font-mono border border-purple-500/20">
+              3
+            </div>
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+              33.3% Weight
+            </span>
+          </div>
+          <div className="space-y-0.5">
+            <h4 className="text-xs font-black text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+              <Building2 size={13} className="text-purple-500 shrink-0" />
+              3. QIB Support (≥ 50X)
+            </h4>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug font-medium">
+              Institutional QIB subscription reaching 50X+. <span className="text-[#1c9bda] font-semibold">Final analysis updates live by 3:00 PM IST on last offer day.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter Controls Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Market selector */}
+          <div className="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-white/5">
+            {["All", "Mainboard", "SME"].map(m => (
+              <button
+                key={m}
+                onClick={() => setMarketFilter(m)}
+                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all border-0 cursor-pointer ${
+                  marketFilter === m
+                    ? "bg-white dark:bg-[#1C9BDA] text-slate-850 dark:text-white shadow-sm"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-white"
+                }`}
+              >
+                {m}
+              </button>
+            ))}
+          </div>
+
+          {/* Tier filter */}
+          <div className="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-white/5">
+            {[
+              { id: "All", label: "All Ratings" },
+              { id: "Strong", label: "Strong (80-100%)" },
+              { id: "Moderate", label: "Moderate (50-79%)" },
+              { id: "Risk", label: "High Risk (<50%)" },
+              { id: "Provisional", label: "Provisional" },
+            ].map(t => (
+              <button
+                key={t.id}
+                onClick={() => setTierFilter(t.id)}
+                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all border-0 cursor-pointer ${
+                  tierFilter === t.id
+                    ? "bg-white dark:bg-[#1C9BDA] text-slate-850 dark:text-white shadow-sm"
+                    : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-white"
+                }`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Search input */}
+        <div className="relative w-full sm:w-64">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search company or sector..."
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="w-full pl-9 pr-3 py-1.5 rounded-xl text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 text-slate-850 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#1C9BDA]"
+          />
+        </div>
+      </div>
+
+      {/* Grid of Scored IPO Cards */}
+      {scoredIpos.length === 0 ? (
+        <div className="text-center py-12 border rounded-2xl border-dashed border-slate-200 dark:border-white/10">
+          <ShieldCheck size={32} className="mx-auto text-slate-400 mb-2 opacity-50" />
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">No IPOs matched your search filter.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+          {scoredIpos.map(({ ipo, score, breakdown, finalReady }) => {
+            const status = getComputedStatus(ipo);
+            const badgeTheme = !finalReady
+              ? { bg: "bg-[#1c9bda]/10 dark:bg-[#1c9bda]/20", text: "text-[#1c9bda] dark:text-[#52b1e4]", border: "border-[#1c9bda]/30", label: "PROVISIONAL RATING" }
+              : score >= 80
+              ? { bg: "bg-emerald-500/10 dark:bg-emerald-500/20", text: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-500/30", label: "STRONG CONVICTION" }
+              : score >= 50
+              ? { bg: "bg-amber-500/10 dark:bg-amber-500/20", text: "text-amber-600 dark:text-amber-400", border: "border-amber-500/30", label: "MODERATE RATING" }
+              : { bg: "bg-rose-500/10 dark:bg-rose-500/20", text: "text-rose-600 dark:text-rose-400", border: "border-rose-500/30", label: "CAUTIOUS / HIGH RISK" };
+
+            return (
+              <div
+                key={ipo.id}
+                onClick={() => onOpen(ipo, "modal")}
+                className="p-5 rounded-2xl border transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-pointer bg-slate-50/70 dark:bg-white/[0.02] border-slate-200/90 dark:border-white/5 flex flex-col justify-between space-y-4 group"
+              >
+                {/* Header */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300 font-mono">
+                        {ipo.type}
+                      </span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        status === "Open" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                        status === "Upcoming" ? "bg-blue-500/15 text-blue-600 dark:text-blue-400" :
+                        "bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400"
+                      }`}>
+                        {status}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-extrabold text-slate-850 dark:text-white truncate group-hover:text-[#1C9BDA] transition-colors">
+                      {ipo.name}
+                    </h3>
+                    <p className="text-[11px] font-semibold text-slate-400 truncate">
+                      {ipo.sector || "General"}
+                    </p>
+                  </div>
+
+                  {/* Score Circle Gauge */}
+                  <div className="shrink-0 flex flex-col items-center">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-mono font-black text-base border shadow-sm ${badgeTheme.bg} ${badgeTheme.text} ${badgeTheme.border}`}>
+                      {score}%
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3 Parameter Status Row */}
+                <div className="grid grid-cols-3 gap-1.5 text-[10px] pt-1">
+                  {/* Param 1: GMP */}
+                  <div className={`p-1.5 rounded-lg border flex flex-col items-center justify-center text-center ${
+                    breakdown.gmpPassed ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400"
+                  }`}>
+                    <span className="font-extrabold uppercase text-[8px] text-slate-500 dark:text-slate-400 block">1. GMP (33.3%)</span>
+                    <span className="font-mono font-bold text-[10px] mt-0.5 flex items-center gap-0.5">
+                      {breakdown.gmpPassed ? <CheckCircle size={9} className="text-emerald-500" /> : <X size={9} className="text-slate-400" />}
+                      {breakdown.gmpPct > 0 ? `+${breakdown.gmpPct}%` : "Low"}
+                    </span>
+                  </div>
+
+                  {/* Param 2: Financials & PE */}
+                  <div className={`p-1.5 rounded-lg border flex flex-col items-center justify-center text-center ${
+                    breakdown.finPassed ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400"
+                  }`}>
+                    <span className="font-extrabold uppercase text-[8px] text-slate-500 dark:text-slate-400 block">2. Fin & P/E</span>
+                    <span className="font-mono font-bold text-[10px] mt-0.5 flex items-center gap-0.5 truncate max-w-full">
+                      {breakdown.finPassed ? <CheckCircle size={9} className="text-emerald-500 shrink-0" /> : <X size={9} className="text-slate-400 shrink-0" />}
+                      {breakdown.finPassed ? (breakdown.peVal ? `${breakdown.peVal}x` : "Pass") : "Fair"}
+                    </span>
+                  </div>
+
+                  {/* Param 3: QIB */}
+                  <div className={`p-1.5 rounded-lg border flex flex-col items-center justify-center text-center ${
+                    breakdown.qibPassed ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : !finalReady ? "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400" : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400"
+                  }`}>
+                    <span className="font-extrabold uppercase text-[8px] text-slate-500 dark:text-slate-400 block">3. QIB (33.3%)</span>
+                    <span className="font-mono font-bold text-[10px] mt-0.5 flex items-center gap-0.5">
+                      {breakdown.qibPassed ? <CheckCircle size={9} className="text-emerald-500" /> : !finalReady ? <Clock size={9} className="text-blue-500 animate-pulse" /> : <X size={9} className="text-slate-400" />}
+                      {breakdown.qibVal > 0 ? `${breakdown.qibVal}×` : !finalReady ? "3 PM Live" : "Low"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Timeline Note Banner */}
+                {!finalReady ? (
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold text-[#1c9bda] dark:text-[#52b1e4] bg-[#1c9bda]/5 dark:bg-[#1c9bda]/10 px-2.5 py-1.5 rounded-xl border border-[#1c9bda]/15">
+                    <Clock size={12} className="shrink-0 animate-pulse" />
+                    <span className="truncate">Final Analysis Live on Last Day by 3:00 PM</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 dark:bg-emerald-500/10 px-2.5 py-1.5 rounded-xl border border-emerald-500/15">
+                    <CheckCircle size={12} className="shrink-0 text-emerald-500" />
+                    <span>Final Analysis Verified</span>
+                  </div>
+                )}
+
+                {/* Card Footer */}
+                <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 dark:border-white/5 text-xs">
+                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border ${badgeTheme.bg} ${badgeTheme.text} ${badgeTheme.border}`}>
+                    {badgeTheme.label}
+                  </span>
+                  <span className="text-[11px] font-bold text-[#1C9BDA] group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
+                    Analyze <ChevronRight size={12} />
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =====================================================================
    MULTI-SOURCE VERIFICATION
    Hard facts (price band, lot, issue size, dates, ...) are cross-checked
    across independent sources by the scraper. Each field carries a status in
@@ -2033,6 +2564,7 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
                     SME
                   </span>
                 )}
+                <CalmCapitalScoreBadge ipo={ipo} />
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 truncate">{ipo.sector}</p>
             </div>
@@ -2498,6 +3030,9 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
             </p>
           </div>
         </div>
+
+        {/* CalmCapital Score Section */}
+        <CalmCapitalScoreCard ipo={ipo} dark={dark} />
 
         {/* Basic Info Grid */}
         <div className="grid grid-cols-2 gap-3 px-6 py-2 text-xs">
@@ -5639,6 +6174,7 @@ const AI_ASSISTANT_ENABLED = false;
 const NAV = [
   { id: "ai", label: "AI Assistant", icon: Sparkles },
   { id: "overview", label: "Overview", icon: Home },
+  { id: "score", label: "CalmCapital Score", icon: ShieldCheck },
   { id: "gmp", label: "GMP Trends", icon: TrendingUp },
   { id: "open", label: "Open IPOs", icon: CircleDollarSign },
   { id: "upcoming", label: "Upcoming IPOs", icon: Calendar },
@@ -6437,11 +6973,12 @@ export default function App() {
                 </div>
 
                 {/* 2. IPO Market Snapshot */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                   <StatCard icon={ArrowUpRight} label="Open IPOs" value={counts.Open} tint={BRAND.blue} onClick={() => navigateToTab("open")} />
                   <StatCard icon={Calendar} label="Upcoming IPOs" value={counts.Upcoming} tint={BRAND.blue} onClick={() => navigateToTab("upcoming")} />
                   <StatCard icon={Clock} label="Closed IPOs" value={counts.Closed} tint={BRAND.blue} onClick={() => navigateToTab("closed")} />
                   <StatCard icon={LayoutGrid} label="Listed IPOs" value={counts.Listed} tint={BRAND.blue} onClick={() => navigateToTab("listed")} />
+                  <StatCard icon={ShieldCheck} label="CalmCapital Score" value="3-Factor" tint={BRAND.blue} onClick={() => navigateToTab("score")} />
                 </div>
 
                 {/* 3. LIVE GMP STATUS SECTION (Immediately below status boxes) */}
@@ -6851,6 +7388,10 @@ export default function App() {
                   );
                 })()}
               </div>
+            )}
+
+            {tab === "score" && (
+              <CalmCapitalScoreSection allIpos={filtered} dark={dark} onOpen={handleSelectIpo} navigateToTab={navigateToTab} />
             )}
 
             {tab === "open" && (() => {
