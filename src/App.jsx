@@ -311,6 +311,10 @@ function CalmCapitalScoreBadge({ ipo }) {
    CALMCAPITAL SCORE DASHBOARD & MAIN PAGE SHOWCASE
    Quantitative Rating Engine
 ===================================================================== */
+/* =====================================================================
+   CALMCAPITAL SCORE DASHBOARD & MAIN PAGE SHOWCASE
+   Quantitative Rating Engine
+===================================================================== */
 function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
   const [marketFilter, setMarketFilter] = useState("All");
   const [tierFilter, setTierFilter] = useState("All");
@@ -341,108 +345,108 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
   }, [allIpos, marketFilter, tierFilter, searchTerm]);
 
   return (
-    <div className="rounded-3xl border p-6 md:p-8 space-y-6 transition-all shadow-xl bg-white dark:bg-[#0B1724]/90 border-slate-200 dark:border-white/10">
+    <div className="rounded-3xl border p-6 md:p-8 space-y-6 transition-all shadow-xl bg-white dark:bg-[#0B1724]/90 border-slate-200/80 dark:border-white/10">
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-150 dark:border-white/10 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 dark:border-white/10 pb-6">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-[#1c9bda]/10 text-[#1c9bda] dark:text-[#52b1e4] border border-[#1c9bda]/20">
-            <ShieldCheck size={12} />
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-gradient-to-r from-[#1c9bda]/15 to-[#0ea5e9]/15 text-[#1c9bda] dark:text-[#52b1e4] border border-[#1c9bda]/30 shadow-sm">
+            <ShieldCheck size={13} className="text-[#1c9bda]" />
             3-Parameter Quantitative Engine
           </div>
-          <h2 className="text-xl md:text-2xl font-black text-slate-850 dark:text-white tracking-tight flex items-center gap-2">
+          <h2 className="text-xl md:text-2xl font-black text-[#0B1F33] dark:text-white tracking-tight flex items-center gap-2">
             CalmCapital Score
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed font-medium">
-            Quantitative rating system evaluating every IPO out of 100% using 3 core parameters. Institutional QIB bidding analysis is finalized live on the final offer day by 3:00 PM IST.
+          <p className="text-xs text-slate-600 dark:text-slate-350 max-w-2xl leading-relaxed font-medium">
+            Quantitative rating engine evaluating every IPO out of 100% using 3 strict parameters. Institutional QIB bidding analysis is finalized live on the final offer day by 3:00 PM IST.
           </p>
         </div>
 
         <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
-          <span className="text-xs font-bold text-slate-500 dark:text-slate-400 font-mono px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5">
+          <span className="text-xs font-black text-[#0B1F33] dark:text-white font-mono px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-white/10 border border-slate-250 dark:border-white/10 shadow-sm">
             {scoredIpos.length} Rated IPOs
           </span>
         </div>
       </div>
 
-      {/* 3 Parameter Explainer Cards - Compact & Snug */}
+      {/* 3 Parameter Explainer Cards - Vibrant & Crisp */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Parameter 1 */}
-        <div className="p-4 rounded-2xl border bg-slate-50/70 dark:bg-white/[0.02] border-slate-200/80 dark:border-white/5 space-y-2 hover:border-[#1c9bda]/30 transition-all">
+        <div className="p-4.5 rounded-2xl border bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-500/30 space-y-2 hover:border-emerald-500/50 transition-all shadow-sm">
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 rounded-lg bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-black text-xs font-mono border border-emerald-500/20">
+            <div className="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-black text-xs font-mono shadow-md shadow-emerald-500/20">
               1
             </div>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
               33.3% Weight
             </span>
           </div>
           <div className="space-y-0.5">
-            <h4 className="text-xs font-black text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-              <TrendingUp size={13} className="text-emerald-500 shrink-0" />
+            <h4 className="text-xs font-black text-emerald-950 dark:text-emerald-200 uppercase tracking-wider flex items-center gap-1.5">
+              <TrendingUp size={14} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
               1. GMP Momentum (≥ 20%)
             </h4>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug font-medium">
+            <p className="text-[11px] text-slate-600 dark:text-slate-350 leading-snug font-medium">
               Grey Market Premium cap must be 20% or higher above issue price cap, indicating strong market demand.
             </p>
           </div>
         </div>
 
         {/* Parameter 2 */}
-        <div className="p-4 rounded-2xl border bg-slate-50/70 dark:bg-white/[0.02] border-slate-200/80 dark:border-white/5 space-y-2 hover:border-[#1c9bda]/30 transition-all">
+        <div className="p-4.5 rounded-2xl border bg-blue-50/50 dark:bg-blue-950/20 border-blue-200/80 dark:border-blue-500/30 space-y-2 hover:border-blue-500/50 transition-all shadow-sm">
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 rounded-lg bg-blue-500/10 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center font-black text-xs font-mono border border-blue-500/20">
+            <div className="w-7 h-7 rounded-lg bg-[#1c9bda] text-white flex items-center justify-center font-black text-xs font-mono shadow-md shadow-[#1c9bda]/20">
               2
             </div>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-[#1c9bda]/15 text-[#1c9bda] dark:text-[#52b1e4] border border-[#1c9bda]/30">
               33.3% Weight
             </span>
           </div>
           <div className="space-y-0.5">
-            <h4 className="text-xs font-black text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-              <BarChart3 size={13} className="text-blue-500 shrink-0" />
+            <h4 className="text-xs font-black text-blue-950 dark:text-blue-200 uppercase tracking-wider flex items-center gap-1.5">
+              <BarChart3 size={14} className="text-[#1c9bda] dark:text-[#52b1e4] shrink-0" />
               2. Financials &amp; Fair Valuation
             </h4>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug font-medium">
+            <p className="text-[11px] text-slate-600 dark:text-slate-350 leading-snug font-medium">
               Positive PAT profit with strong ROE (≥ 12%) or margins (≥ 8%), and fair P/E valuation (≤ 45x).
             </p>
           </div>
         </div>
 
         {/* Parameter 3 */}
-        <div className="p-4 rounded-2xl border bg-slate-50/70 dark:bg-white/[0.02] border-slate-200/80 dark:border-white/5 space-y-2 hover:border-[#1c9bda]/30 transition-all">
+        <div className="p-4.5 rounded-2xl border bg-purple-50/50 dark:bg-purple-950/20 border-purple-200/80 dark:border-purple-500/30 space-y-2 hover:border-purple-500/50 transition-all shadow-sm">
           <div className="flex items-center justify-between">
-            <div className="w-7 h-7 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 flex items-center justify-center font-black text-xs font-mono border border-purple-500/20">
+            <div className="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center font-black text-xs font-mono shadow-md shadow-purple-500/20">
               3
             </div>
-            <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-extrabold bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30">
               33.3% Weight
             </span>
           </div>
           <div className="space-y-0.5">
-            <h4 className="text-xs font-black text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-              <Building2 size={13} className="text-purple-500 shrink-0" />
+            <h4 className="text-xs font-black text-purple-950 dark:text-purple-200 uppercase tracking-wider flex items-center gap-1.5">
+              <Building2 size={14} className="text-purple-600 dark:text-purple-400 shrink-0" />
               3. QIB Support (≥ 50X)
             </h4>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug font-medium">
-              Institutional QIB subscription reaching 50X+. <span className="text-[#1c9bda] font-semibold">Final analysis updates live by 3:00 PM IST on last offer day.</span>
+            <p className="text-[11px] text-slate-600 dark:text-slate-350 leading-snug font-medium">
+              Institutional QIB subscription reaching 50X+. <span className="text-[#1c9bda] dark:text-[#52b1e4] font-bold">Final analysis updates live by 3:00 PM IST on last offer day.</span>
             </p>
           </div>
         </div>
       </div>
 
-      {/* Filter Controls Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-        <div className="flex flex-wrap items-center gap-2">
+      {/* Filter Controls Bar - Vibrant Color Coding */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           {/* Market selector */}
-          <div className="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-white/5">
+          <div className="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-slate-800/80 border border-slate-300/60 dark:border-white/10 shadow-inner">
             {["All", "Mainboard", "SME"].map(m => (
               <button
                 key={m}
                 onClick={() => setMarketFilter(m)}
-                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all border-0 cursor-pointer ${
+                className={`px-3.5 py-1 text-xs font-extrabold rounded-lg transition-all border-0 cursor-pointer ${
                   marketFilter === m
-                    ? "bg-white dark:bg-[#1C9BDA] text-slate-850 dark:text-white shadow-sm"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-white"
+                    ? "bg-[#0B1F33] dark:bg-[#1C9BDA] text-white shadow-md shadow-[#1C9BDA]/20"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 {m}
@@ -451,21 +455,21 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
           </div>
 
           {/* Tier filter */}
-          <div className="inline-flex p-1 rounded-xl bg-slate-100 dark:bg-slate-800/60 border border-slate-200 dark:border-white/5">
+          <div className="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-slate-800/80 border border-slate-300/60 dark:border-white/10 shadow-inner">
             {[
-              { id: "All", label: "All Ratings" },
-              { id: "Strong", label: "Strong (80-100%)" },
-              { id: "Moderate", label: "Moderate (50-79%)" },
-              { id: "Risk", label: "High Risk (<50%)" },
-              { id: "Provisional", label: "Provisional" },
+              { id: "All", label: "All Ratings", activeStyle: "bg-[#0B1F33] dark:bg-[#1C9BDA] text-white shadow-md" },
+              { id: "Strong", label: "Strong (80-100%)", activeStyle: "bg-emerald-600 text-white shadow-md shadow-emerald-500/20" },
+              { id: "Moderate", label: "Moderate (50-79%)", activeStyle: "bg-amber-600 text-white shadow-md shadow-amber-500/20" },
+              { id: "Risk", label: "High Risk (<50%)", activeStyle: "bg-rose-600 text-white shadow-md shadow-rose-500/20" },
+              { id: "Provisional", label: "Provisional", activeStyle: "bg-sky-600 text-white shadow-md shadow-sky-500/20" },
             ].map(t => (
               <button
                 key={t.id}
                 onClick={() => setTierFilter(t.id)}
-                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all border-0 cursor-pointer ${
+                className={`px-3 py-1 text-xs font-extrabold rounded-lg transition-all border-0 cursor-pointer ${
                   tierFilter === t.id
-                    ? "bg-white dark:bg-[#1C9BDA] text-slate-850 dark:text-white shadow-sm"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-white"
+                    ? t.activeStyle
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 {t.label}
@@ -476,103 +480,129 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
 
         {/* Search input */}
         <div className="relative w-full sm:w-64">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#1c9bda]" />
           <input
             type="text"
             placeholder="Search company or sector..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 rounded-xl text-xs bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-white/10 text-slate-850 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#1C9BDA]"
+            className="w-full pl-9 pr-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-900/60 border border-slate-300/70 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#1C9BDA] shadow-sm"
           />
         </div>
       </div>
 
       {/* Grid of Scored IPO Cards */}
       {scoredIpos.length === 0 ? (
-        <div className="text-center py-12 border rounded-2xl border-dashed border-slate-200 dark:border-white/10">
-          <ShieldCheck size={32} className="mx-auto text-slate-400 mb-2 opacity-50" />
-          <p className="text-xs font-bold text-slate-500 dark:text-slate-400">No IPOs matched your search filter.</p>
+        <div className="text-center py-12 border rounded-2xl border-dashed border-slate-250 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.01]">
+          <ShieldCheck size={36} className="mx-auto text-[#1c9bda] mb-2 opacity-60" />
+          <p className="text-xs font-extrabold text-slate-700 dark:text-slate-300">No IPOs matched your search filter.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-2">
           {scoredIpos.map(({ ipo, score, breakdown, finalReady }) => {
             const status = getComputedStatus(ipo);
-            const badgeTheme = !finalReady
-              ? { bg: "bg-[#1c9bda]/10 dark:bg-[#1c9bda]/20", text: "text-[#1c9bda] dark:text-[#52b1e4]", border: "border-[#1c9bda]/30", label: "PROVISIONAL RATING" }
+
+            // Dynamic Score Theme
+            const gaugeStyle = !finalReady
+              ? "bg-gradient-to-br from-sky-500 to-blue-600 text-white shadow-md shadow-sky-500/25 border-sky-400/40"
               : score >= 80
-              ? { bg: "bg-emerald-500/10 dark:bg-emerald-500/20", text: "text-emerald-600 dark:text-emerald-400", border: "border-emerald-500/30", label: "STRONG CONVICTION" }
+              ? "bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/25 border-emerald-400/40"
               : score >= 50
-              ? { bg: "bg-amber-500/10 dark:bg-amber-500/20", text: "text-amber-600 dark:text-amber-400", border: "border-amber-500/30", label: "MODERATE RATING" }
-              : { bg: "bg-rose-500/10 dark:bg-rose-500/20", text: "text-rose-600 dark:text-rose-400", border: "border-rose-500/30", label: "CAUTIOUS / HIGH RISK" };
+              ? "bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-md shadow-amber-500/25 border-amber-400/40"
+              : "bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-md shadow-rose-500/25 border-rose-400/40";
+
+            const badgeTheme = !finalReady
+              ? { bg: "bg-sky-100 dark:bg-sky-950/70", text: "text-sky-800 dark:text-sky-300", border: "border-sky-300 dark:border-sky-500/40", label: "PROVISIONAL RATING" }
+              : score >= 80
+              ? { bg: "bg-emerald-100 dark:bg-emerald-950/70", text: "text-emerald-800 dark:text-emerald-300", border: "border-emerald-300 dark:border-emerald-500/40", label: "STRONG CONVICTION" }
+              : score >= 50
+              ? { bg: "bg-amber-100 dark:bg-amber-950/70", text: "text-amber-800 dark:text-amber-300", border: "border-amber-300 dark:border-amber-500/40", label: "MODERATE RATING" }
+              : { bg: "bg-rose-100 dark:bg-rose-950/70", text: "text-rose-800 dark:text-rose-300", border: "border-rose-300 dark:border-rose-500/40", label: "CAUTIOUS / HIGH RISK" };
 
             return (
               <div
                 key={ipo.id}
                 onClick={() => onOpen(ipo, "modal")}
-                className="p-5 rounded-2xl border transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-pointer bg-slate-50/70 dark:bg-white/[0.02] border-slate-200/90 dark:border-white/5 flex flex-col justify-between space-y-4 group"
+                className="p-5 rounded-2xl border transition-all duration-300 hover:shadow-xl hover:shadow-[#1c9bda]/10 hover:-translate-y-1 cursor-pointer bg-white dark:bg-[#121F30] border-slate-200 dark:border-white/10 flex flex-col justify-between space-y-4 group relative overflow-hidden"
               >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="space-y-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-slate-200/70 dark:bg-white/10 text-slate-700 dark:text-slate-300 font-mono">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {/* Market Type Badge */}
+                      <span className={`text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-md border font-mono ${
+                        ipo.type === "SME" 
+                          ? "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-500/30" 
+                          : "bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-500/30"
+                      }`}>
                         {ipo.type}
                       </span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        status === "Open" ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
-                        status === "Upcoming" ? "bg-blue-500/15 text-blue-600 dark:text-blue-400" :
-                        "bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-400"
+                      {/* Status Badge */}
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-md border ${
+                        status === "Open" ? "bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-500/40" :
+                        status === "Upcoming" ? "bg-sky-100 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-300 dark:border-sky-500/40" :
+                        status === "Listed" ? "bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-300 dark:border-purple-500/40" :
+                        "bg-slate-150 dark:bg-white/10 text-slate-700 dark:text-slate-300 border-slate-250 dark:border-white/10"
                       }`}>
                         {status}
                       </span>
                     </div>
-                    <h3 className="text-sm font-extrabold text-slate-850 dark:text-white truncate group-hover:text-[#1C9BDA] transition-colors">
+
+                    <h3 className="text-base font-extrabold text-[#0B1F33] dark:text-white truncate group-hover:text-[#1C9BDA] transition-colors mt-1">
                       {ipo.name}
                     </h3>
-                    <p className="text-[11px] font-semibold text-slate-400 truncate">
-                      {ipo.sector || "General"}
+                    <p className="text-[11px] font-bold text-[#1c9bda] dark:text-[#52b1e4] truncate flex items-center gap-1">
+                      <span>•</span> {ipo.sector || "General"}
                     </p>
                   </div>
 
                   {/* Score Circle Gauge */}
                   <div className="shrink-0 flex flex-col items-center">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-mono font-black text-base border shadow-sm ${badgeTheme.bg} ${badgeTheme.text} ${badgeTheme.border}`}>
+                    <div className={`w-13 h-13 rounded-2xl flex items-center justify-center font-mono font-black text-base border shadow-md ${gaugeStyle}`}>
                       {score}%
                     </div>
                   </div>
                 </div>
 
-                {/* 3 Parameter Status Row */}
-                <div className="grid grid-cols-3 gap-1.5 text-[10px] pt-1">
+                {/* 3 Parameter Status Cards - Rich Color Contrast */}
+                <div className="grid grid-cols-3 gap-2 text-[10px]">
                   {/* Param 1: GMP */}
-                  <div className={`p-1.5 rounded-lg border flex flex-col items-center justify-center text-center ${
-                    breakdown.gmpPassed ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400"
+                  <div className={`p-2 rounded-xl border flex flex-col items-center justify-center text-center transition-all ${
+                    breakdown.gmpPassed 
+                      ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-500/40 text-emerald-900 dark:text-emerald-200" 
+                      : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-500"
                   }`}>
-                    <span className="font-extrabold uppercase text-[8px] text-slate-500 dark:text-slate-400 block">1. GMP (33.3%)</span>
-                    <span className="font-mono font-bold text-[10px] mt-0.5 flex items-center gap-0.5">
-                      {breakdown.gmpPassed ? <CheckCircle size={9} className="text-emerald-500" /> : <X size={9} className="text-slate-400" />}
+                    <span className="font-extrabold uppercase text-[8px] text-slate-600 dark:text-slate-300 block">1. GMP (33.3%)</span>
+                    <span className="font-mono font-black text-[11px] mt-0.5 flex items-center gap-0.5">
+                      {breakdown.gmpPassed ? <CheckCircle size={10} className="text-emerald-600 dark:text-emerald-400" /> : <X size={10} className="text-slate-400" />}
                       {breakdown.gmpPct > 0 ? `+${breakdown.gmpPct}%` : "Low"}
                     </span>
                   </div>
 
                   {/* Param 2: Financials & PE */}
-                  <div className={`p-1.5 rounded-lg border flex flex-col items-center justify-center text-center ${
-                    breakdown.finPassed ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400"
+                  <div className={`p-2 rounded-xl border flex flex-col items-center justify-center text-center transition-all ${
+                    breakdown.finPassed 
+                      ? "bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-500/40 text-blue-900 dark:text-blue-200" 
+                      : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-500"
                   }`}>
-                    <span className="font-extrabold uppercase text-[8px] text-slate-500 dark:text-slate-400 block">2. Fin & P/E</span>
-                    <span className="font-mono font-bold text-[10px] mt-0.5 flex items-center gap-0.5 truncate max-w-full">
-                      {breakdown.finPassed ? <CheckCircle size={9} className="text-emerald-500 shrink-0" /> : <X size={9} className="text-slate-400 shrink-0" />}
+                    <span className="font-extrabold uppercase text-[8px] text-slate-600 dark:text-slate-300 block">2. Fin & P/E</span>
+                    <span className="font-mono font-black text-[11px] mt-0.5 flex items-center gap-0.5 truncate max-w-full">
+                      {breakdown.finPassed ? <CheckCircle size={10} className="text-blue-600 dark:text-blue-400 shrink-0" /> : <X size={10} className="text-slate-400 shrink-0" />}
                       {breakdown.finPassed ? (breakdown.peVal ? `${breakdown.peVal}x` : "Pass") : "Fair"}
                     </span>
                   </div>
 
                   {/* Param 3: QIB */}
-                  <div className={`p-1.5 rounded-lg border flex flex-col items-center justify-center text-center ${
-                    breakdown.qibPassed ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-400" : !finalReady ? "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400" : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-400"
+                  <div className={`p-2 rounded-xl border flex flex-col items-center justify-center text-center transition-all ${
+                    breakdown.qibPassed 
+                      ? "bg-purple-50 dark:bg-purple-950/40 border-purple-300 dark:border-purple-500/40 text-purple-900 dark:text-purple-200" 
+                      : !finalReady 
+                      ? "bg-sky-50 dark:bg-sky-950/40 border-sky-300 dark:border-sky-500/40 text-sky-900 dark:text-sky-200" 
+                      : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/5 text-slate-500"
                   }`}>
-                    <span className="font-extrabold uppercase text-[8px] text-slate-500 dark:text-slate-400 block">3. QIB (33.3%)</span>
-                    <span className="font-mono font-bold text-[10px] mt-0.5 flex items-center gap-0.5">
-                      {breakdown.qibPassed ? <CheckCircle size={9} className="text-emerald-500" /> : !finalReady ? <Clock size={9} className="text-blue-500 animate-pulse" /> : <X size={9} className="text-slate-400" />}
+                    <span className="font-extrabold uppercase text-[8px] text-slate-600 dark:text-slate-300 block">3. QIB (33.3%)</span>
+                    <span className="font-mono font-black text-[11px] mt-0.5 flex items-center gap-0.5">
+                      {breakdown.qibPassed ? <CheckCircle size={10} className="text-purple-600 dark:text-purple-400" /> : !finalReady ? <Clock size={10} className="text-sky-600 animate-pulse" /> : <X size={10} className="text-slate-400" />}
                       {breakdown.qibVal > 0 ? `${breakdown.qibVal}×` : !finalReady ? "3 PM Live" : "Low"}
                     </span>
                   </div>
@@ -580,24 +610,24 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
 
                 {/* Timeline Note Banner */}
                 {!finalReady ? (
-                  <div className="flex items-center gap-1.5 text-[10px] font-semibold text-[#1c9bda] dark:text-[#52b1e4] bg-[#1c9bda]/5 dark:bg-[#1c9bda]/10 px-2.5 py-1.5 rounded-xl border border-[#1c9bda]/15">
-                    <Clock size={12} className="shrink-0 animate-pulse" />
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#1c9bda] dark:text-[#52b1e4] bg-sky-50 dark:bg-sky-950/40 px-3 py-1.5 rounded-xl border border-sky-200 dark:border-sky-500/30">
+                    <Clock size={12} className="shrink-0 animate-pulse text-[#1c9bda]" />
                     <span className="truncate">Final Analysis Live on Last Day by 3:00 PM</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 dark:bg-emerald-500/10 px-2.5 py-1.5 rounded-xl border border-emerald-500/15">
-                    <CheckCircle size={12} className="shrink-0 text-emerald-500" />
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-200 dark:border-emerald-500/30">
+                    <CheckCircle size={12} className="shrink-0 text-emerald-600 dark:text-emerald-400" />
                     <span>Final Analysis Verified</span>
                   </div>
                 )}
 
                 {/* Card Footer */}
-                <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 dark:border-white/5 text-xs">
-                  <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded border ${badgeTheme.bg} ${badgeTheme.text} ${badgeTheme.border}`}>
+                <div className="flex items-center justify-between pt-2.5 border-t border-slate-200/80 dark:border-white/10 text-xs">
+                  <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-lg border ${badgeTheme.bg} ${badgeTheme.text} ${badgeTheme.border}`}>
                     {badgeTheme.label}
                   </span>
-                  <span className="text-[11px] font-bold text-[#1C9BDA] group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
-                    Analyze <ChevronRight size={12} />
+                  <span className="text-xs font-extrabold text-[#1C9BDA] group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
+                    Analyze <ChevronRight size={13} />
                   </span>
                 </div>
               </div>
