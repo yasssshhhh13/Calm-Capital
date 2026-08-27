@@ -368,10 +368,10 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
         </div>
       </div>
 
-      {/* 3 Parameter Explainer Cards - Vibrant & Crisp */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* 3 Parameter Explainer Cards - Roomy & Responsive */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5">
         {/* Parameter 1 */}
-        <div className="p-4.5 rounded-2xl border bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-500/30 space-y-2 hover:border-emerald-500/50 transition-all shadow-sm">
+        <div className="p-5 rounded-2xl border bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200/80 dark:border-emerald-500/30 flex flex-col justify-between space-y-3 hover:border-emerald-500/50 transition-all shadow-sm min-h-[145px] sm:min-h-[155px]">
           <div className="flex items-center justify-between">
             <div className="w-7 h-7 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-black text-xs font-mono shadow-md shadow-emerald-500/20">
               1
@@ -380,19 +380,19 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
               33.3% Weight
             </span>
           </div>
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             <h4 className="text-xs font-black text-emerald-950 dark:text-emerald-200 uppercase tracking-wider flex items-center gap-1.5">
               <TrendingUp size={14} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
               1. GMP Momentum (≥ 20%)
             </h4>
-            <p className="text-[11px] text-slate-600 dark:text-slate-350 leading-snug font-medium">
+            <p className="text-[11px] text-slate-600 dark:text-slate-350 leading-relaxed font-medium">
               Grey Market Premium cap must be 20% or higher above issue price cap, indicating strong market demand.
             </p>
           </div>
         </div>
 
         {/* Parameter 2 */}
-        <div className="p-4.5 rounded-2xl border bg-blue-50/50 dark:bg-blue-950/20 border-blue-200/80 dark:border-blue-500/30 space-y-2 hover:border-blue-500/50 transition-all shadow-sm">
+        <div className="p-5 rounded-2xl border bg-blue-50/50 dark:bg-blue-950/20 border-blue-200/80 dark:border-blue-500/30 flex flex-col justify-between space-y-3 hover:border-blue-500/50 transition-all shadow-sm min-h-[145px] sm:min-h-[155px]">
           <div className="flex items-center justify-between">
             <div className="w-7 h-7 rounded-lg bg-[#1c9bda] text-white flex items-center justify-center font-black text-xs font-mono shadow-md shadow-[#1c9bda]/20">
               2
@@ -401,19 +401,19 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
               33.3% Weight
             </span>
           </div>
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             <h4 className="text-xs font-black text-blue-950 dark:text-blue-200 uppercase tracking-wider flex items-center gap-1.5">
               <BarChart3 size={14} className="text-[#1c9bda] dark:text-[#52b1e4] shrink-0" />
               2. Financials &amp; Fair Valuation
             </h4>
-            <p className="text-[11px] text-slate-600 dark:text-slate-350 leading-snug font-medium">
+            <p className="text-[11px] text-slate-600 dark:text-slate-350 leading-relaxed font-medium">
               Positive PAT profit with strong ROE (≥ 12%) or margins (≥ 8%), and fair P/E valuation (≤ 45x).
             </p>
           </div>
         </div>
 
         {/* Parameter 3 */}
-        <div className="p-4.5 rounded-2xl border bg-purple-50/50 dark:bg-purple-950/20 border-purple-200/80 dark:border-purple-500/30 space-y-2 hover:border-purple-500/50 transition-all shadow-sm">
+        <div className="p-5 rounded-2xl border bg-purple-50/50 dark:bg-purple-950/20 border-purple-200/80 dark:border-purple-500/30 flex flex-col justify-between space-y-3 hover:border-purple-500/50 transition-all shadow-sm min-h-[145px] sm:min-h-[155px]">
           <div className="flex items-center justify-between">
             <div className="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center font-black text-xs font-mono shadow-md shadow-purple-500/20">
               3
@@ -422,12 +422,12 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
               33.3% Weight
             </span>
           </div>
-          <div className="space-y-0.5">
+          <div className="space-y-1">
             <h4 className="text-xs font-black text-purple-950 dark:text-purple-200 uppercase tracking-wider flex items-center gap-1.5">
               <Building2 size={14} className="text-purple-600 dark:text-purple-400 shrink-0" />
               3. QIB Support (≥ 50X)
             </h4>
-            <p className="text-[11px] text-slate-600 dark:text-slate-350 leading-snug font-medium">
+            <p className="text-[11px] text-slate-600 dark:text-slate-350 leading-relaxed font-medium">
               Institutional QIB subscription reaching 50X+. <span className="text-[#1c9bda] dark:text-[#52b1e4] font-bold">Final analysis updates live by 3:00 PM IST on last offer day.</span>
             </p>
           </div>
@@ -7003,12 +7003,38 @@ export default function App() {
                 </div>
 
                 {/* 2. IPO Market Snapshot */}
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                   <StatCard icon={ArrowUpRight} label="Open IPOs" value={counts.Open} tint={BRAND.blue} onClick={() => navigateToTab("open")} />
                   <StatCard icon={Calendar} label="Upcoming IPOs" value={counts.Upcoming} tint={BRAND.blue} onClick={() => navigateToTab("upcoming")} />
                   <StatCard icon={Clock} label="Closed IPOs" value={counts.Closed} tint={BRAND.blue} onClick={() => navigateToTab("closed")} />
                   <StatCard icon={LayoutGrid} label="Listed IPOs" value={counts.Listed} tint={BRAND.blue} onClick={() => navigateToTab("listed")} />
-                  <StatCard icon={ShieldCheck} label="CalmCapital Score" value="3-Factor" tint={BRAND.blue} onClick={() => navigateToTab("score")} />
+                  
+                  {/* Custom Featured Card for CalmCapital Score */}
+                  <div
+                    onClick={() => navigateToTab("score")}
+                    className="col-span-2 sm:col-span-1 relative overflow-hidden rounded-2xl border p-3.5 sm:p-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg bg-gradient-to-r from-[#0B1F33] via-[#123B4A] to-[#1c9bda] dark:from-[#0B1724] dark:via-[#122436] dark:to-[#1c9bda]/80 border-[#1c9bda]/40 text-white flex items-center justify-between group"
+                  >
+                    <div className="flex items-center gap-2.5 relative z-10 min-w-0">
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#1c9bda] text-white flex items-center justify-center font-black shadow-md shadow-[#1c9bda]/30 shrink-0">
+                        <ShieldCheck size={18} className="text-white" />
+                      </div>
+                      <div className="space-y-0.5 min-w-0">
+                        <div className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-[#52b1e4] flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#52b1e4] animate-pulse"></span>
+                          CalmCapital Score
+                        </div>
+                        <div className="text-xs sm:text-sm font-black text-white truncate">
+                          3-Factor Engine
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="relative z-10 shrink-0 ml-1.5">
+                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-white/15 text-white border border-white/20 group-hover:bg-[#1c9bda] transition-all flex items-center gap-0.5">
+                        Rating <ChevronRight size={11} />
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* 3. LIVE GMP STATUS SECTION (Immediately below status boxes) */}
