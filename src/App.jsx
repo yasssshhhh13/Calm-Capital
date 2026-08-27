@@ -454,11 +454,11 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
             ))}
           </div>
 
-          {/* Tier filter */}
-          <div className="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-slate-800/80 border border-slate-300/60 dark:border-white/10 shadow-inner">
+          {/* Tier filter - Scrollable on mobile to prevent right overflow */}
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-slate-200/80 dark:bg-slate-800/80 border border-slate-300/60 dark:border-white/10 shadow-inner overflow-x-auto max-w-full whitespace-nowrap no-scrollbar">
             {[
               { id: "All", label: "All Ratings", activeStyle: "bg-[#0B1F33] dark:bg-[#1C9BDA] text-white shadow-md" },
-              { id: "Strong", label: "Strong (80-100%)", activeStyle: "bg-emerald-600 text-white shadow-md shadow-emerald-500/20" },
+              { id: "Strong", label: "Strong (80%+)", activeStyle: "bg-emerald-600 text-white shadow-md shadow-emerald-500/20" },
               { id: "Moderate", label: "Moderate (50-79%)", activeStyle: "bg-amber-600 text-white shadow-md shadow-amber-500/20" },
               { id: "Risk", label: "High Risk (<50%)", activeStyle: "bg-rose-600 text-white shadow-md shadow-rose-500/20" },
               { id: "Provisional", label: "Provisional", activeStyle: "bg-sky-600 text-white shadow-md shadow-sky-500/20" },
@@ -466,7 +466,7 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
               <button
                 key={t.id}
                 onClick={() => setTierFilter(t.id)}
-                className={`px-3 py-1 text-xs font-extrabold rounded-lg transition-all border-0 cursor-pointer ${
+                className={`px-3 py-1 text-xs font-extrabold rounded-lg transition-all border-0 cursor-pointer shrink-0 ${
                   tierFilter === t.id
                     ? t.activeStyle
                     : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
@@ -6154,7 +6154,7 @@ function DematTab({ dark }) {
 /* =====================================================================
    STAT CARD
 ===================================================================== */
-function StatCard({ icon: Icon, label, value, tint, onClick }) {
+function StatCard({ icon: Icon, label, value, tint, onClick, className = "" }) {
   const clickable = typeof onClick === "function";
   const labelLower = label.toLowerCase();
   
@@ -6180,7 +6180,7 @@ function StatCard({ icon: Icon, label, value, tint, onClick }) {
       role={clickable ? "button" : undefined}
       tabIndex={clickable ? 0 : undefined}
       onKeyDown={clickable ? (e) => (e.key === "Enter" || e.key === " ") && onClick() : undefined}
-      className={`border p-4 flex items-center justify-between rounded-2xl shadow-sm transition-all duration-200 ${cardClass}
+      className={`border p-4 flex items-center justify-between rounded-2xl shadow-sm transition-all duration-200 ${cardClass} ${className}
         ${clickable ? "cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]" : ""}`}
     >
       <div>
@@ -7010,7 +7010,7 @@ export default function App() {
                   <StatCard icon={Calendar} label="Upcoming IPOs" value={counts.Upcoming} tint={BRAND.blue} onClick={() => navigateToTab("upcoming")} />
                   <StatCard icon={Clock} label="Closed IPOs" value={counts.Closed} tint={BRAND.blue} onClick={() => navigateToTab("closed")} />
                   <StatCard icon={LayoutGrid} label="Listed IPOs" value={counts.Listed} tint={BRAND.blue} onClick={() => navigateToTab("listed")} />
-                  <StatCard icon={ShieldCheck} label="CalmCapital Score" value="3-Factor" tint={BRAND.blue} onClick={() => navigateToTab("score")} />
+                  <StatCard icon={ShieldCheck} label="CalmCapital Score" value="3-Factor" tint={BRAND.blue} className="col-span-2 sm:col-span-1" onClick={() => navigateToTab("score")} />
                 </div>
 
                 {/* 3. LIVE GMP STATUS SECTION (Immediately below status boxes) */}
