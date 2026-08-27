@@ -251,9 +251,11 @@ async function scrapeDetail(page, url) {
           else if (catLower.startsWith('policyholder')) key = 'policyholder';
           // Skip anchor / sub-items (they start with '−' or '-')
           if (!key || cat.startsWith('−') || cat.startsWith('-') || cat.startsWith('\u2212')) continue;
-          allocation[key] = pct;
         }
-        if (Object.keys(allocation).length === 0) allocation = null;
+        if (allocation && Object.keys(allocation).length > 0) break;
+        else allocation = null;
+      }
+
       // Scrape live subscription table (QIB / NII / Retail / Total multiples)
       let sub = null;
       for (const tbl of allTables) {

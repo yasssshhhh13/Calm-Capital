@@ -203,6 +203,8 @@ export function reconcile(iposBase, sourceRecords) {
           console.log(`[ALLOCATION] "${ipo.name}" -> ${parts}`);
         }
       }
+    }
+
     // Merge live subscription multiples from Chittorgarh (QIB/NII/Retail/Total)
     if (matches.chittorgarh?.sub) {
       const cgSub = matches.chittorgarh.sub;
