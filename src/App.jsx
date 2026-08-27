@@ -6485,11 +6485,34 @@ export default function App() {
     if (ok) setLiveDataVersion((v) => v + 1);
   }, [dataUrl]);
 
-  // Initial sync + 30-min auto-refresh, exactly as requested.
+  // Real-time live sync: 60-sec auto-poll + instant re-sync on tab focus / visibility change
   useEffect(() => {
     if (dataUrl) syncNow(dataUrl);
-    const periodic = setInterval(() => { syncNow(); setTick((t) => t + 1); }, 30 * 60 * 1000);
-    return () => clearInterval(periodic);
+    const periodic = setInterval(() => { syncNow(); setTick((t) => t + 1); }, 60 * 1000);
+
+    const handleFocusOrVisible = () => {
+      if (document.visibilityState === "visible") {
+        syncNow();
+        fetch(`/ipos.json?t=${Date.now()}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (Array.isArray(data) && data.length > 0) {
+              IPOS_BASE = data;
+              setTick((t) => t + 1);
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    window.addEventListener("focus", handleFocusOrVisible);
+    document.addEventListener("visibilitychange", handleFocusOrVisible);
+
+    return () => {
+      clearInterval(periodic);
+      window.removeEventListener("focus", handleFocusOrVisible);
+      document.removeEventListener("visibilitychange", handleFocusOrVisible);
+    };
   }, [dataUrl, syncNow]);
 
   // Real-time ticking price simulation for listed IPOs
