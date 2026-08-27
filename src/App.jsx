@@ -7012,25 +7012,28 @@ export default function App() {
                   {/* Custom Featured Card for CalmCapital Score */}
                   <div
                     onClick={() => navigateToTab("score")}
-                    className="col-span-2 sm:col-span-1 relative overflow-hidden rounded-2xl border p-3.5 sm:p-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg bg-gradient-to-r from-[#0B1F33] via-[#123B4A] to-[#1c9bda] dark:from-[#0B1724] dark:via-[#122436] dark:to-[#1c9bda]/80 border-[#1c9bda]/40 text-white flex items-center justify-between group"
+                    className="col-span-2 sm:col-span-1 relative overflow-hidden rounded-2xl border p-3.5 sm:p-4 cursor-pointer transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg bg-gradient-to-br from-cyan-50 via-sky-50 to-blue-50 dark:from-[#0F2236] dark:via-[#132A42] dark:to-[#0B1724] border-cyan-300/80 dark:border-cyan-500/40 text-slate-850 dark:text-white flex items-center justify-between group"
                   >
+                    {/* Subtle Ambient Glow */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#1c9bda]/10 via-transparent to-[#14B8A6]/10 opacity-70 pointer-events-none" />
+
                     <div className="flex items-center gap-2.5 relative z-10 min-w-0">
-                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#1c9bda] text-white flex items-center justify-center font-black shadow-md shadow-[#1c9bda]/30 shrink-0">
-                        <ShieldCheck size={18} className="text-white" />
+                      <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-[#1c9bda] to-[#0ea5e9] text-white flex items-center justify-center font-black shadow-md shadow-[#1c9bda]/30 shrink-0">
+                        <ShieldCheck size={19} className="text-white" />
                       </div>
                       <div className="space-y-0.5 min-w-0">
-                        <div className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-[#52b1e4] flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#52b1e4] animate-pulse"></span>
+                        <div className="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wider text-[#1c9bda] dark:text-[#52b1e4] flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#1c9bda] dark:bg-[#52b1e4] animate-pulse"></span>
                           CalmCapital Score
                         </div>
-                        <div className="text-xs sm:text-sm font-black text-white truncate">
+                        <div className="text-xs sm:text-sm font-black text-[#0B1F33] dark:text-white truncate">
                           3-Factor Engine
                         </div>
                       </div>
                     </div>
 
                     <div className="relative z-10 shrink-0 ml-1.5">
-                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-white/15 text-white border border-white/20 group-hover:bg-[#1c9bda] transition-all flex items-center gap-0.5">
+                      <span className="px-2.5 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider bg-[#1c9bda] text-white shadow-sm hover:bg-[#1681b8] transition-all flex items-center gap-0.5 border-0">
                         Rating <ChevronRight size={11} />
                       </span>
                     </div>
