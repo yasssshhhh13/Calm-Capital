@@ -134,41 +134,16 @@ async function checkPanAllotment({ pan, company, registrar, lot, currentGmp, lab
     }
   }
 
-  // Deterministic allotment resolver (allows users to see real Narada-style results)
-  // We use the PAN string hash to provide consistent, stable results for each PAN
-  let hash = 0;
-  for (let i = 0; i < pan.length; i++) {
-    hash = (hash << 5) - hash + pan.charCodeAt(i);
-    hash |= 0;
-  }
-  const positiveHash = Math.abs(hash);
-
-  // By default, ~33% chance of allotment to mirror competitive retail retail quotas
-  const isAllotted = (positiveHash % 3) === 0;
-
-  if (isAllotted) {
-    return {
-      status: "Allotted",
-      sharesApplied: lot,
-      sharesAllotted: lot,
-      lotsAllotted: 1,
-      category: "Retail (RII)",
-      appNo: `${positiveHash.toString().slice(0, 8)}`,
-      message: `Allotted 1 Lot (${lot} Shares)`,
-      estimatedGain: 1 * lot * currentGmp,
-      liveVerified: false
-    };
-  } else {
-    return {
-      status: "Not Allotted",
-      sharesApplied: lot,
-      sharesAllotted: 0,
-      lotsAllotted: 0,
-      category: "Retail (RII)",
-      appNo: `${positiveHash.toString().slice(0, 8)}`,
-      message: "Non-Allottee (Full refund / mandate released)",
-      estimatedGain: 0,
-      liveVerified: false
-    };
-  }
+  // If no live registrar API without captcha is available, do not fabricate results!
+  return {
+    status: "Pending Verification",
+    sharesApplied: lot,
+    sharesAllotted: 0,
+    lotsAllotted: 0,
+    category: "Retail (RII)",
+    appNo: null,
+    message: "Requires official registrar verification (Captcha protected)",
+    estimatedGain: 0,
+    liveVerified: false
+  };
 }

@@ -73,6 +73,22 @@ class GlobalErrorBoundary extends Component {
             <p style={{ fontSize: "13px", color: "#8EA1B7", margin: 0, lineHeight: 1.6 }}>
               A temporary display error occurred. Click below to reset state and reload the platform.
             </p>
+            {this.state.error && (
+              <pre style={{
+                fontSize: "11px",
+                color: "#f87171",
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                padding: "10px 14px",
+                borderRadius: "10px",
+                maxWidth: "100%",
+                overflowX: "auto",
+                textAlign: "left",
+                whiteSpace: "pre-wrap",
+                margin: "4px 0"
+              }}>
+                {this.state.error.toString()}
+              </pre>
+            )}
             <button
               onClick={() => {
                 try { localStorage.clear(); } catch { /* ignore */ }

@@ -5264,28 +5264,29 @@ function getRegistrarUrl(name) {
 /* =====================================================================
    FAMILY PAN & MULTI-ALLOTMENT ENGINE
 ===================================================================== */
-const SAMPLE_FAMILY_PANS = [
-  { id: "pan-1", label: "Self", name: "Primary Account", pan: "AAACB1234F", boid: "1208160012345678" },
-  { id: "pan-2", label: "Spouse", name: "Family Member", pan: "BNZPD5678K", boid: "" },
-  { id: "pan-3", label: "Father", name: "Senior Member", pan: "CPYPS9012L", boid: "" }
-];
-
 function useFamilyPans() {
   const [pans, setPans] = useState(() => {
     try {
       const stored = localStorage.getItem("calmcapital_family_pans");
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed)) {
+          // Filter out legacy dummy sample PANs so user only sees their own real PANs
+          const realOnly = parsed.filter(
+            (p) => p && p.pan && p.pan !== "AAACB1234F" && p.pan !== "BNZPD5678K" && p.pan !== "CPYPS9012L"
+          );
+          return realOnly;
+        }
       }
     } catch (e) {
       console.error(e);
     }
-    return SAMPLE_FAMILY_PANS;
+    return [];
   });
 
   const [masked, setMasked] = useState(true);
 
+  // Persist to localStorage
   useEffect(() => {
     try {
       localStorage.setItem("calmcapital_family_pans", JSON.stringify(pans));
@@ -5295,40 +5296,62 @@ function useFamilyPans() {
   }, [pans]);
 
   const addPan = (item) => {
-    setPans((prev) => [...prev, { ...item, id: "pan-" + Date.now() }]);
+    const cleanPan = item.pan.trim().toUpperCase();
+    const cleanName = item.name ? item.name.trim() : "";
+    const cleanLabel = item.label || "Self";
+    setPans((prev) => [
+      ...prev,
+      {
+        id: "pan-" + Date.now(),
+        label: cleanLabel,
+        name: cleanName,
+        pan: cleanPan,
+        boid: item.boid ? item.boid.trim() : ""
+      },
+    ]);
   };
 
   const updatePan = (id, updated) => {
-    setPans((prev) => prev.map((p) => (p.id === id ? { ...p, ...updated } : p)));
+    const cleanPan = (updated.pan || "").trim().toUpperCase();
+    const cleanName = (updated.name || "").trim();
+    const cleanLabel = updated.label || "Self";
+
+    setPans((prev) =>
+      prev.map((p) =>
+        p.id === id
+          ? { ...p, ...updated, pan: cleanPan, name: cleanName, label: cleanLabel }
+          : p
+      )
+    );
   };
 
   const deletePan = (id) => {
     setPans((prev) => prev.filter((p) => p.id !== id));
   };
 
-  const resetPans = () => {
-    setPans(SAMPLE_FAMILY_PANS);
-  };
-
   const clearAllPans = () => {
     setPans([]);
   };
 
-  return { pans, addPan, updatePan, deletePan, resetPans, clearAllPans, masked, setMasked };
+  return {
+    pans,
+    addPan,
+    updatePan,
+    deletePan,
+    clearAllPans,
+    masked,
+    setMasked,
+  };
 }
 
 function useFamilyAllotments() {
   const [allotments, setAllotments] = useState(() => {
     try {
       const stored = localStorage.getItem("calmcapital_family_allotments");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed && typeof parsed === "object") return parsed;
-      }
-    } catch (e) {
-      console.error(e);
+      return stored ? JSON.parse(stored) : {};
+    } catch {
+      return {};
     }
-    return {};
   });
 
   useEffect(() => {
@@ -5339,20 +5362,34 @@ function useFamilyAllotments() {
     }
   }, [allotments]);
 
-  const setOutcome = (ipoId, panId, status, lots = 1) => {
-    const key = `${ipoId}_${panId}`;
-    setAllotments((prev) => ({
-      ...prev,
-      [key]: { status, lots, updatedAt: Date.now() }
-    }));
-  };
-
   const getOutcome = (ipoId, panId) => {
-    const key = `${ipoId}_${panId}`;
-    return allotments[key] || { status: "Applied", lots: 1 };
+    if (!ipoId || !panId || !allotments[ipoId]) return { status: "Not Checked", lots: 0 };
+    return allotments[ipoId][panId] || { status: "Not Checked", lots: 0 };
   };
 
-  return { allotments, setOutcome, getOutcome };
+  const setOutcome = (ipoId, panId, status, lots = 1) => {
+    if (!ipoId || !panId) return;
+    setAllotments((prev) => {
+      const ipoRecords = prev[ipoId] || {};
+      return {
+        ...prev,
+        [ipoId]: {
+          ...ipoRecords,
+          [panId]: {
+            status,
+            lots: Number(lots) || (status === "Allotted" ? 1 : 0),
+            updatedAt: new Date().toISOString(),
+          },
+        },
+      };
+    });
+  };
+
+  return {
+    allotments,
+    getOutcome,
+    setOutcome,
+  };
 }
 
 function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
@@ -5439,9 +5476,14 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
               <Users size={20} />
             </div>
             <div>
-              <h2 className="text-base font-bold text-slate-850 dark:text-white tracking-tight">Family PAN Vault</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-bold text-slate-850 dark:text-white tracking-tight">Family PAN Vault</h2>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-bold">
+                  Saved Locally
+                </span>
+              </div>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                Save family PANs for instant 1-click batch allotment checking.
+                Save family PANs securely in your browser to easily check allotment across all members.
               </p>
             </div>
           </div>
@@ -5458,7 +5500,7 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
           {/* Add / Edit Form */}
           <form onSubmit={handleSave} className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-150 dark:border-white/5 space-y-4">
             <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center justify-between">
-              <span>{editingId ? "Edit Family Member PAN" : "Add Family Member PAN"}</span>
+              <span>{editingId ? "Edit Family Member PAN" : "+ Add Family Member PAN"}</span>
               {editingId && (
                 <button type="button" onClick={cancelEdit} className="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer border-0 bg-transparent">
                   Cancel Edit
@@ -5557,80 +5599,78 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-slate-850 dark:text-white uppercase tracking-wider">
-                Saved Profiles ({familyPans.pans.length})
+                Saved Family Profiles ({familyPans.pans.length})
               </h3>
-              <div className="flex items-center gap-2">
+              {familyPans.pans.length > 0 && (
                 <button
                   type="button"
-                  onClick={familyPans.resetPans}
-                  className="text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer border-0 bg-transparent"
+                  onClick={familyPans.clearAllPans}
+                  className="text-[11px] text-rose-500 hover:underline cursor-pointer border-0 bg-transparent"
                 >
-                  Reset to Samples
+                  Clear All
                 </button>
-                {familyPans.pans.length > 0 && (
-                  <>
-                    <span className="text-slate-300 dark:text-slate-700">•</span>
-                    <button
-                      type="button"
-                      onClick={familyPans.clearAllPans}
-                      className="text-[11px] text-rose-500 hover:underline cursor-pointer border-0 bg-transparent"
-                    >
-                      Clear All
-                    </button>
-                  </>
-                )}
+              )}
+            </div>
+
+            {familyPans.pans.length === 0 ? (
+              <div className="p-8 text-center border border-dashed border-slate-200 dark:border-white/10 rounded-2xl space-y-2 bg-slate-50/50 dark:bg-white/[0.01]">
+                <Users size={28} className="mx-auto text-slate-400" />
+                <p className="text-xs font-bold text-slate-700 dark:text-slate-300">No PANs Saved Yet</p>
+                <p className="text-[11px] text-slate-400 max-w-sm mx-auto">
+                  Use the form above to add your PAN and family member PANs (Self, Mother, Father, Spouse).
+                </p>
               </div>
-            </div>
-
-            <div className="space-y-2">
-              {familyPans.pans.map((p) => (
-                <div
-                  key={p.id}
-                  className="p-3.5 rounded-xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] flex items-center justify-between gap-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-xl bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center shrink-0">
-                      {p.label ? p.label.slice(0, 2).toUpperCase() : "FA"}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-800 dark:text-white">{p.label}</span>
-                        {p.name && <span className="text-[11px] text-slate-400 font-medium">({p.name})</span>}
+            ) : (
+              <div className="space-y-2">
+                {familyPans.pans.map((p) => (
+                  <div
+                    key={p.id}
+                    className="p-3.5 rounded-xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] flex items-center justify-between gap-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-slate-200 dark:bg-white/10 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center justify-center shrink-0">
+                        {p.label ? p.label.slice(0, 2).toUpperCase() : "FA"}
                       </div>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">
-                          {p.pan}
-                        </span>
-                        {p.boid && (
-                          <span className="text-[10px] text-slate-400 font-mono">
-                            BOID: {p.boid}
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-slate-850 dark:text-white">{p.label}</span>
+                          {p.name && <span className="text-[11px] text-slate-400 font-medium">({p.name})</span>}
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="font-mono text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                            {p.pan}
                           </span>
-                        )}
+                          {p.boid && (
+                            <span className="text-[10px] text-slate-400 font-mono">
+                              BOID: {p.boid}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      title="Edit"
-                      onClick={() => startEdit(p)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 cursor-pointer border-0 bg-transparent"
-                    >
-                      <Edit2 size={13} />
-                    </button>
-                    <button
-                      type="button"
-                      title="Delete"
-                      onClick={() => familyPans.deletePan(p.id)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 cursor-pointer border-0 bg-transparent"
-                    >
-                      <Trash2 size={13} />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        title="Edit"
+                        onClick={() => startEdit(p)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-white/10 cursor-pointer border-0 bg-transparent"
+                      >
+                        <Edit2 size={13} />
+                      </button>
+                      <button
+                        type="button"
+                        title="Delete"
+                        onClick={() => familyPans.deletePan(p.id)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 cursor-pointer border-0 bg-transparent"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -5638,7 +5678,7 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
         <div className="p-4 px-6 border-t border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-[11px] text-slate-400 dark:text-slate-500">
             <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
-            <span>Encrypted local browser storage. Never shared.</span>
+            <span>Private & stored locally in your browser. No login required.</span>
           </div>
           <button
             type="button"
@@ -5656,11 +5696,7 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
 function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, onOpenPanManager, dark }) {
   const [copiedId, setCopiedId] = useState(null);
   const [showMasked, setShowMasked] = useState(true);
-  const [checking, setChecking] = useState(false);
-  const [lastCheckedAt, setLastCheckedAt] = useState(null);
-  const [detailedResults, setDetailedResults] = useState({});
-  const [checkError, setCheckError] = useState(null);
-  const registrarUrl = getRegistrarUrl(ipo?.registrar);
+  const registrarUrl = getRegistrarUrl(ipo?.registrar) || "https://www.bseindia.com/investors/appli_check.aspx";
 
   const handleCopy = (id, text) => {
     if (navigator?.clipboard?.writeText) {
@@ -5670,72 +5706,21 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  // Direct automated multi-PAN allotment check (like Narada)
-  const runDirectBatchCheck = useCallback(async () => {
-    if (!ipo || !familyPans?.pans || familyPans.pans.length === 0) return;
-    setChecking(true);
-    setCheckError(null);
-
-    try {
-      const res = await fetch("/api/check-allotment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ipoId: ipo.id,
-          company: ipo.company || ipo.name,
-          registrar: ipo.registrar,
-          lotSize: ipo.lot || ipo.lotSize || 1,
-          gmp: ipo.gmp || 0,
-          pans: familyPans.pans
-        })
-      });
-
-      const data = await res.json();
-      if (res.ok && data.results) {
-        const resMap = {};
-        data.results.forEach((item) => {
-          resMap[item.id] = item;
-          // Persist outcome in local family ledger
-          familyAllotments?.setOutcome?.(
-            ipo.id,
-            item.id,
-            item.status,
-            item.lotsAllotted || (item.status === "Allotted" ? 1 : 0)
-          );
-        });
-        setDetailedResults(resMap);
-        setLastCheckedAt(new Date());
-      } else {
-        setCheckError(data.error || "Could not query registrar servers. Please try again.");
-      }
-    } catch (err) {
-      console.error("Direct allotment check failed:", err);
-      setCheckError("Unable to reach allotment server. Please check your network connection.");
-    } finally {
-      setChecking(false);
-    }
-  }, [ipo, familyPans?.pans, familyAllotments]);
-
-  // Auto-run direct check when modal opens if not checked yet
-  useEffect(() => {
-    if (ipo && familyPans?.pans?.length > 0 && !lastCheckedAt) {
-      runDirectBatchCheck();
-    }
-  }, [ipo?.id, runDirectBatchCheck, familyPans?.pans?.length, lastCheckedAt]);
-
   if (!ipo) return null;
 
-  const currentOutcomes = (familyPans?.pans || []).map((p) => {
-    const outcome = familyAllotments?.getOutcome?.(ipo.id, p.id) || { status: "Applied", lots: 1 };
-    const apiDetail = detailedResults[p.id];
+  const pansList = familyPans?.pans || [];
+
+  const currentOutcomes = pansList.map((p) => {
+    const outcome = familyAllotments?.getOutcome?.(ipo.id, p.id) || { status: "Not Checked", lots: 0 };
     return {
       pan: p,
-      outcome,
-      detail: apiDetail
+      outcome
     };
   });
 
-  const totalAllottedLots = currentOutcomes.filter(o => o.outcome?.status === "Allotted").reduce((sum, o) => sum + (o.outcome?.lots || 1), 0);
+  const totalAllottedLots = currentOutcomes
+    .filter(o => o.outcome?.status === "Allotted")
+    .reduce((sum, o) => sum + (Number(o.outcome?.lots) || 1), 0);
   const totalApplied = currentOutcomes.length;
   const estimatedProfitPerLot = (ipo.gmp && (ipo.lot || ipo.lotSize)) ? (ipo.gmp * (ipo.lot || ipo.lotSize)) : 0;
   const totalEstProfit = totalAllottedLots * estimatedProfitPerLot;
@@ -5773,223 +5758,215 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
 
         {/* Content Body */}
         <div className="p-6 overflow-y-auto space-y-5 flex-1">
-          {/* Hero Action: Direct One-Click Batch Allotment Check Button */}
-          <div className="space-y-2">
-            <button
-              type="button"
-              disabled={checking || familyPans.pans.length === 0}
-              onClick={runDirectBatchCheck}
-              className="w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-[#1c9bda] hover:opacity-95 text-white text-xs sm:text-sm font-extrabold py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 transition-all cursor-pointer border-0 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {checking ? (
-                <>
-                  <RefreshCw size={16} className="animate-spin text-white shrink-0" />
-                  <span>Checking {familyPans.pans.length} PANs on Registrar Servers...</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles size={16} className="text-amber-300 shrink-0" />
-                  <span>Check Allotment For All ({familyPans.pans.length}) Saved PANs</span>
-                </>
-              )}
-            </button>
-            <div className="flex items-center justify-between text-[11px] px-1 text-slate-500 dark:text-slate-400">
-              <span>Direct automated verification • No captcha typing needed</span>
-              {lastCheckedAt && (
-                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
-                  ✓ Checked at {lastCheckedAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}
-                </span>
-              )}
+          {/* Official Registrar Check Banner */}
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 via-emerald-500/10 to-teal-500/10 border border-blue-500/20 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={16} className="text-blue-500 shrink-0" />
+                  <span className="text-xs font-bold text-slate-850 dark:text-white">
+                    Official Registrar: {ipo.registrar || "Official Registrar"}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Registrars require captcha verification. Open the official portal and use the 1-click <strong>Copy PAN</strong> buttons below.
+                </p>
+              </div>
+
+              <a
+                href={registrarUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 bg-[#1c9bda] hover:bg-[#1c9bda]/90 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm transition-all shrink-0 cursor-pointer no-underline"
+              >
+                <span>Open {ipo.registrar ? ipo.registrar.split(" ")[0] : "Registrar"} Portal</span>
+                <ExternalLink size={13} />
+              </a>
             </div>
           </div>
 
-          {checkError && (
-            <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 text-xs font-semibold flex items-center gap-2">
-              <AlertTriangle size={15} className="shrink-0" />
-              <span>{checkError}</span>
-            </div>
-          )}
-
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-150 dark:border-white/5 text-center">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Family Applications</span>
-              <span className="text-lg font-black text-slate-800 dark:text-white mt-0.5 block">{totalApplied}</span>
-            </div>
-            <div className="p-3.5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 text-center">
-              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">Lots Allotted</span>
-              <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">{totalAllottedLots}</span>
-            </div>
-            <div className="p-3.5 rounded-2xl bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 text-center">
-              <span className="text-[10px] font-bold text-[#1c9bda] dark:text-[#52b1e4] uppercase tracking-wider block">Est. Listing Gain</span>
-              <span className="text-lg font-black text-slate-800 dark:text-white mt-0.5 block">
-                {totalEstProfit > 0 ? `+${rupee(totalEstProfit)}` : "—"}
-              </span>
-            </div>
-          </div>
-
-          {/* Family Members Allotment Results List */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
-                <Users size={14} className="text-[#1c9bda]" />
-                Allotment Status by Member ({familyPans.pans.length})
-              </h3>
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowMasked(!showMasked)}
-                  className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-white flex items-center gap-1 cursor-pointer border-0 bg-transparent"
-                >
-                  {showMasked ? <Eye size={12} /> : <EyeOff size={12} />}
-                  {showMasked ? "Reveal PANs" : "Mask PANs"}
-                </button>
-                <button
-                  type="button"
-                  onClick={onOpenPanManager}
-                  className="text-[11px] font-bold text-[#1c9bda] hover:underline cursor-pointer border-0 bg-transparent"
-                >
-                  + Add / Edit PANs
-                </button>
+          {/* If No Saved PANs: Clean Empty State with Add CTA */}
+          {pansList.length === 0 ? (
+            <div className="py-10 px-6 text-center space-y-3.5 bg-slate-50/50 dark:bg-white/[0.015] border border-dashed border-slate-200 dark:border-white/10 rounded-3xl">
+              <div className="w-14 h-14 mx-auto rounded-2xl bg-[#1c9bda]/10 text-[#1c9bda] flex items-center justify-center">
+                <Users size={28} />
               </div>
-            </div>
-
-            {familyPans.pans.length === 0 ? (
-              <div className="p-8 text-center border border-dashed border-slate-200 dark:border-white/10 rounded-2xl space-y-2">
-                <CreditCard size={28} className="mx-auto text-slate-400" />
-                <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">No saved family PANs yet</p>
-                <p className="text-[11px] text-slate-400">Save family PANs to check all allotments in one click.</p>
-                <button
-                  type="button"
-                  onClick={onOpenPanManager}
-                  className="mt-2 px-4 py-2 rounded-xl bg-[#1c9bda] text-white text-xs font-bold cursor-pointer border-0"
-                >
-                  Add Family PAN
-                </button>
+              <div className="space-y-1 max-w-sm mx-auto">
+                <h3 className="text-sm font-bold text-slate-850 dark:text-white">
+                  No Family PANs Saved Yet
+                </h3>
+                <p className="text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+                  Save your PAN card and family members (Self, Mother, Father, Spouse) to check and track all allotments in one place.
+                </p>
               </div>
-            ) : (
-              <div className="space-y-2.5">
-                {currentOutcomes.map(({ pan: p, outcome, detail }) => {
-                  const isCopied = copiedId === p.id;
-                  const displayPan = showMasked 
-                    ? p.pan.slice(0, 3) + "••••" + p.pan.slice(-2)
-                    : p.pan;
-
-                  const isAllotted = outcome.status === "Allotted";
-                  const isNotAllotted = outcome.status === "Not Allotted";
-
-                  return (
-                    <div 
-                      key={p.id}
-                      className={`p-4 rounded-2xl border transition-all ${
-                        isAllotted
-                          ? "border-emerald-500/30 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.06]"
-                          : isNotAllotted
-                          ? "border-rose-500/20 bg-rose-500/[0.02] dark:bg-rose-500/[0.03]"
-                          : "border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.015]"
-                      } flex flex-col sm:flex-row sm:items-center justify-between gap-3`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-xs shrink-0 ${
-                          isAllotted
-                            ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20"
-                            : isNotAllotted
-                            ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
-                            : "bg-[#1c9bda]/10 text-[#1c9bda] dark:bg-[#1c9bda]/20 dark:text-[#52b1e4]"
-                        }`}>
-                          {isAllotted ? "✓" : (p.label ? p.label.slice(0, 2).toUpperCase() : "FA")}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-bold text-slate-850 dark:text-white">{p.label}</span>
-                            {p.name && <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">({p.name})</span>}
-                            <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300 tracking-wider bg-white dark:bg-white/5 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-white/10">
-                              {displayPan}
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400 flex-wrap">
-                            {detail?.appNo && (
-                              <span>App #{detail.appNo}</span>
-                            )}
-                            {detail?.sharesApplied && (
-                              <span>• Applied: {detail.sharesApplied} shares</span>
-                            )}
-                            {detail?.message && (
-                              <span className={isAllotted ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-slate-400"}>
-                                • {detail.message}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Result Badge / Status */}
-                      <div className="flex items-center gap-2 self-end sm:self-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-white/5">
-                        {isAllotted ? (
-                          <div className="text-right">
-                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-xl bg-emerald-500 text-white text-xs font-black shadow-sm">
-                              ✓ ALLOTTED
-                            </span>
-                            {detail?.estimatedGain > 0 && (
-                              <span className="block text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
-                                +{rupee(detail.estimatedGain)} est. gain
-                              </span>
-                            )}
-                          </div>
-                        ) : isNotAllotted ? (
-                          <div className="text-right">
-                            <span className="inline-flex items-center px-3 py-1 rounded-xl bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/25 text-xs font-extrabold">
-                              NOT ALLOTTED
-                            </span>
-                            <span className="block text-[10px] text-slate-400 mt-0.5">
-                              Refund in process
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="inline-flex items-center px-3 py-1 rounded-xl bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300 text-xs font-bold">
-                            PENDING
-                          </span>
-                        )}
-
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(p.id, p.pan)}
-                          title="Copy PAN"
-                          className="p-2 rounded-xl text-slate-400 hover:text-[#1c9bda] hover:bg-slate-100 dark:hover:bg-white/5 transition-all cursor-pointer border-0 bg-transparent"
-                        >
-                          {isCopied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Registrar Official Portal Fallback Link */}
-          {registrarUrl && (
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.015] border border-slate-150 dark:border-white/5 flex items-center justify-between gap-3 text-xs">
-              <span className="text-slate-500 dark:text-slate-400">
-                Want to cross-check directly on {ipo.registrar || "registrar"} website?
-              </span>
               <button
                 type="button"
-                onClick={() => window.open(registrarUrl, "_blank", "noopener,noreferrer")}
-                className="text-[#1c9bda] hover:underline font-bold flex items-center gap-1 cursor-pointer border-0 bg-transparent shrink-0"
+                onClick={onOpenPanManager}
+                className="inline-flex items-center gap-1.5 bg-[#1c9bda] hover:bg-[#1c9bda]/90 text-white text-xs font-bold py-2.5 px-5 rounded-xl shadow-md transition-all cursor-pointer border-0"
               >
-                Open Official Portal
-                <ExternalLink size={12} />
+                <PlusCircle size={15} />
+                <span>+ Add Family PANs</span>
               </button>
             </div>
+          ) : (
+            <>
+              {/* Quick Metrics Bar */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-150 dark:border-white/5 text-center">
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Family Applications</span>
+                  <span className="text-lg font-black text-slate-800 dark:text-white mt-0.5 block">{totalApplied}</span>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 text-center">
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider block">Lots Allotted</span>
+                  <span className="text-lg font-black text-emerald-600 dark:text-emerald-400 mt-0.5 block">{totalAllottedLots}</span>
+                </div>
+                <div className="p-3.5 rounded-2xl bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/20 text-center">
+                  <span className="text-[10px] font-bold text-[#1c9bda] dark:text-[#52b1e4] uppercase tracking-wider block">Est. Listing Gain</span>
+                  <span className="text-lg font-black text-slate-800 dark:text-white mt-0.5 block">
+                    {totalEstProfit > 0 ? `+${rupee(totalEstProfit)}` : "—"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Family Members Allotment Results List */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xs font-bold text-slate-850 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                    <Users size={14} className="text-[#1c9bda]" />
+                    Family Members ({pansList.length})
+                  </h3>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowMasked(!showMasked)}
+                      className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-850 dark:hover:text-white flex items-center gap-1 cursor-pointer border-0 bg-transparent"
+                    >
+                      {showMasked ? <Eye size={12} /> : <EyeOff size={12} />}
+                      {showMasked ? "Reveal PANs" : "Mask PANs"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onOpenPanManager}
+                      className="text-[11px] font-bold text-[#1c9bda] hover:underline cursor-pointer border-0 bg-transparent"
+                    >
+                      + Manage PANs
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5">
+                  {currentOutcomes.map(({ pan: p, outcome }) => {
+                    const isCopied = copiedId === p.id;
+                    const displayPan = showMasked 
+                      ? p.pan.slice(0, 3) + "••••" + p.pan.slice(-2)
+                      : p.pan;
+
+                    const isAllotted = outcome.status === "Allotted";
+                    const isNotAllotted = outcome.status === "Not Allotted";
+                    const isNotChecked = !isAllotted && !isNotAllotted;
+                    const lots = outcome.lots || 1;
+                    const gain = isAllotted ? lots * estimatedProfitPerLot : 0;
+
+                    return (
+                      <div 
+                        key={p.id}
+                        className={`p-4 rounded-2xl border transition-all ${
+                          isAllotted
+                            ? "border-emerald-500/30 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.06]"
+                            : isNotAllotted
+                            ? "border-rose-500/20 bg-rose-500/[0.02] dark:bg-rose-500/[0.03]"
+                            : "border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.015]"
+                        } flex flex-col sm:flex-row sm:items-center justify-between gap-3`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-bold text-xs shrink-0 ${
+                            isAllotted
+                              ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20"
+                              : isNotAllotted
+                              ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+                              : "bg-[#1c9bda]/10 text-[#1c9bda] dark:bg-[#1c9bda]/20 dark:text-[#52b1e4]"
+                          }`}>
+                            {isAllotted ? "✓" : (p.label ? p.label.slice(0, 2).toUpperCase() : "FA")}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-xs font-bold text-slate-850 dark:text-white">{p.label}</span>
+                              {p.name && <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">({p.name})</span>}
+                              <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300 tracking-wider bg-white dark:bg-white/5 px-2 py-0.5 rounded-lg border border-slate-200 dark:border-white/10">
+                                {displayPan}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleCopy(p.id, p.pan)}
+                                className={`px-2 py-0.5 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer border ${
+                                  isCopied
+                                    ? "bg-emerald-500 text-white border-emerald-500"
+                                    : "bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:border-[#1c9bda]"
+                                }`}
+                              >
+                                {isCopied ? <Check size={11} /> : <Copy size={11} />}
+                                <span>{isCopied ? "Copied!" : "Copy PAN"}</span>
+                              </button>
+                            </div>
+
+                            <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                              {isAllotted && (
+                                <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                                  Allotted {lots} Lot ({lots * (ipo.lot || ipo.lotSize || 1)} Shares){gain > 0 ? ` • +${rupee(gain)} est. gain` : ""}
+                                </span>
+                              )}
+                              {isNotAllotted && (
+                                <span className="text-rose-500 font-medium">
+                                  Not Allotted • Full refund / mandate released
+                                </span>
+                              )}
+                              {isNotChecked && (
+                                <span className="text-slate-400">
+                                  Check on registrar and record result below:
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Accurate Outcome Selector */}
+                        <div className="flex items-center gap-1.5 self-end sm:self-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-white/5">
+                          <button
+                            type="button"
+                            onClick={() => familyAllotments?.setOutcome?.(ipo.id, p.id, "Allotted", lots || 1)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                              isAllotted
+                                ? "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20"
+                                : "bg-white dark:bg-[#121D2D] text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-emerald-500 hover:text-emerald-500"
+                            }`}
+                          >
+                            ✓ Allotted
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => familyAllotments?.setOutcome?.(ipo.id, p.id, "Not Allotted", 0)}
+                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                              isNotAllotted
+                                ? "bg-rose-600 text-white border-rose-600 shadow-md shadow-rose-600/20"
+                                : "bg-white dark:bg-[#121D2D] text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-rose-500 hover:text-rose-500"
+                            }`}
+                          >
+                            ✕ Not Allotted
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
           )}
         </div>
 
         {/* Footer */}
         <div className="p-4 px-6 border-t border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] flex items-center justify-between">
           <p className="text-[11px] text-slate-400 dark:text-slate-500">
-            Automated verification results are saved to your local family ledger.
+            Results are saved locally in your browser ledger.
           </p>
           <button
             type="button"
