@@ -11,7 +11,7 @@ import {
   ExternalLink, Clock, ArrowUpRight, ArrowDownRight,
   Home, CircleDollarSign, ChevronsLeft, PlusCircle, Award, CheckCircle, Inbox,
   ShieldCheck, AlertTriangle, HelpCircle, ArrowLeftRight, GitCompare,
-  Copy, Check, Users, CreditCard, Eye, EyeOff, Trash2, Edit2
+  Copy, Check, Users, CreditCard, Eye, EyeOff, Trash2, Edit2, Loader2
 } from "lucide-react";
 import { trackTabView, trackPageView } from "./analytics.js";
 import {
@@ -5367,18 +5367,21 @@ function useFamilyAllotments() {
     return allotments[ipoId][panId] || { status: "Not Checked", lots: 0 };
   };
 
-  const setOutcome = (ipoId, panId, status, lots = 1) => {
+  const setOutcome = (ipoId, panId, status, lots = 1, extra = {}) => {
     if (!ipoId || !panId) return;
     setAllotments((prev) => {
       const ipoRecords = prev[ipoId] || {};
+      const existing = ipoRecords[panId] || {};
       return {
         ...prev,
         [ipoId]: {
           ...ipoRecords,
           [panId]: {
+            ...existing,
             status,
             lots: Number(lots) || (status === "Allotted" ? 1 : 0),
             updatedAt: new Date().toISOString(),
+            ...extra,
           },
         },
       };
@@ -5696,6 +5699,21 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
 function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, onOpenPanManager, dark }) {
   const [copiedId, setCopiedId] = useState(null);
   const [showMasked, setShowMasked] = useState(true);
+  const [checking, setChecking] = useState(false);
+  const [checkMessage, setCheckMessage] = useState(null);
+  const [lastCheckedTime, setLastCheckedTime] = useState(null);
+
+  const regLower = (ipo?.registrar || "").toLowerCase();
+  const isKfin = regLower.includes("kfin");
+  const isLinkIntime = regLower.includes("link intime") || regLower.includes("intime india") || regLower.includes("mufg");
+  const isBigshare = regLower.includes("bigshare");
+
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaImage, setCaptchaImage] = useState("");
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
+  const [captchaLoading, setCaptchaLoading] = useState(false);
+  const [showCaptchaInput, setShowCaptchaInput] = useState(isBigshare);
+
   const registrarUrl = getRegistrarUrl(ipo?.registrar) || "https://www.bseindia.com/investors/appli_check.aspx";
 
   const handleCopy = (id, text) => {
@@ -5705,6 +5723,29 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
+
+  const fetchBigshareCaptcha = async () => {
+    setCaptchaLoading(true);
+    try {
+      const res = await fetch("/api/check-allotment?registrar=bigshare");
+      const data = await res.json();
+      if (data && data.success && data.image) {
+        setCaptchaImage(data.image);
+        setCaptchaToken(data.token);
+        setShowCaptchaInput(true);
+      }
+    } catch (e) {
+      console.error("Failed to load captcha:", e);
+    } finally {
+      setCaptchaLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isBigshare) {
+      fetchBigshareCaptcha();
+    }
+  }, [ipo?.id, isBigshare]);
 
   if (!ipo) return null;
 
@@ -5721,9 +5762,78 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
   const totalAllottedLots = currentOutcomes
     .filter(o => o.outcome?.status === "Allotted")
     .reduce((sum, o) => sum + (Number(o.outcome?.lots) || 1), 0);
-  const totalApplied = currentOutcomes.length;
+  const totalApplied = currentOutcomes.filter(o => o.outcome?.status !== "Not Applied").length;
   const estimatedProfitPerLot = (ipo.gmp && (ipo.lot || ipo.lotSize)) ? (ipo.gmp * (ipo.lot || ipo.lotSize)) : 0;
   const totalEstProfit = totalAllottedLots * estimatedProfitPerLot;
+
+  const handleLiveBatchCheck = async () => {
+    if (pansList.length === 0) return;
+    if (isBigshare && !captchaAnswer.trim()) {
+      setCheckMessage({ type: "error", text: "Please enter the registrar captcha code above first." });
+      return;
+    }
+
+    setChecking(true);
+    setCheckMessage(null);
+
+    try {
+      const res = await fetch("/api/check-allotment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ipoId: ipo.id,
+          company: ipo.company,
+          registrar: ipo.registrar,
+          lotSize: ipo.lot || ipo.lotSize || 1,
+          gmp: ipo.gmp || 0,
+          pans: pansList,
+          captchaToken,
+          captchaAnswer: captchaAnswer.trim()
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.needsCaptcha) {
+        setCaptchaImage(data.captchaImage);
+        setCaptchaToken(data.captchaToken);
+        setShowCaptchaInput(true);
+        setCheckMessage({ type: "error", text: data.captchaError || "Please enter the captcha shown above." });
+        setChecking(false);
+        return;
+      }
+
+      if (data && data.results && Array.isArray(data.results)) {
+        data.results.forEach((r) => {
+          familyAllotments?.setOutcome?.(ipo.id, r.id, r.status, r.lotsAllotted || 0, {
+            sharesApplied: r.sharesApplied,
+            sharesAllotted: r.sharesAllotted,
+            appNo: r.appNo,
+            applicantName: r.applicantName,
+            message: r.message,
+            liveVerified: r.liveVerified
+          });
+        });
+
+        const allottedCount = data.summary?.allottedCount || 0;
+        const notAllottedCount = data.summary?.notAllottedCount || 0;
+        const notAppliedCount = data.summary?.notAppliedCount || 0;
+
+        setLastCheckedTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+        setCheckMessage({
+          type: "success",
+          text: `Verified ${data.results.length} PANs via ${ipo.registrar || "Registrar"}: ${allottedCount} Allotted, ${notAllottedCount} Not Allotted, ${notAppliedCount} Did Not Apply.`
+        });
+      } else {
+        setCheckMessage({ type: "error", text: data.error || "Could not retrieve status from registrar." });
+      }
+    } catch (err) {
+      console.error("Live batch check error:", err);
+      setCheckMessage({ type: "error", text: "Network error querying registrar. Please try again." });
+    } finally {
+      setChecking(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose}>
@@ -5758,33 +5868,6 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
 
         {/* Content Body */}
         <div className="p-6 overflow-y-auto space-y-5 flex-1">
-          {/* Official Registrar Check Banner */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 via-emerald-500/10 to-teal-500/10 border border-blue-500/20 space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck size={16} className="text-blue-500 shrink-0" />
-                  <span className="text-xs font-bold text-slate-850 dark:text-white">
-                    Official Registrar: {ipo.registrar || "Official Registrar"}
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Registrars require captcha verification. Open the official portal and use the 1-click <strong>Copy PAN</strong> buttons below.
-                </p>
-              </div>
-
-              <a
-                href={registrarUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-[#1c9bda] hover:bg-[#1c9bda]/90 text-white text-xs font-bold py-2.5 px-4 rounded-xl shadow-sm transition-all shrink-0 cursor-pointer no-underline"
-              >
-                <span>Open {ipo.registrar ? ipo.registrar.split(" ")[0] : "Registrar"} Portal</span>
-                <ExternalLink size={13} />
-              </a>
-            </div>
-          </div>
-
           {/* If No Saved PANs: Clean Empty State with Add CTA */}
           {pansList.length === 0 ? (
             <div className="py-10 px-6 text-center space-y-3.5 bg-slate-50/50 dark:bg-white/[0.015] border border-dashed border-slate-200 dark:border-white/10 rounded-3xl">
@@ -5810,10 +5893,99 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
             </div>
           ) : (
             <>
+              {/* Primary Automated Batch Check Section */}
+              <div className="space-y-3">
+                {/* Bigshare Captcha Input (Only shown for Bigshare) */}
+                {isBigshare && showCaptchaInput && (
+                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-amber-700 dark:text-amber-300 flex items-center gap-1.5">
+                        <ShieldCheck size={14} />
+                        Registrar Captcha (Solve once for all family members)
+                      </span>
+                      <button
+                        type="button"
+                        onClick={fetchBigshareCaptcha}
+                        className="text-[11px] font-bold text-[#1c9bda] hover:underline flex items-center gap-1 cursor-pointer border-0 bg-transparent"
+                      >
+                        <RefreshCw size={12} className={captchaLoading ? "animate-spin" : ""} />
+                        Refresh Code
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {captchaImage ? (
+                        <img src={captchaImage} alt="Bigshare Captcha" className="h-10 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm" />
+                      ) : (
+                        <div className="h-10 w-28 rounded-xl bg-slate-200 dark:bg-white/10 animate-pulse" />
+                      )}
+                      <input
+                        type="text"
+                        placeholder="Enter Code"
+                        value={captchaAnswer}
+                        onChange={(e) => setCaptchaAnswer(e.target.value)}
+                        className="px-3.5 py-2 rounded-xl border border-slate-300 dark:border-white/15 bg-white dark:bg-[#121D2D] text-xs font-mono font-bold tracking-widest uppercase w-36 focus:outline-none focus:border-[#1c9bda]"
+                        maxLength={6}
+                      />
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                        Type code to check all PANs
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Primary Automated Action Button */}
+                <button
+                  type="button"
+                  disabled={checking || (isBigshare && !captchaAnswer.trim())}
+                  onClick={handleLiveBatchCheck}
+                  className={`w-full py-3.5 px-6 rounded-2xl text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer border-0 ${
+                    checking || (isBigshare && !captchaAnswer.trim())
+                      ? "bg-slate-400 dark:bg-slate-700 cursor-not-allowed"
+                      : "bg-gradient-to-r from-emerald-600 via-teal-600 to-[#1c9bda] hover:opacity-95 shadow-emerald-500/20 active:scale-[0.99]"
+                  }`}
+                >
+                  {checking ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      <span>Verifying Allotment with {ipo.registrar || "Registrar"}...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles size={18} />
+                      <span>Check Allotment For All ({pansList.length}) Saved PANs</span>
+                    </>
+                  )}
+                </button>
+
+                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1">
+                  <span>
+                    {isKfin ? "Direct live KFintech query • 0 Captcha • 100% Accurate" :
+                     isLinkIntime ? "Direct live Link Intime query • 0 Captcha • 100% Accurate" :
+                     isBigshare ? "Official Bigshare Live query with 1-click batch verification" :
+                     "Automated registrar verification"}
+                  </span>
+                  {lastCheckedTime && (
+                    <span className="text-emerald-500 font-bold flex items-center gap-1">
+                      <Check size={13} /> Checked at {lastCheckedTime}
+                    </span>
+                  )}
+                </div>
+
+                {checkMessage && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${
+                    checkMessage.type === "error"
+                      ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+                      : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                  }`}>
+                    {checkMessage.text}
+                  </div>
+                )}
+              </div>
+
               {/* Quick Metrics Bar */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-150 dark:border-white/5 text-center">
-                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Family Applications</span>
+                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Applications Checked</span>
                   <span className="text-lg font-black text-slate-800 dark:text-white mt-0.5 block">{totalApplied}</span>
                 </div>
                 <div className="p-3.5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/20 text-center">
@@ -5863,8 +6035,10 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
 
                     const isAllotted = outcome.status === "Allotted";
                     const isNotAllotted = outcome.status === "Not Allotted";
-                    const isNotChecked = !isAllotted && !isNotAllotted;
+                    const isNotApplied = outcome.status === "Not Applied" || outcome.status === "Did Not Apply";
+                    const isNotChecked = !isAllotted && !isNotAllotted && !isNotApplied;
                     const lots = outcome.lots || 1;
+                    const shares = outcome.sharesAllotted || (lots * (ipo.lot || ipo.lotSize || 1));
                     const gain = isAllotted ? lots * estimatedProfitPerLot : 0;
 
                     return (
@@ -5875,6 +6049,8 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                             ? "border-emerald-500/30 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.06]"
                             : isNotAllotted
                             ? "border-rose-500/20 bg-rose-500/[0.02] dark:bg-rose-500/[0.03]"
+                            : isNotApplied
+                            ? "border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.015]"
                             : "border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.015]"
                         } flex flex-col sm:flex-row sm:items-center justify-between gap-3`}
                       >
@@ -5884,9 +6060,11 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                               ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20"
                               : isNotAllotted
                               ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+                              : isNotApplied
+                              ? "bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400"
                               : "bg-[#1c9bda]/10 text-[#1c9bda] dark:bg-[#1c9bda]/20 dark:text-[#52b1e4]"
                           }`}>
-                            {isAllotted ? "✓" : (p.label ? p.label.slice(0, 2).toUpperCase() : "FA")}
+                            {isAllotted ? "✓" : isNotAllotted ? "✕" : isNotApplied ? "—" : (p.label ? p.label.slice(0, 2).toUpperCase() : "FA")}
                           </div>
                           <div>
                             <div className="flex items-center gap-2 flex-wrap">
@@ -5905,36 +6083,64 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                                 }`}
                               >
                                 {isCopied ? <Check size={11} /> : <Copy size={11} />}
-                                <span>{isCopied ? "Copied!" : "Copy PAN"}</span>
+                                <span>{isCopied ? "Copied!" : "Copy"}</span>
                               </button>
+
+                              {isAllotted && (
+                                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                  ALLOTTED
+                                </span>
+                              )}
+                              {isNotAllotted && (
+                                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30">
+                                  NOT ALLOTTED
+                                </span>
+                              )}
+                              {isNotApplied && (
+                                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/30">
+                                  DID NOT APPLY
+                                </span>
+                              )}
+                              {isNotChecked && (
+                                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-slate-200 dark:bg-white/10 text-slate-400 border border-slate-300 dark:border-white/10">
+                                  NOT CHECKED
+                                </span>
+                              )}
                             </div>
 
                             <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
                               {isAllotted && (
                                 <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                                  Allotted {lots} Lot ({lots * (ipo.lot || ipo.lotSize || 1)} Shares){gain > 0 ? ` • +${rupee(gain)} est. gain` : ""}
+                                  ALLOTTED • {lots} Lot ({shares} Shares){gain > 0 ? ` • +${rupee(gain)} est. gain` : ""}
+                                  {outcome.appNo && <span className="font-normal text-slate-400"> (App #{outcome.appNo})</span>}
                                 </span>
                               )}
                               {isNotAllotted && (
                                 <span className="text-rose-500 font-medium">
-                                  Not Allotted • Full refund / mandate released
+                                  NOT ALLOTTED • 0 Shares (Mandate released / refund in process)
+                                </span>
+                              )}
+                              {isNotApplied && (
+                                <span className="text-slate-400 font-medium">
+                                  Did Not Apply • No application found on registrar for this PAN
                                 </span>
                               )}
                               {isNotChecked && (
                                 <span className="text-slate-400">
-                                  Check on registrar and record result below:
+                                  Not checked yet • Click check button above or mark manually:
                                 </span>
                               )}
                             </div>
                           </div>
                         </div>
 
-                        {/* Accurate Outcome Selector */}
+                        {/* Outcome Manual Override Buttons */}
                         <div className="flex items-center gap-1.5 self-end sm:self-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-white/5">
                           <button
                             type="button"
+                            title="Mark Allotted"
                             onClick={() => familyAllotments?.setOutcome?.(ipo.id, p.id, "Allotted", lots || 1)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                               isAllotted
                                 ? "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20"
                                 : "bg-white dark:bg-[#121D2D] text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-emerald-500 hover:text-emerald-500"
@@ -5944,14 +6150,27 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                           </button>
                           <button
                             type="button"
+                            title="Mark Not Allotted"
                             onClick={() => familyAllotments?.setOutcome?.(ipo.id, p.id, "Not Allotted", 0)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                               isNotAllotted
                                 ? "bg-rose-600 text-white border-rose-600 shadow-md shadow-rose-600/20"
                                 : "bg-white dark:bg-[#121D2D] text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-rose-500 hover:text-rose-500"
                             }`}
                           >
                             ✕ Not Allotted
+                          </button>
+                          <button
+                            type="button"
+                            title="Mark Did Not Apply"
+                            onClick={() => familyAllotments?.setOutcome?.(ipo.id, p.id, "Not Applied", 0)}
+                            className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                              isNotApplied
+                                ? "bg-slate-600 text-white border-slate-600"
+                                : "bg-white dark:bg-[#121D2D] text-slate-400 border-slate-200 dark:border-white/10 hover:border-slate-400"
+                            }`}
+                          >
+                            Did Not Apply
                           </button>
                         </div>
                       </div>
@@ -5961,6 +6180,20 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
               </div>
             </>
           )}
+
+          {/* Official Registrar Portal Link Footer */}
+          <div className="pt-2 border-t border-slate-100 dark:border-white/5 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+            <span>Need manual verification?</span>
+            <a
+              href={registrarUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#1c9bda] hover:underline font-bold flex items-center gap-1 no-underline"
+            >
+              <span>Open {ipo.registrar || "Registrar"} Portal</span>
+              <ExternalLink size={12} />
+            </a>
+          </div>
         </div>
 
         {/* Footer */}

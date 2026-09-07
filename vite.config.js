@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { exec } from "child_process";
 import path from "path";
+import checkAllotmentHandler from "./api/check-allotment.js";
 
 export default defineConfig({
   plugins: [
@@ -29,11 +30,9 @@ export default defineConfig({
             return;
           }
           if (req.url && req.url.startsWith("/api/check-allotment")) {
-            let body = "";
-            req.on("data", (chunk) => { body += chunk; });
-            req.on("end", async () => {
+            const handleRequest = async (bodyText) => {
               try {
-                req.body = body ? JSON.parse(body) : {};
+                req.body = bodyText ? JSON.parse(bodyText) : {};
               } catch {
                 req.body = {};
               }
@@ -48,14 +47,21 @@ export default defineConfig({
                 })
               };
               try {
-                const { default: handler } = await import("./api/check-allotment.js");
-                await handler(req, mockRes);
+                await checkAllotmentHandler(req, mockRes);
               } catch (err) {
                 console.error("[Vite Middleware] check-allotment failed:", err);
                 res.writeHead(500, { "Content-Type": "application/json" });
                 res.end(JSON.stringify({ error: err.message }));
               }
-            });
+            };
+
+            if (req.method === "GET") {
+              handleRequest("");
+            } else {
+              let body = "";
+              req.on("data", (chunk) => { body += chunk; });
+              req.on("end", () => handleRequest(body));
+            }
             return;
           }
           next();
