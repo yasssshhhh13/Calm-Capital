@@ -28,6 +28,36 @@ export default defineConfig({
             });
             return;
           }
+          if (req.url && req.url.startsWith("/api/check-allotment")) {
+            let body = "";
+            req.on("data", (chunk) => { body += chunk; });
+            req.on("end", async () => {
+              try {
+                req.body = body ? JSON.parse(body) : {};
+              } catch {
+                req.body = {};
+              }
+              const mockRes = {
+                setHeader: (k, v) => res.setHeader(k, v),
+                status: (code) => ({
+                  json: (data) => {
+                    res.writeHead(code, { "Content-Type": "application/json" });
+                    res.end(JSON.stringify(data));
+                  },
+                  end: () => res.end()
+                })
+              };
+              try {
+                const { default: handler } = await import("./api/check-allotment.js");
+                await handler(req, mockRes);
+              } catch (err) {
+                console.error("[Vite Middleware] check-allotment failed:", err);
+                res.writeHead(500, { "Content-Type": "application/json" });
+                res.end(JSON.stringify({ error: err.message }));
+              }
+            });
+            return;
+          }
           next();
         });
       }
