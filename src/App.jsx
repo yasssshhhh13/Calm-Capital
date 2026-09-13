@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect, useCallback, Component } from "react";
+import React, { useState, useMemo, useRef, useEffect, useCallback, Component, useDeferredValue, useTransition } from "react";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, PieChart, Pie, LabelList,
@@ -320,30 +320,32 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
   const [marketFilter, setMarketFilter] = useState("All");
   const [tierFilter, setTierFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const deferredSearchTerm = useDeferredValue(searchTerm);
+
+  // Pre-calculate quantitative scores once per allIpos change (NOT on every keystroke!)
+  const allScored = useMemo(() => {
+    return (allIpos || []).map((ipo) => {
+      const { score, breakdown } = calculateCalmCapitalScore(ipo);
+      const finalReady = isFinalScoreReady(ipo);
+      const searchKey = `${ipo.name || ""} ${ipo.company || ""} ${ipo.sector || ""}`.toLowerCase();
+      return { ipo, score, breakdown, finalReady, searchKey };
+    });
+  }, [allIpos]);
 
   const scoredIpos = useMemo(() => {
-    return (allIpos || [])
-      .map(ipo => {
-        const { score, breakdown } = calculateCalmCapitalScore(ipo);
-        const finalReady = isFinalScoreReady(ipo);
-        return { ipo, score, breakdown, finalReady };
-      })
-      .filter(({ ipo, score, finalReady }) => {
+    const q = deferredSearchTerm.trim().toLowerCase();
+    return allScored
+      .filter(({ ipo, score, finalReady, searchKey }) => {
         if (marketFilter !== "All" && ipo.type !== marketFilter) return false;
         if (tierFilter === "Strong" && score < 80) return false;
         if (tierFilter === "Moderate" && (score < 50 || score >= 80)) return false;
         if (tierFilter === "Risk" && score >= 50) return false;
         if (tierFilter === "Provisional" && finalReady) return false;
-        if (searchTerm) {
-          const q = searchTerm.toLowerCase();
-          const nameMatch = (ipo.name || "").toLowerCase().includes(q) || (ipo.company || "").toLowerCase().includes(q);
-          const sectorMatch = (ipo.sector || "").toLowerCase().includes(q);
-          return nameMatch || sectorMatch;
-        }
+        if (q) return searchKey.includes(q);
         return true;
       })
       .sort((a, b) => b.score - a.score || (b.ipo.gmp || 0) - (a.ipo.gmp || 0));
-  }, [allIpos, marketFilter, tierFilter, searchTerm]);
+  }, [allScored, marketFilter, tierFilter, deferredSearchTerm]);
 
   return (
     <div className="rounded-3xl border p-6 md:p-8 space-y-6 transition-all shadow-xl bg-white dark:bg-[#0B1724]/90 border-slate-200/80 dark:border-white/10">
@@ -487,8 +489,18 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
             placeholder="Search company or sector..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-900/60 border border-slate-300/70 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#1C9BDA] shadow-sm"
+            className="w-full pl-9 pr-8 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-slate-900/60 border border-slate-300/70 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#1C9BDA] shadow-sm"
           />
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer border-0 bg-transparent flex items-center justify-center"
+              title="Clear"
+            >
+              <X size={12} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -2149,17 +2161,24 @@ function CalculatorTab({ onOpen }) {
   const roi = inv ? (profit / inv) * 100 : 0;
   const breakeven = p;
 
-  const filtered = allIpos.filter((i) => {
-    const matchSearch = !search || i.company.toLowerCase().includes(search.toLowerCase());
-    const matchFilter = !calcFilter || i.status === calcFilter;
-    return matchSearch && matchFilter;
-  });
+  const deferredSearch = useDeferredValue(search);
+
+  const filtered = useMemo(() => {
+    const q = deferredSearch.trim().toLowerCase();
+    return allIpos.filter((i) => {
+      const matchSearch = !q || (i.company || i.name || "").toLowerCase().includes(q);
+      const matchFilter = !calcFilter || i.status === calcFilter;
+      return matchSearch && matchFilter;
+    });
+  }, [allIpos, deferredSearch, calcFilter]);
 
   // Group filtered results by status in the correct display order
-  const grouped = STATUS_ORDER.map((s) => ({
-    status: s,
-    items: filtered.filter((i) => i.status === s),
-  })).filter((g) => g.items.length > 0);
+  const grouped = useMemo(() => {
+    return STATUS_ORDER.map((s) => ({
+      status: s,
+      items: filtered.filter((i) => i.status === s),
+    })).filter((g) => g.items.length > 0);
+  }, [filtered]);
 
   return (
     <div className="space-y-6">
@@ -4409,17 +4428,20 @@ function CompareTab({ onOpen }) {
     setId2(temp);
   };
 
+  const deferredSearch1 = useDeferredValue(search1);
+  const deferredSearch2 = useDeferredValue(search2);
+
   const filtered1 = useMemo(() => {
-    if (!search1.trim()) return eligibleList;
-    const q = search1.toLowerCase();
+    const q = deferredSearch1.trim().toLowerCase();
+    if (!q) return eligibleList;
     return eligibleList.filter((i) => (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q));
-  }, [eligibleList, search1]);
+  }, [eligibleList, deferredSearch1]);
 
   const filtered2 = useMemo(() => {
-    if (!search2.trim()) return eligibleList;
-    const q = search2.toLowerCase();
+    const q = deferredSearch2.trim().toLowerCase();
+    if (!q) return eligibleList;
     return eligibleList.filter((i) => (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q));
-  }, [eligibleList, search2]);
+  }, [eligibleList, deferredSearch2]);
 
   // Determine financial comparison period
   const finPeriod = ipo1?.finMeta?.period || ipo1?.finYear || ipo2?.finMeta?.period || ipo2?.finYear || "FY2025–26";
@@ -7300,6 +7322,102 @@ const NAV = [
   { id: "demat", label: "Open Demat Account", icon: Landmark },
 ].filter((n) => n.id !== "ai" || AI_ASSISTANT_ENABLED);
 
+function HeaderSearchBar({ query, onQueryChange }) {
+  const [localVal, setLocalVal] = useState(query || "");
+  const inputRef = useRef(null);
+  const timerRef = useRef(null);
+
+  useEffect(() => {
+    setLocalVal(query || "");
+  }, [query]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const target = e.target;
+      const isInput =
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable);
+
+      if ((e.key === "/" && !isInput) || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k")) {
+        e.preventDefault();
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      } else if (e.key === "Escape" && document.activeElement === inputRef.current) {
+        if (localVal) {
+          if (timerRef.current) clearTimeout(timerRef.current);
+          setLocalVal("");
+          onQueryChange("");
+        } else {
+          inputRef.current?.blur();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [localVal, onQueryChange]);
+
+  const handleChange = (e) => {
+    const nextVal = e.target.value;
+    setLocalVal(nextVal);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      onQueryChange(nextVal);
+    }, 120);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      onQueryChange(localVal);
+    }
+  };
+
+  const handleClear = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setLocalVal("");
+    onQueryChange("");
+    inputRef.current?.focus();
+  };
+
+  return (
+    <div className="relative flex-1 max-w-sm sm:max-w-md group">
+      <Search
+        size={14}
+        className={`absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-150 pointer-events-none ${
+          localVal ? "text-[#0F766E] dark:text-[#14B8A6]" : "text-slate-400 group-focus-within:text-[#0F766E] dark:group-focus-within:text-[#14B8A6]"
+        }`}
+      />
+      <input
+        ref={inputRef}
+        type="text"
+        value={localVal}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        placeholder="Search by company, sector, registrar..."
+        className="w-full bg-[#FAFBF9]/80 focus:bg-[#FFFFFF] dark:bg-[#1A293D] border border-slate-200 dark:border-[#34465C] rounded-xl pl-9 pr-14 py-2 text-sm outline-none shadow-sm transition-all focus:border-[#0F766E] focus:ring-2 focus:ring-[#0F766E]/15 text-[#0B1F33] dark:text-[#F8FAFC] placeholder:text-slate-400 dark:placeholder:text-[#8FA3BA]"
+      />
+      <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
+        {localVal ? (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/10 transition-all cursor-pointer border-0 bg-transparent flex items-center justify-center"
+            title="Clear search (Esc)"
+          >
+            <X size={13} />
+          </button>
+        ) : (
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-bold text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-white/5 border border-slate-250 dark:border-white/10 rounded-md pointer-events-none select-none">
+            /
+          </kbd>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [loadingDb, setLoadingDb] = useState(false);
   const [tab, setTabRaw] = useState(() => {
@@ -7333,6 +7451,7 @@ export default function App() {
     return "modal";
   }); // "modal" | "full"
   const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
   const [openType, setOpenType] = useState("Mainboard");
   const [upcomingType, setUpcomingType] = useState("Mainboard");
   const [listedType, setListedType] = useState("Mainboard");
@@ -7661,14 +7780,25 @@ export default function App() {
 
   const filtered = useMemo(() => {
     const all = getLiveIPOS();
-    if (!query.trim()) return all;
-    const q = query.toLowerCase();
+    const q = (deferredQuery || "").trim().toLowerCase();
+    if (!q) return all;
     return all.filter((i) => {
-      const companyName = i.company || i.name || "";
-      const sectorName = i.sector || "";
-      return companyName.toLowerCase().includes(q) || sectorName.toLowerCase().includes(q);
+      const companyName = (i.company || i.name || "").toLowerCase();
+      const sectorName = (i.sector || "").toLowerCase();
+      const registrar = (i.registrar || "").toLowerCase();
+      const symbol = (i.symbol || "").toLowerCase();
+      return (
+        companyName.includes(q) ||
+        sectorName.includes(q) ||
+        registrar.includes(q) ||
+        symbol.includes(q)
+      );
     });
-  }, [query, tick]);
+  }, [deferredQuery, tick]);
+
+  const sortedFiltered = useMemo(() => {
+    return sortIposLogically(filtered);
+  }, [filtered]);
 
   const counts = useMemo(() => {
     const all = getLiveIPOS();
@@ -7924,11 +8054,7 @@ export default function App() {
               </button>
             )}
 
-            <div className="relative flex-1 max-w-sm">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search for company IPOs..."
-                className="w-full bg-[#FAFBF9]/80 focus:bg-[#FFFFFF] dark:bg-[#1A293D] border border-slate-200 dark:border-[#34465C] rounded-xl pl-9 pr-4 py-2 text-sm outline-none shadow-sm transition-all focus:border-[#0F766E] focus:ring-1 focus:ring-[#0F766E] text-[#0B1F33] dark:text-[#F8FAFC] placeholder:text-slate-400 dark:placeholder:text-[#8FA3BA]" />
-            </div>
+            <HeaderSearchBar query={query} onQueryChange={setQuery} />
 
             <div className="ml-auto flex items-center gap-2.5 relative">
               <div className="hidden sm:flex items-center">
@@ -8008,31 +8134,43 @@ export default function App() {
                   <div className="space-y-6 animate-fade-in">
                     <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-4">
                       <div>
-                        <h2 className="text-base font-bold text-slate-850 dark:text-white tracking-tight">
-                          Search Results
-                        </h2>
+                        <div className="flex items-center gap-2">
+                          <h2 className="text-base font-bold text-slate-850 dark:text-white tracking-tight">
+                            Search Results
+                          </h2>
+                          <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#0F766E]/10 dark:bg-[#14B8A6]/20 text-[#0F766E] dark:text-[#14B8A6]">
+                            {sortedFiltered.length} {sortedFiltered.length === 1 ? "match" : "matches"}
+                          </span>
+                        </div>
                         <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
                           Showing matches for &ldquo;<span className="font-semibold text-slate-750 dark:text-slate-300">{query}</span>&rdquo; across all categories &amp; statuses
                         </p>
                       </div>
                       <button
                         onClick={() => setQuery("")}
-                        className="text-xs text-[#1c9bda] hover:underline font-bold cursor-pointer border-0 bg-transparent"
+                        className="text-xs text-[#0F766E] dark:text-[#14B8A6] hover:underline font-bold cursor-pointer border-0 bg-transparent flex items-center gap-1"
                       >
+                        <X size={13} />
                         Clear search
                       </button>
                     </div>
 
-                    {filtered.length > 0 ? (
+                    {sortedFiltered.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {sortIposLogically(filtered).map((ipo) => (
+                        {sortedFiltered.map((ipo) => (
                           <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />
                         ))}
                       </div>
                     ) : (
                       <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
                         <Building2 size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
-                        <p className="text-slate-500 text-sm">No matching IPOs found in our database.</p>
+                        <p className="text-slate-500 text-sm">No matching IPOs found for &ldquo;{query}&rdquo;.</p>
+                        <button
+                          onClick={() => setQuery("")}
+                          className="mt-3 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-[#1E293B] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-[#334155] transition-colors border-0 cursor-pointer"
+                        >
+                          Reset search filter
+                        </button>
                       </div>
                     )}
                   </div>
