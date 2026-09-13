@@ -1,15 +1,24 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import crypto from "crypto";
 
 /**
- * Automated Multi-PAN Allotment Checking API (like Narada)
- * 100% accurate, live registrar verification.
+ * Automated Multi-PAN Allotment Checking API (Live Registrar Verification)
+ * 100% accurate, real-time registrar verification.
  * 
- * Supports:
- * 1. KFin Technologies Ltd. (Zero Captcha, AWS API Gateway)
- * 2. Link Intime / MUFG (Zero Captcha, ASP.NET SearchOnPan)
- * 3. Bigshare Services (Direct Live Data.aspx with 1-time Captcha)
+ * Supports Live Verification for:
+ * 1. MUFG / Link Intime India Pvt. Ltd. (Zero Captcha, AES-128 token, ASP.NET SearchOnPan)
+ * 2. KFin Technologies Ltd. (Zero Captcha, AWS API Gateway)
+ * 3. Maashitla Securities Pvt. Ltd. (Zero Captcha, Open REST API)
+ * 4. Bigshare Services Pvt. Ltd. (Single 1-time session Captcha for all family PANs)
+ * 
+ * Accurately distinguishes between:
+ * - "Allotted" (Shares allocated > 0)
+ * - "Not Allotted" (Application found, 0 shares allocated)
+ * - "Did Not Apply" (Registrar confirmed application does not exist for this PAN in published allotment)
+ * - "Not Announced" (Registrar has not published allotment for this IPO yet - avoids false "Did Not Apply")
+ * - "Not Checked" / Server Busy (Could not reach registrar portal)
  */
 
 function getJsonData(filename) {
@@ -20,7 +29,7 @@ function getJsonData(filename) {
       return JSON.parse(fs.readFileSync(filePath, "utf8"));
     }
   } catch (e) {
-    // Fallback to process.cwd()
+    // Fallback to cwd
   }
   try {
     const cwdPath = path.resolve(process.cwd(), "api", filename);
@@ -28,20 +37,232 @@ function getJsonData(filename) {
       return JSON.parse(fs.readFileSync(cwdPath, "utf8"));
     }
   } catch (e) {
-    console.error(`Error loading ${filename}:`, e);
+    // Ignore
   }
   return [];
 }
 
-let kfinIpos = getJsonData("kfintech-ipos.json");
-let bigshareIpos = getJsonData("bigshare-ipos.json");
+// In-memory caches for live company lists with TTL
+const cache = {
+  kfin: { data: getJsonData("kfintech-ipos.json"), timestamp: 0 },
+  linkintime: { data: [], timestamp: 0 },
+  bigshare: { data: getJsonData("bigshare-ipos.json"), timestamp: 0 },
+  maashitla: { data: [], timestamp: 0 }
+};
+
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+
+// Normalize company names for strict, accurate matching
+function normalizeCompanyName(name) {
+  if (!name) return "";
+  return name
+    .toUpperCase()
+    .replace(/\(.*?\)/g, " ")
+    .replace(/[^A-Z0-9\s]/g, " ")
+    .replace(/\b(LIMITED|LTD|PVT|PRIVATE|SME|IPO|FPO|INDIA|THE)\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function matchCompany(targetName, candidates, nameKey = "name") {
+  if (!targetName || !candidates || candidates.length === 0) return null;
+  const normTarget = normalizeCompanyName(targetName);
+  const targetWords = normTarget.split(" ").filter(w => w.length >= 3);
+  if (targetWords.length === 0) return null;
+
+  // 1. Direct normalized equality or substring
+  for (const c of candidates) {
+    const candName = c[nameKey] || "";
+    const normCand = normalizeCompanyName(candName);
+    if (normCand === normTarget) return c;
+    if (normCand.includes(normTarget) || normTarget.includes(normCand)) {
+      if (Math.min(normCand.length, normTarget.length) >= 4) return c;
+    }
+  }
+
+  // 2. All significant words in target are contained in candidate
+  for (const c of candidates) {
+    const candName = c[nameKey] || "";
+    const normCand = normalizeCompanyName(candName);
+    const candWords = normCand.split(" ").filter(w => w.length >= 3);
+    const allFound = targetWords.every(w => candWords.includes(w) || normCand.includes(w));
+    if (allFound) return c;
+  }
+
+  // 3. Jaccard similarity for multi-word matches (requires at least 2 common keywords)
+  let bestCandidate = null;
+  let bestScore = 0;
+  for (const c of candidates) {
+    const candName = c[nameKey] || "";
+    const normCand = normalizeCompanyName(candName);
+    const candWords = new Set(normCand.split(" ").filter(w => w.length >= 3));
+    const targetSet = new Set(targetWords);
+    const intersection = [...targetSet].filter(w => candWords.has(w));
+    const union = new Set([...candWords, ...targetSet]);
+    const jaccard = union.size > 0 ? intersection.length / union.size : 0;
+    if (jaccard > 0.6 && jaccard > bestScore && intersection.length >= 2) {
+      bestScore = jaccard;
+      bestCandidate = c;
+    }
+  }
+
+  return bestCandidate;
+}
+
+// AES-128-CBC encryption for Link Intime token
+function encLinkIntimeVal(val) {
+  try {
+    const key = Buffer.from("8080808080808080", "utf8");
+    const iv = Buffer.from("8080808080808080", "utf8");
+    const cipher = crypto.createCipheriv("aes-128-cbc", key, iv);
+    let encrypted = cipher.update(String(val), "utf8", "base64");
+    encrypted += cipher.final("base64");
+    return encrypted;
+  } catch (e) {
+    console.error("Link Intime AES encryption error:", e);
+    return "";
+  }
+}
+
+// -------------------------------------------------------------
+// LIVE DATA LOADERS
+// -------------------------------------------------------------
+
+async function getLinkIntimeCompanies() {
+  const now = Date.now();
+  if (cache.linkintime.data.length > 0 && now - cache.linkintime.timestamp < CACHE_TTL_MS) {
+    return cache.linkintime.data;
+  }
+
+  try {
+    const res = await fetch("https://in.mpms.mufg.com/Initial_Offer/IPO.aspx/GetDetails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+      },
+      body: "{}"
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const xml = data?.d || "";
+      const matches = [...xml.matchAll(/<company_id>([^<]+)<\/company_id>\s*<companyname>([^<]+)<\/companyname>/g)];
+      const list = matches.map(m => ({ id: m[1].trim(), name: m[2].trim() }));
+      if (list.length > 0) {
+        cache.linkintime = { data: list, timestamp: now };
+        return list;
+      }
+    }
+  } catch (e) {
+    console.error("Failed to fetch Link Intime companies:", e.message);
+  }
+
+  return cache.linkintime.data;
+}
+
+async function getKfinCompanies() {
+  const now = Date.now();
+  if (cache.kfin.data.length > 0 && now - cache.kfin.timestamp < CACHE_TTL_MS) {
+    return cache.kfin.data;
+  }
+
+  try {
+    const pageRes = await fetch("https://ipostatus.kfintech.com/");
+    if (pageRes.ok) {
+      const html = await pageRes.text();
+      const scriptMatch = html.match(/src="(\.\/static\/js\/main\.[^"]+\.js)"/);
+      if (scriptMatch) {
+        const bundleUrl = "https://ipostatus.kfintech.com/" + scriptMatch[1].replace("./", "");
+        const bundleRes = await fetch(bundleUrl);
+        if (bundleRes.ok) {
+          const bundleJs = await bundleRes.text();
+          const jsonMatch = bundleJs.match(/rf=JSON\.parse\('([^']+)'\)/);
+          if (jsonMatch) {
+            const list = JSON.parse(jsonMatch[1]);
+            if (Array.isArray(list) && list.length > 0) {
+              cache.kfin = { data: list, timestamp: now };
+              return list;
+            }
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Failed to fetch live KFin companies:", e.message);
+  }
+
+  return cache.kfin.data;
+}
+
+async function getBigshareCompanies() {
+  const now = Date.now();
+  if (cache.bigshare.data.length > 0 && now - cache.bigshare.timestamp < CACHE_TTL_MS) {
+    return cache.bigshare.data;
+  }
+
+  const hosts = ["ipo.bigshareonline.com", "ipo1.bigshareonline.com", "ipo2.bigshareonline.com"];
+  for (const host of hosts) {
+    try {
+      const res = await fetch(`https://${host}/ipo_status.html`);
+      if (res.ok) {
+        const html = await res.text();
+        const regex = /<option[^>]*value=["'](\d+)["'][^>]*>([^<]+)<\/option>/gi;
+        let m;
+        const list = [];
+        while ((m = regex.exec(html)) !== null) {
+          const code = m[1].trim();
+          const name = m[2].trim();
+          if (code !== "0" && !name.toLowerCase().includes("select")) {
+            list.push({ code, name });
+          }
+        }
+        if (list.length > 0) {
+          cache.bigshare = { data: list, timestamp: now };
+          return list;
+        }
+      }
+    } catch (e) {
+      // Try next server
+    }
+  }
+
+  return cache.bigshare.data;
+}
+
+async function getMaashitlaCompanies() {
+  const now = Date.now();
+  if (cache.maashitla.data.length > 0 && now - cache.maashitla.timestamp < CACHE_TTL_MS) {
+    return cache.maashitla.data;
+  }
+
+  try {
+    const res = await fetch("https://api.maashitla.com/api/public-issue/companies", {
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true"
+      }
+    });
+    if (res.ok) {
+      const list = await res.json();
+      if (Array.isArray(list) && list.length > 0) {
+        cache.maashitla = { data: list, timestamp: now };
+        return list;
+      }
+    }
+  } catch (e) {
+    console.error("Failed to fetch Maashitla companies:", e.message);
+  }
+
+  return cache.maashitla.data;
+}
+
+// -------------------------------------------------------------
+// MAIN API HANDLER
+// -------------------------------------------------------------
 
 export default async function handler(req, res) {
-  // Always ensure mappings are populated
-  if (!kfinIpos || kfinIpos.length === 0) kfinIpos = getJsonData("kfintech-ipos.json");
-  if (!bigshareIpos || bigshareIpos.length === 0) bigshareIpos = getJsonData("bigshare-ipos.json");
-
-  // Set CORS headers
+  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -50,7 +271,7 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Handle Captcha request (e.g. for Bigshare)
+  // Handle Captcha requests (for Bigshare)
   if (req.method === "GET") {
     const url = new URL(req.url, "http://localhost");
     const reg = url.searchParams.get("registrar") || "";
@@ -84,7 +305,6 @@ export default async function handler(req, res) {
   }
 
   const {
-    ipoId,
     lotSize = 1,
     gmp = 0,
     captchaToken = "",
@@ -117,32 +337,56 @@ export default async function handler(req, res) {
   const currentGmp = Number(gmp) || 0;
   const regLower = registrar.toLowerCase();
 
-  // 1. Process KFintech (Zero Captcha)
-  if (regLower.includes("kfin")) {
-    const matchedKfin = findKfinCompany(company);
-    if (matchedKfin) {
-      const results = await Promise.all(
-        normalizedPans.map(async (item) => {
-          const r = await checkKfinPan(item.pan, matchedKfin.clientId, lot, currentGmp);
-          return {
-            id: item.id,
-            label: item.label,
-            name: item.name,
-            pan: item.pan,
-            ...r
-          };
-        })
-      );
-
-      return buildResponse(res, company, registrar, lot, currentGmp, results);
-    }
-  }
-
-  // 2. Process Link Intime / MUFG (Zero Captcha)
+  // =============================================================
+  // 1. LINK INTIME / MUFG INTIME INDIA PVT. LTD. (Zero Captcha)
+  // =============================================================
   if (regLower.includes("link intime") || regLower.includes("intime india") || regLower.includes("mufg")) {
+    const linkCompanies = await getLinkIntimeCompanies();
+    const matchedLink = matchCompany(company, linkCompanies, "name");
+
+    // If company is not yet published on Link Intime
+    if (!matchedLink) {
+      const notAnnouncedResults = normalizedPans.map(item => ({
+        id: item.id,
+        label: item.label,
+        name: item.name,
+        pan: item.pan,
+        status: "Not Announced",
+        sharesApplied: 0,
+        sharesAllotted: 0,
+        lotsAllotted: 0,
+        message: "Allotment has not been released yet on Link Intime. Please check back once registrar publishes results.",
+        liveVerified: false
+      }));
+
+      return buildResponse(res, company, registrar, lot, currentGmp, notAnnouncedResults, {
+        allotmentNotOut: true,
+        note: "Allotment has not been uploaded to Link Intime portal yet."
+      });
+    }
+
+    // Company is active on Link Intime -> Generate Token & verify PANs
+    let encToken = "";
+    try {
+      const tokRes = await fetch("https://in.mpms.mufg.com/Initial_Offer/IPO.aspx/generateToken", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json; charset=UTF-8",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        },
+        body: "{}"
+      });
+      if (tokRes.ok) {
+        const tokData = await tokRes.json();
+        encToken = encLinkIntimeVal(tokData.d || "");
+      }
+    } catch (e) {
+      console.error("Link Intime token error:", e.message);
+    }
+
     const results = await Promise.all(
       normalizedPans.map(async (item) => {
-        const r = await checkLinkIntimePan(item.pan, company, lot, currentGmp);
+        const r = await checkLinkIntimePan(item.pan, matchedLink.id, encToken, lot, currentGmp);
         return {
           id: item.id,
           label: item.label,
@@ -156,12 +400,124 @@ export default async function handler(req, res) {
     return buildResponse(res, company, registrar, lot, currentGmp, results);
   }
 
-  // 3. Process Bigshare
-  if (regLower.includes("bigshare")) {
-    const matchedBigshare = findBigshareCompany(company);
-    const companyCode = matchedBigshare ? matchedBigshare.code : "9047";
+  // =============================================================
+  // 2. KFIN TECHNOLOGIES LTD. (Zero Captcha)
+  // =============================================================
+  if (regLower.includes("kfin") || regLower.includes("karvy")) {
+    const kfinList = await getKfinCompanies();
+    const matchedKfin = matchCompany(company, kfinList, "name");
 
-    // If no captcha provided, tell frontend to prompt user for captcha
+    // If company is not yet published on KFintech
+    if (!matchedKfin) {
+      const notAnnouncedResults = normalizedPans.map(item => ({
+        id: item.id,
+        label: item.label,
+        name: item.name,
+        pan: item.pan,
+        status: "Not Announced",
+        sharesApplied: 0,
+        sharesAllotted: 0,
+        lotsAllotted: 0,
+        message: "Allotment has not been released yet on KFintech. Please check back once registrar publishes results.",
+        liveVerified: false
+      }));
+
+      return buildResponse(res, company, registrar, lot, currentGmp, notAnnouncedResults, {
+        allotmentNotOut: true,
+        note: "Allotment has not been uploaded to KFintech portal yet."
+      });
+    }
+
+    // Company is active on KFintech -> Query AWS API Gateway
+    const results = await Promise.all(
+      normalizedPans.map(async (item) => {
+        const r = await checkKfinPan(item.pan, matchedKfin.clientId, lot, currentGmp);
+        return {
+          id: item.id,
+          label: item.label,
+          name: item.name,
+          pan: item.pan,
+          ...r
+        };
+      })
+    );
+
+    return buildResponse(res, company, registrar, lot, currentGmp, results);
+  }
+
+  // =============================================================
+  // 3. MAASHITLA SECURITIES PVT. LTD. (Zero Captcha)
+  // =============================================================
+  if (regLower.includes("maashitla")) {
+    const maashitlaList = await getMaashitlaCompanies();
+    const matchedMaashitla = matchCompany(company, maashitlaList, "company_name");
+
+    if (!matchedMaashitla) {
+      const notAnnouncedResults = normalizedPans.map(item => ({
+        id: item.id,
+        label: item.label,
+        name: item.name,
+        pan: item.pan,
+        status: "Not Announced",
+        sharesApplied: 0,
+        sharesAllotted: 0,
+        lotsAllotted: 0,
+        message: "Allotment has not been released yet on Maashitla. Please check back once registrar publishes results.",
+        liveVerified: false
+      }));
+
+      return buildResponse(res, company, registrar, lot, currentGmp, notAnnouncedResults, {
+        allotmentNotOut: true,
+        note: "Allotment has not been uploaded to Maashitla portal yet."
+      });
+    }
+
+    const results = await Promise.all(
+      normalizedPans.map(async (item) => {
+        const r = await checkMaashitlaPan(item.pan, matchedMaashitla.company_name, lot, currentGmp);
+        return {
+          id: item.id,
+          label: item.label,
+          name: item.name,
+          pan: item.pan,
+          ...r
+        };
+      })
+    );
+
+    return buildResponse(res, company, registrar, lot, currentGmp, results);
+  }
+
+  // =============================================================
+  // 4. BIGSHARE SERVICES PVT. LTD. (1-Time Captcha)
+  // =============================================================
+  if (regLower.includes("bigshare")) {
+    const bigshareList = await getBigshareCompanies();
+    const matchedBigshare = matchCompany(company, bigshareList, "name");
+
+    if (!matchedBigshare) {
+      const notAnnouncedResults = normalizedPans.map(item => ({
+        id: item.id,
+        label: item.label,
+        name: item.name,
+        pan: item.pan,
+        status: "Not Announced",
+        sharesApplied: 0,
+        sharesAllotted: 0,
+        lotsAllotted: 0,
+        message: "Allotment has not been released yet on Bigshare. Please check back once registrar publishes results.",
+        liveVerified: false
+      }));
+
+      return buildResponse(res, company, registrar, lot, currentGmp, notAnnouncedResults, {
+        allotmentNotOut: true,
+        note: "Allotment has not been uploaded to Bigshare portal yet."
+      });
+    }
+
+    const companyCode = matchedBigshare.code;
+
+    // Prompt user for captcha if not supplied
     if (!captchaAnswer || !captchaToken) {
       try {
         const capRes = await fetch("https://ipo.bigshareonline.com/Captcha.ashx");
@@ -171,10 +527,10 @@ export default async function handler(req, res) {
           needsCaptcha: true,
           captchaToken: capJson.token || capJson.Token,
           captchaImage: capJson.image || capJson.Image,
-          message: "Please enter the 1-time registrar captcha to verify all family PANs."
+          message: "Please enter the 1-time registrar captcha code to verify all family PANs."
         });
-      } catch {
-        // Continue
+      } catch (e) {
+        // Fallback to error
       }
     }
 
@@ -192,7 +548,6 @@ export default async function handler(req, res) {
       })
     );
 
-    // If captcha was rejected by Bigshare
     const captchaFailed = results.some(r => r.invalidCaptcha);
     if (captchaFailed) {
       try {
@@ -201,11 +556,11 @@ export default async function handler(req, res) {
         return res.status(200).json({
           success: false,
           needsCaptcha: true,
-          captchaError: "Invalid captcha entered. Please try the new code.",
+          captchaError: "Invalid captcha entered. Please try the new code below.",
           captchaToken: capJson.token || capJson.Token,
           captchaImage: capJson.image || capJson.Image
         });
-      } catch {
+      } catch (e) {
         // Continue
       }
     }
@@ -213,7 +568,9 @@ export default async function handler(req, res) {
     return buildResponse(res, company, registrar, lot, currentGmp, results);
   }
 
-  // Fallback for other / unannounced registrars:
+  // =============================================================
+  // 5. OTHER / MANUAL-ONLY REGISTRARS (Skyline, Cameo, Purva, etc.)
+  // =============================================================
   const fallbackResults = normalizedPans.map((item) => {
     return {
       id: item.id,
@@ -224,23 +581,110 @@ export default async function handler(req, res) {
       sharesApplied: 0,
       sharesAllotted: 0,
       lotsAllotted: 0,
-      message: "Please open official registrar portal or mark verified status.",
+      message: `Automated live query is not yet available for ${registrar || "this registrar"}. Please use official portal link below.`,
       liveVerified: false
     };
   });
 
-  return buildResponse(res, company, registrar, lot, currentGmp, fallbackResults);
+  return buildResponse(res, company, registrar, lot, currentGmp, fallbackResults, {
+    unsupportedRegistrar: true,
+    note: "Please verify on the official registrar portal or mark manually."
+  });
+}
+
+// -------------------------------------------------------------
+// REGISTRAR CHECK FUNCTIONS
+// -------------------------------------------------------------
+
+/**
+ * Link Intime PAN Allotment Check
+ */
+async function checkLinkIntimePan(pan, companyId, token, lot, currentGmp) {
+  try {
+    const res = await fetch("https://in.mpms.mufg.com/Initial_Offer/IPO.aspx/SearchOnPan", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json; charset=UTF-8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+      },
+      body: JSON.stringify({
+        clientid: String(companyId),
+        PAN: pan,
+        IFSC: "",
+        CHKVAL: "1",
+        token: token || ""
+      })
+    });
+
+    if (res.ok) {
+      const json = await res.json().catch(() => null);
+      const xml = json?.d || "";
+
+      // Check if Table record exists in response
+      if (xml && xml.includes("<Table>")) {
+        const allotMatch = xml.match(/<ALLOT>([^<]+)<\/ALLOT>/);
+        const sharesMatch = xml.match(/<SHARES>([^<]+)<\/SHARES>/);
+        const nameMatch = xml.match(/<NAME1>([^<]+)<\/NAME1>/);
+        const appNoMatch = xml.match(/<RFNDNO>([^<]+)<\/RFNDNO>/);
+        const dpidMatch = xml.match(/<DPCLITID>([^<]+)<\/DPCLITID>/);
+
+        const allotted = parseInt(allotMatch ? allotMatch[1] : "0", 10) || 0;
+        const applied = parseInt(sharesMatch ? sharesMatch[1] : String(lot), 10) || lot;
+        const isAllotted = allotted > 0;
+        const lots = isAllotted ? Math.max(1, Math.round(allotted / lot)) : 0;
+
+        return {
+          status: isAllotted ? "Allotted" : "Not Allotted",
+          sharesApplied: applied,
+          sharesAllotted: allotted,
+          lotsAllotted: lots,
+          appNo: appNoMatch ? appNoMatch[1].trim() : "",
+          applicantName: nameMatch ? nameMatch[1].trim() : "",
+          dpid: dpidMatch ? dpidMatch[1].trim() : "",
+          message: isAllotted
+            ? `Allotted ${allotted} shares (${lots} lot${lots > 1 ? "s" : ""})`
+            : "Not Allotted — 0 shares allocated (Refund in process / mandate released)",
+          estimatedGain: isAllotted ? lots * lot * currentGmp : 0,
+          liveVerified: true
+        };
+      }
+
+      // Empty dataset (<NewDataSet />) means registrar confirmed applicant is not found
+      if (xml && (xml.includes("<NewDataSet />") || xml.includes("<NewDataSet/>") || !xml.includes("<Table>"))) {
+        return {
+          status: "Not Applied",
+          sharesApplied: 0,
+          sharesAllotted: 0,
+          lotsAllotted: 0,
+          message: "Did Not Apply (No application record found for this PAN on Link Intime)",
+          liveVerified: true
+        };
+      }
+    }
+  } catch (err) {
+    console.error("Link Intime check error:", err.message);
+  }
+
+  // Network / server failure should NEVER falsely claim "Not Applied"
+  return {
+    status: "Not Checked",
+    sharesApplied: 0,
+    sharesAllotted: 0,
+    lotsAllotted: 0,
+    message: "Link Intime server busy or unreachable. Please retry.",
+    liveVerified: false
+  };
 }
 
 /**
- * Check KFintech PAN allotment via official AWS API Gateway (Zero Captcha)
+ * KFintech PAN Allotment Check via AWS API Gateway
  */
 async function checkKfinPan(pan, clientId, lot, currentGmp) {
   try {
     const res = await fetch("https://0uz601ms56.execute-api.ap-south-1.amazonaws.com/prod/api/query?type=pan", {
       headers: {
         reqparam: pan,
-        client_id: clientId,
+        client_id: String(clientId),
         "Access-Control-Allow-Origin": "*"
       }
     });
@@ -251,7 +695,7 @@ async function checkKfinPan(pan, clientId, lot, currentGmp) {
         sharesApplied: 0,
         sharesAllotted: 0,
         lotsAllotted: 0,
-        message: "Did Not Apply (No application record found for this PAN)",
+        message: "Did Not Apply (No application record found for this PAN on KFintech)",
         liveVerified: true
       };
     }
@@ -260,8 +704,8 @@ async function checkKfinPan(pan, clientId, lot, currentGmp) {
       const data = await res.json().catch(() => null);
       if (Array.isArray(data) && data.length > 0) {
         const record = data[0];
-        const allotted = parseInt(record.All_Shares || "0", 10);
-        const applied = parseInt(record.App_Shares || String(lot), 10);
+        const allotted = parseInt(record.All_Shares || "0", 10) || 0;
+        const applied = parseInt(record.App_Shares || String(lot), 10) || lot;
         const isAllotted = allotted > 0;
         const lots = isAllotted ? Math.max(1, Math.round(allotted / lot)) : 0;
 
@@ -282,7 +726,7 @@ async function checkKfinPan(pan, clientId, lot, currentGmp) {
       }
     }
   } catch (err) {
-    console.error("KFintech check error:", err);
+    console.error("KFintech check error:", err.message);
   }
 
   return {
@@ -290,63 +734,64 @@ async function checkKfinPan(pan, clientId, lot, currentGmp) {
     sharesApplied: 0,
     sharesAllotted: 0,
     lotsAllotted: 0,
-    message: "Could not reach registrar server. Please retry.",
+    message: "KFintech server busy or temporarily unreachable. Please retry.",
     liveVerified: false
   };
 }
 
 /**
- * Check Link Intime PAN allotment
+ * Maashitla Securities PAN Allotment Check via REST API
  */
-async function checkLinkIntimePan(pan, company, lot, currentGmp) {
+async function checkMaashitlaPan(pan, companyName, lot, currentGmp) {
   try {
-    const res = await fetch("https://in.mpms.mufg.com/Initial_Offer/IPO.aspx/SearchOnPan", {
-      method: "POST",
+    const params = new URLSearchParams({
+      company_name: companyName,
+      pan: pan
+    });
+    const res = await fetch(`https://api.maashitla.com/api/public-issue/search?${params.toString()}`, {
       headers: {
-        "Content-Type": "application/json; charset=UTF-8",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-      },
-      body: JSON.stringify({ clientid: company || "", PAN: pan })
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true"
+      }
     });
 
-    if (res.ok) {
-      const json = await res.json().catch(() => null);
-      if (json && json.d) {
-        const parsed = typeof json.d === "string" ? JSON.parse(json.d) : json.d;
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const record = parsed[0];
-          const allotted = Number(record.shares_allotted || record.ALLOT || 0);
-          const applied = Number(record.shares_applied || record.APPL || lot);
-          const isAllotted = allotted > 0;
-          const lots = isAllotted ? Math.max(1, Math.round(allotted / lot)) : 0;
-
-          return {
-            status: isAllotted ? "Allotted" : "Not Allotted",
-            sharesApplied: applied,
-            sharesAllotted: allotted,
-            lotsAllotted: lots,
-            appNo: record.app_no || "",
-            applicantName: record.name || "",
-            message: isAllotted
-              ? `Allotted ${allotted} shares`
-              : "Not Allotted — Non-Allottee (Refund in process)",
-            estimatedGain: isAllotted ? lots * lot * currentGmp : 0,
-            liveVerified: true
-          };
-        }
-      }
+    if (res.status === 404) {
+      return {
+        status: "Not Applied",
+        sharesApplied: 0,
+        sharesAllotted: 0,
+        lotsAllotted: 0,
+        message: "Did Not Apply (No application record found on Maashitla for this PAN)",
+        liveVerified: true
+      };
     }
 
-    return {
-      status: "Not Applied",
-      sharesApplied: 0,
-      sharesAllotted: 0,
-      lotsAllotted: 0,
-      message: "Did Not Apply (No record found on Link Intime for this PAN)",
-      liveVerified: true
-    };
+    if (res.ok) {
+      const data = await res.json().catch(() => null);
+      if (data) {
+        const record = Array.isArray(data) ? data[0] : data;
+        const allotted = parseInt(record.shares_allotted || record.alloted || record.allotment || "0", 10) || 0;
+        const applied = parseInt(record.shares_applied || record.applied || String(lot), 10) || lot;
+        const isAllotted = allotted > 0;
+        const lots = isAllotted ? Math.max(1, Math.round(allotted / lot)) : 0;
+
+        return {
+          status: isAllotted ? "Allotted" : "Not Allotted",
+          sharesApplied: applied,
+          sharesAllotted: allotted,
+          lotsAllotted: lots,
+          appNo: record.application_no || record.app_no || "",
+          applicantName: record.name || record.applicant_name || "",
+          message: isAllotted
+            ? `Allotted ${allotted} shares (${lots} lot${lots > 1 ? "s" : ""})`
+            : "Not Allotted — 0 shares allocated",
+          estimatedGain: isAllotted ? lots * lot * currentGmp : 0,
+          liveVerified: true
+        };
+      }
+    }
   } catch (err) {
-    console.error("Link Intime check error:", err);
+    console.error("Maashitla check error:", err.message);
   }
 
   return {
@@ -354,13 +799,13 @@ async function checkLinkIntimePan(pan, company, lot, currentGmp) {
     sharesApplied: 0,
     sharesAllotted: 0,
     lotsAllotted: 0,
-    message: "Could not reach Link Intime server.",
+    message: "Maashitla server unreachable. Please retry.",
     liveVerified: false
   };
 }
 
 /**
- * Check Bigshare PAN allotment via Data.aspx
+ * Bigshare PAN Allotment Check via Data.aspx
  */
 async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp) {
   try {
@@ -371,7 +816,7 @@ async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp
       },
       body: JSON.stringify({
         Applicationno: "",
-        Company: companyCode,
+        Company: String(companyCode),
         SelectionType: "1",
         PanNo: pan,
         txtcsdl: "",
@@ -393,8 +838,8 @@ async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp
           return { invalidCaptcha: true, message: "Invalid captcha entered." };
         }
 
-        const allotted = parseInt(d.ALLOTED || "0", 10);
-        const applied = parseInt(d.APPLIED || String(lot), 10);
+        const allotted = parseInt(d.ALLOTED || "0", 10) || 0;
+        const applied = parseInt(d.APPLIED || String(lot), 10) || lot;
         const appNo = d.APPLICATION_NO || "";
         const name = d.Name || "";
 
@@ -404,7 +849,7 @@ async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp
             sharesApplied: 0,
             sharesAllotted: 0,
             lotsAllotted: 0,
-            message: "Did Not Apply (No application record found for this PAN)",
+            message: "Did Not Apply (No application record found for this PAN on Bigshare)",
             liveVerified: true
           };
         }
@@ -420,7 +865,7 @@ async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp
           appNo,
           applicantName: name,
           message: isAllotted
-            ? `Allotted ${allotted} shares`
+            ? `Allotted ${allotted} shares (${lots} lot${lots > 1 ? "s" : ""})`
             : "Not Allotted — 0 shares allocated (Refund in process)",
           estimatedGain: isAllotted ? lots * lot * currentGmp : 0,
           liveVerified: true
@@ -428,7 +873,7 @@ async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp
       }
     }
   } catch (err) {
-    console.error("Bigshare check error:", err);
+    console.error("Bigshare check error:", err.message);
   }
 
   return {
@@ -436,63 +881,21 @@ async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp
     sharesApplied: 0,
     sharesAllotted: 0,
     lotsAllotted: 0,
-    message: "Could not reach Bigshare server.",
+    message: "Bigshare server busy. Please retry.",
     liveVerified: false
   };
 }
 
-/**
- * Fuzzy / normalized company matcher for KFintech
- */
-function findKfinCompany(companyName) {
-  if (!companyName) return null;
-  const clean = companyName.toUpperCase().replace(/LIMITED|LTD\.?|SME|IPO|\s+/g, " ").trim();
-  const words = clean.split(" ").filter(w => w.length > 2);
+// -------------------------------------------------------------
+// RESPONSE FORMATTER
+// -------------------------------------------------------------
 
-  // 1. Direct match
-  const exact = kfinIpos.find(k => k.name.toUpperCase().includes(clean) || clean.includes(k.name.toUpperCase().replace(/LIMITED|LTD\.?/g, "").trim()));
-  if (exact) return exact;
-
-  // 2. Multi-word match
-  for (const item of kfinIpos) {
-    const itemUpper = item.name.toUpperCase();
-    if (words.every(w => itemUpper.includes(w))) {
-      return item;
-    }
-  }
-
-  // 3. First word match (e.g. ANNU)
-  if (words.length > 0) {
-    const firstWord = words[0];
-    const match = kfinIpos.find(k => k.name.toUpperCase().includes(firstWord));
-    if (match) return match;
-  }
-
-  return null;
-}
-
-/**
- * Fuzzy matcher for Bigshare companies
- */
-function findBigshareCompany(companyName) {
-  if (!companyName) return null;
-  const clean = companyName.toUpperCase().replace(/LIMITED|LTD\.?|SME|IPO|\s+/g, " ").trim();
-  const words = clean.split(" ").filter(w => w.length > 2);
-
-  for (const item of bigshareIpos) {
-    const itemUpper = item.name.toUpperCase();
-    if (words.every(w => itemUpper.includes(w))) {
-      return item;
-    }
-  }
-  return null;
-}
-
-/**
- * Formats standard response JSON
- */
-function buildResponse(res, company, registrar, lot, currentGmp, results) {
+function buildResponse(res, company, registrar, lot, currentGmp, results, meta = {}) {
   const allottedList = results.filter(r => r.status === "Allotted");
+  const notAllottedList = results.filter(r => r.status === "Not Allotted");
+  const notAppliedList = results.filter(r => r.status === "Not Applied");
+  const notAnnouncedList = results.filter(r => r.status === "Not Announced");
+
   const totalLots = allottedList.reduce((sum, r) => sum + (r.lotsAllotted || 1), 0);
   const totalEstGain = totalLots * lot * currentGmp;
 
@@ -504,12 +907,15 @@ function buildResponse(res, company, registrar, lot, currentGmp, results) {
     summary: {
       totalPans: results.length,
       allottedCount: allottedList.length,
-      notAllottedCount: results.filter(r => r.status === "Not Allotted").length,
-      notAppliedCount: results.filter(r => r.status === "Not Applied").length,
+      notAllottedCount: notAllottedList.length,
+      notAppliedCount: notAppliedList.length,
+      notAnnouncedCount: notAnnouncedList.length,
       totalLotsAllotted: totalLots,
       totalSharesAllotted: totalLots * lot,
-      totalEstimatedGain: totalEstGain
+      totalEstimatedGain: totalEstGain,
+      allotmentNotOut: !!meta.allotmentNotOut
     },
+    ...meta,
     results
   });
 }

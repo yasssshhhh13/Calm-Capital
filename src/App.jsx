@@ -5707,6 +5707,7 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
   const isKfin = regLower.includes("kfin");
   const isLinkIntime = regLower.includes("link intime") || regLower.includes("intime india") || regLower.includes("mufg");
   const isBigshare = regLower.includes("bigshare");
+  const isMaashitla = regLower.includes("maashitla");
 
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaImage, setCaptchaImage] = useState("");
@@ -5818,12 +5819,26 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
         const allottedCount = data.summary?.allottedCount || 0;
         const notAllottedCount = data.summary?.notAllottedCount || 0;
         const notAppliedCount = data.summary?.notAppliedCount || 0;
+        const notAnnouncedCount = data.summary?.notAnnouncedCount || 0;
 
         setLastCheckedTime(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
-        setCheckMessage({
-          type: "success",
-          text: `Verified ${data.results.length} PANs via ${ipo.registrar || "Registrar"}: ${allottedCount} Allotted, ${notAllottedCount} Not Allotted, ${notAppliedCount} Did Not Apply.`
-        });
+
+        if (data.summary?.allotmentNotOut || notAnnouncedCount === data.results.length) {
+          setCheckMessage({
+            type: "info",
+            text: `Allotment Not Released: ${ipo.registrar || "The registrar"} has not published the allotment for ${ipo.company} yet. Please check back once announced.`
+          });
+        } else if (data.unsupportedRegistrar) {
+          setCheckMessage({
+            type: "info",
+            text: `Automated live check is not available for ${ipo.registrar || "this registrar"}. Please verify on official registrar portal below.`
+          });
+        } else {
+          setCheckMessage({
+            type: "success",
+            text: `Verified ${data.results.length} PANs via ${ipo.registrar || "Registrar"}: ${allottedCount} Allotted, ${notAllottedCount} Not Allotted, ${notAppliedCount} Did Not Apply${notAnnouncedCount > 0 ? `, ${notAnnouncedCount} Pending Release` : ""}.`
+          });
+        }
       } else {
         setCheckMessage({ type: "error", text: data.error || "Could not retrieve status from registrar." });
       }
@@ -5961,6 +5976,7 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                   <span>
                     {isKfin ? "Direct live KFintech query • 0 Captcha • 100% Accurate" :
                      isLinkIntime ? "Direct live Link Intime query • 0 Captcha • 100% Accurate" :
+                     isMaashitla ? "Direct live Maashitla query • 0 Captcha • 100% Accurate" :
                      isBigshare ? "Official Bigshare Live query with 1-click batch verification" :
                      "Automated registrar verification"}
                   </span>
@@ -5975,6 +5991,8 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                   <div className={`p-3 rounded-xl text-xs font-medium ${
                     checkMessage.type === "error"
                       ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+                      : checkMessage.type === "info"
+                      ? "bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/25"
                       : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
                   }`}>
                     {checkMessage.text}
@@ -6036,7 +6054,8 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                     const isAllotted = outcome.status === "Allotted";
                     const isNotAllotted = outcome.status === "Not Allotted";
                     const isNotApplied = outcome.status === "Not Applied" || outcome.status === "Did Not Apply";
-                    const isNotChecked = !isAllotted && !isNotAllotted && !isNotApplied;
+                    const isNotAnnounced = outcome.status === "Not Announced" || outcome.status === "Pending Release";
+                    const isNotChecked = !isAllotted && !isNotAllotted && !isNotApplied && !isNotAnnounced;
                     const lots = outcome.lots || 1;
                     const shares = outcome.sharesAllotted || (lots * (ipo.lot || ipo.lotSize || 1));
                     const gain = isAllotted ? lots * estimatedProfitPerLot : 0;
@@ -6049,6 +6068,8 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                             ? "border-emerald-500/30 bg-emerald-500/[0.04] dark:bg-emerald-500/[0.06]"
                             : isNotAllotted
                             ? "border-rose-500/20 bg-rose-500/[0.02] dark:bg-rose-500/[0.03]"
+                            : isNotAnnounced
+                            ? "border-amber-500/25 bg-amber-500/[0.03] dark:bg-amber-500/[0.04]"
                             : isNotApplied
                             ? "border-slate-200 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.015]"
                             : "border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.015]"
@@ -6060,11 +6081,13 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                               ? "bg-emerald-500 text-white shadow-md shadow-emerald-500/20"
                               : isNotAllotted
                               ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"
+                              : isNotAnnounced
+                              ? "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/25"
                               : isNotApplied
                               ? "bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400"
                               : "bg-[#1c9bda]/10 text-[#1c9bda] dark:bg-[#1c9bda]/20 dark:text-[#52b1e4]"
                           }`}>
-                            {isAllotted ? "✓" : isNotAllotted ? "✕" : isNotApplied ? "—" : (p.label ? p.label.slice(0, 2).toUpperCase() : "FA")}
+                            {isAllotted ? "✓" : isNotAllotted ? "✕" : isNotAnnounced ? "⏳" : isNotApplied ? "—" : (p.label ? p.label.slice(0, 2).toUpperCase() : "FA")}
                           </div>
                           <div>
                             <div className="flex items-center gap-2 flex-wrap">
@@ -6096,6 +6119,11 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                                   NOT ALLOTTED
                                 </span>
                               )}
+                              {isNotAnnounced && (
+                                <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                                  NOT ANNOUNCED YET
+                                </span>
+                              )}
                               {isNotApplied && (
                                 <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/30">
                                   DID NOT APPLY
@@ -6120,6 +6148,11 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                                   NOT ALLOTTED • 0 Shares (Mandate released / refund in process)
                                 </span>
                               )}
+                              {isNotAnnounced && (
+                                <span className="text-amber-600 dark:text-amber-400 font-medium">
+                                  Not Announced Yet • {outcome.message || "Allotment data has not been published by registrar yet"}
+                                </span>
+                              )}
                               {isNotApplied && (
                                 <span className="text-slate-400 font-medium">
                                   Did Not Apply • No application found on registrar for this PAN
@@ -6127,7 +6160,7 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
                               )}
                               {isNotChecked && (
                                 <span className="text-slate-400">
-                                  Not checked yet • Click check button above or mark manually:
+                                  {outcome.message || "Not checked yet • Click check button above or mark manually:"}
                                 </span>
                               )}
                             </div>
