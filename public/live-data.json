@@ -6711,67 +6711,92 @@
       }
     },
     "national-stock-exchange-of-india": {
-      "gmp": 283,
+      "gmp": 140,
+      "priceMax": 1785,
+      "estListing": 1925,
       "verification": {
         "priceMax": {
-          "status": "unverified",
+          "status": "verified",
           "value": 1785,
           "sources": [
-            "chittorgarh"
+            "chittorgarh",
+            "investorgain"
           ],
-          "updatedAt": "2026-09-14T05:49:16.132Z"
-        },
-        "lot": {
-          "status": "unverified",
-          "value": 8,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-14T05:49:16.132Z"
-        },
-        "issueSize": {
-          "status": "unverified",
-          "value": 14.89,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-14T05:49:16.132Z"
-        },
-        "ofs": {
-          "status": "unverified",
-          "value": 0,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-14T05:49:16.132Z"
-        },
-        "faceValue": {
-          "status": "unverified",
-          "value": 10,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-14T05:49:16.132Z"
-        },
-        "close": {
-          "status": "unverified",
-          "value": "2026-09-18",
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-14T05:49:16.132Z"
+          "updatedAt": "2026-09-17T17:50:00.000Z"
         },
         "priceMin": {
-          "status": "unverified",
+          "status": "verified",
           "value": 1700,
           "sources": [
-            "chittorgarh"
+            "chittorgarh",
+            "investorgain"
           ],
-          "updatedAt": "2026-09-14T05:49:16.132Z"
+          "updatedAt": "2026-09-17T17:50:00.000Z"
+        },
+        "lot": {
+          "status": "verified",
+          "value": 8,
+          "sources": [
+            "chittorgarh",
+            "investorgain"
+          ],
+          "updatedAt": "2026-09-17T17:50:00.000Z"
+        },
+        "issueSize": {
+          "status": "verified",
+          "value": 22562,
+          "sources": [
+            "chittorgarh",
+            "investorgain"
+          ],
+          "updatedAt": "2026-09-17T17:50:00.000Z"
+        },
+        "ofs": {
+          "status": "verified",
+          "value": 22562,
+          "sources": [
+            "chittorgarh",
+            "investorgain"
+          ],
+          "updatedAt": "2026-09-17T17:50:00.000Z"
+        },
+        "faceValue": {
+          "status": "verified",
+          "value": 1,
+          "sources": [
+            "chittorgarh",
+            "investorgain"
+          ],
+          "updatedAt": "2026-09-17T17:50:00.000Z"
+        },
+        "open": {
+          "status": "verified",
+          "value": "2026-09-17",
+          "sources": [
+            "chittorgarh",
+            "investorgain"
+          ],
+          "updatedAt": "2026-09-17T17:50:00.000Z"
+        },
+        "close": {
+          "status": "verified",
+          "value": "2026-09-21",
+          "sources": [
+            "chittorgarh",
+            "investorgain"
+          ],
+          "updatedAt": "2026-09-17T17:50:00.000Z"
+        },
+        "listing": {
+          "status": "verified",
+          "value": "2026-09-24",
+          "sources": [
+            "chittorgarh",
+            "investorgain"
+          ],
+          "updatedAt": "2026-09-17T17:50:00.000Z"
         }
-      },
-      "listedAt": 285,
-      "currentPrice": 285
+      }
     },
     "knack-packaging": {
       "gmp": 210,

@@ -110,8 +110,12 @@ async function scrapeDetail(page, url) {
       };
       const parseDate = (s) => {
         if (!s) return null;
-        // e.g. "Mon, Jul 21, 2026" or "Jul 21, 2026" or "21 Jul 2026"
-        const cleaned = String(s).replace(/^[A-Za-z]{3},\s*/, "").trim();
+        // e.g. "Mon, Jul 21, 2026" or "Jul 21, 2026" or "21 Jul 2026" or "22nd Sep 2026" or "Thu, Sep 24, 2026 T"
+        const cleaned = String(s)
+          .replace(/^[A-Za-z]{3},\s*/, "")
+          .replace(/(\d+)(st|nd|rd|th)/i, "$1")
+          .replace(/\s+[A-Z]$/, "")
+          .trim();
         const d = new Date(cleaned);
         if (!isNaN(d.getTime())) {
           const pad = (n) => String(n).padStart(2, "0");
@@ -147,10 +151,23 @@ async function scrapeDetail(page, url) {
         if (fields.ofs == null && label.includes("offer for sale")) fields.ofs = toCr(value);
 
         if (fields.open == null && (label === "ipo date" || label.includes("ipo open") || label.includes("open date"))) {
-          // "23 to 25 Jan, 2017" style range or a single date
-          const rangeM = value.match(/([A-Za-z0-9 ,]+?)\s+to\s+([A-Za-z0-9 ,]+)/);
-          if (rangeM) { fields.open = parseDate(rangeM[1]); fields.close = parseDate(rangeM[2]); }
-          else fields.open = parseDate(value);
+          // "17 to 21 Sep, 2026" or "Sep 17 to Sep 21, 2026" or a single date
+          const rangeM = value.match(/([A-Za-z0-9 ,]+?)\s+to\s+([A-Za-z0-9 ,]+)/i);
+          if (rangeM) {
+            let p1 = rangeM[1].trim();
+            const p2 = rangeM[2].trim();
+            if (!/[a-z]{3}/i.test(p1)) {
+              const monthYearMatch = p2.match(/([A-Za-z]+[,\s]+\d{4})/);
+              if (monthYearMatch) p1 = `${p1} ${monthYearMatch[1]}`;
+            } else if (!/\d{4}/.test(p1)) {
+              const yearMatch = p2.match(/\b(20\d{2})\b/);
+              if (yearMatch) p1 = `${p1} ${yearMatch[1]}`;
+            }
+            fields.open = parseDate(p1);
+            fields.close = parseDate(p2);
+          } else {
+            fields.open = parseDate(value);
+          }
         }
         if (fields.close == null && (label.includes("ipo close") || label.includes("close date"))) fields.close = parseDate(value);
         if (fields.allotment == null && label.includes("allotment")) fields.allotment = parseDate(value);

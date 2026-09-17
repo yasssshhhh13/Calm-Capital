@@ -282,7 +282,7 @@ async function main() {
           issueSize: null,
           freshIssue: null,
           ofs: 0,
-          gmp: 0,
+          gmp: null,
           trend: "stable",
           estListing: null,
           listedAt: null,

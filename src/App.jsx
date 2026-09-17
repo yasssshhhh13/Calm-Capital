@@ -810,7 +810,7 @@ function getSentiment(ipo) {
   const p = ipo.priceMax || ipo.priceMin;
   if (!p || isNaN(p) || p <= 0) return null;
   const gmpPct = (gmpVal / p) * 100;
-  if (gmpPct <= 0) {
+  if (gmpPct < 0) {
     return {
       label: "Bearish",
       emoji: "🔴",
@@ -1084,6 +1084,14 @@ function getLiveIPOS() {
       finalIpo = { ...finalIpo, currentPrice: _realtimePrices[merged.id].price };
     }
     finalIpo = { ...finalIpo, status: liveStatus(finalIpo, today) };
+    if (finalIpo.status !== "Listed") {
+      finalIpo.listedAt = null;
+      finalIpo.currentPrice = null;
+    }
+    if (finalIpo.gmp === 0 && (finalIpo.priceMax == null || finalIpo.open == null)) {
+      finalIpo.gmp = null;
+      finalIpo.estListing = null;
+    }
     if (finalIpo.fin) {
       finalIpo.fin = validateFinancials(finalIpo);
     }

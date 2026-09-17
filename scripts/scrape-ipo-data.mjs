@@ -47,12 +47,14 @@ function isMissingRegistrar(value) {
 function calculateStatus(ipo) {
   const today = new Date();
   
-  // Clean up any stale estimated values if the listing date is in the future
-  const isFutureListing = ipo.listing && today < new Date(ipo.listing + "T10:00:00+05:30");
-  if (isFutureListing) {
+  // Clean up any stale estimated values if the listing date is in the future or the issue is not yet closed
+  const isFutureOrOpen = (ipo.listing && today < new Date(ipo.listing + "T10:00:00+05:30")) ||
+    (ipo.close && today < new Date(ipo.close + "T16:50:00+05:30")) ||
+    (ipo.open && today < new Date(ipo.open + "T00:00:00+05:30"));
+  if (isFutureOrOpen) {
     if (ipo.listedAt !== null && ipo.listedAt !== undefined) {
       ipo.listedAt = null;
-      console.log(`[CLEANUP] Reset listing price for upcoming IPO: "${ipo.name}"`);
+      console.log(`[CLEANUP] Reset listing price for upcoming/open IPO: "${ipo.name}"`);
     }
     if (ipo.currentPrice !== null && ipo.currentPrice !== undefined) {
       ipo.currentPrice = null;
@@ -124,8 +126,10 @@ function applyDetailInfo(ipo, detailInfo) {
   if (validNum(detailInfo.faceValue) && ipo.faceValue == null) { ipo.faceValue = detailInfo.faceValue; changed = true; }
   
   const today = new Date();
-  const isFutureListing = ipo.listing && today < new Date(ipo.listing + "T10:00:00+05:30");
-  if (validNum(detailInfo.listedAt) && ipo.listedAt == null && !isFutureListing) {
+  const isFutureOrOpen = (ipo.listing && today < new Date(ipo.listing + "T10:00:00+05:30")) ||
+    (ipo.close && today < new Date(ipo.close + "T16:50:00+05:30")) ||
+    (ipo.open && today < new Date(ipo.open + "T00:00:00+05:30"));
+  if (validNum(detailInfo.listedAt) && ipo.listedAt == null && !isFutureOrOpen) {
     ipo.listedAt = detailInfo.listedAt;
     if (ipo.currentPrice == null) ipo.currentPrice = detailInfo.listedAt;
     changed = true;
@@ -288,7 +292,7 @@ async function main() {
   const errors = [];
 
   try {
-    const gmpData = await scrapeGmp(page);
+    const gmpData = await scrapeGmp(page, iposBase);
     gmpPatches = gmpData.result;
     rawGmpRows = gmpData.rows;
   } catch (err) {
@@ -355,8 +359,8 @@ async function main() {
         open, close, listing, allotment, refund, demat,
         priceMin, priceMax, faceValue: 10, lot, issueSize,
         freshIssue: issueSize, ofs: 0,
-        gmp: gmp ?? 0,
-        trend: gmp && gmp > 0 ? "up" : "stable",
+        gmp: gmp != null ? gmp : null,
+        trend: gmp && gmp > 0 ? "up" : gmp && gmp < 0 ? "down" : "stable",
         estListing, listedAt: null, currentPrice: null,
         gmpHistory: gmp !== undefined ? [{ d: new Date().toLocaleDateString("en-US", { day: "2-digit", month: "short" }), v: gmp }] : [],
         drhp: "https://www.sebi.gov.in/filings/public-issues.html",
@@ -417,8 +421,34 @@ async function main() {
           console.log(`[PRICE] "${existingIpo.name}" -> ₹${rowPrice} (from GMP table)`);
         }
 
+        const rowGmp = parseGmpCell(cells[1]);
+        if (rowGmp !== undefined && existingIpo.gmp !== rowGmp) {
+          const oldGmp = existingIpo.gmp;
+          existingIpo.gmp = rowGmp;
+          existingIpo.trend = oldGmp != null ? (rowGmp > oldGmp ? "up" : rowGmp < oldGmp ? "down" : "stable") : (rowGmp > 0 ? "up" : "stable");
+          if (existingIpo.priceMax) existingIpo.estListing = existingIpo.priceMax + rowGmp;
+          
+          const todayStr = new Date().toLocaleDateString("en-US", { day: "2-digit", month: "short" });
+          if (!Array.isArray(existingIpo.gmpHistory)) existingIpo.gmpHistory = [];
+          const lastH = existingIpo.gmpHistory[existingIpo.gmpHistory.length - 1];
+          if (!lastH || lastH.d !== todayStr || lastH.v !== rowGmp) {
+            existingIpo.gmpHistory.push({ d: todayStr, v: rowGmp });
+          }
+          gmpPatches[id] = {
+            ...(gmpPatches[id] || {}),
+            gmp: rowGmp,
+            ...(existingIpo.priceMax ? { priceMax: existingIpo.priceMax, estListing: existingIpo.priceMax + rowGmp } : {}),
+          };
+          changed = true;
+          console.log(`[GMP UPDATE] "${existingIpo.name}" -> ₹${rowGmp} (was ₹${oldGmp})`);
+        }
+
         const listingInfo = parseListingInfo(rawName);
-        if (listingInfo && existingIpo.listedAt == null) {
+        const todayDate = new Date();
+        const isNotYetListed = (existingIpo.listing && todayDate < new Date(existingIpo.listing + "T10:00:00+05:30")) ||
+          (existingIpo.close && todayDate < new Date(existingIpo.close + "T16:50:00+05:30")) ||
+          (existingIpo.open && todayDate < new Date(existingIpo.open + "T00:00:00+05:30"));
+        if (listingInfo && existingIpo.listedAt == null && !isNotYetListed) {
           existingIpo.listedAt = listingInfo.listedAt;
           if (existingIpo.currentPrice == null) existingIpo.currentPrice = listingInfo.listedAt;
           changed = true;
@@ -576,14 +606,22 @@ async function main() {
     // the freshest verified/pending/conflict state without a full baseline reload.
     if (baseIpo && baseIpo.verification) ipos[id].verification = baseIpo.verification;
 
-    // Always surface listing price on the live overlay once captured in baseline
-    if (baseIpo?.listedAt != null) {
-      ipos[id].listedAt = baseIpo.listedAt;
-      if (baseIpo.currentPrice != null) ipos[id].currentPrice = baseIpo.currentPrice;
-    }
-
     const latestStatus = baseIpo ? calculateStatus(baseIpo) : "Upcoming";
     const isUpcoming = latestStatus === "Upcoming" || latestStatus === "DRHP Filed";
+
+    // Only surface listing price on the live overlay if the IPO is actually Listed
+    if (latestStatus === "Listed" && baseIpo?.listedAt != null) {
+      ipos[id].listedAt = baseIpo.listedAt;
+      if (baseIpo.currentPrice != null) ipos[id].currentPrice = baseIpo.currentPrice;
+    } else {
+      delete ipos[id].listedAt;
+      delete ipos[id].currentPrice;
+    }
+
+    if (baseIpo && (baseIpo.priceMax == null || baseIpo.open == null) && ipos[id].gmp === 0) {
+      delete ipos[id].gmp;
+      delete ipos[id].estListing;
+    }
 
     if (!isUpcoming) {
       if (newSub && Object.keys(newSub).length > 0) {

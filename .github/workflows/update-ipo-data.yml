@@ -42,6 +42,10 @@ jobs:
           node scripts/scrape-ipo-data.mjs
           node scripts/discover-new-ipos.mjs
           python scripts/extract-drhp-financials.py
+          node scripts/sanitize-and-sync.mjs
+
+      - name: Automated Quality Gate — Comprehensive System Audit
+        run: node scripts/monthly-system-audit.mjs
 
       - name: Commit updated data if changed
         run: |

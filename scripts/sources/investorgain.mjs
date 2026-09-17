@@ -96,9 +96,11 @@ export async function extractTable(page, label) {
 
 export function parseGmpCell(text) {
   if (!text) return undefined;
-  const m = text.match(/₹\s*(--|-?[\d,]+)/);
-  if (!m || m[1] === "--") return undefined;
-  const n = parseFloat(m[1].replace(/,/g, ""));
+  const clean = String(text).replace(/,/g, "").trim();
+  if (clean === "--" || clean === "-" || clean.toLowerCase() === "tba" || clean.toLowerCase() === "n/a") return undefined;
+  const m = clean.match(/(?:₹|Rs\.?|&#8377;)?\s*(-?\d+(?:\.\d+)?)/);
+  if (!m) return undefined;
+  const n = parseFloat(m[1]);
   return Number.isFinite(n) ? n : undefined;
 }
 
@@ -291,7 +293,7 @@ export async function scrapeIpoDetailPage(page, href) {
   }
 }
 
-export async function scrapeGmp(page) {
+export async function scrapeGmp(page, iposBase = []) {
   await page.goto(GMP_URL, { waitUntil: "networkidle", timeout: 45000 });
   await page.waitForTimeout(2000);
   const rows = await extractTable(page, "gmp");
@@ -299,7 +301,16 @@ export async function scrapeGmp(page) {
   const result = {};
   for (const { cells } of rows) {
     const rawName = cells[0];
-    const id = resolveId(cleanScrapedName(rawName || ""));
+    const cleaned = cleanScrapedName(rawName || "");
+    let id = resolveId(cleaned);
+    if (!id && cleaned && Array.isArray(iposBase) && iposBase.length > 0) {
+      const generatedId = normalizeName(cleaned).replace(/\s+/g, "-");
+      const existing = findExistingIpo(iposBase, cleaned, generatedId);
+      if (existing) {
+        id = existing.id;
+        NAME_TO_ID[normalizeName(cleaned)] = id;
+      }
+    }
     if (!id) continue;
 
     const gmp = parseGmpCell(cells[1]);
