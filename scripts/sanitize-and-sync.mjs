@@ -61,7 +61,24 @@ export function sanitizeAndSync() {
     return "Listed";
   }
 
+  const cleanNameStr = (s) => {
+    if (!s) return "";
+    return s
+      .replace(/\s*(?:BSE\s+SME|NSE\s+SME|NSE\s+Emerge|BSE|NSE|SME|IPO)?\s*C?ALLOTT?ED\b/gi, "")
+      .replace(/\s+(?:BSE|NSE)\s+SME/i, "")
+      .replace(/\s+NSE\s+Emerge/i, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
   for (const ipo of ipos) {
+    // 0. Name Hygiene: Strip corrupt ALLOTTED/CALLOTTED/SMECALLOTTED suffixes
+    if (ipo.name) ipo.name = cleanNameStr(ipo.name);
+    if (ipo.company) ipo.company = cleanNameStr(ipo.company);
+    if (ipo.about && /allott?ed/i.test(ipo.about)) {
+      ipo.about = ipo.about.replace(/\s*(?:BSE\s+SME|NSE\s+SME|NSE\s+Emerge|BSE|NSE|SME|IPO)?\s*C?ALLOTT?ED\b/gi, "");
+    }
+
     // 1. Status Sync
     const expectedStatus = computeLiveStatus(ipo);
     if (ipo.status !== expectedStatus) {
