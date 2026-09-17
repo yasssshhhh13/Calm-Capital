@@ -7463,6 +7463,7 @@ export default function App() {
   const [closedType, setClosedType] = useState("Mainboard");
   const [overviewType, setOverviewType] = useState("Mainboard");
   const [gmpMarket, setGmpMarket] = useState("Mainboard");
+  const [searchStatusFilter, setSearchStatusFilter] = useState("All");
   const lastTabPathRef = useRef(TAB_PATHS["overview"] || "/");
   const currentPathIpoId = parseLocation(typeof window !== "undefined" ? window.location.pathname : "/", typeof window !== "undefined" ? window.location.search : "").ipoId;
   const mainScrollRef = useRef(null);
@@ -7919,6 +7920,45 @@ export default function App() {
     );
   }
 
+  const isDedicatedTab = ["upcoming", "open", "closed", "listed", "allotment", "subscriptions", "financials", "docs", "watchlist", "gmp"].includes(tab);
+
+  const renderTabEmptySearchHelper = (categoryName, currentType, currentCount) => {
+    if (!query.trim()) return null;
+    const otherMatches = sortedFiltered.filter(i => getComputedStatus(i) !== categoryName);
+    if (otherMatches.length === 0) return null;
+
+    return (
+      <div className="mt-4 p-4 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 max-w-md mx-auto text-left space-y-2.5">
+        <p className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+          <span>💡</span> Looking for one of these?
+        </p>
+        {otherMatches.slice(0, 3).map((m) => {
+          const st = getComputedStatus(m);
+          const targetTab = st === "Listed" ? "listed" : st === "Open" ? "open" : st === "Upcoming" ? "upcoming" : "closed";
+          const listingDateFormatted = m.listing || m.allotment 
+            ? new Date((m.listing || m.allotment) + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
+            : null;
+          return (
+            <div key={m.id} className="flex items-center justify-between gap-2 text-xs py-1.5 border-b border-slate-200/40 dark:border-white/5 last:border-0">
+              <div className="min-w-0 pr-2">
+                <span className="font-semibold text-slate-850 dark:text-white block truncate">{m.name}</span>
+                <span className="text-[11px] text-slate-400">
+                  {st === "Listed" ? `Listed${listingDateFormatted ? ` on ${listingDateFormatted}` : ""}` : st}
+                </span>
+              </div>
+              <button
+                onClick={() => setTab(targetTab)}
+                className="shrink-0 px-2.5 py-1 rounded-lg bg-teal-600/10 text-teal-600 dark:text-teal-400 font-bold hover:bg-teal-600 hover:text-white transition-all cursor-pointer border-0 text-[11px]"
+              >
+                View in {st} IPOs →
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className={dark ? "dark" : ""}>
       <div className="h-screen flex overflow-hidden" style={{
@@ -8135,9 +8175,9 @@ export default function App() {
               </div>
             ) : (
               <div key={tab} className="tab-enter">
-                {query.trim() ? (
+                {query.trim() && !isDedicatedTab ? (
                   <div className="space-y-6 animate-fade-in">
-                    <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 dark:border-white/5 pb-4">
                       <div>
                         <div className="flex items-center gap-2">
                           <h2 className="text-base font-bold text-slate-850 dark:text-white tracking-tight">
@@ -8148,36 +8188,71 @@ export default function App() {
                           </span>
                         </div>
                         <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
-                          Showing matches for &ldquo;<span className="font-semibold text-slate-750 dark:text-slate-300">{query}</span>&rdquo; across all categories &amp; statuses
+                          Showing matches for &ldquo;<span className="font-semibold text-slate-750 dark:text-slate-300">{query}</span>&rdquo;
                         </p>
+                        <div className="flex flex-wrap gap-1.5 mt-3">
+                          {["All", "Open", "Upcoming", "Closed", "Listed"].map((st) => {
+                            const count = st === "All"
+                              ? sortedFiltered.length
+                              : sortedFiltered.filter(i => getComputedStatus(i) === st).length;
+                            return (
+                              <button
+                                key={st}
+                                onClick={() => setSearchStatusFilter(st)}
+                                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
+                                  searchStatusFilter === st
+                                    ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
+                                    : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10"
+                                }`}
+                              >
+                                {st} ({count})
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                       <button
                         onClick={() => setQuery("")}
-                        className="text-xs text-[#0F766E] dark:text-[#14B8A6] hover:underline font-bold cursor-pointer border-0 bg-transparent flex items-center gap-1"
+                        className="text-xs text-[#0F766E] dark:text-[#14B8A6] hover:underline font-bold cursor-pointer border-0 bg-transparent flex items-center gap-1 self-start sm:self-auto"
                       >
                         <X size={13} />
                         Clear search
                       </button>
                     </div>
 
-                    {sortedFiltered.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {sortedFiltered.map((ipo) => (
-                          <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
-                        <Building2 size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
-                        <p className="text-slate-500 text-sm">No matching IPOs found for &ldquo;{query}&rdquo;.</p>
-                        <button
-                          onClick={() => setQuery("")}
-                          className="mt-3 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-[#1E293B] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-[#334155] transition-colors border-0 cursor-pointer"
-                        >
-                          Reset search filter
-                        </button>
-                      </div>
-                    )}
+                    {(() => {
+                      const displayedCards = searchStatusFilter === "All"
+                        ? sortedFiltered
+                        : sortedFiltered.filter(i => getComputedStatus(i) === searchStatusFilter);
+
+                      if (displayedCards.length > 0) {
+                        return (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {displayedCards.map((ipo) => (
+                              <IPOCard key={ipo.id} ipo={ipo} onOpen={handleSelectIpo} watchlist={watchlist} dark={dark} />
+                            ))}
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
+                          <Building2 size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
+                          <p className="text-slate-500 text-sm">
+                            No {searchStatusFilter !== "All" ? `${searchStatusFilter} ` : ""}IPOs found matching &ldquo;{query}&rdquo;.
+                          </p>
+                          <button
+                            onClick={() => {
+                              if (searchStatusFilter !== "All") setSearchStatusFilter("All");
+                              else setQuery("");
+                            }}
+                            className="mt-3 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-[#1E293B] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-[#334155] transition-colors border-0 cursor-pointer"
+                          >
+                            {searchStatusFilter !== "All" ? "View all matches" : "Reset search filter"}
+                          </button>
+                        </div>
+                      );
+                    })()}
                   </div>
                 ) : (
                   <>
@@ -8735,11 +8810,22 @@ export default function App() {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
-                      <CircleDollarSign size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
-                      <p className="text-slate-500 text-sm">
-                        There are currently no open {openType} IPOs.
+                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-10 text-center space-y-3">
+                      <CircleDollarSign size={32} className="mx-auto text-slate-300 dark:text-slate-700" />
+                      <p className="text-slate-700 dark:text-slate-200 text-sm font-semibold">
+                        {query.trim()
+                          ? `No open ${openType} IPOs found matching "${query}".`
+                          : `There are currently no open ${openType} IPOs.`}
                       </p>
+                      {query.trim() && renderTabEmptySearchHelper("Open", openType, openMainboardCount + openSmeCount)}
+                      {query.trim() && (
+                        <button
+                          onClick={() => setQuery("")}
+                          className="mt-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-[#1E293B] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-[#334155] transition-colors border-0 cursor-pointer"
+                        >
+                          Clear search
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -8794,11 +8880,22 @@ export default function App() {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
-                      <Calendar size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
-                      <p className="text-slate-500 text-sm">
-                        There are currently no closed {closedType} IPOs.
+                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-10 text-center space-y-3">
+                      <Calendar size={32} className="mx-auto text-slate-300 dark:text-slate-700" />
+                      <p className="text-slate-700 dark:text-slate-200 text-sm font-semibold">
+                        {query.trim()
+                          ? `No closed ${closedType} IPOs found matching "${query}".`
+                          : `There are currently no closed ${closedType} IPOs.`}
                       </p>
+                      {query.trim() && renderTabEmptySearchHelper("Closed", closedType, closedMainboardCount + closedSmeCount)}
+                      {query.trim() && (
+                        <button
+                          onClick={() => setQuery("")}
+                          className="mt-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-[#1E293B] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-[#334155] transition-colors border-0 cursor-pointer"
+                        >
+                          Clear search
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -8853,11 +8950,22 @@ export default function App() {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
-                      <Calendar size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
-                      <p className="text-slate-500 text-sm">
-                        There are currently no upcoming {upcomingType} IPOs. Please check back later.
+                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-10 text-center space-y-3">
+                      <Calendar size={32} className="mx-auto text-slate-300 dark:text-slate-700" />
+                      <p className="text-slate-700 dark:text-slate-200 text-sm font-semibold">
+                        {query.trim()
+                          ? `No upcoming ${upcomingType} IPOs found matching "${query}".`
+                          : `There are currently no upcoming ${upcomingType} IPOs. Please check back later.`}
                       </p>
+                      {query.trim() && renderTabEmptySearchHelper("Upcoming", upcomingType, upcomingMainboardCount + upcomingSmeCount)}
+                      {query.trim() && (
+                        <button
+                          onClick={() => setQuery("")}
+                          className="mt-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-[#1E293B] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-[#334155] transition-colors border-0 cursor-pointer"
+                        >
+                          Clear search
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
@@ -8926,9 +9034,22 @@ export default function App() {
                       ))}
                     </div>
                   ) : (
-                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-12 text-center">
-                      <Building2 size={32} className="mx-auto mb-3 text-slate-300 dark:text-slate-700" />
-                      <p className="text-slate-500 text-sm">No listed {listedType} IPOs found.</p>
+                    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-10 text-center space-y-3">
+                      <Building2 size={32} className="mx-auto text-slate-300 dark:text-slate-700" />
+                      <p className="text-slate-700 dark:text-slate-200 text-sm font-semibold">
+                        {query.trim()
+                          ? `No listed ${listedType} IPOs found matching "${query}".`
+                          : `No listed ${listedType} IPOs found.`}
+                      </p>
+                      {query.trim() && renderTabEmptySearchHelper("Listed", listedType, listedMainboardCount + listedSmeCount)}
+                      {query.trim() && (
+                        <button
+                          onClick={() => setQuery("")}
+                          className="mt-2 px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-[#1E293B] text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-200 dark:hover:bg-[#334155] transition-colors border-0 cursor-pointer"
+                        >
+                          Clear search
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
