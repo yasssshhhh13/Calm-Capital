@@ -43,12 +43,9 @@ const cleanCompanyName = (name) => {
     .replace(/\s*[-–—]?\s*rhp/gi, "")
     .replace(/\s*corrigendum\s+to\s+drhp/gi, "")
     .replace(/\s*addendum\s+to\s+drhp/gi, "")
-    .replace(/\s+(?:BSE|NSE)\s+SME\s*CALLOTTED/i, "")
-    .replace(/\s+(?:BSE|NSE)\s+SME\s*CALLOTED/i, "")
+    .replace(/\s*(?:BSE\s+SME|NSE\s+SME|NSE\s+Emerge|BSE|NSE|SME|IPO)?\s*C?ALLOTT?ED\b/gi, "")
     .replace(/\s+(?:BSE|NSE)\s+SME/i, "")
     .replace(/\s+NSE\s+Emerge/i, "")
-    .replace(/\s+CALLOTTED/i, "")
-    .replace(/\s+CALLOTED/i, "")
     .replace(/\s+/g, " ")
     .trim();
 

@@ -2263,7 +2263,7 @@
     "nseCode": "ARDEE"
   },
   {
-    "id": "aegeus-technologies-smecallotted",
+    "id": "aegeus-technologies",
     "name": "Aegeus Technologies",
     "company": "Aegeus Technologies Limited",
     "type": "SME",
@@ -2314,7 +2314,7 @@
       "netWorth": 15.4,
       "debt": 11.93
     },
-    "about": "Aegeus Technologies BSE SMECALLOTTED Limited is a newly announced SME IPO operating in the IT Services & Technology sector. The company is launching its issue on BSE SME.",
+    "about": "Aegeus Technologies Limited is an SME IPO operating in the IT Services & Technology sector. The company successfully listed on BSE SME.",
     "sector": "IT Services & Technology",
     "registrar": "Skyline Financial Services Pvt.Ltd.",
     "investorgainUrl": "https://www.investorgain.com/ipo/aegeus-technologies-ipo/2089/",
@@ -2414,7 +2414,7 @@
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/aegeus-technologies-ipo/2837/"
   },
   {
-    "id": "anawil-wire-engineering-smecallotted",
+    "id": "anawil-wire-engineering",
     "name": "Anawil Wire & Engineering",
     "company": "Anawil Wire & Engineering Limited",
     "type": "SME",
@@ -2465,7 +2465,7 @@
       "netWorth": 89.51,
       "debt": 128.25
     },
-    "about": "Anawil Wire & Engineering NSE SMECALLOTTED Limited is a newly announced SME IPO operating in the General sector. The company is launching its issue on NSE Emerge.",
+    "about": "Anawil Wire & Engineering Limited is an SME IPO operating in the General sector. The company successfully listed on NSE Emerge.",
     "sector": "General",
     "registrar": "Bigshare Services Pvt.Ltd.",
     "investorgainUrl": "https://www.investorgain.com/ipo/anawil-wire-engieering-ipo/1895/",
@@ -16698,9 +16698,9 @@
     "issueSize": 22562,
     "freshIssue": 0,
     "ofs": 22562,
-    "gmp": 140,
+    "gmp": 145,
     "trend": "up",
-    "estListing": 1925,
+    "estListing": 1930,
     "listedAt": null,
     "currentPrice": null,
     "gmpHistory": [
@@ -16709,8 +16709,12 @@
         "v": 283
       },
       {
+        "d": "Sep 15",
+        "v": 160
+      },
+      {
         "d": "Sep 17",
-        "v": 140
+        "v": 145
       }
     ],
     "drhp": "https://www.sebi.gov.in/filings/public-issues/jun-2026/national-stock-exchange-of-india-limited-drhp_102189.html",
@@ -16721,7 +16725,7 @@
     "fin": {
       "revenue": 18713.37,
       "pat": 10302.06,
-      "ebitda": 14519.09,
+      "ebitda": 11097.9,
       "netWorth": 31869.72,
       "debt": 0,
       "eps": 41.62,
@@ -16733,25 +16737,20 @@
     "registrar": "MUFG Intime India Pvt.Ltd.",
     "investorgainUrl": "https://www.investorgain.com/ipo/national-stock-exchange-of-india-ipo/2305/",
     "strengths": [
-      "World's largest derivatives exchange by contract volume and dominant market leader in Indian equities",
-      "Robust financial profile with 50%+ PAT margins, strong cash generation, and zero debt",
-      "Diversified revenue model spanning trading, clearing, listing, colocation, and index licensing"
+      "Growing market footprint in the General sector",
+      "Experienced promoter group and management team"
     ],
     "risks": [
-      "Subject to intensive regulatory oversight, scrutiny, and directive compliance from SEBI",
-      "Financial performance is sensitive to overall capital market sentiment and trading volume cycles"
+      "Operating scale limits relative to larger peers",
+      "Highly competitive market segment and raw material cost exposure"
     ],
     "verification": {
       "priceMax": {
-        "status": "verified",
+        "status": "unverified",
         "value": 1785,
         "sources": [
-          "chittorgarh",
-          "investorgain"
+          "chittorgarh"
         ],
-<<<<<<< HEAD
-        "updatedAt": "2026-09-17T17:50:00.000Z"
-=======
         "updatedAt": "2026-09-17T09:15:02.002Z"
       },
       "lot": {
@@ -16788,88 +16787,19 @@
       },
       "close": {
         "status": "unverified",
-        "value": "2026-09-18",
+        "value": "2026-09-21",
         "sources": [
           "chittorgarh"
         ],
         "updatedAt": "2026-09-17T09:15:02.002Z"
->>>>>>> 6e09b4730fa56fe05772e456c4e9b5deaed7049b
       },
       "priceMin": {
-        "status": "verified",
+        "status": "unverified",
         "value": 1700,
         "sources": [
-          "chittorgarh",
-          "investorgain"
+          "chittorgarh"
         ],
-<<<<<<< HEAD
-        "updatedAt": "2026-09-17T17:50:00.000Z"
-      },
-      "lot": {
-        "status": "verified",
-        "value": 8,
-        "sources": [
-          "chittorgarh",
-          "investorgain"
-        ],
-        "updatedAt": "2026-09-17T17:50:00.000Z"
-      },
-      "issueSize": {
-        "status": "verified",
-        "value": 22562,
-        "sources": [
-          "chittorgarh",
-          "investorgain"
-        ],
-        "updatedAt": "2026-09-17T17:50:00.000Z"
-      },
-      "ofs": {
-        "status": "verified",
-        "value": 22562,
-        "sources": [
-          "chittorgarh",
-          "investorgain"
-        ],
-        "updatedAt": "2026-09-17T17:50:00.000Z"
-      },
-      "faceValue": {
-        "status": "verified",
-        "value": 1,
-        "sources": [
-          "chittorgarh",
-          "investorgain"
-        ],
-        "updatedAt": "2026-09-17T17:50:00.000Z"
-      },
-      "open": {
-        "status": "verified",
-        "value": "2026-09-17",
-        "sources": [
-          "chittorgarh",
-          "investorgain"
-        ],
-        "updatedAt": "2026-09-17T17:50:00.000Z"
-      },
-      "close": {
-        "status": "verified",
-        "value": "2026-09-21",
-        "sources": [
-          "chittorgarh",
-          "investorgain"
-        ],
-        "updatedAt": "2026-09-17T17:50:00.000Z"
-      },
-      "listing": {
-        "status": "verified",
-        "value": "2026-09-24",
-        "sources": [
-          "chittorgarh",
-          "investorgain"
-        ],
-        "updatedAt": "2026-09-17T17:50:00.000Z"
-=======
         "updatedAt": "2026-09-17T09:15:02.002Z"
->>>>>>> 6e09b4730fa56fe05772e456c4e9b5deaed7049b
       }
     },
     "finMeta": {
@@ -16877,8 +16807,8 @@
       "sourceUrl": "https://www.sebi.gov.in/filings/public-issues/jun-2026/national-stock-exchange-of-india-limited-drhp_102189.html",
       "fy": "FY2026 (Jun)",
       "pageNum": "Financials",
-      "verifiedAt": "2026-09-17T17:50:00.000Z",
-      "method": "InvestorGain prospectus table + Chittorgarh + DRHP/RHP",
+      "verifiedAt": "2026-09-04T14:53:12.988Z",
+      "method": "InvestorGain prospectus table + DRHP/RHP",
       "status": "Verified"
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/national-stock-exchange-of-india-ipo/3151/",
@@ -18482,11 +18412,7 @@
     "name": "Shakti Polytarp",
     "company": "Shakti Polytarp Limited",
     "type": "SME",
-<<<<<<< HEAD
     "status": "Closed",
-=======
-    "status": "Open",
->>>>>>> 6e09b4730fa56fe05772e456c4e9b5deaed7049b
     "discoveredAt": "2026-09-09T02:56:33.913Z",
     "open": "2026-09-15",
     "close": "2026-09-17",
@@ -18670,7 +18596,7 @@
     "ofs": 0,
     "gmp": 0,
     "trend": "stable",
-    "estListing": 53,
+    "estListing": 54,
     "listedAt": null,
     "currentPrice": null,
     "gmpHistory": [],
@@ -19146,11 +19072,7 @@
     "name": "Quanto Agroworld",
     "company": "Quanto Agroworld Limited",
     "type": "SME",
-<<<<<<< HEAD
     "status": "Closed",
-=======
-    "status": "Open",
->>>>>>> 6e09b4730fa56fe05772e456c4e9b5deaed7049b
     "discoveredAt": "2026-09-09T07:52:20.815Z",
     "open": "2026-09-15",
     "close": "2026-09-17",
@@ -19552,11 +19474,7 @@
     "name": "Vama Wovenfab",
     "company": "Vama Wovenfab Limited",
     "type": "SME",
-<<<<<<< HEAD
     "status": "Closed",
-=======
-    "status": "Open",
->>>>>>> 6e09b4730fa56fe05772e456c4e9b5deaed7049b
     "discoveredAt": "2026-09-10T05:34:11.504Z",
     "open": "2026-09-15",
     "close": "2026-09-17",
@@ -20309,7 +20227,7 @@
     "issueSize": 405,
     "freshIssue": 405,
     "ofs": 0,
-    "gmp": null,
+    "gmp": 0,
     "trend": "stable",
     "estListing": 405,
     "listedAt": null,
@@ -20924,18 +20842,18 @@
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/fx-multitech-ipo/2849/"
   },
   {
-    "id": "one-mobikwik-systems-ipocallotted",
-    "name": "One Mobikwik Systems IPOCALLOTTED",
-    "company": "One Mobikwik Systems IPOCALLOTTED Limited",
+    "id": "one-mobikwik-systems",
+    "name": "One Mobikwik Systems",
+    "company": "One Mobikwik Systems Limited",
     "type": "Mainboard",
-    "status": "Upcoming",
+    "status": "Listed",
     "discoveredAt": "2026-09-15T15:33:04.111Z",
-    "open": "2026-12-11",
-    "close": "2026-12-13",
-    "listing": "2026-12-18",
-    "allotment": "2026-12-16",
-    "refund": "2026-12-17",
-    "demat": "2026-12-17",
+    "open": "2024-12-11",
+    "close": "2024-12-13",
+    "listing": "2024-12-18",
+    "allotment": "2024-12-16",
+    "refund": "2024-12-17",
+    "demat": "2024-12-17",
     "priceMin": 265,
     "priceMax": 279,
     "faceValue": 10,
@@ -20943,11 +20861,11 @@
     "issueSize": 572,
     "freshIssue": 572,
     "ofs": 0,
-    "gmp": 0,
-    "trend": "stable",
-    "estListing": 279,
-    "listedAt": null,
-    "currentPrice": null,
+    "gmp": null,
+    "trend": "up",
+    "estListing": null,
+    "listedAt": 440,
+    "currentPrice": 440,
     "gmpHistory": [],
     "drhp": "https://www.sebi.gov.in/filings/public-issues/jan-2024/one-mobikwik-systems-limited_80450.html",
     "rhp": null,
@@ -20960,8 +20878,8 @@
       "revenue": 3022.56,
       "pat": 1113
     },
-    "about": "One Mobikwik Systems IPOCALLOTTED Limited is a newly announced Mainboard IPO operating in the General sector. The company is launching its issue on BSE, NSE.",
-    "sector": "General",
+    "about": "One Mobikwik Systems Limited is an Indian digital banking and payment service provider operating MobiKwik wallet, BNPL, and payment gateway services. The company successfully listed on BSE and NSE in December 2024.",
+    "sector": "Fintech",
     "registrar": "MUFG Intime India Pvt.Ltd.",
     "investorgainUrl": "https://www.investorgain.com/ipo/mobikwik-ipo/162/",
     "strengths": [
@@ -21029,7 +20947,7 @@
       },
       "open": {
         "status": "unverified",
-        "value": "2026-12-11",
+        "value": "2024-12-11",
         "sources": [
           "chittorgarh"
         ],
@@ -21037,7 +20955,7 @@
       },
       "close": {
         "status": "unverified",
-        "value": "2026-12-13",
+        "value": "2024-12-13",
         "sources": [
           "chittorgarh"
         ],
@@ -21045,13 +20963,13 @@
       },
       "allotment": {
         "status": "unverified",
-        "value": "2026-12-16",
+        "value": "2024-12-16",
         "sources": [],
         "updatedAt": "2026-09-17T09:15:02.002Z"
       },
       "listing": {
         "status": "unverified",
-        "value": "2026-12-18",
+        "value": "2024-12-18",
         "sources": [
           "chittorgarh"
         ],
@@ -21406,7 +21324,7 @@
     "issueSize": null,
     "freshIssue": 370,
     "ofs": 0,
-    "gmp": 0,
+    "gmp": null,
     "trend": "stable",
     "estListing": null,
     "listedAt": null,
@@ -21491,8 +21409,8 @@
   },
   {
     "id": "sterlite-electric-second",
-    "name": "Sterlite Electric Limited \u2013 Second",
-    "company": "Sterlite Electric Limited \u2013 Second Limited",
+    "name": "Sterlite Electric Limited – Second",
+    "company": "Sterlite Electric Limited – Second Limited",
     "type": "Mainboard",
     "status": "Upcoming",
     "discoveredAt": "2026-09-16T13:11:39.023Z",
@@ -21509,7 +21427,7 @@
     "issueSize": null,
     "freshIssue": null,
     "ofs": 0,
-    "gmp": 0,
+    "gmp": null,
     "trend": "stable",
     "estListing": null,
     "listedAt": null,
@@ -21520,7 +21438,7 @@
     "leadManager": "To Be Announced",
     "registrar": "To Be Announced",
     "exchange": "BSE, NSE",
-    "about": "Sterlite Electric Limited \u2013 Second is a newly announced Mainboard IPO in the General sector. The company has filed its DRHP with SEBI and is preparing for its public issue.",
+    "about": "Sterlite Electric Limited – Second is a newly announced Mainboard IPO in the General sector. The company has filed its DRHP with SEBI and is preparing for its public issue.",
     "sector": "General",
     "strengths": [
       "Established presence in the General industry",
@@ -21744,7 +21662,7 @@
     "issueSize": null,
     "freshIssue": 34.14,
     "ofs": 0,
-    "gmp": 0,
+    "gmp": null,
     "trend": "stable",
     "estListing": null,
     "listedAt": null,
@@ -22163,7 +22081,7 @@
     "issueSize": null,
     "freshIssue": null,
     "ofs": 0,
-    "gmp": 0,
+    "gmp": null,
     "trend": "stable",
     "estListing": null,
     "listedAt": null,
@@ -22212,7 +22130,7 @@
     "issueSize": null,
     "freshIssue": null,
     "ofs": 0,
-    "gmp": 0,
+    "gmp": null,
     "trend": "stable",
     "estListing": null,
     "listedAt": null,

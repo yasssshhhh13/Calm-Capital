@@ -199,14 +199,12 @@ export function displayIpoName(ipo) {
   if (!ipo) return "IPO";
   const raw = ipo.name || ipo.company || "IPO";
   return String(raw)
-    .replace(/\s+(?:BSE|NSE)\s+SME\s*CALLOTTED/i, "")
-    .replace(/\s+(?:BSE|NSE)\s+SME\s*CALLOTED/i, "")
+    .replace(/\s*(?:BSE\s+SME|NSE\s+SME|NSE\s+Emerge|BSE|NSE|SME|IPO)?\s*C?ALLOTT?ED\b/gi, "")
     .replace(/\s+(?:BSE|NSE)\s+SME/i, "")
     .replace(/\s+NSE\s+Emerge/i, "")
-    .replace(/\s+CALLOTTED/i, "")
-    .replace(/\s+CALLOTED/i, "")
     .replace(/\s+Limited\.?$/i, "")
     .replace(/\s+Ltd\.?$/i, "")
+    .replace(/\s+/g, " ")
     .trim();
 }
 

@@ -53,7 +53,8 @@ function cleanScrapedName(raw) {
   if (!raw) return "";
   let cleaned = raw.split("\n")[0].trim();
   cleaned = cleaned.replace(/\s*(BSE SME|NSE SME|BSE|NSE|IPO)?[UOCL]?\s*L?@\s*-?[\d,.]+\s*\(?[-\d,.%]*\)?/i, "");
-  cleaned = cleaned.replace(/\s*(BSE SME|NSE SME|BSE|NSE|IPO)[UOCL]?\s*$/, "");
+  cleaned = cleaned.replace(/\s*(?:BSE\s+SME|NSE\s+SME|NSE\s+Emerge|BSE|NSE|SME|IPO)?\s*C?ALLOTT?ED\b/gi, "");
+  cleaned = cleaned.replace(/\s*(BSE SME|NSE SME|BSE|NSE|SME|IPO)[UOCL]?\s*$/i, "");
   cleaned = cleaned.replace(/\s+[UOCL]$/i, "");
   return cleaned.trim();
 }

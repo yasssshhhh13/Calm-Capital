@@ -6394,138 +6394,7 @@
     "national-stock-exchange-of-india": {
       "gmp": 140,
       "priceMax": 1785,
-      "estListing": 1925,
-      "verification": {
-        "priceMax": {
-          "status": "verified",
-          "value": 1785,
-          "sources": [
-            "chittorgarh",
-            "investorgain"
-          ],
-<<<<<<< HEAD
-          "updatedAt": "2026-09-17T17:50:00.000Z"
-=======
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "lot": {
-          "status": "unverified",
-          "value": 8,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "issueSize": {
-          "status": "unverified",
-          "value": 14.89,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "ofs": {
-          "status": "unverified",
-          "value": 0,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "faceValue": {
-          "status": "unverified",
-          "value": 10,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "close": {
-          "status": "unverified",
-          "value": "2026-09-18",
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
->>>>>>> 6e09b4730fa56fe05772e456c4e9b5deaed7049b
-        },
-        "priceMin": {
-          "status": "verified",
-          "value": 1700,
-          "sources": [
-            "chittorgarh",
-            "investorgain"
-          ],
-<<<<<<< HEAD
-          "updatedAt": "2026-09-17T17:50:00.000Z"
-        },
-        "lot": {
-          "status": "verified",
-          "value": 8,
-          "sources": [
-            "chittorgarh",
-            "investorgain"
-          ],
-          "updatedAt": "2026-09-17T17:50:00.000Z"
-        },
-        "issueSize": {
-          "status": "verified",
-          "value": 22562,
-          "sources": [
-            "chittorgarh",
-            "investorgain"
-          ],
-          "updatedAt": "2026-09-17T17:50:00.000Z"
-        },
-        "ofs": {
-          "status": "verified",
-          "value": 22562,
-          "sources": [
-            "chittorgarh",
-            "investorgain"
-          ],
-          "updatedAt": "2026-09-17T17:50:00.000Z"
-        },
-        "faceValue": {
-          "status": "verified",
-          "value": 1,
-          "sources": [
-            "chittorgarh",
-            "investorgain"
-          ],
-          "updatedAt": "2026-09-17T17:50:00.000Z"
-        },
-        "open": {
-          "status": "verified",
-          "value": "2026-09-17",
-          "sources": [
-            "chittorgarh",
-            "investorgain"
-          ],
-          "updatedAt": "2026-09-17T17:50:00.000Z"
-        },
-        "close": {
-          "status": "verified",
-          "value": "2026-09-21",
-          "sources": [
-            "chittorgarh",
-            "investorgain"
-          ],
-          "updatedAt": "2026-09-17T17:50:00.000Z"
-        },
-        "listing": {
-          "status": "verified",
-          "value": "2026-09-24",
-          "sources": [
-            "chittorgarh",
-            "investorgain"
-          ],
-          "updatedAt": "2026-09-17T17:50:00.000Z"
-=======
-          "updatedAt": "2026-09-17T09:15:02.002Z"
->>>>>>> 6e09b4730fa56fe05772e456c4e9b5deaed7049b
-        }
-      }
+      "estListing": 1925
     },
     "knack-packaging": {
       "gmp": 150,
@@ -8620,95 +8489,6 @@
       "gmp": 51,
       "estListing": 157
     },
-    "one-mobikwik-systems-ipocallotted": {
-      "priceMax": 279,
-      "verification": {
-        "priceMin": {
-          "status": "unverified",
-          "value": 265,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "priceMax": {
-          "status": "unverified",
-          "value": 279,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "lot": {
-          "status": "unverified",
-          "value": 53,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "issueSize": {
-          "status": "unverified",
-          "value": 572,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "freshIssue": {
-          "status": "unverified",
-          "value": 572,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "ofs": {
-          "status": "unverified",
-          "value": 0,
-          "sources": [],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "faceValue": {
-          "status": "unverified",
-          "value": 10,
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "open": {
-          "status": "unverified",
-          "value": "2026-12-11",
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "close": {
-          "status": "unverified",
-          "value": "2026-12-13",
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "allotment": {
-          "status": "unverified",
-          "value": "2026-12-16",
-          "sources": [],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        },
-        "listing": {
-          "status": "unverified",
-          "value": "2026-12-18",
-          "sources": [
-            "chittorgarh"
-          ],
-          "updatedAt": "2026-09-17T09:15:02.002Z"
-        }
-      }
-    },
     "fx-multitech": {
       "priceMax": 116,
       "verification": {
@@ -9361,6 +9141,10 @@
           "updatedAt": "2026-09-17T09:15:02.002Z"
         }
       }
+    },
+    "one-mobikwik-systems": {
+      "listedAt": 440,
+      "currentPrice": 440
     }
   }
 }
