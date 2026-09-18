@@ -2608,12 +2608,12 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
 
       <div className="p-5 relative z-[1] pointer-events-none">
         {/* Row 1: Company Logo, Name, Sector and Bookmark */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
+        <div className="flex items-start justify-between gap-3 min-w-0">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
             <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} />
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="font-bold text-slate-800 dark:text-white text-[15px] leading-tight truncate">{ipo.company}</h3>
+                <h3 className="font-bold text-slate-800 dark:text-white text-[15px] leading-tight truncate" title={ipo.company}>{ipo.company}</h3>
                 <span className="text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.5 rounded-full" style={{ background: ss.bg, color: ss.color, border: `1px solid ${ss.border}` }}>
                   {ipo.status}
                 </span>
@@ -5965,12 +5965,12 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 border-b border-slate-150 dark:border-white/5 flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3.5">
+        <div className="p-6 border-b border-slate-150 dark:border-white/5 flex items-start justify-between gap-4 min-w-0">
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
             <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={46} />
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-lg font-bold text-slate-850 dark:text-white tracking-tight">{ipo.company}</h2>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-lg font-bold text-slate-850 dark:text-white tracking-tight break-words" title={ipo.company}>{ipo.company}</h2>
                 <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
                   {ipo.type || "Mainboard"}
                 </span>
@@ -6377,28 +6377,28 @@ function AllotmentCard({ ipo, onOpen, dark, todayStr, onCheckFamilyAllotment, fa
         e.preventDefault();
         onOpen?.(ipo);
       }}
-      className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full cursor-pointer no-underline text-inherit"
+      className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full cursor-pointer no-underline text-inherit overflow-hidden"
     >
-      <div>
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} />
-            <div className="min-w-0">
-              <h3 className="font-bold text-slate-800 dark:text-white text-[15px] leading-tight truncate">{ipo.company}</h3>
-              <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-                <span className="text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.5 rounded-full" style={{ background: ss.bg, color: ss.color, border: `1px solid ${ss.border}` }}>
-                  {status}
+      <div className="w-full min-w-0">
+        <div className="flex items-start gap-3 w-full min-w-0">
+          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} />
+          <div className="min-w-0 flex-1">
+            <h3 className="font-bold text-slate-800 dark:text-white text-[15px] leading-snug line-clamp-2 break-words" title={ipo.company}>
+              {ipo.company}
+            </h3>
+            <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+              <span className="text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.5 rounded-full" style={{ background: ss.bg, color: ss.color, border: `1px solid ${ss.border}` }}>
+                {status}
+              </span>
+              {ipo.type === "SME" ? (
+                <span className="text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/25">
+                  SME
                 </span>
-                {ipo.type === "SME" ? (
-                  <span className="text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/25">
-                    SME
-                  </span>
-                ) : (
-                  <span className="text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/25">
-                    Mainboard
-                  </span>
-                )}
-              </div>
+              ) : (
+                <span className="text-[9px] uppercase tracking-wide font-extrabold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/25">
+                  Mainboard
+                </span>
+              )}
             </div>
           </div>
         </div>
