@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 /**
- * Calm Capital - Authentication & Cloud Account Engine
+ * Calm Capital - Cloud Authentication & PAN Vault Sync Engine
  * 100% Optional for users: Visitors can use Calm Capital as Guest (localStorage)
- * or Sign In / Sign Up via Email or Mobile Number to backup & sync PANs.
+ * or Sign In / Sign Up via Email or Mobile Number to backup & sync PANs across devices.
+ * 
+ * Works with /api/auth serverless cloud store and local fallback.
  */
 
 const ACCOUNTS_STORAGE_KEY = "calmcapital_accounts";
@@ -54,10 +56,38 @@ export function AuthProvider({ children }) {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalInitialTab, setAuthModalInitialTab] = useState("signin"); // "signin" | "signup"
 
-  // Keep session in sync
+  // Keep session in sync locally
   useEffect(() => {
     saveStoredSession(user);
   }, [user]);
+
+  // Auto-sync local account & PANs to cloud on app start (e.g. phone backing up 11 PANs to cloud)
+  useEffect(() => {
+    if (user && user.mobile) {
+      const pans = user.savedPans || [];
+      fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "sync",
+          identifier: user.mobile || user.email,
+          mobile: user.mobile,
+          email: user.email,
+          name: user.name,
+          pans: pans,
+          allotments: user.savedAllotments || {}
+        })
+      })
+        .then((r) => r.json())
+        .then((res) => {
+          if (res.savedPans && res.savedPans.length > (user.savedPans?.length || 0)) {
+            // Cloud has more recent PANs, update local state
+            setUser((prev) => (prev ? { ...prev, savedPans: res.savedPans } : null));
+          }
+        })
+        .catch(() => {}); // silent fail offline
+    }
+  }, []);
 
   const openAuthModal = useCallback((mode = "signin") => {
     setAuthModalInitialTab(mode);
@@ -69,10 +99,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * Sign Up with Email or Mobile
+   * Sign Up with Email or Mobile (Cloud + Local)
    */
   const signUp = useCallback(async ({ name, email, mobile, password, initialPans = [], initialAllotments = {} }) => {
-    const accounts = getStoredAccounts();
     const cleanName = (name || "").trim();
     const cleanEmail = (email || "").trim().toLowerCase();
     const cleanMobile = (mobile || "").replace(/\D/g, "").slice(-10);
@@ -84,38 +113,79 @@ export function AuthProvider({ children }) {
       throw new Error("Password must be at least 4 characters.");
     }
 
-    // Check duplicate
-    if (cleanEmail && accounts.some((a) => a.email && a.email.toLowerCase() === cleanEmail)) {
-      throw new Error("An account with this Email already exists. Please Sign In.");
+    // Try cloud signup first
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "signup",
+          name: cleanName,
+          email: cleanEmail || null,
+          mobile: cleanMobile || null,
+          password: password,
+          initialPans: Array.isArray(initialPans) ? initialPans : [],
+          initialAllotments: initialAllotments || {}
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Sign Up failed. Please check your details.");
+      }
+
+      const cloudUser = data.user;
+      setUser(cloudUser);
+
+      // Save locally as backup
+      const accounts = getStoredAccounts();
+      const existingIdx = accounts.findIndex((a) => (cleanMobile && a.mobile === cleanMobile) || (cleanEmail && a.email === cleanEmail));
+      if (existingIdx !== -1) {
+        accounts[existingIdx] = { ...cloudUser, password };
+      } else {
+        accounts.push({ ...cloudUser, password });
+      }
+      saveStoredAccounts(accounts);
+
+      return cloudUser;
+    } catch (apiErr) {
+      // If API route failed or offline, fallback to local accounts
+      if (apiErr.message && !apiErr.message.includes("fetch")) {
+        throw apiErr;
+      }
+
+      const accounts = getStoredAccounts();
+      if (cleanEmail && accounts.some((a) => a.email && a.email.toLowerCase() === cleanEmail)) {
+        throw new Error("An account with this Email already exists. Please Sign In.");
+      }
+      if (cleanMobile && accounts.some((a) => a.mobile === cleanMobile)) {
+        throw new Error("An account with this Mobile Number already exists. Please Sign In.");
+      }
+
+      const newUser = {
+        id: "usr_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
+        name: cleanName || (cleanEmail ? cleanEmail.split("@")[0] : `User ${cleanMobile.slice(-4)}`),
+        email: cleanEmail || null,
+        mobile: cleanMobile || null,
+        password: password,
+        loginType: cleanEmail ? "email" : "mobile",
+        savedPans: Array.isArray(initialPans) ? initialPans : [],
+        savedAllotments: initialAllotments || {},
+        createdAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString()
+      };
+
+      accounts.push(newUser);
+      saveStoredAccounts(accounts);
+
+      const { password: _, ...sessionUser } = newUser;
+      setUser(sessionUser);
+      return sessionUser;
     }
-    if (cleanMobile && accounts.some((a) => a.mobile === cleanMobile)) {
-      throw new Error("An account with this Mobile Number already exists. Please Sign In.");
-    }
-
-    const newUser = {
-      id: "usr_" + Date.now() + "_" + Math.random().toString(36).slice(2, 7),
-      name: cleanName || (cleanEmail ? cleanEmail.split("@")[0] : `User ${cleanMobile.slice(-4)}`),
-      email: cleanEmail || null,
-      mobile: cleanMobile || null,
-      password: password, // client-persisted account demo
-      loginType: cleanEmail ? "email" : "mobile",
-      savedPans: Array.isArray(initialPans) ? initialPans : [],
-      savedAllotments: initialAllotments || {},
-      createdAt: new Date().toISOString(),
-      lastLoginAt: new Date().toISOString()
-    };
-
-    accounts.push(newUser);
-    saveStoredAccounts(accounts);
-
-    // Strip password from memory session
-    const { password: _, ...sessionUser } = newUser;
-    setUser(sessionUser);
-    return sessionUser;
   }, []);
 
   /**
-   * Sign In with Email or Mobile
+   * Sign In with Email or Mobile (Cloud + Local)
    */
   const signIn = useCallback(async ({ identifier, password }) => {
     const cleanId = (identifier || "").trim();
@@ -126,31 +196,70 @@ export function AuthProvider({ children }) {
       throw new Error("Please enter your password.");
     }
 
-    const accounts = getStoredAccounts();
-    const isMobile = /^\d{10}$/.test(cleanId.replace(/\D/g, "").slice(-10)) && !cleanId.includes("@");
-    const cleanMobile = isMobile ? cleanId.replace(/\D/g, "").slice(-10) : null;
-    const cleanEmail = !isMobile ? cleanId.toLowerCase() : null;
+    // Try cloud authentication first for cross-device support
+    try {
+      const res = await fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "signin",
+          identifier: cleanId,
+          password: password
+        })
+      });
 
-    const account = accounts.find((a) => {
-      if (cleanMobile && a.mobile === cleanMobile) return true;
-      if (cleanEmail && a.email && a.email.toLowerCase() === cleanEmail) return true;
-      return false;
-    });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Authentication failed. Please verify credentials.");
+      }
 
-    if (!account) {
-      throw new Error("No account found with this Email or Mobile. Please Sign Up.");
+      const cloudUser = data.user;
+      setUser(cloudUser);
+
+      // Save locally as backup
+      const accounts = getStoredAccounts();
+      const existingIdx = accounts.findIndex((a) => a.id === cloudUser.id || (cloudUser.mobile && a.mobile === cloudUser.mobile));
+      if (existingIdx !== -1) {
+        accounts[existingIdx] = { ...cloudUser, password };
+      } else {
+        accounts.push({ ...cloudUser, password });
+      }
+      saveStoredAccounts(accounts);
+
+      return cloudUser;
+    } catch (apiErr) {
+      // If server returned specific message, propagate it
+      if (apiErr.message && !apiErr.message.includes("fetch")) {
+        throw apiErr;
+      }
+
+      // Local fallback
+      const accounts = getStoredAccounts();
+      const isMobile = /^\d{10}$/.test(cleanId.replace(/\D/g, "").slice(-10)) && !cleanId.includes("@");
+      const cleanMobile = isMobile ? cleanId.replace(/\D/g, "").slice(-10) : null;
+      const cleanEmail = !isMobile ? cleanId.toLowerCase() : null;
+
+      const account = accounts.find((a) => {
+        if (cleanMobile && a.mobile === cleanMobile) return true;
+        if (cleanEmail && a.email && a.email.toLowerCase() === cleanEmail) return true;
+        return false;
+      });
+
+      if (!account) {
+        throw new Error("No account found with this Email or Mobile. Please Sign Up.");
+      }
+
+      if (account.password !== password) {
+        throw new Error("Incorrect password. Please verify and try again.");
+      }
+
+      account.lastLoginAt = new Date().toISOString();
+      saveStoredAccounts(accounts);
+
+      const { password: _, ...sessionUser } = account;
+      setUser(sessionUser);
+      return sessionUser;
     }
-
-    if (account.password !== password) {
-      throw new Error("Incorrect password. Please verify and try again.");
-    }
-
-    account.lastLoginAt = new Date().toISOString();
-    saveStoredAccounts(accounts);
-
-    const { password: _, ...sessionUser } = account;
-    setUser(sessionUser);
-    return sessionUser;
   }, []);
 
   /**
@@ -161,7 +270,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * Sync PANs to active account
+   * Sync PANs to active account (Cloud + Local)
    */
   const syncPansToAccount = useCallback((newPans) => {
     if (!user) return;
@@ -172,6 +281,21 @@ export function AuthProvider({ children }) {
       saveStoredAccounts(accounts);
     }
     setUser((prev) => (prev ? { ...prev, savedPans: newPans } : null));
+
+    // Background push to cloud
+    if (user.mobile || user.email) {
+      fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "sync",
+          identifier: user.mobile || user.email,
+          mobile: user.mobile,
+          email: user.email,
+          pans: newPans
+        })
+      }).catch(() => {});
+    }
   }, [user]);
 
   /**
@@ -186,6 +310,21 @@ export function AuthProvider({ children }) {
       saveStoredAccounts(accounts);
     }
     setUser((prev) => (prev ? { ...prev, savedAllotments: newAllotments } : null));
+
+    // Background push to cloud
+    if (user.mobile || user.email) {
+      fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "sync",
+          identifier: user.mobile || user.email,
+          mobile: user.mobile,
+          email: user.email,
+          allotments: newAllotments
+        })
+      }).catch(() => {});
+    }
   }, [user]);
 
   return (
