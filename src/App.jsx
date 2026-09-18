@@ -11,7 +11,8 @@ import {
   ExternalLink, Clock, ArrowUpRight, ArrowDownRight,
   Home, CircleDollarSign, ChevronsLeft, PlusCircle, Award, CheckCircle, Inbox,
   ShieldCheck, AlertTriangle, HelpCircle, ArrowLeftRight, GitCompare,
-  Copy, Check, Users, CreditCard, Eye, EyeOff, Trash2, Edit2, Loader2
+  Copy, Check, Users, CreditCard, Eye, EyeOff, Trash2, Edit2, Loader2,
+  LogIn, LogOut, UserCheck
 } from "lucide-react";
 import { trackTabView, trackPageView } from "./analytics.js";
 import {
@@ -26,6 +27,8 @@ import {
 } from "./seo.js";
 
 import initialIpoData from "../public/ipos.json";
+import { useAuth } from "./auth.jsx";
+import AuthModal from "./components/AuthModal.jsx";
 
 /* =====================================================================
    BRAND TOKENS
@@ -5292,13 +5295,21 @@ function getRegistrarUrl(name) {
    FAMILY PAN & MULTI-ALLOTMENT ENGINE
 ===================================================================== */
 function useFamilyPans() {
+  const { user, syncPansToAccount } = useAuth();
+
   const [pans, setPans] = useState(() => {
     try {
+      const userSession = localStorage.getItem("calmcapital_user_session");
+      if (userSession) {
+        const u = JSON.parse(userSession);
+        if (Array.isArray(u?.savedPans) && u.savedPans.length > 0) {
+          return u.savedPans;
+        }
+      }
       const stored = localStorage.getItem("calmcapital_family_pans");
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
-          // Filter out legacy dummy sample PANs so user only sees their own real PANs
           const realOnly = parsed.filter(
             (p) => p && p.pan && p.pan !== "AAACB1234F" && p.pan !== "BNZPD5678K" && p.pan !== "CPYPS9012L"
           );
@@ -5313,14 +5324,24 @@ function useFamilyPans() {
 
   const [masked, setMasked] = useState(true);
 
-  // Persist to localStorage
+  // When user session changes, load user's saved pans if available
+  useEffect(() => {
+    if (user && Array.isArray(user.savedPans) && user.savedPans.length > 0) {
+      setPans(user.savedPans);
+    }
+  }, [user?.id]);
+
+  // Persist to localStorage and sync to cloud account if logged in
   useEffect(() => {
     try {
       localStorage.setItem("calmcapital_family_pans", JSON.stringify(pans));
+      if (user) {
+        syncPansToAccount(pans);
+      }
     } catch (e) {
       console.error(e);
     }
-  }, [pans]);
+  }, [pans, user, syncPansToAccount]);
 
   const addPan = (item) => {
     const cleanPan = item.pan.trim().toUpperCase();
@@ -5372,8 +5393,17 @@ function useFamilyPans() {
 }
 
 function useFamilyAllotments() {
+  const { user, syncAllotmentsToAccount } = useAuth();
+
   const [allotments, setAllotments] = useState(() => {
     try {
+      const userSession = localStorage.getItem("calmcapital_user_session");
+      if (userSession) {
+        const u = JSON.parse(userSession);
+        if (u?.savedAllotments && Object.keys(u.savedAllotments).length > 0) {
+          return u.savedAllotments;
+        }
+      }
       const stored = localStorage.getItem("calmcapital_family_allotments");
       return stored ? JSON.parse(stored) : {};
     } catch {
@@ -5382,12 +5412,21 @@ function useFamilyAllotments() {
   });
 
   useEffect(() => {
+    if (user && user.savedAllotments) {
+      setAllotments(user.savedAllotments);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
     try {
       localStorage.setItem("calmcapital_family_allotments", JSON.stringify(allotments));
+      if (user) {
+        syncAllotmentsToAccount(allotments);
+      }
     } catch (e) {
       console.error(e);
     }
-  }, [allotments]);
+  }, [allotments, user, syncAllotmentsToAccount]);
 
   const getOutcome = (ipoId, panId) => {
     if (!ipoId || !panId || !allotments[ipoId]) return { status: "Not Checked", lots: 0 };
@@ -5423,6 +5462,7 @@ function useFamilyAllotments() {
 }
 
 function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
+  const { user, isLoggedIn, signOut, openAuthModal } = useAuth();
   const [label, setLabel] = useState("Self");
   const [customLabel, setCustomLabel] = useState("");
   const [name, setName] = useState("");
@@ -5508,12 +5548,18 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-slate-850 dark:text-white tracking-tight">Family PAN Vault</h2>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-bold">
-                  Saved Locally
-                </span>
+                {isLoggedIn ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
+                    <CheckCircle size={10} /> Synced to Account
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400 text-[10px] font-bold">
+                    Saved Locally (Guest)
+                  </span>
+                )}
               </div>
               <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                Save family PANs securely in your browser to easily check allotment across all members.
+                Save family PANs securely to easily check allotment across all members.
               </p>
             </div>
           </div>
@@ -5526,7 +5572,42 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto space-y-6 flex-1">
+        <div className="p-6 overflow-y-auto space-y-5 flex-1">
+          {/* Optional Cloud Account Banner */}
+          {isLoggedIn ? (
+            <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs text-emerald-800 dark:text-emerald-300 min-w-0">
+                <UserCheck size={16} className="shrink-0 text-emerald-500" />
+                <span className="truncate">
+                  Logged in as <strong>{user.name}</strong> ({user.mobile ? `+91 ${user.mobile}` : user.email}) • PANs backed up
+                </span>
+              </div>
+              <button 
+                type="button" 
+                onClick={signOut}
+                className="text-[11px] font-bold text-rose-500 hover:underline shrink-0 cursor-pointer border-0 bg-transparent"
+              >
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-[#1c9bda]/10 via-teal-500/10 to-transparent border border-[#1c9bda]/25 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
+                <Sparkles size={16} className="text-[#1c9bda] shrink-0" />
+                <span className="leading-snug">
+                  <strong>Optional:</strong> Want to access your saved PANs on another phone or browser?
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => openAuthModal("signin")}
+                className="px-3.5 py-1.5 rounded-xl bg-[#1c9bda] hover:bg-[#1c9bda]/90 text-white text-[11px] font-bold shadow-sm shrink-0 cursor-pointer border-0"
+              >
+                Sign In / Sign Up
+              </button>
+            </div>
+          )}
+
           {/* Add / Edit Form */}
           <form onSubmit={handleSave} className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-150 dark:border-white/5 space-y-4">
             <h3 className="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider flex items-center justify-between">
@@ -5790,7 +5871,7 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
   const totalAllottedLots = currentOutcomes
     .filter(o => o.outcome?.status === "Allotted")
     .reduce((sum, o) => sum + (Number(o.outcome?.lots) || 1), 0);
-  const totalApplied = currentOutcomes.filter(o => o.outcome?.status !== "Not Applied").length;
+  const totalApplied = currentOutcomes.filter(o => o.outcome?.status === "Allotted" || o.outcome?.status === "Not Allotted").length;
   const estimatedProfitPerLot = (ipo.gmp && (ipo.lot || ipo.lotSize)) ? (ipo.gmp * (ipo.lot || ipo.lotSize)) : 0;
   const totalEstProfit = totalAllottedLots * estimatedProfitPerLot;
 
@@ -7670,6 +7751,8 @@ export default function App() {
   const notifHook = useNotifications(liveDataVersion);
   const familyPans = useFamilyPans();
   const familyAllotments = useFamilyAllotments();
+  const auth = useAuth();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [panManagerOpen, setPanManagerOpen] = useState(false);
   const [selectedFamilyIpo, setSelectedFamilyIpo] = useState(null);
 
@@ -8127,6 +8210,70 @@ export default function App() {
                   {familyPans.pans.length}
                 </span>
               </button>
+
+              {/* Optional User Account / Sign In */}
+              {auth.isLoggedIn ? (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 text-slate-850 dark:text-white transition-all cursor-pointer text-xs font-bold shadow-sm"
+                    title={`Signed in as ${auth.user.name}`}
+                  >
+                    <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                      {auth.user.name ? auth.user.name.charAt(0).toUpperCase() : "U"}
+                    </div>
+                    <span className="hidden md:inline max-w-[85px] truncate font-semibold text-[11px]">
+                      {auth.user.name ? auth.user.name.split(" ")[0] : "Account"}
+                    </span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                  </button>
+
+                  {userMenuOpen && (
+                    <div 
+                      className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-[#0E1726] border border-slate-200 dark:border-white/10 shadow-2xl py-2 z-50 animate-fade-in"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <div className="px-4 py-2 border-b border-slate-100 dark:border-white/5">
+                        <p className="text-xs font-bold text-slate-850 dark:text-white truncate">{auth.user.name}</p>
+                        <p className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
+                          {auth.user.mobile ? `+91 ${auth.user.mobile}` : auth.user.email}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setPanManagerOpen(true)}
+                        className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
+                      >
+                        <Users size={14} className="text-[#1c9bda]" />
+                        <span>Saved PAN Vault ({familyPans.pans.length})</span>
+                      </button>
+                      <div className="border-t border-slate-100 dark:border-white/5 my-1" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          auth.signOut();
+                          setUserMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
+                      >
+                        <LogOut size={14} />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => auth.openAuthModal("signin")}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#1c9bda]/30 bg-[#1c9bda]/10 hover:bg-[#1c9bda]/20 text-[#1c9bda] dark:text-[#52b1e4] transition-all cursor-pointer text-xs font-bold shadow-sm"
+                  title="Optional: Sign In to save PANs across devices"
+                >
+                  <LogIn size={13} />
+                  <span>Sign In</span>
+                </button>
+              )}
 
               <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />
               
@@ -9109,6 +9256,16 @@ export default function App() {
           dark={dark}
         />
       )}
+
+      {/* Optional Account Authentication Modal (Email or Mobile) */}
+      <AuthModal
+        isOpen={auth.authModalOpen}
+        onClose={auth.closeAuthModal}
+        initialTab={auth.authModalInitialTab}
+        currentLocalPans={familyPans.pans}
+        currentLocalAllotments={familyAllotments.allotments}
+        dark={dark}
+      />
     </div>
   );
 }

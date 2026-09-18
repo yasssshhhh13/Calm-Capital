@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import { initAnalytics } from "./analytics.js";
+import { AuthProvider } from "./auth.jsx";
 
 try {
   initAnalytics();
@@ -128,7 +129,9 @@ if (rootEl) {
   try {
     ReactDOM.createRoot(rootEl).render(
       <GlobalErrorBoundary>
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </GlobalErrorBoundary>
     );
   } catch (err) {

@@ -89,7 +89,19 @@ function matchCompany(targetName, candidates, nameKey = "name") {
     if (allFound) return c;
   }
 
-  // 3. Jaccard similarity for multi-word matches (requires at least 2 common keywords)
+  // 3. First two words match (strong indicator for Indian company names like "Bajaj Housing" or "Tata Tech")
+  if (targetWords.length >= 2) {
+    const targetPrefix = targetWords.slice(0, 2).join(" ");
+    for (const c of candidates) {
+      const candName = c[nameKey] || "";
+      const normCand = normalizeCompanyName(candName);
+      if (normCand.startsWith(targetPrefix) || normCand.includes(targetPrefix)) {
+        return c;
+      }
+    }
+  }
+
+  // 4. Jaccard similarity for multi-word matches
   let bestCandidate = null;
   let bestScore = 0;
   for (const c of candidates) {
@@ -100,7 +112,7 @@ function matchCompany(targetName, candidates, nameKey = "name") {
     const intersection = [...targetSet].filter(w => candWords.has(w));
     const union = new Set([...candWords, ...targetSet]);
     const jaccard = union.size > 0 ? intersection.length / union.size : 0;
-    if (jaccard > 0.6 && jaccard > bestScore && intersection.length >= 2) {
+    if (jaccard >= 0.4 && jaccard > bestScore && intersection.length >= 1) {
       bestScore = jaccard;
       bestCandidate = c;
     }
@@ -620,29 +632,46 @@ async function checkLinkIntimePan(pan, companyId, token, lot, currentGmp) {
       const json = await res.json().catch(() => null);
       const xml = json?.d || "";
 
-      // Check if Table record exists in response
-      if (xml && xml.includes("<Table>")) {
-        const allotMatch = xml.match(/<ALLOT>([^<]+)<\/ALLOT>/);
-        const sharesMatch = xml.match(/<SHARES>([^<]+)<\/SHARES>/);
-        const nameMatch = xml.match(/<NAME1>([^<]+)<\/NAME1>/);
-        const appNoMatch = xml.match(/<RFNDNO>([^<]+)<\/RFNDNO>/);
-        const dpidMatch = xml.match(/<DPCLITID>([^<]+)<\/DPCLITID>/);
+      // Parse all <Table> blocks in response
+      const tableMatches = [...xml.matchAll(/<Table>([\s\S]*?)<\/Table>/gi)];
 
-        const allotted = parseInt(allotMatch ? allotMatch[1] : "0", 10) || 0;
-        const applied = parseInt(sharesMatch ? sharesMatch[1] : String(lot), 10) || lot;
-        const isAllotted = allotted > 0;
-        const lots = isAllotted ? Math.max(1, Math.round(allotted / lot)) : 0;
+      if (tableMatches.length > 0) {
+        let totalAllotted = 0;
+        let totalApplied = 0;
+        let appNo = "";
+        let applicantName = "";
+        let dpid = "";
+
+        for (const match of tableMatches) {
+          const tXml = match[1];
+          const allotM = tXml.match(/<ALLOT>([^<]+)<\/ALLOT>/i);
+          const sharesM = tXml.match(/<SHARES>([^<]+)<\/SHARES>/i);
+          const nameM = tXml.match(/<NAME1>([^<]+)<\/NAME1>/i) || tXml.match(/<NAME>([^<]+)<\/NAME>/i);
+          const appNoM = tXml.match(/<RFNDNO>([^<]+)<\/RFNDNO>/i) || tXml.match(/<APPNO>([^<]+)<\/APPNO>/i);
+          const dpidM = tXml.match(/<DPCLITID>([^<]+)<\/DPCLITID>/i);
+
+          const a = parseInt(allotM ? allotM[1].trim() : "0", 10) || 0;
+          const s = parseInt(sharesM ? sharesM[1].trim() : String(lot), 10) || lot;
+          totalAllotted += a;
+          totalApplied += s;
+          if (!appNo && appNoM) appNo = appNoM[1].trim();
+          if (!applicantName && nameM) applicantName = nameM[1].trim();
+          if (!dpid && dpidM) dpid = dpidM[1].trim();
+        }
+
+        const isAllotted = totalAllotted > 0;
+        const lots = isAllotted ? Math.max(1, Math.round(totalAllotted / lot)) : 0;
 
         return {
           status: isAllotted ? "Allotted" : "Not Allotted",
-          sharesApplied: applied,
-          sharesAllotted: allotted,
+          sharesApplied: totalApplied || lot,
+          sharesAllotted: totalAllotted,
           lotsAllotted: lots,
-          appNo: appNoMatch ? appNoMatch[1].trim() : "",
-          applicantName: nameMatch ? nameMatch[1].trim() : "",
-          dpid: dpidMatch ? dpidMatch[1].trim() : "",
+          appNo,
+          applicantName,
+          dpid,
           message: isAllotted
-            ? `Allotted ${allotted} shares (${lots} lot${lots > 1 ? "s" : ""})`
+            ? `Allotted ${totalAllotted} shares (${lots} lot${lots > 1 ? "s" : ""})`
             : "Not Allotted — 0 shares allocated (Refund in process / mandate released)",
           estimatedGain: isAllotted ? lots * lot * currentGmp : 0,
           liveVerified: true
@@ -702,27 +731,65 @@ async function checkKfinPan(pan, clientId, lot, currentGmp) {
 
     if (res.ok) {
       const data = await res.json().catch(() => null);
-      if (Array.isArray(data) && data.length > 0) {
-        const record = data[0];
-        const allotted = parseInt(record.All_Shares || "0", 10) || 0;
-        const applied = parseInt(record.App_Shares || String(lot), 10) || lot;
-        const isAllotted = allotted > 0;
-        const lots = isAllotted ? Math.max(1, Math.round(allotted / lot)) : 0;
+
+      if (Array.isArray(data)) {
+        if (data.length === 0) {
+          return {
+            status: "Not Applied",
+            sharesApplied: 0,
+            sharesAllotted: 0,
+            lotsAllotted: 0,
+            message: "Did Not Apply (No application record found for this PAN on KFintech)",
+            liveVerified: true
+          };
+        }
+
+        let totalAllotted = 0;
+        let totalApplied = 0;
+        let appNo = "";
+        let applicantName = "";
+        let dpid = "";
+
+        for (const record of data) {
+          const a = parseInt(record.All_Shares || record.all_shares || "0", 10) || 0;
+          const s = parseInt(record.App_Shares || record.app_shares || String(lot), 10) || lot;
+          totalAllotted += a;
+          totalApplied += s;
+          if (!appNo && record.Appln_No) appNo = record.Appln_No;
+          if (!applicantName && record.Name) applicantName = record.Name;
+          if (!dpid && record.DP_CLID) dpid = record.DP_CLID;
+        }
+
+        const isAllotted = totalAllotted > 0;
+        const lots = isAllotted ? Math.max(1, Math.round(totalAllotted / lot)) : 0;
 
         return {
           status: isAllotted ? "Allotted" : "Not Allotted",
-          sharesApplied: applied,
-          sharesAllotted: allotted,
+          sharesApplied: totalApplied || lot,
+          sharesAllotted: totalAllotted,
           lotsAllotted: lots,
-          appNo: record.Appln_No || "",
-          applicantName: record.Name || "",
-          dpid: record.DP_CLID || "",
+          appNo,
+          applicantName,
+          dpid,
           message: isAllotted
-            ? `Allotted ${allotted} shares (${lots} lot${lots > 1 ? "s" : ""})`
+            ? `Allotted ${totalAllotted} shares (${lots} lot${lots > 1 ? "s" : ""})`
             : "Not Allotted — 0 shares allocated (Refund in process / mandate released)",
           estimatedGain: isAllotted ? lots * lot * currentGmp : 0,
           liveVerified: true
         };
+      }
+
+      if (data && typeof data === "object") {
+        if (data.error && /not found|no record/i.test(data.error)) {
+          return {
+            status: "Not Applied",
+            sharesApplied: 0,
+            sharesAllotted: 0,
+            lotsAllotted: 0,
+            message: "Did Not Apply (No application record found for this PAN on KFintech)",
+            liveVerified: true
+          };
+        }
       }
     }
   } catch (err) {
@@ -769,6 +836,28 @@ async function checkMaashitlaPan(pan, companyName, lot, currentGmp) {
     if (res.ok) {
       const data = await res.json().catch(() => null);
       if (data) {
+        if (Array.isArray(data) && data.length === 0) {
+          return {
+            status: "Not Applied",
+            sharesApplied: 0,
+            sharesAllotted: 0,
+            lotsAllotted: 0,
+            message: "Did Not Apply (No application record found on Maashitla for this PAN)",
+            liveVerified: true
+          };
+        }
+
+        if (data.detail && /no records/i.test(data.detail)) {
+          return {
+            status: "Not Applied",
+            sharesApplied: 0,
+            sharesAllotted: 0,
+            lotsAllotted: 0,
+            message: "Did Not Apply (No application record found on Maashitla for this PAN)",
+            liveVerified: true
+          };
+        }
+
         const record = Array.isArray(data) ? data[0] : data;
         const allotted = parseInt(record.shares_allotted || record.alloted || record.allotment || "0", 10) || 0;
         const applied = parseInt(record.shares_applied || record.applied || String(lot), 10) || lot;
@@ -817,12 +906,12 @@ async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp
       body: JSON.stringify({
         Applicationno: "",
         Company: String(companyCode),
-        SelectionType: "1",
-        PanNo: pan,
+        SelectionType: "PN", // "PN" for PAN Number query (not "1")
+        PanNo: pan.trim().toUpperCase(),
         txtcsdl: "",
         txtDPID: "",
         txtClId: "",
-        ddlType: "1",
+        ddlType: "0",
         lang: "1",
         CaptchaToken: token || "",
         CaptchaAnswer: answer || "",
@@ -838,12 +927,13 @@ async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp
           return { invalidCaptcha: true, message: "Invalid captcha entered." };
         }
 
-        const allotted = parseInt(d.ALLOTED || "0", 10) || 0;
-        const applied = parseInt(d.APPLIED || String(lot), 10) || lot;
-        const appNo = d.APPLICATION_NO || "";
-        const name = d.Name || "";
+        const allotted = parseInt(d.ALLOTED || d.alloted || d.Alloted || "0", 10) || 0;
+        const applied = parseInt(d.APPLIED || d.applied || d.Applied || String(lot), 10) || lot;
+        const appNo = (d.APPLICATION_NO || d.application_no || d.AppNo || "").trim();
+        const name = (d.Name || d.name || d.NAME || "").trim();
 
-        if (!appNo && !name && allotted === 0 && (!d.APPLIED || d.APPLIED === "0")) {
+        // If no application record exists at all for this PAN
+        if (!appNo && !name && allotted === 0 && (!d.APPLIED || d.APPLIED === "0" || d.APPLIED === 0)) {
           return {
             status: "Not Applied",
             sharesApplied: 0,
