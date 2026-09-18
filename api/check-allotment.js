@@ -709,31 +709,83 @@ async function checkLinkIntimePan(pan, companyId, token, lot, currentGmp) {
  * KFintech PAN Allotment Check via AWS API Gateway
  */
 async function checkKfinPan(pan, clientId, lot, currentGmp) {
-  try {
-    const res = await fetch("https://0uz601ms56.execute-api.ap-south-1.amazonaws.com/prod/api/query?type=pan", {
-      headers: {
-        reqparam: pan,
-        client_id: String(clientId),
-        "Access-Control-Allow-Origin": "*"
+  const cleanPan = pan.trim().toUpperCase();
+  const headers = {
+    reqparam: cleanPan,
+    client_id: String(clientId),
+    "Access-Control-Allow-Origin": "*",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+    "Referer": "https://ipostatus.kfintech.com/",
+    "Origin": "https://ipostatus.kfintech.com",
+    "Accept": "application/json, text/plain, */*"
+  };
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch("https://0uz601ms56.execute-api.ap-south-1.amazonaws.com/prod/api/query?type=pan", {
+        headers
+      });
+
+      if (res.status === 404) {
+        return {
+          status: "Not Applied",
+          sharesApplied: 0,
+          sharesAllotted: 0,
+          lotsAllotted: 0,
+          message: "Did Not Apply (No application record found for this PAN on KFintech)",
+          liveVerified: true
+        };
       }
-    });
 
-    if (res.status === 404) {
-      return {
-        status: "Not Applied",
-        sharesApplied: 0,
-        sharesAllotted: 0,
-        lotsAllotted: 0,
-        message: "Did Not Apply (No application record found for this PAN on KFintech)",
-        liveVerified: true
-      };
-    }
+      if (res.ok) {
+        let rawText = "";
+        let data = null;
+        try {
+          rawText = await res.text();
+          data = JSON.parse(rawText);
+        } catch {
+          data = null;
+        }
 
-    if (res.ok) {
-      const data = await res.json().catch(() => null);
+        // Check for error messages inside 200 responses
+        if (data && typeof data === "object" && !Array.isArray(data)) {
+          if (data.error && /not found|no record/i.test(String(data.error))) {
+            return {
+              status: "Not Applied",
+              sharesApplied: 0,
+              sharesAllotted: 0,
+              lotsAllotted: 0,
+              message: "Did Not Apply (No application record found for this PAN on KFintech)",
+              liveVerified: true
+            };
+          }
+        }
 
-      if (Array.isArray(data)) {
-        if (data.length === 0) {
+        let records = [];
+        if (Array.isArray(data)) {
+          records = data;
+        } else if (data && Array.isArray(data.data)) {
+          records = data.data;
+        } else if (data && Array.isArray(data.result)) {
+          records = data.result;
+        } else if (data && Array.isArray(data.results)) {
+          records = data.results;
+        } else if (data && typeof data === "object") {
+          // If single record has applicant or shares data
+          if (
+            data.All_Shares !== undefined ||
+            data.all_shares !== undefined ||
+            data.App_Shares !== undefined ||
+            data.app_shares !== undefined ||
+            data.Appln_No ||
+            data.Name ||
+            data.Pan_No
+          ) {
+            records = [data];
+          }
+        }
+
+        if (records.length === 0) {
           return {
             status: "Not Applied",
             sharesApplied: 0,
@@ -750,14 +802,14 @@ async function checkKfinPan(pan, clientId, lot, currentGmp) {
         let applicantName = "";
         let dpid = "";
 
-        for (const record of data) {
-          const a = parseInt(record.All_Shares || record.all_shares || "0", 10) || 0;
-          const s = parseInt(record.App_Shares || record.app_shares || String(lot), 10) || lot;
+        for (const record of records) {
+          const a = parseInt(record.All_Shares || record.all_shares || record.All_shares || record.alloted || record.ALLOTED || "0", 10) || 0;
+          const s = parseInt(record.App_Shares || record.app_shares || record.App_shares || record.applied || record.APPLIED || String(lot), 10) || lot;
           totalAllotted += a;
           totalApplied += s;
-          if (!appNo && record.Appln_No) appNo = record.Appln_No;
-          if (!applicantName && record.Name) applicantName = record.Name;
-          if (!dpid && record.DP_CLID) dpid = record.DP_CLID;
+          if (!appNo && (record.Appln_No || record.appln_no || record.appNo)) appNo = record.Appln_No || record.appln_no || record.appNo;
+          if (!applicantName && (record.Name || record.name)) applicantName = record.Name || record.name;
+          if (!dpid && (record.DP_CLID || record.dp_clid)) dpid = record.DP_CLID || record.dp_clid;
         }
 
         const isAllotted = totalAllotted > 0;
@@ -778,22 +830,9 @@ async function checkKfinPan(pan, clientId, lot, currentGmp) {
           liveVerified: true
         };
       }
-
-      if (data && typeof data === "object") {
-        if (data.error && /not found|no record/i.test(data.error)) {
-          return {
-            status: "Not Applied",
-            sharesApplied: 0,
-            sharesAllotted: 0,
-            lotsAllotted: 0,
-            message: "Did Not Apply (No application record found for this PAN on KFintech)",
-            liveVerified: true
-          };
-        }
-      }
+    } catch (err) {
+      console.error("KFintech check attempt error:", err.message);
     }
-  } catch (err) {
-    console.error("KFintech check error:", err.message);
   }
 
   return {
