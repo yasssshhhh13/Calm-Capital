@@ -6,6 +6,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
  * or Sign In / Sign Up via Email or Mobile Number to backup & sync PANs across devices.
  * 
  * Works with /api/auth serverless cloud store and local fallback.
+ * Supports bidirectional instant synchronization for: Add, Edit, and Delete across devices.
  */
 
 const ACCOUNTS_STORAGE_KEY = "calmcapital_accounts";
@@ -61,33 +62,34 @@ export function AuthProvider({ children }) {
     saveStoredSession(user);
   }, [user]);
 
-  // Auto-sync local account & PANs to cloud on app start (e.g. phone backing up 11 PANs to cloud)
-  useEffect(() => {
-    if (user && user.mobile) {
-      const pans = user.savedPans || [];
-      fetch("/api/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "sync",
-          identifier: user.mobile || user.email,
-          mobile: user.mobile,
-          email: user.email,
-          name: user.name,
-          pans: pans,
-          allotments: user.savedAllotments || {}
-        })
-      })
-        .then((r) => r.json())
-        .then((res) => {
-          if (res.savedPans && res.savedPans.length > (user.savedPans?.length || 0)) {
-            // Cloud has more recent PANs, update local state
-            setUser((prev) => (prev ? { ...prev, savedPans: res.savedPans } : null));
+  /**
+   * Pull latest PANs & updates from cloud (reflecting additions, edits, and deletions)
+   */
+  const refreshFromCloud = useCallback(async () => {
+    if (!user || (!user.mobile && !user.email)) return;
+    try {
+      const id = user.mobile || user.email;
+      const res = await fetch(`/api/auth?action=get&identifier=${encodeURIComponent(id)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.user && Array.isArray(data.user.savedPans)) {
+          const cloudTime = new Date(data.user.vaultUpdatedAt || data.user.lastLoginAt || 0).getTime();
+          const localTime = new Date(user.vaultUpdatedAt || 0).getTime();
+          if (cloudTime >= localTime || !user.vaultUpdatedAt) {
+            setUser((prev) => (prev ? { ...prev, ...data.user } : null));
           }
-        })
-        .catch(() => {}); // silent fail offline
-    }
-  }, []);
+        }
+      }
+    } catch {}
+  }, [user]);
+
+  // Sync on startup and whenever user focuses or returns to the browser tab
+  useEffect(() => {
+    refreshFromCloud();
+    const handleFocus = () => refreshFromCloud();
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [refreshFromCloud]);
 
   const openAuthModal = useCallback((mode = "signin") => {
     setAuthModalInitialTab(mode);
@@ -113,6 +115,8 @@ export function AuthProvider({ children }) {
       throw new Error("Password must be at least 4 characters.");
     }
 
+    const now = new Date().toISOString();
+
     // Try cloud signup first
     try {
       const res = await fetch("/api/auth", {
@@ -125,7 +129,8 @@ export function AuthProvider({ children }) {
           mobile: cleanMobile || null,
           password: password,
           initialPans: Array.isArray(initialPans) ? initialPans : [],
-          initialAllotments: initialAllotments || {}
+          initialAllotments: initialAllotments || {},
+          vaultUpdatedAt: now
         })
       });
 
@@ -134,7 +139,7 @@ export function AuthProvider({ children }) {
         throw new Error(data.error || "Sign Up failed. Please check your details.");
       }
 
-      const cloudUser = data.user;
+      const cloudUser = { ...data.user, vaultUpdatedAt: now };
       setUser(cloudUser);
 
       // Save locally as backup
@@ -149,7 +154,6 @@ export function AuthProvider({ children }) {
 
       return cloudUser;
     } catch (apiErr) {
-      // If API route failed or offline, fallback to local accounts
       if (apiErr.message && !apiErr.message.includes("fetch")) {
         throw apiErr;
       }
@@ -171,8 +175,9 @@ export function AuthProvider({ children }) {
         loginType: cleanEmail ? "email" : "mobile",
         savedPans: Array.isArray(initialPans) ? initialPans : [],
         savedAllotments: initialAllotments || {},
-        createdAt: new Date().toISOString(),
-        lastLoginAt: new Date().toISOString()
+        vaultUpdatedAt: now,
+        createdAt: now,
+        lastLoginAt: now
       };
 
       accounts.push(newUser);
@@ -228,7 +233,6 @@ export function AuthProvider({ children }) {
 
       return cloudUser;
     } catch (apiErr) {
-      // If server returned specific message, propagate it
       if (apiErr.message && !apiErr.message.includes("fetch")) {
         throw apiErr;
       }
@@ -271,16 +275,19 @@ export function AuthProvider({ children }) {
 
   /**
    * Sync PANs to active account (Cloud + Local)
+   * Reliably saves additions, edits, and deletions across devices.
    */
   const syncPansToAccount = useCallback((newPans) => {
     if (!user) return;
+    const now = new Date().toISOString();
     const accounts = getStoredAccounts();
     const idx = accounts.findIndex((a) => a.id === user.id);
     if (idx !== -1) {
       accounts[idx].savedPans = newPans;
+      accounts[idx].vaultUpdatedAt = now;
       saveStoredAccounts(accounts);
     }
-    setUser((prev) => (prev ? { ...prev, savedPans: newPans } : null));
+    setUser((prev) => (prev ? { ...prev, savedPans: newPans, vaultUpdatedAt: now } : null));
 
     // Background push to cloud
     if (user.mobile || user.email) {
@@ -292,7 +299,8 @@ export function AuthProvider({ children }) {
           identifier: user.mobile || user.email,
           mobile: user.mobile,
           email: user.email,
-          pans: newPans
+          pans: newPans,
+          vaultUpdatedAt: now
         })
       }).catch(() => {});
     }
@@ -311,7 +319,6 @@ export function AuthProvider({ children }) {
     }
     setUser((prev) => (prev ? { ...prev, savedAllotments: newAllotments } : null));
 
-    // Background push to cloud
     if (user.mobile || user.email) {
       fetch("/api/auth", {
         method: "POST",
@@ -340,7 +347,8 @@ export function AuthProvider({ children }) {
         signUp,
         signOut,
         syncPansToAccount,
-        syncAllotmentsToAccount
+        syncAllotmentsToAccount,
+        refreshFromCloud
       }}
     >
       {children}

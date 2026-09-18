@@ -292,16 +292,18 @@ export default async function handler(req, res) {
         };
       }
 
-      // Merge or update PANs
-      if (Array.isArray(pans) && pans.length > 0) {
+      // Update PANs (supports additions, edits, and deletions)
+      if (Array.isArray(pans)) {
         user.savedPans = pans;
       }
-      if (allotments && Object.keys(allotments).length > 0) {
+      if (allotments && typeof allotments === "object") {
         user.savedAllotments = { ...user.savedAllotments, ...allotments };
       }
       if (name && !user.name) {
         user.name = name;
       }
+      const vaultUpdatedAt = req.body?.vaultUpdatedAt || new Date().toISOString();
+      user.vaultUpdatedAt = vaultUpdatedAt;
       user.lastLoginAt = new Date().toISOString();
 
       await saveUser(key, user);
@@ -310,7 +312,8 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         user: safeUser,
-        savedPans: user.savedPans
+        savedPans: user.savedPans,
+        vaultUpdatedAt: user.vaultUpdatedAt
       });
     }
 

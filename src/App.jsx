@@ -5462,7 +5462,7 @@ function useFamilyAllotments() {
 }
 
 function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
-  const { user, isLoggedIn, signOut, openAuthModal } = useAuth();
+  const { user, isLoggedIn, signOut, openAuthModal, refreshFromCloud } = useAuth();
   const [label, setLabel] = useState("Self");
   const [customLabel, setCustomLabel] = useState("");
   const [name, setName] = useState("");
@@ -5470,6 +5470,13 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
   const [boid, setBoid] = useState("");
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState(null);
+
+  // Refresh from cloud whenever modal is opened
+  useEffect(() => {
+    if (isOpen && isLoggedIn) {
+      refreshFromCloud?.();
+    }
+  }, [isOpen, isLoggedIn, refreshFromCloud]);
 
   if (!isOpen) return null;
 
