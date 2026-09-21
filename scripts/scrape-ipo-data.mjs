@@ -441,6 +441,21 @@ async function main() {
           };
           changed = true;
           console.log(`[GMP UPDATE] "${existingIpo.name}" -> ₹${rowGmp} (was ₹${oldGmp})`);
+        } else if (rowGmp !== undefined) {
+          gmpPatches[id] = {
+            ...(gmpPatches[id] || {}),
+            gmp: rowGmp,
+            ...(existingIpo.priceMax ? { priceMax: existingIpo.priceMax, estListing: existingIpo.priceMax + rowGmp } : {}),
+          };
+        } else if (rowGmp === undefined && existingIpo.gmp !== null && existingIpo.gmp !== undefined) {
+          console.log(`[GMP CLEANUP] "${existingIpo.name}" has no active quote (--) -> resetting GMP to null`);
+          existingIpo.gmp = null;
+          existingIpo.estListing = null;
+          if (gmpPatches[id]) {
+            delete gmpPatches[id].gmp;
+            delete gmpPatches[id].estListing;
+          }
+          changed = true;
         }
 
         const listingInfo = parseListingInfo(rawName);
@@ -619,6 +634,10 @@ async function main() {
     }
 
     if (baseIpo && (baseIpo.priceMax == null || baseIpo.open == null) && ipos[id].gmp === 0) {
+      delete ipos[id].gmp;
+      delete ipos[id].estListing;
+    }
+    if (baseIpo && (baseIpo.gmp == null || baseIpo.gmp === 0) && newGmp.gmp === undefined) {
       delete ipos[id].gmp;
       delete ipos[id].estListing;
     }

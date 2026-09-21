@@ -57,13 +57,47 @@ export const NAME_TO_ID = {
   "gulf lloyds": "gulf-lloyds",
   "millworks technologies": "millworks-technologies",
   "crazy snacks": "crazy-snacks",
+  "nse": "national-stock-exchange-of-india",
+  "national stock exchange": "national-stock-exchange-of-india",
+  "national stock exchange of india": "national-stock-exchange-of-india",
+  "ss retail": "ss-retail",
+  "spectraa technology solutions": "spectraa-technology-solutions",
+  "kheria autocomp": "kheria-autocomp",
+  "sonaselection india": "sonaselection-india",
+  "hero motors": "hero-motors",
+  "jindal supreme": "jindal-supreme",
+  "a-one steels": "a-one-steels",
+  "varmora granito": "varmora-granito",
+  "robokidz eduventures": "robokidz-eduventures",
+  "fx multitech": "fx-multitech",
+  "vivekanand cotspin": "vivekanand-cotspin",
+  "axiom gas engineering": "axiom-gas-engineering",
+  "armee infotech": "armee-infotech",
+  "elevate campuses": "elevate-campuses",
+  "adroit industries": "adroit-industries",
+  "swastika infra": "swastika-infra",
+  "unitec fibres": "unitec-fibres",
+  "liqvd digital": "liqvd-digital",
+  "anand seamless": "anand-seamless",
+  "himalaya nutravedics": "himalaya-nutravedics",
+  "sai urja indo": "sai-urja-indo",
+  "skoffset": "s-k-offset",
+  "pooja logistics": "pooja-logistics",
+  "core integra consulting": "core-integra-consulting",
+  "bench mark infotech services": "bench-mark-infotech-services",
+  "peshwa wheat": "peshwa-wheat",
 };
 
 export function resolveId(rawName) {
   const norm = normalizeName(rawName);
+  if (!norm) return null;
   if (NAME_TO_ID[norm]) return NAME_TO_ID[norm];
   for (const [key, id] of Object.entries(NAME_TO_ID)) {
-    if (norm.includes(key) || key.includes(norm)) return id;
+    if (key === norm) return id;
+    if (key.length >= 3) {
+      const regex = new RegExp(`\\b${key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i");
+      if (regex.test(norm)) return id;
+    }
   }
   return null;
 }
@@ -96,9 +130,28 @@ export async function extractTable(page, label) {
 
 export function parseGmpCell(text) {
   if (!text) return undefined;
-  const clean = String(text).replace(/,/g, "").trim();
-  if (clean === "--" || clean === "-" || clean.toLowerCase() === "tba" || clean.toLowerCase() === "n/a") return undefined;
-  const m = clean.match(/(?:₹|Rs\.?|&#8377;)?\s*(-?\d+(?:\.\d+)?)/);
+  // InvestorGain cell format:
+  // Line 1: "₹72 (4.03%)" or "₹-- (0.00%)" or "₹-2 (-2.38%)" or "₹13.5 (16.67%)"
+  // Line 2: "48 ↓ / 310 ↑"
+  const lines = String(text).split("\n").map((l) => l.trim()).filter(Boolean);
+  if (!lines.length) return undefined;
+
+  const firstLine = lines[0].replace(/,/g, "").trim();
+  // Strip percentage part in parentheses to only evaluate the GMP amount
+  const valuePart = firstLine.split("(")[0].trim();
+
+  // If the value part contains "--" or is "-" or "TBA" or "N/A", GMP is not available
+  if (
+    !valuePart ||
+    valuePart.includes("--") ||
+    valuePart === "-" ||
+    /\b(tba|tbd|n\/a|na)\b/i.test(valuePart)
+  ) {
+    return undefined;
+  }
+
+  // Match the actual signed number in the value part (can be negative, e.g. -2, -6)
+  const m = valuePart.match(/(?:₹|Rs\.?|&#8377;)?\s*(-?\d+(?:\.\d+)?)/);
   if (!m) return undefined;
   const n = parseFloat(m[1]);
   return Number.isFinite(n) ? n : undefined;
@@ -120,10 +173,14 @@ export function parseListingInfo(rawName) {
 export function cleanScrapedName(raw) {
   if (!raw) return "";
   let cleaned = raw.split("\n")[0].trim();
-  cleaned = cleaned.replace(/\s*(BSE SME|NSE SME|BSE|NSE|IPO)?[UOCL]?\s*L?@\s*-?[\d,.]+\s*\(?[-\d,.%]*\)?/i, "");
-  cleaned = cleaned.replace(/\s*(?:BSE\s+SME|NSE\s+SME|NSE\s+Emerge|BSE|NSE|SME|IPO)?\s*C?ALLOTT?ED\b/gi, "");
-  cleaned = cleaned.replace(/\s*(BSE SME|NSE SME|BSE|NSE|SME|IPO)[UOCL]?\s*$/i, "");
-  cleaned = cleaned.replace(/\s+[UOCL]$/i, "");
+  // 1. Remove listing price suffixes like IPOL@43.00 (0%) or L@154.00 (10%)
+  cleaned = cleaned.replace(/\s*(?:BSE\s+SME|NSE\s+SME|NSE\s+Emerge|BSE|NSE|SME|IPO)?\s*(?:CT|OT|LT|AT|[UOCL])?\s*L?@\s*-?[\d,.]+\s*\(?[-\d,.%]*\)?/gi, "");
+  // 2. Remove ALLOTTED / CALLOTTED / SMECALLOTTED suffixes
+  cleaned = cleaned.replace(/\s*(?:BSE\s+SME|NSE\s+SME|NSE\s+Emerge|BSE|NSE|SME|IPO)?\s*(?:SME)?C?ALLOTT?ED\b/gi, "");
+  // 3. Remove trailing exchange and status combinations (e.g. "NSE SMECT", "IPOCT", "BSE SMEO", "IPOU", "IPOC")
+  cleaned = cleaned.replace(/\s*(?:BSE\s+SME|NSE\s+SME|NSE\s+Emerge|BSE|NSE|SME|IPO)\s*(?:CT|OT|LT|AT|[UOCL])?\s*$/gi, "");
+  // 4. Remove standalone trailing status markers (e.g. " CT", " OT", " U", " O", " C", " L")
+  cleaned = cleaned.replace(/\s+(?:CT|OT|LT|AT|[UOCL])\s*$/gi, "");
   return cleaned.trim();
 }
 

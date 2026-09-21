@@ -139,6 +139,13 @@ export function sanitizeAndSync() {
         delete patch.estListing;
         liveCleanups++;
       }
+
+      // If base IPO has null GMP and patch has 0 GMP without estListing or with same priceMax, clear false 0
+      if (baseIpo.gmp == null && patch.gmp === 0) {
+        delete patch.gmp;
+        delete patch.estListing;
+        liveCleanups++;
+      }
     }
   }
 

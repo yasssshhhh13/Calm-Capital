@@ -27,11 +27,15 @@ export function toCrore(text) {
 /** Lowercase, strip suffixes/exchange tags/punctuation into a comparable token string. */
 export function normalizeName(raw) {
   if (!raw) return "";
-  return String(raw)
+  const cleaned = String(raw)
     .toLowerCase()
     .replace(/\b(bse sme|nse emerge|nse sme|bse|nse|ipo|ltd|limited|pvt|private|co|company|corporation|corp)\b/g, "")
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
+  if (!cleaned) {
+    return String(raw).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  }
+  return cleaned;
 }
 
 export function companyTokens(name) {

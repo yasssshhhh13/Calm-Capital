@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { parseGmpCell, cleanScrapedName, resolveId } from "./sources/investorgain.mjs";
+import { normalizeName } from "./lib/match.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -234,6 +236,50 @@ async function runAudit() {
   const refreshRejectRes = createMockRes();
   await refreshHandler({ method: "DELETE" }, refreshRejectRes);
   assert(refreshRejectRes.statusCode === 405, "/api/refresh rejects unsupported HTTP methods with 405");
+
+  // -------------------------------------------------------------
+  // SUITE 6: GMP EXTRACTION & SANITATION INTEGRITY
+  // -------------------------------------------------------------
+  console.log("\n--- [SUITE 6] GMP Engine & Normalization Integrity ---");
+
+  // 6A: parseGmpCell must NEVER return 0 for unquoted / '--' cells
+  assert(parseGmpCell("₹-- (0.00%)\n0 ↓ / 0 ↑") === undefined, "parseGmpCell returns undefined for '₹-- (0.00%)' (no false 0)");
+  assert(parseGmpCell("") === undefined, "parseGmpCell returns undefined for empty string");
+  assert(parseGmpCell(null) === undefined, "parseGmpCell returns undefined for null");
+  assert(parseGmpCell("--") === undefined, "parseGmpCell returns undefined for '--'");
+  assert(parseGmpCell("TBA") === undefined, "parseGmpCell returns undefined for 'TBA'");
+  assert(parseGmpCell("₹72 (4.03%)\n48 ↓ / 310 ↑") === 72, "parseGmpCell parses positive integer ₹72 correctly");
+  assert(parseGmpCell("₹-2 (-2.38%)\n-2 ↓ / 24 ↑") === -2, "parseGmpCell parses negative integer ₹-2 correctly");
+  assert(parseGmpCell("₹-6 (-1.77%)\n-10 ↓ / 38 ↑") === -6, "parseGmpCell parses negative integer ₹-6 correctly");
+  assert(parseGmpCell("₹13.5 (16.67%)\n13.50 ↓ / 24 ↑") === 13.5, "parseGmpCell parses decimal ₹13.5 correctly");
+  assert(parseGmpCell("₹0 (0.00%)\n0 ↓ / 0 ↑") === 0, "parseGmpCell parses genuine 0 correctly");
+
+  // 6B: cleanScrapedName must strip all status suffixes (CT, OT, LT, AT, U, O, C, L)
+  assert(cleanScrapedName("NSE IPOCT") === "NSE", "cleanScrapedName strips 'IPOCT' to 'NSE'");
+  assert(cleanScrapedName("Kheria Autocomp NSE SMECT") === "Kheria Autocomp", "cleanScrapedName strips 'NSE SMECT'");
+  assert(cleanScrapedName("SpectraA Technology Solutions NSE SMECT") === "SpectraA Technology Solutions", "cleanScrapedName strips multi-word 'NSE SMECT'");
+  assert(cleanScrapedName("Sonaselection India IPOCT") === "Sonaselection India", "cleanScrapedName strips 'IPOCT'");
+  assert(cleanScrapedName("SS Retail IPOC") === "SS Retail", "cleanScrapedName strips 'IPOC'");
+  assert(cleanScrapedName("Hero Motors IPOC") === "Hero Motors", "cleanScrapedName strips 'IPOC'");
+  assert(cleanScrapedName("Robokidz Eduventures BSE SMEO") === "Robokidz Eduventures", "cleanScrapedName strips 'BSE SMEO'");
+  assert(cleanScrapedName("A-One Steels IPOU") === "A-One Steels", "cleanScrapedName strips 'IPOU'");
+  assert(cleanScrapedName("Vama Wovenfab BSE SMECALLOTTED") === "Vama Wovenfab", "cleanScrapedName strips 'BSE SMECALLOTTED'");
+  assert(cleanScrapedName("Manika Plastech IPOL@43.00 (0%)") === "Manika Plastech", "cleanScrapedName strips 'IPOL@...'");
+
+  // 6C: resolveId and normalizeName for NSE
+  assert(normalizeName("NSE") === "nse", "normalizeName('NSE') returns 'nse' and does not collapse to empty string");
+  assert(resolveId("NSE") === "national-stock-exchange-of-india", "resolveId('NSE') maps to 'national-stock-exchange-of-india'");
+  assert(resolveId("National Stock Exchange") === "national-stock-exchange-of-india", "resolveId('National Stock Exchange') maps to 'national-stock-exchange-of-india'");
+  assert(resolveId("SS Retail") === "ss-retail", "resolveId('SS Retail') maps to 'ss-retail'");
+
+  // 6D: Database consistency
+  let estListingMismatches = 0;
+  ipos.forEach((ipo) => {
+    if (ipo.priceMax != null && typeof ipo.gmp === "number") {
+      if (ipo.estListing !== ipo.priceMax + ipo.gmp) estListingMismatches++;
+    }
+  });
+  assert(estListingMismatches === 0, "Zero estListing mismatches (estListing === priceMax + gmp)", `Mismatches: ${estListingMismatches}`);
 
   // -------------------------------------------------------------
   // FINAL SCORECARD
