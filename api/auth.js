@@ -45,8 +45,30 @@ function normalizeKey(identifier = "") {
 
 // Helper: Upstash / Vercel KV store
 async function getKvClient() {
-  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+  // Dynamically find Redis REST URL and Token under any prefix (STORAGE, KV, UPSTASH, etc.)
+  let url =
+    process.env.KV_REST_API_URL ||
+    process.env.UPSTASH_REDIS_REST_URL ||
+    process.env.STORAGE_REST_API_URL ||
+    process.env.STORAGE_URL;
+
+  let token =
+    process.env.KV_REST_API_TOKEN ||
+    process.env.UPSTASH_REDIS_REST_TOKEN ||
+    process.env.STORAGE_REST_API_TOKEN ||
+    process.env.STORAGE_TOKEN;
+
+  // If not found by known names, scan process.env for any matching REST API pair
+  if (!url || !token) {
+    for (const key of Object.keys(process.env)) {
+      if (key.endsWith("_REST_API_URL") && !url) {
+        url = process.env[key];
+        const prefix = key.replace(/_REST_API_URL$/, "");
+        token = token || process.env[`${prefix}_REST_API_TOKEN`];
+      }
+    }
+  }
+
   if (url && token) {
     return {
       async get(key) {
