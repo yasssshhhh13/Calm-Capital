@@ -14,10 +14,36 @@ const SESSION_STORAGE_KEY = "calmcapital_user_session";
 
 const AuthContext = createContext(null);
 
+export function cleanUserObj(u) {
+  if (!u) return null;
+  let parsed = u;
+  while (typeof parsed === "string") {
+    try {
+      const next = JSON.parse(parsed);
+      if (next === parsed) break;
+      parsed = next;
+    } catch {
+      break;
+    }
+  }
+  if (Array.isArray(parsed)) {
+    parsed = parsed.find((item) => item && typeof item === "object" && !Array.isArray(item)) || parsed[0];
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+  if (!Array.isArray(parsed.savedPans)) {
+    if (typeof parsed.savedPans === "string") {
+      try { parsed.savedPans = JSON.parse(parsed.savedPans); } catch { parsed.savedPans = []; }
+    }
+    if (!Array.isArray(parsed.savedPans)) parsed.savedPans = [];
+  }
+  return parsed;
+}
+
 function getStoredAccounts() {
   try {
     const raw = localStorage.getItem(ACCOUNTS_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
@@ -34,7 +60,7 @@ function saveStoredAccounts(accounts) {
 function getStoredSession() {
   try {
     const raw = localStorage.getItem(SESSION_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return cleanUserObj(raw ? JSON.parse(raw) : null);
   } catch {
     return null;
   }
@@ -77,15 +103,16 @@ export function AuthProvider({ children }) {
       const res = await fetch(`/api/auth?action=get&identifier=${encodeURIComponent(id)}`);
       if (res.ok) {
         const data = await res.json();
-        if (data.user && Array.isArray(data.user.savedPans)) {
-          const cloudTime = new Date(data.user.vaultUpdatedAt || data.user.lastLoginAt || 0).getTime();
+        const cloudUser = cleanUserObj(data.user);
+        if (cloudUser && Array.isArray(cloudUser.savedPans)) {
+          const cloudTime = new Date(cloudUser.vaultUpdatedAt || cloudUser.lastLoginAt || 0).getTime();
           const localTime = new Date(user.vaultUpdatedAt || 0).getTime();
           if (
             cloudTime >= localTime ||
             !user.vaultUpdatedAt ||
-            (data.user.savedPans.length > (user.savedPans?.length || 0))
+            (cloudUser.savedPans.length > (user.savedPans?.length || 0))
           ) {
-            setUser((prev) => (prev ? { ...prev, ...data.user } : null));
+            setUser((prev) => (prev ? { ...prev, ...cloudUser } : null));
           }
         }
       }
@@ -148,7 +175,7 @@ export function AuthProvider({ children }) {
         throw new Error(data.error || "Sign Up failed. Please check your details.");
       }
 
-      const cloudUser = { ...data.user, vaultUpdatedAt: now };
+      const cloudUser = { ...(cleanUserObj(data.user) || data.user), vaultUpdatedAt: now };
       setUser(cloudUser);
 
       // Save locally as backup
@@ -230,7 +257,10 @@ export function AuthProvider({ children }) {
         throw new Error(data.error || "Authentication failed. Please verify credentials.");
       }
 
-      let cloudUser = data.user;
+      let cloudUser = cleanUserObj(data.user);
+      if (!cloudUser) {
+        throw new Error("Failed to load user profile. Please try again.");
+      }
 
       // Ensure local PANs are merged with cloud PANs so no data is lost
       if (Array.isArray(localPans) && localPans.length > 0) {

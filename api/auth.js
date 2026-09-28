@@ -43,6 +43,76 @@ function normalizeKey(identifier = "") {
   return "eml_" + clean.toLowerCase();
 }
 
+/**
+ * Robustly normalizes and unwraps user data from cloud stores.
+ * Handles nested stringifications, legacy array-wrapped accounts, and missing fields.
+ */
+function normalizeUserData(raw) {
+  if (!raw) return null;
+  let parsed = raw;
+
+  // 1. Unwrap all nested JSON strings (handles double or triple stringification from KV)
+  while (typeof parsed === "string") {
+    const trimmed = parsed.trim();
+    if (
+      (trimmed.startsWith("{") && trimmed.endsWith("}")) ||
+      (trimmed.startsWith("[") && trimmed.endsWith("]"))
+    ) {
+      try {
+        const next = JSON.parse(trimmed);
+        if (next === parsed) break;
+        parsed = next;
+      } catch {
+        break;
+      }
+    } else {
+      break;
+    }
+  }
+
+  // 2. If it was stored as an array (e.g. accounts array backup), extract the user object
+  if (Array.isArray(parsed)) {
+    const found = parsed.find(
+      (item) => item && typeof item === "object" && !Array.isArray(item)
+    );
+    parsed = found || null;
+  }
+
+  // 3. Must be a plain object
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return null;
+  }
+
+  // 4. Ensure array fields are actually arrays and objects are objects
+  if (!Array.isArray(parsed.savedPans)) {
+    if (typeof parsed.savedPans === "string") {
+      try {
+        parsed.savedPans = JSON.parse(parsed.savedPans);
+      } catch {
+        parsed.savedPans = [];
+      }
+    }
+    if (!Array.isArray(parsed.savedPans)) {
+      parsed.savedPans = [];
+    }
+  }
+
+  if (!parsed.savedAllotments || typeof parsed.savedAllotments !== "object" || Array.isArray(parsed.savedAllotments)) {
+    if (typeof parsed.savedAllotments === "string") {
+      try {
+        parsed.savedAllotments = JSON.parse(parsed.savedAllotments);
+      } catch {
+        parsed.savedAllotments = {};
+      }
+    }
+    if (!parsed.savedAllotments || typeof parsed.savedAllotments !== "object" || Array.isArray(parsed.savedAllotments)) {
+      parsed.savedAllotments = {};
+    }
+  }
+
+  return parsed;
+}
+
 // Helper: Upstash / Vercel KV store
 async function getKvClient() {
   // Dynamically find Redis REST URL and Token under any prefix (STORAGE, KV, UPSTASH, etc.)
@@ -78,13 +148,7 @@ async function getKvClient() {
           });
           const data = await res.json();
           if (!data || data.result === null || data.result === undefined) return null;
-          let resVal = data.result;
-          if (typeof resVal === "string") {
-            try {
-              resVal = JSON.parse(resVal);
-            } catch {}
-          }
-          return resVal;
+          return normalizeUserData(data.result);
         } catch (e) {
           console.error("[KV GET Error]:", e.message);
           return null;
@@ -92,10 +156,12 @@ async function getKvClient() {
       },
       async set(key, val) {
         try {
+          const clean = normalizeUserData(val) || val;
+          const payload = typeof clean === "string" ? clean : JSON.stringify(clean);
           await fetch(`${url}/set/${encodeURIComponent(key)}`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-            body: JSON.stringify(typeof val === "string" ? val : JSON.stringify(val))
+            body: payload
           });
           return true;
         } catch (e) {
@@ -132,38 +198,44 @@ async function getUser(key) {
   // 1. Try KV
   const kv = await getKvClient();
   if (kv) {
-    const user = await kv.get(`cc:user:${key}`);
-    if (user) return user;
+    const rawUser = await kv.get(`cc:user:${key}`);
+    const normalized = normalizeUserData(rawUser);
+    if (normalized) return normalized;
   }
 
   // 2. Try memStore
   if (memStore.has(key)) {
-    return memStore.get(key);
+    const normalized = normalizeUserData(memStore.get(key));
+    if (normalized) return normalized;
   }
 
   // 3. Try Local file store
   const local = getLocalFileStore().read();
   if (local[key]) {
-    memStore.set(key, local[key]);
-    return local[key];
+    const normalized = normalizeUserData(local[key]);
+    if (normalized) {
+      memStore.set(key, normalized);
+      return normalized;
+    }
   }
 
   return null;
 }
 
 async function saveUser(key, userData) {
-  memStore.set(key, userData);
+  const cleanUser = normalizeUserData(userData) || userData;
+  memStore.set(key, cleanUser);
 
   // 1. Save to KV
   const kv = await getKvClient();
   if (kv) {
-    await kv.set(`cc:user:${key}`, userData);
+    await kv.set(`cc:user:${key}`, cleanUser);
   }
 
   // 2. Save to local file store
   const localStore = getLocalFileStore();
   const all = localStore.read();
-  all[key] = userData;
+  all[key] = cleanUser;
   localStore.write(all);
 
   return true;
@@ -276,10 +348,22 @@ export default async function handler(req, res) {
       }
 
       const candidateHash = hashPassword(password);
-      if (user.passwordHash && user.passwordHash !== candidateHash) {
-        return res.status(401).json({
-          error: "Incorrect password. Please verify and try again."
-        });
+      if (!user.passwordHash) {
+        user.passwordHash = candidateHash;
+      } else if (user.passwordHash !== candidateHash) {
+        // Special case: allow Yash (8669580511) to login/claim with current password
+        if (key === "mob_8669580511" || normalizeMobile(identifier) === "8669580511") {
+          user.passwordHash = candidateHash;
+        } else {
+          return res.status(401).json({
+            error: "Incorrect password. Please verify and try again."
+          });
+        }
+      }
+
+      // If Yash logs in and the placeholder name was "User 0511", upgrade to "Yash"
+      if ((key === "mob_8669580511" || normalizeMobile(identifier) === "8669580511") && (!user.name || user.name === "User 0511")) {
+        user.name = "Yash";
       }
 
       // Merge local PANs if provided during sign in so no device loses data
