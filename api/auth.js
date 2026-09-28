@@ -55,7 +55,14 @@ async function getKvClient() {
             headers: { Authorization: `Bearer ${token}` }
           });
           const data = await res.json();
-          return data.result ? JSON.parse(data.result) : null;
+          if (!data || data.result === null || data.result === undefined) return null;
+          let resVal = data.result;
+          if (typeof resVal === "string") {
+            try {
+              resVal = JSON.parse(resVal);
+            } catch {}
+          }
+          return resVal;
         } catch (e) {
           console.error("[KV GET Error]:", e.message);
           return null;
@@ -210,7 +217,7 @@ export default async function handler(req, res) {
     // SIGN IN
     // -------------------------------------------------------------
     if (action === "signin") {
-      const { identifier, password } = req.body || {};
+      const { identifier, password, localPans = [], localAllotments = {} } = req.body || {};
       if (!identifier) {
         return res.status(400).json({ error: "Please enter your registered Mobile Number or Email." });
       }
@@ -230,10 +237,11 @@ export default async function handler(req, res) {
           mobile: "8669580511",
           email: null,
           passwordHash: hashPassword(password),
-          savedPans: [],
-          savedAllotments: {},
+          savedPans: Array.isArray(localPans) ? localPans : [],
+          savedAllotments: localAllotments || {},
           createdAt: new Date().toISOString(),
-          lastLoginAt: new Date().toISOString()
+          lastLoginAt: new Date().toISOString(),
+          vaultUpdatedAt: new Date().toISOString()
         };
         await saveUser(key, newRecord);
         user = newRecord;
@@ -250,6 +258,30 @@ export default async function handler(req, res) {
         return res.status(401).json({
           error: "Incorrect password. Please verify and try again."
         });
+      }
+
+      // Merge local PANs if provided during sign in so no device loses data
+      if (Array.isArray(localPans) && localPans.length > 0) {
+        const existingPans = Array.isArray(user.savedPans) ? user.savedPans : [];
+        const seen = new Set(existingPans.map((p) => (p?.pan || "").toUpperCase()));
+        const merged = [...existingPans];
+        let hasNew = false;
+        for (const lp of localPans) {
+          const clean = (lp?.pan || "").toUpperCase();
+          if (clean && !seen.has(clean)) {
+            seen.add(clean);
+            merged.push(lp);
+            hasNew = true;
+          }
+        }
+        if (hasNew) {
+          user.savedPans = merged;
+          user.vaultUpdatedAt = new Date().toISOString();
+        }
+      }
+
+      if (localAllotments && typeof localAllotments === "object" && Object.keys(localAllotments).length > 0) {
+        user.savedAllotments = { ...(user.savedAllotments || {}), ...localAllotments };
       }
 
       // Update last login

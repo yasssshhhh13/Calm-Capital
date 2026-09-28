@@ -75,7 +75,11 @@ export function AuthProvider({ children }) {
         if (data.user && Array.isArray(data.user.savedPans)) {
           const cloudTime = new Date(data.user.vaultUpdatedAt || data.user.lastLoginAt || 0).getTime();
           const localTime = new Date(user.vaultUpdatedAt || 0).getTime();
-          if (cloudTime >= localTime || !user.vaultUpdatedAt) {
+          if (
+            cloudTime >= localTime ||
+            !user.vaultUpdatedAt ||
+            (data.user.savedPans.length > (user.savedPans?.length || 0))
+          ) {
             setUser((prev) => (prev ? { ...prev, ...data.user } : null));
           }
         }
@@ -191,8 +195,9 @@ export function AuthProvider({ children }) {
 
   /**
    * Sign In with Email or Mobile (Cloud + Local)
+   * Automatically merges existing local PANs on the device into account vault
    */
-  const signIn = useCallback(async ({ identifier, password }) => {
+  const signIn = useCallback(async ({ identifier, password, localPans = [], localAllotments = {} }) => {
     const cleanId = (identifier || "").trim();
     if (!cleanId) {
       throw new Error("Please enter your registered Email or Mobile Number.");
@@ -209,7 +214,9 @@ export function AuthProvider({ children }) {
         body: JSON.stringify({
           action: "signin",
           identifier: cleanId,
-          password: password
+          password: password,
+          localPans: Array.isArray(localPans) ? localPans : [],
+          localAllotments: localAllotments || {}
         })
       });
 
@@ -218,7 +225,27 @@ export function AuthProvider({ children }) {
         throw new Error(data.error || "Authentication failed. Please verify credentials.");
       }
 
-      const cloudUser = data.user;
+      let cloudUser = data.user;
+
+      // Ensure local PANs are merged with cloud PANs so no data is lost
+      if (Array.isArray(localPans) && localPans.length > 0) {
+        const existing = Array.isArray(cloudUser.savedPans) ? cloudUser.savedPans : [];
+        const seen = new Set(existing.map((p) => (p.pan || "").toUpperCase()));
+        const merged = [...existing];
+        let hasNew = false;
+        for (const lp of localPans) {
+          const clean = (lp.pan || "").toUpperCase();
+          if (clean && !seen.has(clean)) {
+            seen.add(clean);
+            merged.push(lp);
+            hasNew = true;
+          }
+        }
+        if (hasNew) {
+          cloudUser = { ...cloudUser, savedPans: merged, vaultUpdatedAt: new Date().toISOString() };
+        }
+      }
+
       setUser(cloudUser);
 
       // Save locally as backup
@@ -255,6 +282,21 @@ export function AuthProvider({ children }) {
 
       if (account.password !== password) {
         throw new Error("Incorrect password. Please verify and try again.");
+      }
+
+      // Merge local PANs in local fallback as well
+      if (Array.isArray(localPans) && localPans.length > 0) {
+        const existing = Array.isArray(account.savedPans) ? account.savedPans : [];
+        const seen = new Set(existing.map((p) => (p.pan || "").toUpperCase()));
+        const merged = [...existing];
+        for (const lp of localPans) {
+          const clean = (lp.pan || "").toUpperCase();
+          if (clean && !seen.has(clean)) {
+            seen.add(clean);
+            merged.push(lp);
+          }
+        }
+        account.savedPans = merged;
       }
 
       account.lastLoginAt = new Date().toISOString();

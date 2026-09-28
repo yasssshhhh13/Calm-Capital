@@ -3008,11 +3008,11 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
 
   return (
     <div
-      className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in"
+      className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in overflow-y-auto"
       onClick={onClose}
     >
       <div
-        className="rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl transition-colors border"
+        className="rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl transition-colors border my-auto flex flex-col"
         style={{
           background: dark ? "#172437" : "#ffffff",
           borderColor: dark ? "rgba(52,74,97,0.9)" : "rgba(0,0,0,0.08)",
@@ -3021,7 +3021,13 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
-        <div className="flex items-center justify-between px-6 pt-5 pb-2">
+        <div
+          className="sticky top-0 z-20 flex items-center justify-between px-6 pt-4 pb-3 backdrop-blur-md border-b shrink-0"
+          style={{
+            background: dark ? "rgba(23,36,55,0.92)" : "rgba(255,255,255,0.92)",
+            borderColor: dark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.05)"
+          }}
+        >
           <div className="flex items-center gap-2">
             <button
               onClick={() => watchlist.toggle(ipo.id)}
@@ -3092,20 +3098,8 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
         {/* CalmCapital Score Section */}
         <CalmCapitalScoreCard ipo={ipo} dark={dark} />
 
-        {/* Basic Info Grid */}
+        {/* Basic Info Grid: Min. Investment and Cut-off Price */}
         <div className="grid grid-cols-2 gap-3 px-6 py-2 text-xs">
-          <div className="border border-slate-150 dark:border-white/5 rounded-xl p-3 bg-slate-50/50 dark:bg-white/[0.01]">
-            <span className="text-slate-400 dark:text-slate-500 block font-medium">Price Band</span>
-            <span className="font-mono font-black text-slate-850 dark:text-white mt-0.5 block">
-              {formatPriceBand(ipo.priceMin, ipo.priceMax)}
-            </span>
-          </div>
-          <div className="border border-slate-150 dark:border-white/5 rounded-xl p-3 bg-slate-50/50 dark:bg-white/[0.01]">
-            <span className="text-slate-400 dark:text-slate-500 block font-medium">Lot Size</span>
-            <span className="font-mono font-black text-slate-850 dark:text-white mt-0.5 block">
-              {ipo.lot ? `${ipo.lot} Shares` : "—"}
-            </span>
-          </div>
           <div className="border border-slate-150 dark:border-white/5 rounded-xl p-3 bg-slate-50/50 dark:bg-white/[0.01]">
             <span className="text-slate-400 dark:text-slate-500 block font-medium">Min. Investment</span>
             <span className="font-mono font-black text-slate-850 dark:text-white mt-0.5 block">
@@ -5324,12 +5318,30 @@ function useFamilyPans() {
 
   const [masked, setMasked] = useState(true);
 
-  // When user session changes, load user's saved pans if available
+  // When user session changes, load user's saved pans if available (with smart merge)
   useEffect(() => {
-    if (user && Array.isArray(user.savedPans) && user.savedPans.length > 0) {
-      setPans(user.savedPans);
+    if (user && Array.isArray(user.savedPans)) {
+      setPans((prev) => {
+        const seen = new Set();
+        const merged = [];
+        for (const p of user.savedPans) {
+          const num = (p?.pan || "").toUpperCase();
+          if (num && !seen.has(num)) {
+            seen.add(num);
+            merged.push(p);
+          }
+        }
+        for (const p of prev) {
+          const num = (p?.pan || "").toUpperCase();
+          if (num && !seen.has(num)) {
+            seen.add(num);
+            merged.push(p);
+          }
+        }
+        return merged;
+      });
     }
-  }, [user?.id]);
+  }, [user?.id, user?.vaultUpdatedAt]);
 
   // Persist to localStorage and sync to cloud account if logged in
   useEffect(() => {
@@ -5413,9 +5425,12 @@ function useFamilyAllotments() {
 
   useEffect(() => {
     if (user && user.savedAllotments) {
-      setAllotments(user.savedAllotments);
+      setAllotments((prev) => ({
+        ...prev,
+        ...user.savedAllotments,
+      }));
     }
-  }, [user?.id]);
+  }, [user?.id, user?.vaultUpdatedAt]);
 
   useEffect(() => {
     try {

@@ -60,8 +60,13 @@ export default function AuthModal({ isOpen, onClose, initialTab = "signin", curr
           throw new Error("Please enter your password.");
         }
 
-        await signIn({ identifier, password });
-        setSuccessMsg("Signed in successfully!");
+        await signIn({
+          identifier,
+          password,
+          localPans: currentLocalPans,
+          localAllotments: currentLocalAllotments
+        });
+        setSuccessMsg("Signed in successfully! PAN Vault synced.");
         setTimeout(() => {
           onClose();
         }, 600);
@@ -249,10 +254,11 @@ export default function AuthModal({ isOpen, onClose, initialTab = "signin", curr
                 <input
                   type="tel"
                   maxLength={10}
+                  autoComplete="tel"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value.replace(/\D/g, ""))}
-                  placeholder="9876543210"
-                  className="flex-1 bg-slate-50 dark:bg-[#121D2D] border border-slate-200 dark:border-white/10 rounded-xl px-3.5 py-2.5 text-xs font-mono font-bold tracking-wider text-slate-850 dark:text-white outline-none focus:border-[#1c9bda]"
+                  placeholder="Enter 10-digit number"
+                  className="flex-1 bg-slate-50 dark:bg-[#121D2D] border border-slate-200 dark:border-white/10 rounded-xl px-3.5 py-2.5 text-xs font-mono font-bold tracking-wider text-slate-850 dark:text-white placeholder:font-sans placeholder:font-normal placeholder:tracking-normal placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-[#1c9bda]"
                 />
               </div>
             </div>
