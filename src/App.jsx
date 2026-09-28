@@ -2463,7 +2463,7 @@ function getLogoUrl(name) {
 /* =====================================================================
    COMPANY AVATAR — official logo with graceful initials fallback
 ===================================================================== */
-function CompanyAvatar({ name = "", logoUrl = null, size = 40 }) {
+const CompanyAvatar = React.memo(function CompanyAvatar({ name = "", logoUrl = null, size = 40 }) {
   const [srcIndex, setSrcIndex] = useState(0);
 
   // Reset index whenever the company name or logoUrl changes (e.g. navigating between cards)
@@ -2542,12 +2542,12 @@ function CompanyAvatar({ name = "", logoUrl = null, size = 40 }) {
       {initials}
     </div>
   );
-}
+});
 
 /* =====================================================================
    IPO CARD
 ===================================================================== */
-function IPOCard({ ipo, onOpen, watchlist, dark }) {
+const IPOCard = React.memo(function IPOCard({ ipo, onOpen, watchlist, dark }) {
   const watched = watchlist.ids.includes(ipo.id);
   const isListed = ipo.status === "Listed";
   const isClosed = ipo.status === "Closed";
@@ -2821,12 +2821,12 @@ function IPOCard({ ipo, onOpen, watchlist, dark }) {
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================================
    LISTED IPO CARD — specialized card matching reference image
 ===================================================================== */
-function ListedIPOCard({ ipo, onOpen, watchlist }) {
+const ListedIPOCard = React.memo(function ListedIPOCard({ ipo, onOpen, watchlist }) {
   const watched = watchlist.ids.includes(ipo.id);
   const gain = listingGainPct(ipo);
   const pnl = listingProfitLossPerLot(ipo);
@@ -2976,7 +2976,7 @@ function ListedIPOCard({ ipo, onOpen, watchlist }) {
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================================
    IPO DETAIL MODAL (Quick Summary Preview Summary)
@@ -5319,8 +5319,13 @@ function useFamilyPans() {
   const [masked, setMasked] = useState(true);
 
   // When user session changes, load user's saved pans if available (with smart merge)
+  const lastUserPansRef = useRef(null);
   useEffect(() => {
     if (user && Array.isArray(user.savedPans)) {
+      const userPansJson = JSON.stringify(user.savedPans);
+      if (lastUserPansRef.current === userPansJson) return;
+      lastUserPansRef.current = userPansJson;
+
       setPans((prev) => {
         const seen = new Set();
         const merged = [];
@@ -5338,22 +5343,28 @@ function useFamilyPans() {
             merged.push(p);
           }
         }
+        if (JSON.stringify(merged) === JSON.stringify(prev)) {
+          return prev;
+        }
         return merged;
       });
     }
-  }, [user?.id, user?.vaultUpdatedAt]);
+  }, [user?.id, user?.savedPans]);
 
-  // Persist to localStorage and sync to cloud account if logged in
+  // Persist to localStorage and sync to cloud account only when pans actually change
+  const lastSyncedPansRef = useRef(null);
   useEffect(() => {
     try {
-      localStorage.setItem("calmcapital_family_pans", JSON.stringify(pans));
-      if (user) {
+      const pansJson = JSON.stringify(pans);
+      localStorage.setItem("calmcapital_family_pans", pansJson);
+      if (user && lastSyncedPansRef.current !== pansJson) {
+        lastSyncedPansRef.current = pansJson;
         syncPansToAccount(pans);
       }
     } catch (e) {
       console.error(e);
     }
-  }, [pans, user, syncPansToAccount]);
+  }, [pans, user?.id, syncPansToAccount]);
 
   const addPan = (item) => {
     const cleanPan = item.pan.trim().toUpperCase();
@@ -5423,25 +5434,37 @@ function useFamilyAllotments() {
     }
   });
 
+  const lastUserAllotmentsRef = useRef(null);
   useEffect(() => {
     if (user && user.savedAllotments) {
-      setAllotments((prev) => ({
-        ...prev,
-        ...user.savedAllotments,
-      }));
-    }
-  }, [user?.id, user?.vaultUpdatedAt]);
+      const userAllotmentsJson = JSON.stringify(user.savedAllotments);
+      if (lastUserAllotmentsRef.current === userAllotmentsJson) return;
+      lastUserAllotmentsRef.current = userAllotmentsJson;
 
+      setAllotments((prev) => {
+        const merged = {
+          ...prev,
+          ...user.savedAllotments,
+        };
+        if (JSON.stringify(merged) === JSON.stringify(prev)) return prev;
+        return merged;
+      });
+    }
+  }, [user?.id, user?.savedAllotments]);
+
+  const lastSyncedAllotmentsRef = useRef(null);
   useEffect(() => {
     try {
-      localStorage.setItem("calmcapital_family_allotments", JSON.stringify(allotments));
-      if (user) {
+      const allotmentsJson = JSON.stringify(allotments);
+      localStorage.setItem("calmcapital_family_allotments", allotmentsJson);
+      if (user && lastSyncedAllotmentsRef.current !== allotmentsJson) {
+        lastSyncedAllotmentsRef.current = allotmentsJson;
         syncAllotmentsToAccount(allotments);
       }
     } catch (e) {
       console.error(e);
     }
-  }, [allotments, user, syncAllotmentsToAccount]);
+  }, [allotments, user?.id, syncAllotmentsToAccount]);
 
   const getOutcome = (ipoId, panId) => {
     if (!ipoId || !panId || !allotments[ipoId]) return { status: "Not Checked", lots: 0 };
@@ -6377,7 +6400,7 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
   );
 }
 
-function AllotmentCard({ ipo, onOpen, dark, todayStr, onCheckFamilyAllotment, familyStats }) {
+const AllotmentCard = React.memo(function AllotmentCard({ ipo, onOpen, dark, todayStr, onCheckFamilyAllotment, familyStats }) {
   const registrarUrl = getRegistrarUrl(ipo.registrar);
   // Show the registrar portal as soon as we know who it is — don't wait for allotment day.
   const isActivated = Boolean(registrarUrl);
@@ -6495,7 +6518,7 @@ function AllotmentCard({ ipo, onOpen, dark, todayStr, onCheckFamilyAllotment, fa
       </div>
     </a>
   );
-}
+});
 
 function AllotmentTab({ query, onOpen, watchlist, dark, tick, familyPans, familyAllotments, onOpenPanManager, onCheckFamilyAllotment }) {
   const [filterType, setFilterType] = useState("Mainboard");
@@ -7362,7 +7385,7 @@ function DematTab({ dark }) {
 /* =====================================================================
    STAT CARD
 ===================================================================== */
-function StatCard({ icon: Icon, label, value, tint, onClick, className = "" }) {
+const StatCard = React.memo(function StatCard({ icon: Icon, label, value, tint, onClick, className = "" }) {
   const clickable = typeof onClick === "function";
   const labelLower = label.toLowerCase();
   
@@ -7401,7 +7424,7 @@ function StatCard({ icon: Icon, label, value, tint, onClick, className = "" }) {
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================================
    MAIN APP
@@ -7589,7 +7612,7 @@ export default function App() {
     }
   }, []);
 
-  const handleSelectIpo = (ipo, mode = "modal") => {
+  const handleSelectIpo = useCallback((ipo, mode = "modal") => {
     try {
       if (ipo) {
         const parsed = parseLocation(window.location.pathname, window.location.search);
@@ -7602,21 +7625,26 @@ export default function App() {
         if ((window.location.pathname.replace(/\/+$/, "") || "/") !== path) {
           window.history.pushState(null, "", path);
         }
-        const meta = applyIpoSeo(ipo);
-        trackPageView(meta.path, meta.title);
+        // Run SEO and analytics asynchronously to make click response instantaneous (< 16ms)
+        setTimeout(() => {
+          const meta = applyIpoSeo(ipo);
+          trackPageView(meta.path, meta.title);
+        }, 0);
       } else {
         setSelected(null);
         setViewMode("modal");
         const path = lastTabPathRef.current || TAB_PATHS[tab] || "/";
         window.history.pushState(null, "", path);
-        const meta = applyTabSeo(tab);
-        trackPageView(meta.path, meta.title);
+        setTimeout(() => {
+          const meta = applyTabSeo(tab);
+          trackPageView(meta.path, meta.title);
+        }, 0);
       }
     } catch (e) {
       console.error("Failed to update IPO URL:", e?.message || "[REDACTED]");
       setSelected(ipo);
     }
-  };
+  }, [tab]);
 
   // Sync deep link / path on load
   useEffect(() => {

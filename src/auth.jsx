@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 /**
  * Calm Capital - Cloud Authentication & PAN Vault Sync Engine
@@ -56,6 +56,11 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => getStoredSession());
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalInitialTab, setAuthModalInitialTab] = useState("signin"); // "signin" | "signup"
+
+  const userRef = useRef(user);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
 
   // Keep session in sync locally
   useEffect(() => {
@@ -320,10 +325,19 @@ export function AuthProvider({ children }) {
    * Reliably saves additions, edits, and deletions across devices.
    */
   const syncPansToAccount = useCallback((newPans) => {
-    if (!user) return;
+    const currentUser = userRef.current;
+    if (!currentUser) return;
+
+    // Check if newPans is actually different from existing savedPans to avoid infinite render loops
+    const oldPansJson = JSON.stringify(currentUser.savedPans || []);
+    const newPansJson = JSON.stringify(newPans || []);
+    if (oldPansJson === newPansJson) {
+      return;
+    }
+
     const now = new Date().toISOString();
     const accounts = getStoredAccounts();
-    const idx = accounts.findIndex((a) => a.id === user.id);
+    const idx = accounts.findIndex((a) => a.id === currentUser.id);
     if (idx !== -1) {
       accounts[idx].savedPans = newPans;
       accounts[idx].vaultUpdatedAt = now;
@@ -332,67 +346,87 @@ export function AuthProvider({ children }) {
     setUser((prev) => (prev ? { ...prev, savedPans: newPans, vaultUpdatedAt: now } : null));
 
     // Background push to cloud
-    if (user.mobile || user.email) {
+    if (currentUser.mobile || currentUser.email) {
       fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "sync",
-          identifier: user.mobile || user.email,
-          mobile: user.mobile,
-          email: user.email,
+          identifier: currentUser.mobile || currentUser.email,
+          mobile: currentUser.mobile,
+          email: currentUser.email,
           pans: newPans,
           vaultUpdatedAt: now
         })
       }).catch(() => {});
     }
-  }, [user]);
+  }, []);
 
   /**
    * Sync Allotments to active account
    */
   const syncAllotmentsToAccount = useCallback((newAllotments) => {
-    if (!user) return;
+    const currentUser = userRef.current;
+    if (!currentUser) return;
+
+    const oldAllotmentsJson = JSON.stringify(currentUser.savedAllotments || {});
+    const newAllotmentsJson = JSON.stringify(newAllotments || {});
+    if (oldAllotmentsJson === newAllotmentsJson) {
+      return;
+    }
+
     const accounts = getStoredAccounts();
-    const idx = accounts.findIndex((a) => a.id === user.id);
+    const idx = accounts.findIndex((a) => a.id === currentUser.id);
     if (idx !== -1) {
       accounts[idx].savedAllotments = newAllotments;
       saveStoredAccounts(accounts);
     }
     setUser((prev) => (prev ? { ...prev, savedAllotments: newAllotments } : null));
 
-    if (user.mobile || user.email) {
+    if (currentUser.mobile || currentUser.email) {
       fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "sync",
-          identifier: user.mobile || user.email,
-          mobile: user.mobile,
-          email: user.email,
+          identifier: currentUser.mobile || currentUser.email,
+          mobile: currentUser.mobile,
+          email: currentUser.email,
           allotments: newAllotments
         })
       }).catch(() => {});
     }
-  }, [user]);
+  }, []);
+
+  const authValue = useMemo(() => ({
+    user,
+    isLoggedIn: !!user,
+    authModalOpen,
+    authModalInitialTab,
+    openAuthModal,
+    closeAuthModal,
+    signIn,
+    signUp,
+    signOut,
+    syncPansToAccount,
+    syncAllotmentsToAccount,
+    refreshFromCloud
+  }), [
+    user,
+    authModalOpen,
+    authModalInitialTab,
+    openAuthModal,
+    closeAuthModal,
+    signIn,
+    signUp,
+    signOut,
+    syncPansToAccount,
+    syncAllotmentsToAccount,
+    refreshFromCloud
+  ]);
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoggedIn: !!user,
-        authModalOpen,
-        authModalInitialTab,
-        openAuthModal,
-        closeAuthModal,
-        signIn,
-        signUp,
-        signOut,
-        syncPansToAccount,
-        syncAllotmentsToAccount,
-        refreshFromCloud
-      }}
-    >
+    <AuthContext.Provider value={authValue}>
       {children}
     </AuthContext.Provider>
   );
