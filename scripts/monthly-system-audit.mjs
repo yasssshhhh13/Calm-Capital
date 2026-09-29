@@ -145,12 +145,12 @@ async function runAudit() {
   await checkAllotment({ method: "PUT" }, putRes);
   assert(putRes.statusCode === 405, "Unsupported HTTP method returns 405 Method Not Allowed");
 
-  // 3C: Test GET with registrar=bigshare (Captcha retrieval)
+  // 3C: Test GET with registrar=bigshare (Zero-Captcha verification endpoint)
   const getBigshareRes = createMockRes();
   await checkAllotment({ method: "GET", url: "/api/check-allotment?registrar=bigshare" }, getBigshareRes);
   assert(
-    getBigshareRes.statusCode === 200 && (getBigshareRes.body?.success === true || getBigshareRes.statusCode === 200),
-    "GET Bigshare Captcha endpoint reachable & returns structured response",
+    getBigshareRes.statusCode === 200 && (getBigshareRes.body?.success === true || getBigshareRes.body?.zeroCaptcha === true),
+    "GET Bigshare Zero-Captcha endpoint reachable & returns structured response",
     getBigshareRes.body?.error || "OK"
   );
 

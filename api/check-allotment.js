@@ -11,7 +11,7 @@ import crypto from "crypto";
  * 1. MUFG / Link Intime India Pvt. Ltd. (Zero Captcha, AES-128 token, ASP.NET SearchOnPan)
  * 2. KFin Technologies Ltd. (Zero Captcha, AWS API Gateway)
  * 3. Maashitla Securities Pvt. Ltd. (Zero Captcha, Open REST API)
- * 4. Bigshare Services Pvt. Ltd. (Single 1-time session Captcha for all family PANs)
+ * 4. Bigshare Services Pvt. Ltd. (Zero Captcha, Direct ASP.NET Verification)
  * 
  * Accurately distinguishes between:
  * - "Allotted" (Shares allocated > 0)
@@ -283,22 +283,16 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Handle Captcha requests (for Bigshare)
+  // Handle Captcha / Status requests
   if (req.method === "GET") {
     const url = new URL(req.url, "http://localhost");
     const reg = url.searchParams.get("registrar") || "";
     if (reg.toLowerCase().includes("bigshare")) {
-      try {
-        const captchaRes = await fetch("https://ipo.bigshareonline.com/Captcha.ashx");
-        const json = await captchaRes.json();
-        return res.status(200).json({
-          success: true,
-          token: json.token || json.Token,
-          image: json.image || json.Image
-        });
-      } catch (err) {
-        return res.status(500).json({ error: "Failed to fetch captcha from Bigshare: " + err.message });
-      }
+      return res.status(200).json({
+        success: true,
+        zeroCaptcha: true,
+        message: "Bigshare now supports direct zero-captcha verification."
+      });
     }
     return res.status(200).json({ status: "API Online" });
   }
@@ -529,27 +523,10 @@ export default async function handler(req, res) {
 
     const companyCode = matchedBigshare.code;
 
-    // Prompt user for captcha if not supplied
-    if (!captchaAnswer || !captchaToken) {
-      try {
-        const capRes = await fetch("https://ipo.bigshareonline.com/Captcha.ashx");
-        const capJson = await capRes.json();
-        return res.status(200).json({
-          success: false,
-          needsCaptcha: true,
-          captchaToken: capJson.token || capJson.Token,
-          captchaImage: capJson.image || capJson.Image,
-          message: "Please enter the 1-time registrar captcha code to verify all family PANs."
-        });
-      } catch (e) {
-        // Fallback to error
-      }
-    }
-
-    // Submit with captcha
+    // Direct Zero-Captcha Verification on Bigshare
     const results = await Promise.all(
       normalizedPans.map(async (item) => {
-        const r = await checkBigsharePan(item.pan, companyCode, captchaToken, captchaAnswer, lot, currentGmp);
+        const r = await checkBigsharePan(item.pan, companyCode, lot, currentGmp);
         return {
           id: item.id,
           label: item.label,
@@ -559,23 +536,6 @@ export default async function handler(req, res) {
         };
       })
     );
-
-    const captchaFailed = results.some(r => r.invalidCaptcha);
-    if (captchaFailed) {
-      try {
-        const capRes = await fetch("https://ipo.bigshareonline.com/Captcha.ashx");
-        const capJson = await capRes.json();
-        return res.status(200).json({
-          success: false,
-          needsCaptcha: true,
-          captchaError: "Invalid captcha entered. Please try the new code below.",
-          captchaToken: capJson.token || capJson.Token,
-          captchaImage: capJson.image || capJson.Image
-        });
-      } catch (e) {
-        // Continue
-      }
-    }
 
     return buildResponse(res, company, registrar, lot, currentGmp, results);
   }
@@ -935,12 +895,13 @@ async function checkMaashitlaPan(pan, companyName, lot, currentGmp) {
 /**
  * Bigshare PAN Allotment Check via Data.aspx
  */
-async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp) {
+async function checkBigsharePan(pan, companyCode, lot, currentGmp) {
   try {
     const res = await fetch("https://ipo.bigshareonline.com/Data.aspx/FetchIpodetails", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json; charset=utf-8"
+        "Content-Type": "application/json; charset=utf-8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
       },
       body: JSON.stringify({
         Applicationno: "",
@@ -951,10 +912,7 @@ async function checkBigsharePan(pan, companyCode, token, answer, lot, currentGmp
         txtDPID: "",
         txtClId: "",
         ddlType: "0",
-        lang: "1",
-        CaptchaToken: token || "",
-        CaptchaAnswer: answer || "",
-        ResultToken: ""
+        lang: "1"
       })
     });
 
