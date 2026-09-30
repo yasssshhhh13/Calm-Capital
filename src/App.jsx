@@ -357,12 +357,16 @@ const CalmCapitalScoreBadge = React.memo(function CalmCapitalScoreBadge({ ipo })
    CALMCAPITAL SCORE DASHBOARD & MAIN PAGE SHOWCASE
    Quantitative Rating Engine
 ===================================================================== */
-/* =====================================================================
-   CALMCAPITAL SCORE DASHBOARD & MAIN PAGE SHOWCASE
-   Quantitative Rating Engine
-===================================================================== */
+const SCORE_STATUS_PRIORITY = {
+  Open: 1,
+  Upcoming: 2,
+  Closed: 3,
+  Listed: 4
+};
+
 function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
   const [marketFilter, setMarketFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
   const [tierFilter, setTierFilter] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const deferredSearchTerm = useDeferredValue(searchTerm);
@@ -372,16 +376,18 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
     return (allIpos || []).map((ipo) => {
       const { score, breakdown } = calculateCalmCapitalScore(ipo);
       const finalReady = isFinalScoreReady(ipo);
+      const computedStatus = getComputedStatus(ipo);
       const searchKey = `${ipo.name || ""} ${ipo.company || ""} ${ipo.sector || ""}`.toLowerCase();
-      return { ipo, score, breakdown, finalReady, searchKey };
+      return { ipo, score, breakdown, finalReady, computedStatus, searchKey };
     });
   }, [allIpos]);
 
   const scoredIpos = useMemo(() => {
     const q = deferredSearchTerm.trim().toLowerCase();
     return allScored
-      .filter(({ ipo, score, finalReady, searchKey }) => {
+      .filter(({ ipo, score, finalReady, computedStatus, searchKey }) => {
         if (marketFilter !== "All" && ipo.type !== marketFilter) return false;
+        if (statusFilter !== "All" && computedStatus !== statusFilter) return false;
         if (tierFilter === "Strong" && score < 80) return false;
         if (tierFilter === "Moderate" && (score < 50 || score >= 80)) return false;
         if (tierFilter === "Risk" && score >= 50) return false;
@@ -389,8 +395,36 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
         if (q) return searchKey.includes(q);
         return true;
       })
-      .sort((a, b) => b.score - a.score || (b.ipo.gmp || 0) - (a.ipo.gmp || 0));
-  }, [allScored, marketFilter, tierFilter, deferredSearchTerm]);
+      .sort((a, b) => {
+        // 1. Status Priority: Open (1) -> Upcoming (2) -> Closed (3) -> Listed (4)
+        const pA = SCORE_STATUS_PRIORITY[a.computedStatus] || 99;
+        const pB = SCORE_STATUS_PRIORITY[b.computedStatus] || 99;
+        if (pA !== pB) return pA - pB;
+
+        // 2. Mainboard before SME
+        const smeA = a.ipo.type === "SME" ? 1 : 0;
+        const smeB = b.ipo.type === "SME" ? 1 : 0;
+        if (smeA !== smeB) return smeA - smeB;
+
+        // 3. For Open & Upcoming: score descending, then GMP, then date
+        if (a.computedStatus === "Open" || a.computedStatus === "Upcoming") {
+          if (b.score !== a.score) return b.score - a.score;
+          const gmpDiff = (b.ipo.gmp || 0) - (a.ipo.gmp || 0);
+          if (gmpDiff !== 0) return gmpDiff;
+          const da = a.ipo.close || a.ipo.open || "";
+          const db = b.ipo.close || b.ipo.open || "";
+          return da.localeCompare(db);
+        }
+
+        // 4. For Closed & Listed: recency first so newly listed/closed IPOs come up first
+        const dateA = a.ipo.listing || a.ipo.close || a.ipo.open || "";
+        const dateB = b.ipo.listing || b.ipo.close || b.ipo.open || "";
+        if (dateA !== dateB) return dateB.localeCompare(dateA);
+
+        if (b.score !== a.score) return b.score - a.score;
+        return (b.ipo.gmp || 0) - (a.ipo.gmp || 0);
+      });
+  }, [allScored, marketFilter, statusFilter, tierFilter, deferredSearchTerm]);
 
   return (
     <div className="rounded-3xl border p-6 md:p-8 space-y-6 transition-all shadow-xl bg-white dark:bg-[#0B1724]/90 border-slate-200/80 dark:border-white/10">
@@ -498,6 +532,23 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
                 }`}
               >
                 {m}
+              </button>
+            ))}
+          </div>
+
+          {/* Status selector */}
+          <div className="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-slate-800/80 border border-slate-300/60 dark:border-white/10 shadow-inner overflow-x-auto max-w-full whitespace-nowrap no-scrollbar">
+            {["All", "Open", "Upcoming", "Closed", "Listed"].map(s => (
+              <button
+                key={s}
+                onClick={() => setStatusFilter(s)}
+                className={`px-3 py-1 text-xs font-extrabold rounded-lg transition-all border-0 cursor-pointer shrink-0 ${
+                  statusFilter === s
+                    ? "bg-[#0B1F33] dark:bg-[#1C9BDA] text-white shadow-md shadow-[#1C9BDA]/20"
+                    : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
+                }`}
+              >
+                {s}
               </button>
             ))}
           </div>
