@@ -62,14 +62,49 @@ let IPOS_BASE = (Array.isArray(initialIpoData) ? initialIpoData : []).map(ipo =>
 }));
 
 const DATA_AS_OF = "July 3, 2026";
-const rupee = (n) => (n == null || isNaN(n)) ? "-" : (n < 0 ? `-₹${Number(Math.abs(n)).toLocaleString("en-IN")}` : `₹${Number(n).toLocaleString("en-IN")}`);
-const formatDecimal = (n) => (n == null || isNaN(n)) ? "-" : Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 });
-const cr = (n) => (n == null || isNaN(n)) ? "-" : `₹${Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 })} Cr`;
+const _rupeeCache = new Map();
+const rupee = (n) => {
+  if (n == null || isNaN(n)) return "-";
+  let c = _rupeeCache.get(n);
+  if (c !== undefined) return c;
+  c = n < 0 ? `-₹${Number(Math.abs(n)).toLocaleString("en-IN")}` : `₹${Number(n).toLocaleString("en-IN")}`;
+  if (_rupeeCache.size < 2000) _rupeeCache.set(n, c);
+  return c;
+};
+
+const _decimalCache = new Map();
+const formatDecimal = (n) => {
+  if (n == null || isNaN(n)) return "-";
+  let c = _decimalCache.get(n);
+  if (c !== undefined) return c;
+  c = Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+  if (_decimalCache.size < 2000) _decimalCache.set(n, c);
+  return c;
+};
+
+const _crCache = new Map();
+const cr = (n) => {
+  if (n == null || isNaN(n)) return "-";
+  let c = _crCache.get(n);
+  if (c !== undefined) return c;
+  c = `₹${Number(n).toLocaleString("en-IN", { maximumFractionDigits: 2 })} Cr`;
+  if (_crCache.size < 2000) _crCache.set(n, c);
+  return c;
+};
+
+const _formatDateCache = new Map();
 const formatDate = (dateStr) => {
   if (!dateStr) return "To Be Announced";
+  let c = _formatDateCache.get(dateStr);
+  if (c !== undefined) return c;
   const date = new Date(dateStr + "T00:00:00+05:30");
-  if (isNaN(date.getTime())) return dateStr;
-  return date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  if (isNaN(date.getTime())) {
+    _formatDateCache.set(dateStr, dateStr);
+    return dateStr;
+  }
+  c = date.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  if (_formatDateCache.size < 2000) _formatDateCache.set(dateStr, c);
+  return c;
 };
 const price = (i) => i.priceMax || i.priceMin;
 const profitPerLot = (i) => (!i.lot || !i.gmp) ? 0 : i.gmp * i.lot;
@@ -86,12 +121,19 @@ const listingProfitLossPerLot = (i) => (i.listedAt && i.priceMax && i.lot) ? (i.
    2. Good Financials & Reasonable Valuation (+33.33%) (PAT > 0, Margin >= 8%/ROE >= 12%, PE <= 45x)
    3. QIB Subscription >= 50X (+33.33%)
 ===================================================================== */
+const _scoreCache = new WeakMap();
+
 export function calculateCalmCapitalScore(ipo) {
   if (!ipo) {
     return {
       score: 0,
       breakdown: { gmpPassed: false, gmpPct: 0, finPassed: false, finReason: "", peVal: null, qibPassed: false, qibVal: 0 }
     };
+  }
+
+  const cached = _scoreCache.get(ipo);
+  if (cached && cached._gmp === ipo.gmp && cached._sub === ipo.sub?.qib && cached._fin === ipo.fin) {
+    return cached.result;
   }
 
   let score = 0;
@@ -133,7 +175,7 @@ export function calculateCalmCapitalScore(ipo) {
 
   const finalScore = Math.min(100, Math.round(score));
 
-  return {
+  const result = {
     score: finalScore,
     breakdown: {
       gmpPassed,
@@ -145,6 +187,9 @@ export function calculateCalmCapitalScore(ipo) {
       qibVal: Math.round(qibVal * 10) / 10,
     }
   };
+
+  _scoreCache.set(ipo, { _gmp: ipo.gmp, _sub: ipo.sub?.qib, _fin: ipo.fin, result });
+  return result;
 }
 
 export function isFinalScoreReady(ipo) {
@@ -161,7 +206,7 @@ export function isFinalScoreReady(ipo) {
   return now >= closeDeadline;
 }
 
-function CalmCapitalScoreCard({ ipo, dark }) {
+const CalmCapitalScoreCard = React.memo(function CalmCapitalScoreCard({ ipo, dark }) {
   const { score, breakdown } = calculateCalmCapitalScore(ipo);
   const finalReady = isFinalScoreReady(ipo);
 
@@ -286,9 +331,9 @@ function CalmCapitalScoreCard({ ipo, dark }) {
       )}
     </div>
   );
-}
+});
 
-function CalmCapitalScoreBadge({ ipo }) {
+const CalmCapitalScoreBadge = React.memo(function CalmCapitalScoreBadge({ ipo }) {
   const { score } = calculateCalmCapitalScore(ipo);
   const finalReady = isFinalScoreReady(ipo);
 
@@ -306,7 +351,7 @@ function CalmCapitalScoreBadge({ ipo }) {
       <span>Score: {score}% {!finalReady ? "(Prov)" : ""}</span>
     </span>
   );
-}
+});
 
 /* =====================================================================
    CALMCAPITAL SCORE DASHBOARD & MAIN PAGE SHOWCASE
@@ -666,12 +711,18 @@ const labelSources = (arr) => (arr || [])
   .map((s) => SOURCE_LABEL[s] || s)
   .join(", ");
 
+const _priceBandCache = new Map();
 const formatPriceBand = (min, max) => {
   if (min == null && max == null) return "—";
-  if (min == null) return `₹${max}`;
-  if (max == null) return `₹${min}`;
-  if (min === max) return `₹${max}`;
-  return `₹${min}–₹${max}`;
+  const key = `${min}:${max}`;
+  let c = _priceBandCache.get(key);
+  if (c !== undefined) return c;
+  if (min == null) c = `₹${max}`;
+  else if (max == null) c = `₹${min}`;
+  else if (min === max) c = `₹${max}`;
+  else c = `₹${min}–₹${max}`;
+  if (_priceBandCache.size < 2000) _priceBandCache.set(key, c);
+  return c;
 };
 
 const fieldVerification = (ipo, field) => (ipo && ipo.verification && ipo.verification[field]) || null;
@@ -792,8 +843,10 @@ function liveStatus(ipo, today) {
   return "Listed";
 }
 
-function getComputedStatus(ipo, now = new Date()) {
-  return liveStatus(ipo, now);
+function getComputedStatus(ipo, now) {
+  if (!ipo) return "Upcoming";
+  if (!now && ipo.status) return ipo.status;
+  return liveStatus(ipo, now || new Date());
 }
 
 /**
@@ -907,6 +960,14 @@ function getIpoBiddingDay(ipo, now = new Date()) {
 // verified baseline so every part of the app reads through one function.
 let _liveOverlay = { updatedAt: null, byId: {} };
 let _realtimePrices = {}; // Stores ticking price, prev price, and last tick direction/timestamp for animations
+
+// ── getLiveIPOS() cache ──────────────────────────────────────────────
+// getLiveIPOS() is called 24+ times per render cycle across the app.
+// Caching avoids rebuilding the full merged/deduped list each time.
+let _liveIposCache = null;        // cached result of getLiveIPOS()
+let _liveIposCacheVersion = 0;    // last version we computed for
+let _liveDataVersion = 0;         // bumped when overlay, base, or prices change
+function invalidateLiveIposCache() { _liveDataVersion++; _liveIposCache = null; }
 
 // Validates financial data objects to ensure accuracy and consistency.
 // Returns a validated fin object, or null (N/A) if verification fails.
@@ -1044,6 +1105,11 @@ function estimateAppsFromShares(label, sharesSub, isSME) {
 }
 
 function getLiveIPOS() {
+  // Return cached result if data hasn't changed since last computation
+  if (_liveIposCache && _liveIposCacheVersion === _liveDataVersion) {
+    return _liveIposCache;
+  }
+
   const today = new Date();
   const baseMap = new Map();
 
@@ -1098,7 +1164,10 @@ function getLiveIPOS() {
     return finalIpo;
   });
 
-  return dedupeIpoList(mergedList);
+  const result = dedupeIpoList(mergedList);
+  _liveIposCache = result;
+  _liveIposCacheVersion = _liveDataVersion;
+  return result;
 }
 
 export function normalizeIPO(raw) {
@@ -1163,19 +1232,19 @@ function findIpoByIdOrSlug(idOrSlug) {
   }
 }
 
-const sortIposLogically = (ipos) => {
-  const statusPriority = {
-    Open: 1,
-    Upcoming: 2,
-    Closed: 3,
-    Listed: 4
-  };
+const STATUS_PRIORITY_MAP = {
+  Open: 1,
+  Upcoming: 2,
+  Closed: 3,
+  Listed: 4
+};
 
+const sortIposLogically = (ipos) => {
   return [...ipos].sort((a, b) => {
-    const statusA = getComputedStatus(a);
-    const statusB = getComputedStatus(b);
-    const pA = statusPriority[statusA] || 99;
-    const pB = statusPriority[statusB] || 99;
+    const statusA = a.status || getComputedStatus(a);
+    const statusB = b.status || getComputedStatus(b);
+    const pA = STATUS_PRIORITY_MAP[statusA] || 99;
+    const pB = STATUS_PRIORITY_MAP[statusB] || 99;
     if (pA !== pB) return pA - pB;
 
     if (statusA === "Open") {
@@ -1916,6 +1985,7 @@ async function fetchLiveData(rawUrl) {
     const hasRealData = Object.values(json.ipos).some((patch) => patch && typeof patch.gmp === "number");
     if (!hasRealData) return false;
     _liveOverlay = { updatedAt: json.updatedAt, byId: json.ipos };
+    invalidateLiveIposCache();
     return true;
   } catch {
     return false;
@@ -1959,7 +2029,7 @@ function useWatchlist() {
     });
   }, []);
 
-  return { ids, toggle, ready };
+  return useMemo(() => ({ ids, toggle, ready }), [ids, toggle, ready]);
 }
 
 /* =====================================================================
@@ -2115,21 +2185,34 @@ function AssistantPane({ embedded, tick }) {
    IPO PROFIT / LOSS CALCULATOR
 ===================================================================== */
 const STATUS_ORDER = ["Open", "Upcoming", "Closed", "Listed"];
+let _sortedCalcIposCache = null;
+let _sortedCalcIposVersion = -1;
+
 function sortedCalcIpos() {
+  if (_sortedCalcIposCache && _sortedCalcIposVersion === _liveDataVersion) {
+    return _sortedCalcIposCache;
+  }
   const all = getLiveIPOS();
-  return [...all].sort((a, b) => {
-    const si = STATUS_ORDER.indexOf(a.status);
-    const sj = STATUS_ORDER.indexOf(b.status);
+  const sorted = [...all].sort((a, b) => {
+    const statusA = a.status || getComputedStatus(a);
+    const statusB = b.status || getComputedStatus(b);
+    const si = STATUS_ORDER.indexOf(statusA);
+    const sj = STATUS_ORDER.indexOf(statusB);
     if (si !== sj) return si - sj;
     // Within same status: newest open/close date first
     const da = a.open || a.close || "";
     const db = b.open || b.close || "";
     return db.localeCompare(da);
   });
+  _sortedCalcIposCache = sorted;
+  _sortedCalcIposVersion = _liveDataVersion;
+  return sorted;
 }
 
-function CalculatorTab({ onOpen }) {
-  const allIpos = sortedCalcIpos();
+const CalculatorTab = React.memo(function CalculatorTab({ tick, onOpen }) {
+  const allIpos = useMemo(() => {
+    return sortedCalcIpos();
+  }, [tick]);
   const [ipoId, setIpoId] = useState(() => {
     const openIpo = allIpos.find((i) => i.status === "Open");
     if (openIpo) return openIpo.id;
@@ -2172,21 +2255,28 @@ function CalculatorTab({ onOpen }) {
   const deferredSearch = useDeferredValue(search);
 
   const filtered = useMemo(() => {
+    if (!listOpen) return [];
     const q = deferredSearch.trim().toLowerCase();
     return allIpos.filter((i) => {
       const matchSearch = !q || (i.company || i.name || "").toLowerCase().includes(q);
       const matchFilter = !calcFilter || i.status === calcFilter;
       return matchSearch && matchFilter;
     });
-  }, [allIpos, deferredSearch, calcFilter]);
+  }, [allIpos, deferredSearch, calcFilter, listOpen]);
 
-  // Group filtered results by status in the correct display order
+  // Group filtered results by status in the correct display order in a single pass
   const grouped = useMemo(() => {
+    if (!listOpen) return [];
+    const groups = { Open: [], Upcoming: [], Closed: [], Listed: [] };
+    for (const i of filtered) {
+      const s = i.status || "Closed";
+      if (groups[s]) groups[s].push(i);
+    }
     return STATUS_ORDER.map((s) => ({
       status: s,
-      items: filtered.filter((i) => i.status === s),
+      items: groups[s] || [],
     })).filter((g) => g.items.length > 0);
-  }, [filtered]);
+  }, [filtered, listOpen]);
 
   return (
     <div className="space-y-6">
@@ -2227,7 +2317,7 @@ function CalculatorTab({ onOpen }) {
                 borderColor: listOpen ? "rgba(28,155,218,0.4)" : "rgba(148,163,184,0.2)"
               }}
             >
-              <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={36} />
+              <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={36} website={ipo.website} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{ipo.company}</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
@@ -2279,7 +2369,6 @@ function CalculatorTab({ onOpen }) {
                     <div className="relative">
                       <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                       <input
-                        autoFocus={typeof window !== "undefined" && window.innerWidth >= 768}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder={calcFilter ? `Search ${calcFilter} IPOs…` : "Search all IPOs…"}
@@ -2309,9 +2398,13 @@ function CalculatorTab({ onOpen }) {
                           key={i.id}
                           onClick={() => { setIpoId(i.id); setListOpen(false); setSearch(""); }}
                           className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-left"
-                          style={{ background: i.id === ipoId ? "rgba(28,155,218,0.06)" : "transparent" }}
+                          style={{
+                            background: i.id === ipoId ? "rgba(28,155,218,0.06)" : "transparent",
+                            contentVisibility: "auto",
+                            containIntrinsicSize: "1px 48px"
+                          }}
                         >
-                          <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={30} />
+                          <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={30} website={i.website} />
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate">{i.company}</p>
                             <div className="flex items-center gap-1.5 mt-0.5">
@@ -2411,7 +2504,7 @@ function CalculatorTab({ onOpen }) {
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================================
    LOGO REGISTRY — curated direct logo URLs for every IPO + broker.
@@ -2446,70 +2539,93 @@ const LOGO_REGISTRY = {
   "sotefin bharat":       "https://logo.clearbit.com/sotefin.com",
 };
 
+const _logoRegistryKeys = Object.keys(LOGO_REGISTRY);
+const _logoUrlCache = new Map();
+
 // Returns the best matching logo URL for a given display name.
 function getLogoUrl(name) {
   if (!name) return null;
   const n = String(name).toLowerCase().trim();
-  // Exact match first
-  if (LOGO_REGISTRY[n]) return LOGO_REGISTRY[n];
-  // Partial match
-  for (const key of Object.keys(LOGO_REGISTRY)) {
-    const firstWord = n.split(" ")[0];
-    if (n.includes(key) || (firstWord && key.includes(firstWord))) return LOGO_REGISTRY[key];
+  if (_logoUrlCache.has(n)) return _logoUrlCache.get(n);
+  if (LOGO_REGISTRY[n]) {
+    _logoUrlCache.set(n, LOGO_REGISTRY[n]);
+    return LOGO_REGISTRY[n];
   }
+  const firstWord = n.split(" ")[0];
+  for (const key of _logoRegistryKeys) {
+    if (n.includes(key) || (firstWord && key.includes(firstWord))) {
+      _logoUrlCache.set(n, LOGO_REGISTRY[key]);
+      return LOGO_REGISTRY[key];
+    }
+  }
+  _logoUrlCache.set(n, null);
   return null;
 }
 
 /* =====================================================================
    COMPANY AVATAR — official logo with graceful initials fallback
 ===================================================================== */
-const CompanyAvatar = React.memo(function CompanyAvatar({ name = "", logoUrl = null, size = 40 }) {
-  const [srcIndex, setSrcIndex] = useState(0);
+const _avatarSourcesCache = new Map();
+const _avatarMetaCache = new Map();
 
-  // Reset index whenever the company name or logoUrl changes (e.g. navigating between cards)
-  useEffect(() => { setSrcIndex(0); }, [name, logoUrl]);
-
-  const safeName = String(name || "").trim();
-
-  // Initials fallback values
+function getAvatarMeta(safeName) {
+  if (_avatarMetaCache.has(safeName)) return _avatarMetaCache.get(safeName);
   const words = safeName.replace(/Ltd\.|Limited|Pvt\.|Private|Co\./gi, "").trim().split(/\s+/);
   const initials = words.slice(0, 2).map((w) => w[0] || "").join("").toUpperCase();
   const colors = ["#1c9bda", "#8b5cf6", "#f59e0b", "#10b981", "#ef4444", "#3b82f6", "#ec4899"];
   const colorIdx = safeName.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) % colors.length;
-  const bg = colors[colorIdx];
+  const meta = { initials, bg: colors[colorIdx] };
+  _avatarMetaCache.set(safeName, meta);
+  return meta;
+}
 
-  // Try to find the company website from the live list to build domain-based fallbacks
-  const list = getLiveIPOS();
-  const found = list.find((i) => i.company === safeName || i.name === safeName || i.company === name || i.name === name);
-  const website = found?.website || null;
+function getAvatarSources(safeName, logoUrl, website) {
+  const cacheKey = `${safeName || ""}|${logoUrl || ""}|${website || ""}`;
+  if (_avatarSourcesCache.has(cacheKey)) return _avatarSourcesCache.get(cacheKey);
 
-  // Build source cascade once per name/logoUrl
-  const sources = useMemo(() => {
-    const list = [];
-    if (logoUrl && !logoUrl.includes("dummy-logo")) {
-      list.push(logoUrl);
+  const list = [];
+  if (logoUrl && !logoUrl.includes("dummy-logo")) {
+    list.push(logoUrl);
+  }
+  if (safeName) {
+    const primaryUrl = getLogoUrl(safeName);
+    if (primaryUrl) {
+      list.push(primaryUrl);
+      const domain = primaryUrl.replace("https://logo.clearbit.com/", "");
+      list.push(`https://www.google.com/s2/favicons?sz=128&domain=${domain}`);
     }
-    if (safeName) {
-      const primaryUrl = getLogoUrl(safeName);
-      if (primaryUrl) {
-        list.push(primaryUrl);
-        const domain = primaryUrl.replace("https://logo.clearbit.com/", "");
-        list.push(`https://www.google.com/s2/favicons?sz=128&domain=${domain}`);
-      }
+  }
+  if (website) {
+    let domain = "";
+    if (website.includes("://")) {
+      const match = website.match(/:\/\/([^/:]+)/);
+      if (match) domain = match[1].replace(/^www\./, "");
+    } else {
+      domain = website.split("/")[0].replace(/^www\./, "");
     }
-    if (website) {
-      try {
-        const domain = new URL(website).hostname.replace("www.", "");
-        list.push(`https://logo.clearbit.com/${domain}`);
-        list.push(`https://www.google.com/s2/favicons?sz=128&domain=${domain}`);
-        list.push(`https://icons.duckduckgo.com/ip2/${domain}.ico`);
-      } catch (e) {
-        // ignore
-      }
+    if (domain) {
+      list.push(`https://logo.clearbit.com/${domain}`);
+      list.push(`https://www.google.com/s2/favicons?sz=128&domain=${domain}`);
+      list.push(`https://icons.duckduckgo.com/ip2/${domain}.ico`);
     }
-    return list;
-  }, [safeName, logoUrl, website]);
+  }
 
+  _avatarSourcesCache.set(cacheKey, list);
+  return list;
+}
+
+const CompanyAvatar = React.memo(function CompanyAvatar({ name = "", logoUrl = null, size = 40, website: websiteProp = null }) {
+  const [srcIndex, setSrcIndex] = useState(0);
+  const prevPropRef = useRef(name + (logoUrl || ""));
+
+  if (prevPropRef.current !== name + (logoUrl || "")) {
+    prevPropRef.current = name + (logoUrl || "");
+    if (srcIndex !== 0) setSrcIndex(0);
+  }
+
+  const safeName = String(name || "").trim();
+  const { initials, bg } = getAvatarMeta(safeName);
+  const sources = getAvatarSources(safeName, logoUrl, websiteProp);
   const currentSrc = sources[srcIndex];
 
   if (currentSrc) {
@@ -2590,7 +2706,7 @@ const IPOCard = React.memo(function IPOCard({ ipo, onOpen, watchlist, dark }) {
   return (
     <div
       className="bg-white dark:bg-[#121D2D] border rounded-2xl overflow-hidden relative group transition-all hover:shadow-md"
-      style={{ borderColor: fs.border, boxShadow: fs.shadow }}
+      style={{ borderColor: fs.border, boxShadow: fs.shadow, contentVisibility: "auto", containIntrinsicSize: "1px 260px" }}
     >
       {/* Stretch link for SEO + open details (bookmark sits above this) */}
       <a
@@ -2610,7 +2726,7 @@ const IPOCard = React.memo(function IPOCard({ ipo, onOpen, watchlist, dark }) {
         {/* Row 1: Company Logo, Name, Sector and Bookmark */}
         <div className="flex items-start justify-between gap-3 min-w-0">
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} />
+            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} website={ipo.website} />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="font-bold text-slate-800 dark:text-white text-[15px] leading-tight truncate" title={ipo.company}>{ipo.company}</h3>
@@ -2821,6 +2937,11 @@ const IPOCard = React.memo(function IPOCard({ ipo, onOpen, watchlist, dark }) {
       </div>
     </div>
   );
+}, (prev, next) => {
+  return prev.ipo === next.ipo &&
+         prev.dark === next.dark &&
+         prev.onOpen === next.onOpen &&
+         prev.watchlist.ids.includes(prev.ipo.id) === next.watchlist.ids.includes(next.ipo.id);
 });
 
 /* =====================================================================
@@ -2845,7 +2966,7 @@ const ListedIPOCard = React.memo(function ListedIPOCard({ ipo, onOpen, watchlist
   else if (currentRet < 0) currentColor = "#e11d48";
 
   return (
-    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl shadow-sm hover:shadow-md transition-all overflow-hidden relative">
+    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl shadow-sm hover:shadow-md transition-all overflow-hidden relative" style={{ contentVisibility: "auto", containIntrinsicSize: "1px 260px" }}>
       <a
         href={ipoPath(ipo.id)}
         aria-label={`View ${ipo.company} IPO details`}
@@ -2859,7 +2980,7 @@ const ListedIPOCard = React.memo(function ListedIPOCard({ ipo, onOpen, watchlist
       <div className="p-5 relative z-[1] pointer-events-none">
         {/* Header: Avatar + Company + Type badge */}
         <div className="flex items-center gap-3 mb-1">
-          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={44} />
+          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={44} website={ipo.website} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <h3 className="font-bold text-slate-850 dark:text-white text-[15px] leading-snug">{ipo.company}</h3>
@@ -2976,12 +3097,16 @@ const ListedIPOCard = React.memo(function ListedIPOCard({ ipo, onOpen, watchlist
       </div>
     </div>
   );
+}, (prev, next) => {
+  return prev.ipo === next.ipo &&
+         prev.onOpen === next.onOpen &&
+         prev.watchlist.ids.includes(prev.ipo.id) === next.watchlist.ids.includes(next.ipo.id);
 });
 
 /* =====================================================================
    IPO DETAIL MODAL (Quick Summary Preview Summary)
 ===================================================================== */
-function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
+const IPODetail = React.memo(function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
   if (!ipo) return null;
 
   const watched = watchlist.ids.includes(ipo.id);
@@ -3058,7 +3183,7 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
 
         {/* Company Info */}
         <div className="px-6 py-4 flex items-start gap-4">
-          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={48} />
+          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={48} website={ipo.website} />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-lg font-extrabold tracking-tight text-slate-850 dark:text-white leading-tight">
@@ -3152,14 +3277,14 @@ function IPODetail({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================================
    ALLOCATION DONUT CHART COMPONENT
    Reusable donut chart for SEBI share allocation reservations.
    Accepts quotaReservations: [{short, desc, pct, value, color}]
 ===================================================================== */
-function AllocationDonut({ data }) {
+const AllocationDonut = React.memo(function AllocationDonut({ data }) {
   const [activeIdx, setActiveIdx] = useState(null);
 
   return (
@@ -3215,12 +3340,12 @@ function AllocationDonut({ data }) {
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================================
    IPO FULL-PAGE RESEARCH VIEW
 ===================================================================== */
-function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
+const IPODetailFullPage = React.memo(function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTab }) {
   if (!ipo) return null;
 
   const [expandedAbout, setExpandedAbout] = useState(false);
@@ -3365,7 +3490,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
       {/* ── 1. Top Premium Header Info Section ── */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
         <div className="flex items-start gap-4">
-          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={64} />
+          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={64} website={ipo.website} />
           <div className="min-w-0">
             <div className="flex items-center gap-2.5 flex-wrap">
               <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-850 dark:text-white leading-tight">
@@ -4332,7 +4457,7 @@ function IPODetailFullPage({ ipo, onClose, watchlist, dark, onOpen, onNavigateTa
       </div>
     </div>
   );
-}
+});
 
 function SectionLabel({ icon: Icon, children }) {
   return (
@@ -4345,14 +4470,25 @@ function SectionLabel({ icon: Icon, children }) {
 /* =====================================================================
    IPO COMPARISON TAB
 ===================================================================== */
-function getEligibleCompareIPOS(marketType) {
-  const all = getLiveIPOS();
-  const STATUS_PRIORITY = { Open: 1, Closed: 2, Upcoming: 3 };
+const _compareStatusPriority = { Open: 1, Closed: 2, Upcoming: 3 };
+const _compareCacheMap = new Map();
+let _compareCacheVersion = -1;
 
-  return all
+function getEligibleCompareIPOS(marketType) {
+  if (_compareCacheVersion !== _liveDataVersion) {
+    _compareCacheMap.clear();
+    _compareCacheVersion = _liveDataVersion;
+  }
+  if (_compareCacheMap.has(marketType)) {
+    return _compareCacheMap.get(marketType);
+  }
+
+  const all = getLiveIPOS();
+
+  const res = all
     .filter((ipo) => {
       if (!ipo || ipo.type !== marketType) return false;
-      const s = getComputedStatus(ipo);
+      const s = ipo.status || getComputedStatus(ipo);
       if (s === "Open" || s === "Closed") return true;
       if (s === "Upcoming") {
         // Upcoming IPOs ONLY IF CURRENT GMP IS AVAILABLE
@@ -4361,11 +4497,14 @@ function getEligibleCompareIPOS(marketType) {
       return false;
     })
     .sort((a, b) => {
-      const sa = STATUS_PRIORITY[getComputedStatus(a)] || 99;
-      const sb = STATUS_PRIORITY[getComputedStatus(b)] || 99;
+      const sa = _compareStatusPriority[a.status || getComputedStatus(a)] || 99;
+      const sb = _compareStatusPriority[b.status || getComputedStatus(b)] || 99;
       if (sa !== sb) return sa - sb;
       return (a.company || a.name || "").localeCompare(b.company || b.name || "");
     });
+
+  _compareCacheMap.set(marketType, res);
+  return res;
 }
 
 function getCompareAllotmentOdds(ipo) {
@@ -4392,7 +4531,7 @@ function getCompareRetailIssueSize(ipo) {
   return cr(ipo.issueSize * pct);
 }
 
-function CompareTab({ onOpen }) {
+const CompareTab = React.memo(function CompareTab({ onOpen }) {
   const [market, setMarket] = useState("Mainboard");
   const [search1, setSearch1] = useState("");
   const [search2, setSearch2] = useState("");
@@ -4401,49 +4540,45 @@ function CompareTab({ onOpen }) {
 
   const eligibleList = useMemo(() => getEligibleCompareIPOS(market), [market]);
 
-  const [id1, setId1] = useState("");
-  const [id2, setId2] = useState("");
+  const [selectedIds, setSelectedIds] = useState(() => {
+    const list = getEligibleCompareIPOS("Mainboard");
+    return { id1: list[0]?.id || "", id2: list[1]?.id || list[0]?.id || "" };
+  });
 
-  // Ensure selected IDs are always valid for the active market
-  useEffect(() => {
-    if (eligibleList.length > 0) {
-      const valid1 = eligibleList.some((i) => i.id === id1);
-      const valid2 = eligibleList.some((i) => i.id === id2);
+  const setMarketType = useCallback((newMarket) => {
+    setMarket(newMarket);
+    const list = getEligibleCompareIPOS(newMarket);
+    setSelectedIds({ id1: list[0]?.id || "", id2: list[1]?.id || list[0]?.id || "" });
+  }, []);
 
-      const next1 = valid1 ? id1 : eligibleList[0]?.id || "";
-      let next2 = valid2 ? id2 : eligibleList[1]?.id || eligibleList[0]?.id || "";
-      if (next1 === next2 && eligibleList.length > 1) {
-        next2 = eligibleList.find((i) => i.id !== next1)?.id || next1;
-      }
-
-      if (next1 !== id1) setId1(next1);
-      if (next2 !== id2) setId2(next2);
-    }
-  }, [market, eligibleList, id1, id2]);
+  const id1 = selectedIds.id1;
+  const id2 = selectedIds.id2;
+  const setId1 = useCallback((nextId) => setSelectedIds((prev) => ({ ...prev, id1: nextId })), []);
+  const setId2 = useCallback((nextId) => setSelectedIds((prev) => ({ ...prev, id2: nextId })), []);
 
   const ipo1 = eligibleList.find((i) => i.id === id1) || eligibleList[0] || null;
   const ipo2 = eligibleList.find((i) => i.id === id2) || eligibleList[1] || eligibleList[0] || null;
 
-  const swapSelection = () => {
-    const temp = id1;
-    setId1(id2);
-    setId2(temp);
-  };
+  const swapSelection = useCallback(() => {
+    setSelectedIds((prev) => ({ id1: prev.id2, id2: prev.id1 }));
+  }, []);
 
   const deferredSearch1 = useDeferredValue(search1);
   const deferredSearch2 = useDeferredValue(search2);
 
   const filtered1 = useMemo(() => {
+    if (!modalOpen1) return [];
     const q = deferredSearch1.trim().toLowerCase();
     if (!q) return eligibleList;
     return eligibleList.filter((i) => (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q));
-  }, [eligibleList, deferredSearch1]);
+  }, [eligibleList, deferredSearch1, modalOpen1]);
 
   const filtered2 = useMemo(() => {
+    if (!modalOpen2) return [];
     const q = deferredSearch2.trim().toLowerCase();
     if (!q) return eligibleList;
     return eligibleList.filter((i) => (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q));
-  }, [eligibleList, deferredSearch2]);
+  }, [eligibleList, deferredSearch2, modalOpen2]);
 
   // Determine financial comparison period
   const finPeriod = ipo1?.finMeta?.period || ipo1?.finYear || ipo2?.finMeta?.period || ipo2?.finYear || "FY2025–26";
@@ -4542,7 +4677,7 @@ function CompareTab({ onOpen }) {
         {/* Mainboard | SME Segmented Control */}
         <div className="bg-slate-100 dark:bg-white/5 p-0.5 rounded-xl flex items-center border border-slate-200 dark:border-white/5 self-start sm:self-auto">
           <button
-            onClick={() => setMarket("Mainboard")}
+            onClick={() => setMarketType("Mainboard")}
             className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
               market === "Mainboard"
                 ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
@@ -4552,7 +4687,7 @@ function CompareTab({ onOpen }) {
             MAINBOARD
           </button>
           <button
-            onClick={() => setMarket("SME")}
+            onClick={() => setMarketType("SME")}
             className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border-0 ${
               market === "SME"
                 ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-sm"
@@ -4583,7 +4718,7 @@ function CompareTab({ onOpen }) {
           >
             {ipo1 ? (
               <>
-                <CompanyAvatar name={ipo1.company} logoUrl={ipo1.logoUrl} size={40} />
+                <CompanyAvatar name={ipo1.company} logoUrl={ipo1.logoUrl} size={40} website={ipo1.website} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{ipo1.company}</p>
                   <div className="flex items-center gap-2 mt-0.5 flex-wrap">
@@ -4634,7 +4769,7 @@ function CompareTab({ onOpen }) {
           >
             {ipo2 ? (
               <>
-                <CompanyAvatar name={ipo2.company} logoUrl={ipo2.logoUrl} size={40} />
+                <CompanyAvatar name={ipo2.company} logoUrl={ipo2.logoUrl} size={40} website={ipo2.website} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{ipo2.company}</p>
                   <div className="flex items-center gap-2 mt-0.5 flex-wrap">
@@ -4687,7 +4822,7 @@ function CompareTab({ onOpen }) {
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <CompanyAvatar name={item.company} logoUrl={item.logoUrl} size={34} />
+                    <CompanyAvatar name={item.company} logoUrl={item.logoUrl} size={34} website={item.website} />
                     <div className="min-w-0">
                       <p className="text-xs font-bold truncate">{item.company}</p>
                       <p className="text-[10px] text-slate-400">{getComputedStatus(item)} · {formatPriceBand(item.priceMin, item.priceMax)}</p>
@@ -4734,7 +4869,7 @@ function CompareTab({ onOpen }) {
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <CompanyAvatar name={item.company} logoUrl={item.logoUrl} size={34} />
+                    <CompanyAvatar name={item.company} logoUrl={item.logoUrl} size={34} website={item.website} />
                     <div className="min-w-0">
                       <p className="text-xs font-bold truncate">{item.company}</p>
                       <p className="text-[10px] text-slate-400">{getComputedStatus(item)} · {formatPriceBand(item.priceMin, item.priceMax)}</p>
@@ -4764,7 +4899,7 @@ function CompareTab({ onOpen }) {
 
             {/* IPO 1 Info Card */}
             <div className="flex flex-col items-center text-center px-2 space-y-1.5">
-              <CompanyAvatar name={ipo1.company} logoUrl={ipo1.logoUrl} size={44} />
+              <CompanyAvatar name={ipo1.company} logoUrl={ipo1.logoUrl} size={44} website={ipo1.website} />
               <p className="text-xs font-bold text-slate-800 dark:text-white leading-tight">{ipo1.company}</p>
               <div className="flex items-center gap-1 flex-wrap justify-center">
                 <span className="text-[9px] uppercase tracking-wide font-extrabold px-1.5 py-0.2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
@@ -4776,7 +4911,7 @@ function CompareTab({ onOpen }) {
 
             {/* IPO 2 Info Card */}
             <div className="flex flex-col items-center text-center px-2 space-y-1.5">
-              <CompanyAvatar name={ipo2.company} logoUrl={ipo2.logoUrl} size={44} />
+              <CompanyAvatar name={ipo2.company} logoUrl={ipo2.logoUrl} size={44} website={ipo2.website} />
               <p className="text-xs font-bold text-slate-800 dark:text-white leading-tight">{ipo2.company}</p>
               <div className="flex items-center gap-1 flex-wrap justify-center">
                 <span className="text-[9px] uppercase tracking-wide font-extrabold px-1.5 py-0.2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
@@ -4876,25 +5011,26 @@ function CompareTab({ onOpen }) {
       )}
     </div>
   );
-}
+});
 
 /* =====================================================================
    GMP TRENDS TAB
 ===================================================================== */
-function GMPTab({ tick, onOpen, query }) {
+const GMP_STATUS_ORDER = { Open: 1, Closed: 2, Upcoming: 3 };
+
+const GMPTab = React.memo(function GMPTab({ tick, onOpen, query }) {
   const data = useMemo(() => {
-    const STATUS_ORDER = { Open: 1, Closed: 2, Upcoming: 3 };
     const q = query?.trim() ? query.toLowerCase() : "";
 
     return [...getLiveIPOS()]
       .filter((i) => {
-        const s = getComputedStatus(i);
+        const s = i.status || getComputedStatus(i);
         const matchesSearch = !q || (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q);
         return matchesSearch && (s === "Open" || s === "Upcoming" || s === "Closed") && i.gmp != null && !isNaN(i.gmp);
       })
       .sort((a, b) => {
-        const sa = STATUS_ORDER[getComputedStatus(a)] || 99;
-        const sb = STATUS_ORDER[getComputedStatus(b)] || 99;
+        const sa = GMP_STATUS_ORDER[a.status || getComputedStatus(a)] || 99;
+        const sb = GMP_STATUS_ORDER[b.status || getComputedStatus(b)] || 99;
         if (sa !== sb) return sa - sb;
         return gainPct(b) - gainPct(a);
       })
@@ -4902,10 +5038,10 @@ function GMPTab({ tick, onOpen, query }) {
         company: i.company || i.name || i.id || "Unknown IPO",
         pct: Number(gainPct(i).toFixed(1)),
         gmp: i.gmp,
-        status: getComputedStatus(i),
+        status: i.status || getComputedStatus(i),
         rawIpo: i
       }));
-  }, [tick]);
+  }, [tick, query]);
 
   const [hovered, setHovered] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
@@ -4998,7 +5134,7 @@ function GMPTab({ tick, onOpen, query }) {
               >
                 <div className="bg-white dark:bg-slate-900 border border-slate-150 dark:border-slate-700 rounded-2xl shadow-2xl p-3.5 space-y-1.5 min-w-[200px] max-w-[260px]">
                   <div className="flex items-start gap-2">
-                    <CompanyAvatar name={entry.company} logoUrl={entry.rawIpo?.logoUrl} size={28} />
+                    <CompanyAvatar name={entry.company} logoUrl={entry.rawIpo?.logoUrl} size={28} website={entry.rawIpo?.website} />
                     <p className="text-xs font-bold text-slate-800 dark:text-slate-100 leading-tight">{entry.company}</p>
                   </div>
                   <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
@@ -5030,7 +5166,7 @@ function GMPTab({ tick, onOpen, query }) {
       )}
     </div>
   );
-}
+});
 
 
 /* =====================================================================
@@ -6012,7 +6148,7 @@ function MultiPanAllotmentModal({ ipo, onClose, familyPans, familyAllotments, on
         {/* Header */}
         <div className="p-6 border-b border-slate-150 dark:border-white/5 flex items-start justify-between gap-4 min-w-0">
           <div className="flex items-center gap-3.5 min-w-0 flex-1">
-            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={46} />
+            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={46} website={ipo.website} />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-lg font-bold text-slate-850 dark:text-white tracking-tight break-words" title={ipo.company}>{ipo.company}</h2>
@@ -6426,7 +6562,7 @@ const AllotmentCard = React.memo(function AllotmentCard({ ipo, onOpen, dark, tod
     >
       <div className="w-full min-w-0">
         <div className="flex items-start gap-3 w-full min-w-0">
-          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} />
+          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} website={ipo.website} />
           <div className="min-w-0 flex-1">
             <h3 className="font-bold text-slate-800 dark:text-white text-[15px] leading-snug line-clamp-2 break-words" title={ipo.company}>
               {ipo.company}
@@ -6520,11 +6656,11 @@ const AllotmentCard = React.memo(function AllotmentCard({ ipo, onOpen, dark, tod
   );
 });
 
-function AllotmentTab({ query, onOpen, watchlist, dark, tick, familyPans, familyAllotments, onOpenPanManager, onCheckFamilyAllotment }) {
+const AllotmentTab = React.memo(function AllotmentTab({ query, onOpen, watchlist, dark, tick, familyPans, familyAllotments, onOpenPanManager, onCheckFamilyAllotment }) {
   const [filterType, setFilterType] = useState("Mainboard");
   
-  const today = new Date();
-  const todayStr = ymd(today);
+  const today = useMemo(() => new Date(), [tick]);
+  const todayStr = useMemo(() => ymd(today), [today]);
   const d = (s) => new Date(s + "T00:00:00+05:30");
   
   const allIpos = useMemo(() => {
@@ -6756,12 +6892,12 @@ function AllotmentTab({ query, onOpen, watchlist, dark, tick, familyPans, family
       </section>
     </div>
   );
-}
+});
 
 /* =====================================================================
    SUBSCRIPTIONS TAB
 ===================================================================== */
-function SubscriptionsTab({ dark, query }) {
+const SubscriptionsTab = React.memo(function SubscriptionsTab({ dark, query }) {
   const [filterType, setFilterType] = useState(() => {
     try {
       return localStorage.getItem("calmcapital-subscriptions-filter") || "Mainboard";
@@ -6777,19 +6913,33 @@ function SubscriptionsTab({ dark, query }) {
     } catch { /* ignore */ }
   };
 
-  const allIpos = getLiveIPOS().filter((i) => getComputedStatus(i) !== "Upcoming");
-  const mainboardCount = allIpos.filter((i) => i.type === "Mainboard").length;
-  const smeCount = allIpos.filter((i) => i.type === "SME").length;
-  
-  const displayedIpos = sortIposLogically(
-    allIpos.filter(
-      (i) =>
-        i.type === filterType &&
-        (!query?.trim() ||
-          (i.company || i.name || "").toLowerCase().includes(query.toLowerCase()) ||
-          (i.sector || "").toLowerCase().includes(query.toLowerCase()))
-    )
-  );
+  const allIpos = useMemo(() => {
+    return getLiveIPOS().filter((i) => (i.status || getComputedStatus(i)) !== "Upcoming");
+  }, []);
+
+  const { mainboardCount, smeCount, displayedIpos } = useMemo(() => {
+    let mbCount = 0;
+    let sCount = 0;
+    const q = (query || "").trim().toLowerCase();
+    const matched = [];
+
+    for (const i of allIpos) {
+      if (i.type === "Mainboard") mbCount++;
+      else if (i.type === "SME") sCount++;
+
+      if (i.type === filterType) {
+        if (!q || (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q)) {
+          matched.push(i);
+        }
+      }
+    }
+
+    return {
+      mainboardCount: mbCount,
+      smeCount: sCount,
+      displayedIpos: sortIposLogically(matched),
+    };
+  }, [allIpos, filterType, query]);
 
   const statusBadge = {
     Open:     { bg: dark ? "rgba(16,185,129,0.15)" : "rgba(16,185,129,0.1)", color: "#10b981", border: dark ? "1px solid rgba(16,185,129,0.25)" : "1px solid rgba(16,185,129,0.2)" },
@@ -6857,7 +7007,7 @@ function SubscriptionsTab({ dark, query }) {
                 {/* Header row: logo + company name + badges */}
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} />
+                    <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} website={ipo.website} />
                     <div className="min-w-0">
                       <p className="text-sm font-bold tracking-tight leading-snug text-slate-800 dark:text-white truncate">{ipo.company}</p>
                       <span
@@ -6902,14 +7052,14 @@ function SubscriptionsTab({ dark, query }) {
       </div>
     </div>
   );
-}
+});
 
 
 
 /* =====================================================================
    FINANCIALS TAB
 ===================================================================== */
-function FinancialsTab({ onOpen, dark, query }) {
+const FinancialsTab = React.memo(function FinancialsTab({ onOpen, dark, query }) {
   const [filterType, setFilterType] = useState(() => {
     try {
       return localStorage.getItem("calmcapital-financials-filter") || "Mainboard";
@@ -6925,19 +7075,33 @@ function FinancialsTab({ onOpen, dark, query }) {
     } catch { /* ignore */ }
   };
 
-  const allIpos = getLiveIPOS().filter((i) => i.fin);
-  const mainboardCount = allIpos.filter((i) => i.type === "Mainboard").length;
-  const smeCount = allIpos.filter((i) => i.type === "SME").length;
-  
-  const displayedIpos = sortIposLogically(
-    allIpos.filter(
-      (i) =>
-        i.type === filterType &&
-        (!query?.trim() ||
-          (i.company || i.name || "").toLowerCase().includes(query.toLowerCase()) ||
-          (i.sector || "").toLowerCase().includes(query.toLowerCase()))
-    )
-  );
+  const allIpos = useMemo(() => {
+    return getLiveIPOS().filter((i) => i.fin);
+  }, []);
+
+  const { mainboardCount, smeCount, displayedIpos } = useMemo(() => {
+    let mbCount = 0;
+    let sCount = 0;
+    const q = (query || "").trim().toLowerCase();
+    const matched = [];
+
+    for (const i of allIpos) {
+      if (i.type === "Mainboard") mbCount++;
+      else if (i.type === "SME") sCount++;
+
+      if (i.type === filterType) {
+        if (!q || (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q)) {
+          matched.push(i);
+        }
+      }
+    }
+
+    return {
+      mainboardCount: mbCount,
+      smeCount: sCount,
+      displayedIpos: sortIposLogically(matched),
+    };
+  }, [allIpos, filterType, query]);
 
   const MetricBox = ({ label, value, isNA, span = 1 }) => (
     <div
@@ -7014,7 +7178,7 @@ function FinancialsTab({ onOpen, dark, query }) {
             >
               {/* Company logo + name */}
               <div className="flex items-center gap-2.5 mb-4">
-                <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={34} />
+                <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={34} website={ipo.website} />
                 <div>
                   <p className="text-sm font-bold tracking-tight leading-snug" style={{ color: dark ? "#ffffff" : "#1e293b" }}>{ipo.company}</p>
                   <span
@@ -7065,12 +7229,12 @@ function FinancialsTab({ onOpen, dark, query }) {
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================================
    DOCUMENTS TAB
 ===================================================================== */
-function DocumentsTab({ onOpen, query }) {
+const DocumentsTab = React.memo(function DocumentsTab({ onOpen, query }) {
   const [filterType, setFilterType] = useState(() => {
     try {
       return localStorage.getItem("calmcapital-documents-filter") || "Mainboard";
@@ -7086,19 +7250,33 @@ function DocumentsTab({ onOpen, query }) {
     } catch { /* ignore */ }
   };
 
-  const allIpos = getLiveIPOS();
-  const mainboardCount = allIpos.filter((i) => i.type === "Mainboard").length;
-  const smeCount = allIpos.filter((i) => i.type === "SME").length;
+  const allIpos = useMemo(() => {
+    return getLiveIPOS();
+  }, []);
 
-  const displayedIpos = sortDocumentsLogically(
-    allIpos.filter(
-      (i) =>
-        i.type === filterType &&
-        (!query?.trim() ||
-          (i.company || i.name || "").toLowerCase().includes(query.toLowerCase()) ||
-          (i.sector || "").toLowerCase().includes(query.toLowerCase()))
-    )
-  );
+  const { mainboardCount, smeCount, displayedIpos } = useMemo(() => {
+    let mbCount = 0;
+    let sCount = 0;
+    const q = (query || "").trim().toLowerCase();
+    const matched = [];
+
+    for (const i of allIpos) {
+      if (i.type === "Mainboard") mbCount++;
+      else if (i.type === "SME") sCount++;
+
+      if (i.type === filterType) {
+        if (!q || (i.company || i.name || "").toLowerCase().includes(q) || (i.sector || "").toLowerCase().includes(q)) {
+          matched.push(i);
+        }
+      }
+    }
+
+    return {
+      mainboardCount: mbCount,
+      smeCount: sCount,
+      displayedIpos: sortDocumentsLogically(matched),
+    };
+  }, [allIpos, filterType, query]);
 
   return (
     <div className="space-y-4">
@@ -7146,7 +7324,7 @@ function DocumentsTab({ onOpen, query }) {
             className="flex items-center justify-between glass glass-hover rounded-xl px-4 py-3 cursor-pointer"
           >
           <div className="flex items-center gap-2.5">
-            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={30} />
+            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={30} website={ipo.website} />
             <div>
               <span className="text-sm text-slate-700 dark:text-slate-200 font-medium block leading-snug">{ipo.company}</span>
               <span
@@ -7194,21 +7372,23 @@ function DocumentsTab({ onOpen, query }) {
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================================
    WATCHLIST TAB
 ===================================================================== */
-function WatchlistTab({ watchlist, onOpen, dark, query }) {
-  const items = sortIposLogically(
-    getLiveIPOS().filter(
+const WatchlistTab = React.memo(function WatchlistTab({ watchlist, onOpen, dark, query }) {
+  const items = useMemo(() => {
+    const q = (query || "").trim().toLowerCase();
+    const filtered = getLiveIPOS().filter(
       (i) =>
         watchlist.ids.includes(i.id) &&
-        (!query?.trim() ||
-          (i.company || i.name || "").toLowerCase().includes(query.toLowerCase()) ||
-          (i.sector || "").toLowerCase().includes(query.toLowerCase()))
-    )
-  );
+        (!q ||
+          (i.company || i.name || "").toLowerCase().includes(q) ||
+          (i.sector || "").toLowerCase().includes(q))
+    );
+    return sortIposLogically(filtered);
+  }, [watchlist.ids, query]);
   if (!watchlist.ready) return <p className="text-sm text-slate-400">Loading watchlist…</p>;
   
   if (items.length === 0) {
@@ -7276,12 +7456,12 @@ function WatchlistTab({ watchlist, onOpen, dark, query }) {
       {items.map((ipo) => <IPOCard key={ipo.id} ipo={ipo} onOpen={onOpen} watchlist={watchlist} dark={dark} />)}
     </div>
   );
-}
+});
 
 /* =====================================================================
    DEMAT TAB
 ===================================================================== */
-function DematTab({ dark }) {
+const DematTab = React.memo(function DematTab({ dark }) {
   const brokers = [
     {
       name: "Upstox",
@@ -7380,7 +7560,7 @@ function DematTab({ dark }) {
       </div>
     </div>
   );
-}
+});
 
 /* =====================================================================
    STAT CARD
@@ -7646,6 +7826,10 @@ export default function App() {
     }
   }, [tab]);
 
+  const handleCloseModal = useCallback(() => {
+    handleSelectIpo(null);
+  }, [handleSelectIpo]);
+
   // Sync deep link / path on load
   useEffect(() => {
     if (loadingDb) return;
@@ -7719,6 +7903,7 @@ export default function App() {
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           IPOS_BASE = data;
+          invalidateLiveIposCache();
           setTick((t) => t + 1);
           setLiveDataVersion((v) => v + 1);
         }
@@ -7838,6 +8023,7 @@ export default function App() {
           .then((data) => {
             if (Array.isArray(data) && data.length > 0) {
               IPOS_BASE = data;
+              invalidateLiveIposCache();
               setTick((t) => t + 1);
             }
           })
@@ -7900,6 +8086,7 @@ export default function App() {
             tickTime: Date.now()
           };
           didChange = true;
+          invalidateLiveIposCache();
         }
       }
 
@@ -7978,6 +8165,7 @@ export default function App() {
           company: cleanCompanyName(ipo.company || ipo.name),
           name: cleanCompanyName(ipo.name || ipo.company)
         }));
+        invalidateLiveIposCache();
       }
       
       await syncNow();
@@ -7995,8 +8183,20 @@ export default function App() {
     }, 2200);
   };
 
-  const groupedFiltered = (status) =>
-    sortIposLogically(filtered.filter((i) => getComputedStatus(i) === status));
+  const groupedByStatus = useMemo(() => {
+    const groups = { Open: [], Closed: [], Upcoming: [], Listed: [] };
+    for (const i of filtered) {
+      const s = getComputedStatus(i);
+      if (groups[s]) groups[s].push(i);
+    }
+    return {
+      Open: sortIposLogically(groups.Open),
+      Closed: sortIposLogically(groups.Closed),
+      Upcoming: sortIposLogically(groups.Upcoming),
+      Listed: sortIposLogically(groups.Listed),
+    };
+  }, [filtered]);
+  const groupedFiltered = (status) => groupedByStatus[status] || [];
 
   const todayActivity = useMemo(() => {
     const all = getLiveIPOS();
@@ -8388,11 +8588,13 @@ export default function App() {
                           Showing matches for &ldquo;<span className="font-semibold text-slate-750 dark:text-slate-300">{query}</span>&rdquo;
                         </p>
                         <div className="flex flex-wrap gap-1.5 mt-3">
-                          {["All", "Open", "Upcoming", "Closed", "Listed"].map((st) => {
-                            const count = st === "All"
-                              ? sortedFiltered.length
-                              : sortedFiltered.filter(i => getComputedStatus(i) === st).length;
-                            return (
+                          {(() => {
+                            const statusCounts = { All: sortedFiltered.length, Open: 0, Upcoming: 0, Closed: 0, Listed: 0 };
+                            for (const item of sortedFiltered) {
+                              const s = item.status || getComputedStatus(item);
+                              if (statusCounts[s] != null) statusCounts[s]++;
+                            }
+                            return ["All", "Open", "Upcoming", "Closed", "Listed"].map((st) => (
                               <button
                                 key={st}
                                 onClick={() => setSearchStatusFilter(st)}
@@ -8402,10 +8604,10 @@ export default function App() {
                                     : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10"
                                 }`}
                               >
-                                {st} ({count})
+                                {st} ({statusCounts[st] || 0})
                               </button>
-                            );
-                          })}
+                            ));
+                          })()}
                         </div>
                       </div>
                       <button
@@ -8420,7 +8622,7 @@ export default function App() {
                     {(() => {
                       const displayedCards = searchStatusFilter === "All"
                         ? sortedFiltered
-                        : sortedFiltered.filter(i => getComputedStatus(i) === searchStatusFilter);
+                        : sortedFiltered.filter(i => (i.status || getComputedStatus(i)) === searchStatusFilter);
 
                       if (displayedCards.length > 0) {
                         return (
@@ -8671,7 +8873,7 @@ export default function App() {
                                 className="p-3.5 rounded-2xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] hover:border-[#1C9BDA]/40 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
                               >
                                 <div className="flex items-center gap-3 min-w-0">
-                                  <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} />
+                                  <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} website={ipo.website} />
                                   <div className="min-w-0">
                                     <p className="text-xs font-bold text-[#0B1F33] dark:text-white truncate">{ipo.company}</p>
                                     <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5 flex-wrap">
@@ -8728,7 +8930,7 @@ export default function App() {
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                         {openToday.map(i => (
                           <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-emerald-500/20 bg-emerald-500/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
-                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} website={i.website} />
                             <div className="min-w-0 flex-1">
                               <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
                               <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">Bidding Opens Today</p>
@@ -8737,7 +8939,7 @@ export default function App() {
                         ))}
                         {closingToday.map(i => (
                           <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-rose-500/20 bg-rose-500/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
-                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} website={i.website} />
                             <div className="min-w-0 flex-1">
                               <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
                               <p className="text-[10px] text-rose-500 dark:text-rose-400 font-bold mt-0.5">Last Day (Closes Today)</p>
@@ -8746,7 +8948,7 @@ export default function App() {
                         ))}
                         {listingToday.map(i => (
                           <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-[#1c9bda]/20 bg-[#1c9bda]/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
-                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} website={i.website} />
                             <div className="min-w-0 flex-1">
                               <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
                               <p className="text-[10px] text-[#1c9bda] dark:text-[#52b1e4] font-bold mt-0.5">Lists Today</p>
@@ -8755,7 +8957,7 @@ export default function App() {
                         ))}
                         {allotmentToday.map(i => (
                           <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-amber-500/20 bg-amber-500/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
-                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} website={i.website} />
                             <div className="min-w-0 flex-1">
                               <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
                               <p className="text-[10px] text-amber-505 dark:text-amber-405 font-bold mt-0.5">Allotment Expected Today</p>
@@ -8764,7 +8966,7 @@ export default function App() {
                         ))}
                         {openingTomorrow.map(i => (
                           <div key={i.id} onClick={() => handleSelectIpo(i)} className="p-3 rounded-xl border border-blue-500/20 bg-blue-500/5 cursor-pointer hover:shadow-md transition-all flex items-center gap-3">
-                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} />
+                            <CompanyAvatar name={i.company} logoUrl={i.logoUrl} size={36} website={i.website} />
                             <div className="min-w-0 flex-1">
                               <p className="text-xs font-bold text-slate-855 dark:text-white truncate">{i.company}</p>
                               <p className="text-[10px] text-blue-500 dark:text-blue-400 font-bold mt-0.5">Opens Tomorrow</p>
@@ -8809,8 +9011,8 @@ export default function App() {
                 </div>
 
                   {(() => {
-                    const openMainboardIpos = sortIposLogically(filtered.filter(i => i.type === "Mainboard" && getComputedStatus(i) === "Open"));
-                    const openSmeIpos = sortIposLogically(filtered.filter(i => i.type === "SME" && getComputedStatus(i) === "Open"));
+                    const openMainboardIpos = groupedByStatus.Open.filter(i => i.type === "Mainboard");
+                    const openSmeIpos = groupedByStatus.Open.filter(i => i.type === "SME");
 
                     const activeOverview = overviewType === "SME"
                       ? openSmeIpos
@@ -8929,7 +9131,7 @@ export default function App() {
 
                 {/* 8.5 Dynamic Quick Answer Box */}
                 {(() => {
-                  const openIpos = getLiveIPOS().filter(i => getComputedStatus(i) === "Open");
+                  const openIpos = groupedByStatus.Open;
                   let bodyText = "";
                   if (openIpos.length > 0) {
                     const openNames = openIpos.map(i => i.name || i.company).join(", ");
@@ -9258,7 +9460,7 @@ export default function App() {
             {tab === "subscriptions" && <SubscriptionsTab dark={dark} query={query} />}
             {tab === "financials" && <FinancialsTab onOpen={handleSelectIpo} dark={dark} query={query} />}
             {tab === "docs" && <DocumentsTab onOpen={handleSelectIpo} query={query} />}
-            {tab === "calculator" && <CalculatorTab onOpen={handleSelectIpo} />}
+            {tab === "calculator" && <CalculatorTab tick={tick} onOpen={handleSelectIpo} />}
             {tab === "watchlist" && <WatchlistTab watchlist={watchlist} onOpen={handleSelectIpo} dark={dark} query={query} />}
             {tab === "demat" && <DematTab dark={dark} />}
             {AI_ASSISTANT_ENABLED && tab === "ai" && <div className="glass rounded-2xl p-5"><AssistantPane embedded tick={tick} /></div>}
@@ -9277,7 +9479,7 @@ export default function App() {
 
       <IPODetail
         ipo={selected && viewMode === "modal" ? selected : null}
-        onClose={() => handleSelectIpo(null)}
+        onClose={handleCloseModal}
         watchlist={watchlist}
         dark={dark}
         onOpen={handleSelectIpo}
