@@ -359,8 +359,8 @@ const CalmCapitalScoreBadge = React.memo(function CalmCapitalScoreBadge({ ipo })
 ===================================================================== */
 const SCORE_STATUS_PRIORITY = {
   Open: 1,
-  Upcoming: 2,
-  Closed: 3,
+  Closed: 2,
+  Upcoming: 3,
   Listed: 4
 };
 
@@ -372,14 +372,43 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
   const deferredSearchTerm = useDeferredValue(searchTerm);
 
   // Pre-calculate quantitative scores once per allIpos change (NOT on every keystroke!)
+  // Filter rules:
+  // - Open: All included
+  // - Closed: Included
+  // - Recent Upcoming: Only if coming in next 7 days
+  // - Listed: Remove listed IPOs listed more than 15 days ago
   const allScored = useMemo(() => {
-    return (allIpos || []).map((ipo) => {
-      const { score, breakdown } = calculateCalmCapitalScore(ipo);
-      const finalReady = isFinalScoreReady(ipo);
-      const computedStatus = getComputedStatus(ipo);
-      const searchKey = `${ipo.name || ""} ${ipo.company || ""} ${ipo.sector || ""}`.toLowerCase();
-      return { ipo, score, breakdown, finalReady, computedStatus, searchKey };
-    });
+    const now = new Date();
+    const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    return (allIpos || [])
+      .map((ipo) => {
+        const { score, breakdown } = calculateCalmCapitalScore(ipo);
+        const finalReady = isFinalScoreReady(ipo);
+        const computedStatus = getComputedStatus(ipo);
+        const searchKey = `${ipo.name || ""} ${ipo.company || ""} ${ipo.sector || ""}`.toLowerCase();
+        return { ipo, score, breakdown, finalReady, computedStatus, searchKey };
+      })
+      .filter(({ ipo, computedStatus }) => {
+        // Recent upcoming: only if opening in next 7 days
+        if (computedStatus === "Upcoming") {
+          if (!ipo.open) return false;
+          const openD = new Date(ipo.open);
+          const diffDays = (openD - todayMidnight) / (1000 * 60 * 60 * 24);
+          if (diffDays < 0 || diffDays > 7) return false;
+        }
+
+        // Listed: remove if listed more than 15 days ago
+        if (computedStatus === "Listed") {
+          const listStr = ipo.listing || ipo.close;
+          if (!listStr) return false;
+          const listD = new Date(listStr);
+          const diffDays = (todayMidnight - listD) / (1000 * 60 * 60 * 24);
+          if (diffDays > 15) return false;
+        }
+
+        return true;
+      });
   }, [allIpos]);
 
   const scoredIpos = useMemo(() => {
@@ -396,7 +425,7 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
         return true;
       })
       .sort((a, b) => {
-        // 1. Status Priority: Open (1) -> Upcoming (2) -> Closed (3) -> Listed (4)
+        // 1. Status Priority: Open (1) -> Closed (2) -> Upcoming (3) -> Listed (4)
         const pA = SCORE_STATUS_PRIORITY[a.computedStatus] || 99;
         const pB = SCORE_STATUS_PRIORITY[b.computedStatus] || 99;
         if (pA !== pB) return pA - pB;
@@ -406,8 +435,8 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
         const smeB = b.ipo.type === "SME" ? 1 : 0;
         if (smeA !== smeB) return smeA - smeB;
 
-        // 3. For Open & Upcoming: score descending, then GMP, then date
-        if (a.computedStatus === "Open" || a.computedStatus === "Upcoming") {
+        // 3. For Open: score descending, then GMP, then offer close date
+        if (a.computedStatus === "Open") {
           if (b.score !== a.score) return b.score - a.score;
           const gmpDiff = (b.ipo.gmp || 0) - (a.ipo.gmp || 0);
           if (gmpDiff !== 0) return gmpDiff;
@@ -416,10 +445,32 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
           return da.localeCompare(db);
         }
 
-        // 4. For Closed & Listed: recency first so newly listed/closed IPOs come up first
-        const dateA = a.ipo.listing || a.ipo.close || a.ipo.open || "";
-        const dateB = b.ipo.listing || b.ipo.close || b.ipo.open || "";
-        if (dateA !== dateB) return dateB.localeCompare(dateA);
+        // 4. For Closed: most recently closed first, then score, then GMP
+        if (a.computedStatus === "Closed") {
+          const da = a.ipo.close || "";
+          const db = b.ipo.close || "";
+          if (da !== db) return db.localeCompare(da);
+          if (b.score !== a.score) return b.score - a.score;
+          return (b.ipo.gmp || 0) - (a.ipo.gmp || 0);
+        }
+
+        // 5. For Upcoming (next 7 days): opening soonest first, then score, then GMP
+        if (a.computedStatus === "Upcoming") {
+          const da = a.ipo.open || "";
+          const db = b.ipo.open || "";
+          if (da !== db) return da.localeCompare(db);
+          if (b.score !== a.score) return b.score - a.score;
+          return (b.ipo.gmp || 0) - (a.ipo.gmp || 0);
+        }
+
+        // 6. For Listed (last 15 days): most recently listed first, then score, then GMP
+        if (a.computedStatus === "Listed") {
+          const dateA = a.ipo.listing || a.ipo.close || "";
+          const dateB = b.ipo.listing || b.ipo.close || "";
+          if (dateA !== dateB) return dateB.localeCompare(dateA);
+          if (b.score !== a.score) return b.score - a.score;
+          return (b.ipo.gmp || 0) - (a.ipo.gmp || 0);
+        }
 
         if (b.score !== a.score) return b.score - a.score;
         return (b.ipo.gmp || 0) - (a.ipo.gmp || 0);
@@ -538,17 +589,23 @@ function CalmCapitalScoreSection({ allIpos, dark, onOpen, navigateToTab }) {
 
           {/* Status selector */}
           <div className="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-slate-800/80 border border-slate-300/60 dark:border-white/10 shadow-inner overflow-x-auto max-w-full whitespace-nowrap no-scrollbar">
-            {["All", "Open", "Upcoming", "Closed", "Listed"].map(s => (
+            {[
+              { id: "All", label: "All" },
+              { id: "Open", label: "Open" },
+              { id: "Closed", label: "Closed" },
+              { id: "Upcoming", label: "Upcoming (≤7d)" },
+              { id: "Listed", label: "Listed (≤15d)" }
+            ].map(s => (
               <button
-                key={s}
-                onClick={() => setStatusFilter(s)}
+                key={s.id}
+                onClick={() => setStatusFilter(s.id)}
                 className={`px-3 py-1 text-xs font-extrabold rounded-lg transition-all border-0 cursor-pointer shrink-0 ${
-                  statusFilter === s
+                  statusFilter === s.id
                     ? "bg-[#0B1F33] dark:bg-[#1C9BDA] text-white shadow-md shadow-[#1C9BDA]/20"
                     : "text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
-                {s}
+                {s.label}
               </button>
             ))}
           </div>
