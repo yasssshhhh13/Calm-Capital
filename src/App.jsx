@@ -2199,7 +2199,11 @@ function sortedCalcIpos() {
     const si = STATUS_ORDER.indexOf(statusA);
     const sj = STATUS_ORDER.indexOf(statusB);
     if (si !== sj) return si - sj;
-    // Within same status: newest open/close date first
+    // Within same status: Mainboard IPOs first, then SME
+    const isSmeA = a.type === "SME" ? 1 : 0;
+    const isSmeB = b.type === "SME" ? 1 : 0;
+    if (isSmeA !== isSmeB) return isSmeA - isSmeB;
+    // Within same status and type: newest open/close date first
     const da = a.open || a.close || "";
     const db = b.open || b.close || "";
     return db.localeCompare(da);
@@ -2214,8 +2218,10 @@ const CalculatorTab = React.memo(function CalculatorTab({ tick, onOpen }) {
     return sortedCalcIpos();
   }, [tick]);
   const [ipoId, setIpoId] = useState(() => {
-    const openIpo = allIpos.find((i) => i.status === "Open");
-    if (openIpo) return openIpo.id;
+    const openMainboard = allIpos.find((i) => i.status === "Open" && i.type !== "SME");
+    if (openMainboard) return openMainboard.id;
+    const openAny = allIpos.find((i) => i.status === "Open");
+    if (openAny) return openAny.id;
     return allIpos[0]?.id || "";
   });
   const [lots, setLots] = useState(1);
