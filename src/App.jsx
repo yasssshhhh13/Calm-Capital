@@ -7000,7 +7000,9 @@ const SubscriptionsTab = React.memo(function SubscriptionsTab({ dark, query }) {
               style={{
                 background: dark ? "#172437" : "#ffffff",
                 border: dark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.06)",
-                boxShadow: dark ? "none" : "0 4px 12px rgba(0,0,0,0.03)"
+                boxShadow: dark ? "none" : "0 4px 12px rgba(0,0,0,0.03)",
+                contentVisibility: "auto",
+                containIntrinsicSize: "1px 280px"
               }}
             >
               <div>
@@ -7173,7 +7175,9 @@ const FinancialsTab = React.memo(function FinancialsTab({ onOpen, dark, query })
               style={{
                 background: dark ? "#172437" : "#ffffff",
                 border: dark ? "1px solid rgba(255,255,255,0.07)" : "1px solid rgba(0,0,0,0.06)",
-                boxShadow: dark ? "none" : "0 4px 12px rgba(0,0,0,0.03)"
+                boxShadow: dark ? "none" : "0 4px 12px rgba(0,0,0,0.03)",
+                contentVisibility: "auto",
+                containIntrinsicSize: "1px 200px"
               }}
             >
               {/* Company logo + name */}
@@ -9163,9 +9167,14 @@ export default function App() {
 
             {tab === "open" && (() => {
               const openIpos = groupedFiltered("Open");
-              const openMainboardCount = openIpos.filter(i => i.type === "Mainboard").length;
-              const openSmeCount = openIpos.filter(i => i.type === "SME").length;
-              const displayedOpenIpos = openIpos.filter(i => i.type === openType);
+              let openMainboardCount = 0;
+              let openSmeCount = 0;
+              const displayedOpenIpos = [];
+              for (const i of openIpos) {
+                if (i.type === "Mainboard") openMainboardCount++;
+                else if (i.type === "SME") openSmeCount++;
+                if (i.type === openType) displayedOpenIpos.push(i);
+              }
 
               return (
                 <div className="space-y-4">
@@ -9233,9 +9242,14 @@ export default function App() {
 
             {tab === "closed" && (() => {
               const closedIpos = groupedFiltered("Closed");
-              const closedMainboardCount = closedIpos.filter(i => i.type === "Mainboard").length;
-              const closedSmeCount = closedIpos.filter(i => i.type === "SME").length;
-              const displayedClosedIpos = closedIpos.filter(i => i.type === closedType);
+              let closedMainboardCount = 0;
+              let closedSmeCount = 0;
+              const displayedClosedIpos = [];
+              for (const i of closedIpos) {
+                if (i.type === "Mainboard") closedMainboardCount++;
+                else if (i.type === "SME") closedSmeCount++;
+                if (i.type === closedType) displayedClosedIpos.push(i);
+              }
 
               return (
                 <div className="space-y-4">
@@ -9303,9 +9317,14 @@ export default function App() {
 
             {tab === "upcoming" && (() => {
               const upcomingIpos = groupedFiltered("Upcoming");
-              const upcomingMainboardCount = upcomingIpos.filter(i => i.type === "Mainboard").length;
-              const upcomingSmeCount = upcomingIpos.filter(i => i.type === "SME").length;
-              const displayedUpcomingIpos = upcomingIpos.filter(i => i.type === upcomingType);
+              let upcomingMainboardCount = 0;
+              let upcomingSmeCount = 0;
+              const displayedUpcomingIpos = [];
+              for (const i of upcomingIpos) {
+                if (i.type === "Mainboard") upcomingMainboardCount++;
+                else if (i.type === "SME") upcomingSmeCount++;
+                if (i.type === upcomingType) displayedUpcomingIpos.push(i);
+              }
 
               return (
                 <div className="space-y-4">
@@ -9387,9 +9406,14 @@ export default function App() {
 
             {tab === "listed" && (() => {
               const listedIpos = groupedFiltered("Listed");
-              const listedMainboardCount = listedIpos.filter(i => i.type === "Mainboard").length;
-              const listedSmeCount = listedIpos.filter(i => i.type === "SME").length;
-              const displayedListedIpos = listedIpos.filter(i => i.type === listedType);
+              let listedMainboardCount = 0;
+              let listedSmeCount = 0;
+              const displayedListedIpos = [];
+              for (const i of listedIpos) {
+                if (i.type === "Mainboard") listedMainboardCount++;
+                else if (i.type === "SME") listedSmeCount++;
+                if (i.type === listedType) displayedListedIpos.push(i);
+              }
 
               return (
                 <div className="space-y-4">
