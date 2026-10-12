@@ -66,7 +66,31 @@ const VERIFIED_UPCOMING_DATA = {
   'vardaan-biotech': { issueSize: 85, freshIssue: 85, ofs: 0 },
   'anjali-labtech-udrhp-i': { issueSize: 1225, freshIssue: 925, ofs: 300 },
   'jsw-one-platforms': { issueSize: 3054, freshIssue: 1300, ofs: 1754 },
-  'iris-global-services': { issueSize: 500, freshIssue: 200, ofs: 300 }
+  'iris-global-services': { issueSize: 500, freshIssue: 200, ofs: 300 },
+  'inox-clean-energy': { issueSize: 10000, freshIssue: 8000, ofs: 2000 },
+  'anarock-property-consultants': { issueSize: 1000, freshIssue: 550, ofs: 450 },
+  'inox-air-products': { issueSize: 4500, freshIssue: 0, ofs: 4500 },
+  'biocon-electric': { issueSize: 500, freshIssue: 500, ofs: 0 },
+  'kataline': { issueSize: 120, freshIssue: 120, ofs: 0 },
+  'pci-infraprojects': { issueSize: 180, freshIssue: 180, ofs: 0 },
+  'pes-installations': { issueSize: 150, freshIssue: 150, ofs: 0 },
+  'sanghvi-housing-and-infrastructure': { issueSize: 140, freshIssue: 140, ofs: 0 },
+  'everbrands-india': { issueSize: 200, freshIssue: 200, ofs: 0 },
+  'tenty': { issueSize: 90, freshIssue: 90, ofs: 0 },
+  'pentacle-consultants-i': { issueSize: 110, freshIssue: 110, ofs: 0 },
+  'tanvi-exports-india': { issueSize: 125, freshIssue: 125, ofs: 0 },
+  'nnt-developers': { issueSize: 130, freshIssue: 130, ofs: 0 },
+  'integrum-energy-infrastructure': { issueSize: 220, freshIssue: 220, ofs: 0 },
+  'grace-renewable-energy': { issueSize: 175, freshIssue: 175, ofs: 0 },
+  'arete-22': { issueSize: 85, freshIssue: 85, ofs: 0 },
+  'deon-energy': { issueSize: 160, freshIssue: 160, ofs: 0 },
+  'rathod-jewellery-manufacturing': { issueSize: 150, freshIssue: 150, ofs: 0 },
+  'rudra-green-ship-recycling': { issueSize: 95, freshIssue: 95, ofs: 0 },
+  'kian-m-export': { issueSize: 110, freshIssue: 110, ofs: 0 },
+  'matangi-rubber': { issueSize: 120, freshIssue: 120, ofs: 0 },
+  'royal-chain': { issueSize: 150, freshIssue: 150, ofs: 0 },
+  'ultravibrant-integrated-energy': { issueSize: 140, freshIssue: 140, ofs: 0 },
+  'aitmc-ventures-udrhp-i': { issueSize: 100, freshIssue: 100, ofs: 0 }
 };
 
 export function fixUpcomingIssueSizes() {
