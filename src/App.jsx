@@ -835,6 +835,7 @@ const formatPriceBand = (min, max) => {
 
 const fieldVerification = (ipo, field) => (ipo && ipo.verification && ipo.verification[field]) || null;
 const isPending = (ipo, field) => {
+  if (field === "issueSize" && (ipo?.issueSize != null || ipo?.freshIssue != null)) return false;
   const v = fieldVerification(ipo, field);
   return !!v && v.status === "pending";
 };
@@ -1302,7 +1303,7 @@ export function normalizeIPO(raw) {
     priceMax: raw.priceMax != null ? Number(raw.priceMax) : null,
     lot: raw.lot != null ? Number(raw.lot) : null,
     gmp: raw.gmp != null ? Number(raw.gmp) : null,
-    issueSize: raw.issueSize != null ? Number(raw.issueSize) : null,
+    issueSize: raw.issueSize != null ? Number(raw.issueSize) : (raw.freshIssue != null ? Number(raw.freshIssue) + Number(raw.ofs || 0) : null),
     freshIssue: raw.freshIssue != null ? Number(raw.freshIssue) : null,
     ofs: raw.ofs != null ? Number(raw.ofs) : null,
     sub: raw.sub && typeof raw.sub === "object" ? raw.sub : null,

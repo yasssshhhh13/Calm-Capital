@@ -120,9 +120,17 @@ function applyDetailInfo(ipo, detailInfo) {
     }
   }
   if (validNum(detailInfo.lot) && ipo.lot == null) { ipo.lot = detailInfo.lot; changed = true; console.log(`[LOT] "${ipo.name}" -> ${ipo.lot} shares`); }
-  if (validNum(detailInfo.issueSize) && ipo.issueSize == null) { ipo.issueSize = detailInfo.issueSize; changed = true; console.log(`[ISSUE SIZE] "${ipo.name}" -> ₹${ipo.issueSize} Cr`); }
   if (validNum(detailInfo.freshIssue) && ipo.freshIssue == null) { ipo.freshIssue = detailInfo.freshIssue; changed = true; }
   if (validNum(detailInfo.ofs) && ipo.ofs == null) { ipo.ofs = detailInfo.ofs; changed = true; }
+  if (validNum(detailInfo.issueSize) && (ipo.issueSize == null || ipo.issueSize < (ipo.freshIssue || 0))) {
+    ipo.issueSize = detailInfo.issueSize;
+    changed = true;
+    console.log(`[ISSUE SIZE] "${ipo.name}" -> ₹${ipo.issueSize} Cr`);
+  } else if (ipo.issueSize == null && validNum(ipo.freshIssue)) {
+    ipo.issueSize = Number(ipo.freshIssue) + Number(ipo.ofs || 0);
+    changed = true;
+    console.log(`[ISSUE SIZE DERIVED] "${ipo.name}" -> ₹${ipo.issueSize} Cr`);
+  }
   if (validNum(detailInfo.faceValue) && ipo.faceValue == null) { ipo.faceValue = detailInfo.faceValue; changed = true; }
   
   const today = new Date();

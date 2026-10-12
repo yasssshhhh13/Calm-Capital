@@ -174,6 +174,18 @@ async function scrapeDetail(page, url) {
         if (fields.listing == null && (label === "listing date" || label.includes("listed on") || label.includes("listing at date"))) fields.listing = parseDate(value);
       }
 
+      // Mathematical derivation: If issueSize is not explicitly in table but components exist
+      if (fields.issueSize == null && (fields.freshIssue != null || fields.ofs != null)) {
+        fields.issueSize = (fields.freshIssue || 0) + (fields.ofs || 0);
+      }
+
+      // Fallback text extraction from prospectus narrative if still missing
+      if (fields.issueSize == null) {
+        const bodyText = document.body ? document.body.innerText : "";
+        const m = bodyText.match(/(?:aggregating\s+up\s+to|issue\s+size\s+of|raise\s+(?:funds\s+of)?)\s*[₹Rs.]*\s*([\d.]+)\s*(?:cr|crore|crores)/i);
+        if (m) fields.issueSize = parseFloat(m[1]);
+      }
+
       // Prospectus financials — first data column = most recent period.
       const fin = {};
       let fy = null;

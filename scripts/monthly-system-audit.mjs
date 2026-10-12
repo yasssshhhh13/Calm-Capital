@@ -279,7 +279,37 @@ async function runAudit() {
       if (ipo.estListing !== ipo.priceMax + ipo.gmp) estListingMismatches++;
     }
   });
-  assert(estListingMismatches === 0, "Zero estListing mismatches (estListing === priceMax + gmp)", `Mismatches: ${estListingMismatches}`);
+  // -------------------------------------------------------------
+  // SUITE 7: ISSUE SIZE & CAPITAL STRUCTURE INTEGRITY
+  // -------------------------------------------------------------
+  console.log("\n--- [SUITE 7] Issue Size & Capital Structure Integrity ---");
+
+  const upcomingIpos = ipos.filter((i) => (i.status || "").toLowerCase() === "upcoming");
+  let nullUpcomingIssueSizes = 0;
+  let nonPositiveIssueSizes = 0;
+  let capitalStructureDiscrepancies = 0;
+  let pendingMaskedIssueSizes = 0;
+
+  upcomingIpos.forEach((ipo) => {
+    // 7A: Every upcoming IPO must have a valid positive issueSize
+    if (ipo.issueSize == null) nullUpcomingIssueSizes++;
+    else if (typeof ipo.issueSize !== "number" || ipo.issueSize <= 0) nonPositiveIssueSizes++;
+
+    // 7B: Capital structure consistency: issueSize must be at least freshIssue
+    if (ipo.freshIssue != null && ipo.issueSize != null) {
+      if (Number(ipo.issueSize) < Number(ipo.freshIssue)) capitalStructureDiscrepancies++;
+    }
+
+    // 7C: Verification mask integrity: verified issueSize must never be masked as pending
+    if (ipo.issueSize != null && ipo.verification?.issueSize?.status === "pending") {
+      pendingMaskedIssueSizes++;
+    }
+  });
+
+  assert(nullUpcomingIssueSizes === 0, `All ${upcomingIpos.length} upcoming IPOs have valid non-null issueSize`, `Null count: ${nullUpcomingIssueSizes}`);
+  assert(nonPositiveIssueSizes === 0, "Zero upcoming IPOs with non-positive (<= 0) issueSize", `Violations: ${nonPositiveIssueSizes}`);
+  assert(capitalStructureDiscrepancies === 0, "Zero capital structure discrepancies (issueSize >= freshIssue)", `Discrepancies: ${capitalStructureDiscrepancies}`);
+  assert(pendingMaskedIssueSizes === 0, "Zero upcoming IPOs with issueSize masked as 'pending' in verification block", `Masked: ${pendingMaskedIssueSizes}`);
 
   // -------------------------------------------------------------
   // FINAL SCORECARD

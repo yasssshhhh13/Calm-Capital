@@ -324,7 +324,16 @@ export async function scrapeIpoDetailPage(page, href) {
         }
       }
 
+      // Mathematical derivation: If issueSize is not explicitly in table but components exist
+      if (result.issueSize == null && (result.freshIssue != null || result.ofs != null)) {
+        result.issueSize = (result.freshIssue || 0) + (result.ofs || 0);
+      }
+
       const bodyText = document.body ? document.body.innerText : "";
+      if (result.issueSize == null) {
+        const m = bodyText.match(/(?:aggregating\s+up\s+to|issue\s+size\s+of|raise\s+(?:funds\s+of)?)\s*[₹Rs.]*\s*([\d.]+)\s*(?:cr|crore|crores)/i);
+        if (m) result.issueSize = parseFloat(m[1]);
+      }
       if (!result.registrar) { const m = bodyText.match(/Registrar(?:\s+to\s+the\s+[Ii]ssue)?\s*[:\n]\s*([^\n]+)/); if (m) result.registrar = clean(m[1]); }
       if (!result.leadManager) { const m = bodyText.match(/Lead Manager[s]?\s*[:\n]\s*([^\n]+)/); if (m) result.leadManager = clean(m[1]); }
       if (result.listedAt == null) {

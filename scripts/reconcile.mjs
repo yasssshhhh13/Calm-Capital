@@ -86,6 +86,12 @@ export function reconcile(iposBase, sourceRecords) {
 
     const verification = (ipo.verification && typeof ipo.verification === "object") ? { ...ipo.verification } : {};
 
+    // Auto-derive issueSize if missing before field reconciliation
+    if (ipo.issueSize == null && ipo.freshIssue != null) {
+      ipo.issueSize = Number(ipo.freshIssue) + Number(ipo.ofs || 0);
+      changed++;
+    }
+
     for (const field of GATED_FIELDS) {
       const votes = [];
       for (const [source, rec] of Object.entries(matches)) {
@@ -99,6 +105,13 @@ export function reconcile(iposBase, sourceRecords) {
       const hadExisting = existing != null;
 
       if (votes.length === 0 && !hadExisting) {
+        if (field === "issueSize" && ipo.freshIssue != null) {
+          const derived = Number(ipo.freshIssue) + Number(ipo.ofs || 0);
+          ipo.issueSize = derived;
+          verification.issueSize = { status: "unverified", value: derived, sources: ["drhp"], updatedAt: now };
+          changed++;
+          continue;
+        }
         if (CORE_DISPLAY.has(field)) verification[field] = { status: "pending", updatedAt: now };
         continue;
       }

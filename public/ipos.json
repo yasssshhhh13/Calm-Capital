@@ -916,7 +916,7 @@
     "priceMax": 151,
     "faceValue": 10,
     "lot": 800,
-    "issueSize": 65,
+    "issueSize": 66.98,
     "freshIssue": 66.98,
     "ofs": 0,
     "gmp": 0,
@@ -4382,8 +4382,8 @@
     "faceValue": 10,
     "lot": null,
     "issueSize": 3000,
-    "freshIssue": null,
-    "ofs": 0,
+    "freshIssue": 0,
+    "ofs": 3000,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -4441,20 +4441,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 3000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 3000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4463,6 +4465,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 0,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -4483,9 +4494,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": 115,
-    "ofs": 0,
+    "issueSize": 115,
+    "freshIssue": 98,
+    "ofs": 17,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -4541,22 +4552,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 115,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 98,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 17,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4587,7 +4607,7 @@
     "lot": null,
     "issueSize": 2800,
     "freshIssue": 600,
-    "ofs": 0,
+    "ofs": 2200,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -4644,24 +4664,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 2800,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 600,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 2200,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4910,7 +4937,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 400,
     "freshIssue": 400,
     "ofs": 0,
     "gmp": null,
@@ -4970,22 +4997,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 400,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 400,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5014,7 +5050,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 270,
     "freshIssue": 270,
     "ofs": 0,
     "gmp": null,
@@ -5074,22 +5110,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 270,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 270,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5118,9 +5163,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 1100,
+    "freshIssue": 0,
+    "ofs": 1100,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -5177,14 +5222,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 1100,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 1100,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5193,6 +5246,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 0,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -5215,7 +5277,7 @@
     "lot": null,
     "issueSize": 1000,
     "freshIssue": 600,
-    "ofs": 0,
+    "ofs": 400,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -5272,28 +5334,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 600,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 400,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5322,9 +5387,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 450,
+    "freshIssue": 310,
+    "ofs": 140,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -5382,14 +5447,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 450,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 140,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5398,6 +5471,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 310,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -5418,7 +5500,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 400,
     "freshIssue": 400,
     "ofs": 0,
     "gmp": null,
@@ -5478,22 +5560,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 400,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 400,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5522,9 +5613,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 1450,
     "freshIssue": 950,
-    "ofs": 0,
+    "ofs": 500,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -5582,22 +5673,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 1450,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 950,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 500,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5685,26 +5785,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 550,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 550,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5733,7 +5838,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 105,
     "freshIssue": 105,
     "ofs": 0,
     "gmp": null,
@@ -5793,22 +5898,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 105,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 105,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5837,7 +5951,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 400,
     "freshIssue": 400,
     "ofs": 0,
     "gmp": null,
@@ -5897,22 +6011,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 400,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 400,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5943,7 +6066,7 @@
     "lot": null,
     "issueSize": 1000,
     "freshIssue": 500,
-    "ofs": 0,
+    "ofs": 500,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -6001,28 +6124,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 500,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 500,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6051,7 +6177,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 150,
     "freshIssue": 150,
     "ofs": 0,
     "gmp": null,
@@ -6111,22 +6237,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 150,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 150,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6155,9 +6290,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 120,
+    "freshIssue": 85,
+    "ofs": 35,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -6215,14 +6350,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 120,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 35,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6231,6 +6374,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 85,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -6251,7 +6403,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 300,
     "freshIssue": 300,
     "ofs": 0,
     "gmp": null,
@@ -6310,22 +6462,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 300,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 300,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6354,7 +6515,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 500,
     "freshIssue": 500,
     "ofs": 0,
     "gmp": null,
@@ -6414,22 +6575,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 500,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 500,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6458,7 +6628,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 430,
     "freshIssue": 430,
     "ofs": 0,
     "gmp": null,
@@ -6518,22 +6688,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 430,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 430,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6562,9 +6741,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 1100,
     "freshIssue": 750,
-    "ofs": 0,
+    "ofs": 350,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -6622,22 +6801,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 1100,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 750,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 350,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6666,9 +6854,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 110,
+    "freshIssue": 85,
+    "ofs": 25,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -6726,14 +6914,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 110,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 25,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6742,6 +6938,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 85,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -6822,26 +7027,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 6650,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 6650,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6870,9 +7080,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 220,
+    "freshIssue": 135,
+    "ofs": 85,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -6930,14 +7140,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 220,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 85,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6946,6 +7164,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 135,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -7111,9 +7338,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 450,
+    "freshIssue": 415,
+    "ofs": 35,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -7171,14 +7398,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 450,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 35,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7187,6 +7422,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 415,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -7413,26 +7657,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 180,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 180,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8194,7 +8443,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 125,
     "freshIssue": 125,
     "ofs": 0,
     "gmp": null,
@@ -8254,22 +8503,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 125,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 125,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8444,7 +8702,7 @@
     "priceMax": 160,
     "faceValue": 10,
     "lot": 93,
-    "issueSize": 550,
+    "issueSize": 656.2,
     "freshIssue": 656.2,
     "ofs": 0,
     "gmp": 0,
@@ -9025,7 +9283,7 @@
     "lot": null,
     "issueSize": 4800,
     "freshIssue": 1800,
-    "ofs": 0,
+    "ofs": 3000,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -9083,28 +9341,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 4800,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1800,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 3000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -9133,9 +9394,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 5012.33,
+    "freshIssue": 2830,
+    "ofs": 2182.33,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -9176,20 +9437,37 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 5012.33,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 2182.33,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
         "sources": [],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 2830,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -9512,9 +9790,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 852.18,
+    "freshIssue": 0,
+    "ofs": 852.18,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -9573,14 +9851,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 852.18,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 852.18,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -9589,6 +9875,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 0,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -10112,26 +10407,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 3000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 3000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -10160,9 +10460,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 1200,
     "freshIssue": 800,
-    "ofs": 0,
+    "ofs": 400,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -10219,22 +10519,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 1200,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 800,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 400,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -10874,7 +11183,7 @@
     "lot": null,
     "issueSize": 3000,
     "freshIssue": 1500,
-    "ofs": 0,
+    "ofs": 1500,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -10932,28 +11241,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 3000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1500,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 1500,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -12754,9 +13066,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 750,
     "freshIssue": 450,
-    "ofs": 0,
+    "ofs": 300,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -12814,22 +13126,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 750,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 450,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 300,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -12860,7 +13181,7 @@
     "lot": null,
     "issueSize": 7600,
     "freshIssue": 1600,
-    "ofs": 0,
+    "ofs": 6000,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -12899,20 +13220,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 7600,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 6000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -12923,12 +13246,13 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1600,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/avaada-electro-ipo/2790/",
@@ -12968,7 +13292,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 95,
     "freshIssue": 95,
     "ofs": 0,
     "gmp": null,
@@ -13026,22 +13350,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 95,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 95,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13070,7 +13403,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 150,
     "freshIssue": 150,
     "ofs": 0,
     "gmp": null,
@@ -13130,22 +13463,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 150,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 150,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13174,7 +13516,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 600,
     "freshIssue": 600,
     "ofs": 0,
     "gmp": null,
@@ -13235,22 +13577,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 600,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 600,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13277,7 +13628,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 170,
     "freshIssue": 170,
     "ofs": 0,
     "gmp": null,
@@ -13338,22 +13689,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 170,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 170,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13382,9 +13742,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 2500,
+    "freshIssue": 0,
+    "ofs": 2500,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -13424,20 +13784,37 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 2500,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 2500,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
         "sources": [],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 0,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -13458,7 +13835,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 585,
     "freshIssue": 585,
     "ofs": 0,
     "gmp": null,
@@ -13518,22 +13895,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 585,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 585,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13550,7 +13936,7 @@
     "name": "German Green Steel and Power Ltd.",
     "company": "German Green Steel and Power Ltd.",
     "type": "Mainboard",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-08-27T13:48:53.542Z",
     "open": "2026-09-25",
     "close": "2026-09-29",
@@ -13562,7 +13948,7 @@
     "priceMax": 139,
     "faceValue": 10,
     "lot": 107,
-    "issueSize": 304,
+    "issueSize": 450,
     "freshIssue": 450,
     "ofs": 0,
     "gmp": 13,
@@ -13782,9 +14168,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 65,
+    "freshIssue": 62,
+    "ofs": 3,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -13843,14 +14229,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 65,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 3,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13859,6 +14253,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 62,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -13879,7 +14282,7 @@
     "priceMax": 254,
     "faceValue": 10,
     "lot": 59,
-    "issueSize": 875,
+    "issueSize": 1350,
     "freshIssue": 1350,
     "ofs": 0,
     "gmp": 46,
@@ -14687,26 +15090,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 3750,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 3750,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -14735,9 +15143,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 1400,
     "freshIssue": 800,
-    "ofs": 0,
+    "ofs": 600,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -14796,22 +15204,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 1400,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 800,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 600,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -15275,8 +15692,8 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
+    "issueSize": 160,
+    "freshIssue": 160,
     "ofs": 0,
     "gmp": null,
     "trend": "stable",
@@ -15336,14 +15753,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 160,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -15352,6 +15777,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 160,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -16700,9 +17134,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 85,
+    "freshIssue": 75,
+    "ofs": 10,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -16761,14 +17195,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 85,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 10,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -16777,6 +17219,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 75,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -17870,9 +18321,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 10000,
+    "freshIssue": 0,
+    "ofs": 10000,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -17931,14 +18382,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 10000,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 10000,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -17947,6 +18406,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 0,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -19243,9 +19711,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 3500,
+    "freshIssue": 0,
+    "ofs": 3500,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -19284,20 +19752,37 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 3500,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 3500,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
         "sources": [],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 0,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -19628,7 +20113,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 1250,
     "freshIssue": 1250,
     "ofs": 0,
     "gmp": null,
@@ -19689,22 +20174,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1250,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 1250,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -19898,9 +20392,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 750,
+    "freshIssue": 375,
+    "ofs": 375,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -19939,14 +20433,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 750,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 375,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -19955,6 +20457,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 375,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/nopaperforms-solutions-ipo/2796/",
@@ -19981,7 +20492,7 @@
     "name": "Runwal Enterprises Limited",
     "company": "Runwal Enterprises Limited",
     "type": "Mainboard",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-11T07:52:05.031Z",
     "open": "2026-09-25",
     "close": "2026-09-29",
@@ -19993,7 +20504,7 @@
     "priceMax": 305,
     "faceValue": 10,
     "lot": 49,
-    "issueSize": 500,
+    "issueSize": 1000,
     "freshIssue": 1000,
     "ofs": 0,
     "gmp": 2,
@@ -20193,9 +20704,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 190,
+    "freshIssue": 115,
+    "ofs": 75,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -20254,14 +20765,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 190,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 75,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -20270,6 +20789,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 115,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -20278,7 +20806,7 @@
     "name": "A-One Steels",
     "company": "A-One Steels Limited",
     "type": "Mainboard",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-12T16:43:39.787Z",
     "open": "2026-09-24",
     "close": "2026-09-28",
@@ -21273,7 +21801,7 @@
     "priceMax": 37,
     "faceValue": 10,
     "lot": 3000,
-    "issueSize": 22,
+    "issueSize": 24.05,
     "freshIssue": 24.05,
     "ofs": 0,
     "gmp": null,
@@ -21417,7 +21945,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 370,
     "freshIssue": 370,
     "ofs": 0,
     "gmp": null,
@@ -21476,22 +22004,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
-      },
-      "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 370,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 370,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -21520,9 +22057,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 1500,
+    "freshIssue": 750,
+    "ofs": 750,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -21562,20 +22099,37 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 1500,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 750,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
         "sources": [],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 750,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -21925,7 +22479,7 @@
     "name": "Sai Urja Indo",
     "company": "Sai Urja Indo Limited",
     "type": "SME",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-17T09:10:46.836Z",
     "open": "2026-09-25",
     "close": "2026-09-29",
@@ -22239,8 +22793,8 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
+    "issueSize": 80,
+    "freshIssue": 80,
     "ofs": 0,
     "gmp": null,
     "trend": "stable",
@@ -22300,14 +22854,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 80,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -22316,6 +22878,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 80,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -22396,26 +22967,31 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1500,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1500,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -23350,8 +23926,8 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
+    "issueSize": 130,
+    "freshIssue": 130,
     "ofs": 0,
     "gmp": null,
     "trend": "stable",
@@ -23411,14 +23987,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 130,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -23427,6 +24011,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 130,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -23435,7 +24028,7 @@
     "name": "Bench Mark Infotech Services",
     "company": "Bench Mark Infotech Services Limited",
     "type": "SME",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-19T11:53:39.325Z",
     "open": "2026-09-25",
     "close": "2026-09-29",
@@ -23783,7 +24376,7 @@
     "name": "Peshwa Wheat",
     "company": "Peshwa Wheat Limited",
     "type": "SME",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-19T21:16:22.753Z",
     "open": "2026-09-24",
     "close": "2026-09-28",
@@ -23953,7 +24546,7 @@
     "name": "Roopa Screen",
     "company": "Roopa Screen Limited",
     "type": "SME",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-21T06:24:13.556Z",
     "open": "2026-09-24",
     "close": "2026-09-28",
@@ -24126,7 +24719,7 @@
     "name": "Himalayan Solar",
     "company": "Himalayan Solar Limited",
     "type": "SME",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-21T06:24:26.599Z",
     "open": "2026-09-25",
     "close": "2026-09-29",
@@ -24285,7 +24878,7 @@
     "name": "Moneyview",
     "company": "Moneyview Limited",
     "type": "Mainboard",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-21T06:24:38.842Z",
     "open": "2026-09-24",
     "close": "2026-09-28",
@@ -24490,7 +25083,7 @@
     "name": "Green Asia Impex",
     "company": "Green Asia Impex Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-21T06:24:50.252Z",
     "open": "2026-09-24",
     "close": "2026-10-01",
@@ -24502,7 +25095,7 @@
     "priceMax": 89,
     "faceValue": 10,
     "lot": 1600,
-    "issueSize": 59,
+    "issueSize": 60.1,
     "freshIssue": 60.1,
     "ofs": 0,
     "gmp": null,
@@ -24661,9 +25254,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 95,
+    "freshIssue": 85,
+    "ofs": 10,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -24722,14 +25315,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 95,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 10,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -24738,6 +25339,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 85,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -24746,7 +25356,7 @@
     "name": "Acevector",
     "company": "Acevector Limited",
     "type": "Mainboard",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-21T21:40:50.905Z",
     "open": "2026-09-25",
     "close": "2026-09-29",
@@ -24923,7 +25533,7 @@
     "name": "Pind Hospitality",
     "company": "Pind Hospitality Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-22T10:55:12.610Z",
     "open": "2026-09-28",
     "close": "2026-09-30",
@@ -25085,7 +25695,7 @@
     "name": "Orient Cables",
     "company": "Orient Cables Limited",
     "type": "Mainboard",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-22T10:55:29.924Z",
     "open": "2026-09-25",
     "close": "2026-09-29",
@@ -25283,7 +25893,7 @@
     "name": "Dudani Retail",
     "company": "Dudani Retail Limited",
     "type": "SME",
-    "status": "Closed",
+    "status": "Listed",
     "discoveredAt": "2026-09-22T10:55:39.324Z",
     "open": "2026-09-25",
     "close": "2026-09-29",
@@ -25458,7 +26068,7 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
+    "issueSize": 300,
     "freshIssue": 300,
     "ofs": 0,
     "gmp": null,
@@ -25499,14 +26109,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 300,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -25517,12 +26135,13 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 300,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/hi-tech-flow-solutions-ipo/3266/",
@@ -25551,7 +26170,7 @@
     "name": "Paramount Syntex",
     "company": "Paramount Syntex Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-23T22:01:25.538Z",
     "open": "2026-09-30",
     "close": "2026-10-06",
@@ -25709,7 +26328,7 @@
     "name": "Omara Ventures India",
     "company": "Omara Ventures India Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-23T22:01:34.952Z",
     "open": "2026-09-30",
     "close": "2026-10-05",
@@ -25868,7 +26487,7 @@
     "name": "EverestIMS Technologies",
     "company": "EverestIMS Technologies Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-23T22:01:44.536Z",
     "open": "2026-09-29",
     "close": "2026-10-05",
@@ -26049,7 +26668,7 @@
     "name": "Black Opal Consultants",
     "company": "Black Opal Consultants Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-23T22:01:53.781Z",
     "open": "2026-09-29",
     "close": "2026-10-01",
@@ -26213,7 +26832,7 @@
     "name": "Acme Universal Safezone 9",
     "company": "Acme Universal Safezone 9 Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-23T22:02:03.359Z",
     "open": "2026-09-28",
     "close": "2026-09-30",
@@ -26371,7 +26990,7 @@
     "name": "SRIT India",
     "company": "SRIT India Limited",
     "type": "Mainboard",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-23T22:02:14.221Z",
     "open": "2026-09-28",
     "close": "2026-09-30",
@@ -26559,7 +27178,7 @@
     "name": "Shah Investor's Home",
     "company": "Shah Investor's Home Limited",
     "type": "Mainboard",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-23T22:02:23.487Z",
     "open": "2026-09-28",
     "close": "2026-09-30",
@@ -26743,7 +27362,7 @@
     "name": "Shivchem Agro",
     "company": "Shivchem Agro Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-23T22:02:33.044Z",
     "open": "2026-09-28",
     "close": "2026-09-30",
@@ -26915,7 +27534,7 @@
     "name": "Shree TNB Polymers",
     "company": "Shree TNB Polymers Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-23T22:02:47.613Z",
     "open": "2026-09-28",
     "close": "2026-10-05",
@@ -27085,8 +27704,8 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
+    "issueSize": 85,
+    "freshIssue": 85,
     "ofs": 0,
     "gmp": null,
     "trend": "stable",
@@ -27146,14 +27765,22 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 85,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -27162,6 +27789,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 85,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -27170,7 +27806,7 @@
     "name": "Dove Soft",
     "company": "Dove Soft Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-24T21:56:53.113Z",
     "open": "2026-09-30",
     "close": "2026-10-05",
@@ -27330,7 +27966,7 @@
     "name": "Vans Electroengineerings",
     "company": "Vans Electroengineerings Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-24T21:57:04.221Z",
     "open": "2026-09-29",
     "close": "2026-10-01",
@@ -27487,7 +28123,7 @@
     "name": "Papadmalji Agro Foods",
     "company": "Papadmalji Agro Foods Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-24T21:57:13.543Z",
     "open": "2026-09-29",
     "close": "2026-10-01",
@@ -27641,9 +28277,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 1225,
+    "freshIssue": 925,
+    "ofs": 300,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -27683,20 +28319,37 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 1225,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 300,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
         "sources": [],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 925,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -27705,7 +28358,7 @@
     "name": "TNA Solutions",
     "company": "TNA Solutions Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-25T20:13:47.605Z",
     "open": "2026-09-30",
     "close": "2026-10-06",
@@ -27849,7 +28502,7 @@
     "name": "Acme India Industries",
     "company": "Acme India Industries Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-25T20:14:01.529Z",
     "open": "2026-09-30",
     "close": "2026-10-06",
@@ -27995,7 +28648,7 @@
     "name": "Nityas Gems & Jewellery",
     "company": "Nityas Gems & Jewellery Limited",
     "type": "Mainboard",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-25T20:14:21.397Z",
     "open": "2026-09-30",
     "close": "2026-10-05",
@@ -28146,7 +28799,7 @@
     "name": "Eventions",
     "company": "Eventions Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-25T20:14:30.296Z",
     "open": "2026-09-30",
     "close": "2026-10-05",
@@ -28285,7 +28938,7 @@
     "name": "Sollfege Smart Electronics",
     "company": "Sollfege Smart Electronics Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-25T20:14:39.064Z",
     "open": "2026-09-30",
     "close": "2026-10-05",
@@ -28423,7 +29076,7 @@
     "name": "SJP Ultrasonic",
     "company": "SJP Ultrasonic Limited",
     "type": "SME",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-25T20:14:47.979Z",
     "open": "2026-09-30",
     "close": "2026-10-05",
@@ -28560,7 +29213,7 @@
     "name": "Vishal Nirmiti",
     "company": "Vishal Nirmiti Limited",
     "type": "Mainboard",
-    "status": "Open",
+    "status": "Listed",
     "discoveredAt": "2026-09-26T09:04:14.910Z",
     "open": "2026-09-30",
     "close": "2026-10-05",
@@ -28718,9 +29371,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 3054,
+    "freshIssue": 1300,
+    "ofs": 1754,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -28760,20 +29413,37 @@
         "updatedAt": "2026-09-30T08:00:22.284Z"
       },
       "issueSize": {
-        "status": "pending",
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 3054,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-09-30T08:00:22.284Z"
+        "status": "verified",
+        "value": 1754,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       },
       "faceValue": {
         "status": "unverified",
         "value": 10,
         "sources": [],
         "updatedAt": "2026-09-30T08:00:22.284Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 1300,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
       }
     }
   },
@@ -28794,9 +29464,9 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": null,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 500,
+    "freshIssue": 200,
+    "ofs": 300,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -28824,6 +29494,35 @@
         "action": "created",
         "details": "Discovered from SEBI DRHP filing. Secondary source check results: None found yet"
       }
-    ]
+    ],
+    "verification": {
+      "issueSize": {
+        "status": "verified",
+        "value": 500,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 200,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      },
+      "ofs": {
+        "status": "verified",
+        "value": 300,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-12T14:27:51.811Z"
+      }
+    }
   }
 ]

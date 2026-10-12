@@ -337,6 +337,12 @@ async function main() {
           existingIpo.drhp = rawDrhpUrl;
         }
 
+        if (existingIpo.issueSize == null && existingIpo.freshIssue != null) {
+          const derived = Number(existingIpo.freshIssue) + Number(existingIpo.ofs || 0);
+          changes.issueSize = { old: null, new: derived };
+          existingIpo.issueSize = derived;
+        }
+
         // If changes detected, log and record in audit trail
         if (Object.keys(changes).length > 0) {
           existingIpo.auditTrail.push({
