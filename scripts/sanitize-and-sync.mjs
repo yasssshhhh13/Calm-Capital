@@ -125,12 +125,49 @@ export function sanitizeAndSync() {
     }
 
     // 5. Issue Size Hygiene & Mathematical Integrity
+    if (ipo.issueSize != null) {
+      if (ipo.ofs != null && Math.abs(ipo.ofs - ipo.issueSize) < 0.1) {
+        // 100% OFS issue
+        ipo.freshIssue = 0;
+      } else if (ipo.freshIssue != null && Math.abs(ipo.freshIssue - ipo.issueSize) < 0.1) {
+        // 100% Fresh issue
+        ipo.ofs = 0;
+      } else if (ipo.type === "Mainboard" && ipo.freshIssue != null && ipo.freshIssue > 0 && ipo.freshIssue < 10 && ipo.issueSize >= 50) {
+        if (ipo.ofs != null && ipo.ofs > 0 && ipo.issueSize > ipo.ofs) {
+          ipo.freshIssue = Number((ipo.issueSize - ipo.ofs).toFixed(2));
+        } else {
+          ipo.freshIssue = ipo.issueSize;
+          ipo.ofs = 0;
+        }
+        issueSizeFixes++;
+      } else if (ipo.type === "SME" && ipo.freshIssue != null && ipo.freshIssue > 0 && ipo.freshIssue < 1 && ipo.issueSize >= 10) {
+        if (ipo.ofs != null && ipo.ofs > 0 && ipo.issueSize > ipo.ofs) {
+          ipo.freshIssue = Number((ipo.issueSize - ipo.ofs).toFixed(2));
+        } else {
+          ipo.freshIssue = ipo.issueSize;
+          ipo.ofs = 0;
+        }
+        issueSizeFixes++;
+      }
+    }
+
     if (ipo.issueSize == null && ipo.freshIssue != null) {
       ipo.issueSize = Number(ipo.freshIssue) + Number(ipo.ofs || 0);
       issueSizeFixes++;
     } else if (ipo.freshIssue != null && ipo.issueSize != null && ipo.issueSize < ipo.freshIssue) {
       ipo.issueSize = Number(ipo.freshIssue) + Number(ipo.ofs || 0);
       issueSizeFixes++;
+    }
+
+    // Component balancing
+    if (ipo.issueSize != null) {
+      if (ipo.freshIssue != null && ipo.freshIssue > 0 && (ipo.ofs == null || ipo.ofs === 0) && ipo.issueSize > ipo.freshIssue) {
+        ipo.ofs = Number((ipo.issueSize - ipo.freshIssue).toFixed(2));
+        issueSizeFixes++;
+      } else if (ipo.ofs != null && ipo.ofs > 0 && (ipo.freshIssue == null || ipo.freshIssue === 0) && ipo.issueSize > ipo.ofs) {
+        ipo.freshIssue = Number((ipo.issueSize - ipo.ofs).toFixed(2));
+        issueSizeFixes++;
+      }
     }
 
     // Unmask verified/valid issue sizes from stuck pending state
@@ -148,6 +185,11 @@ export function sanitizeAndSync() {
   // 6. Clean Live Overlay Store (live-data.json)
   let liveCleanups = 0;
   if (liveData && liveData.ipos) {
+    if (liveData.ipos["bonfigloli-transmissions"]) {
+      delete liveData.ipos["bonfigloli-transmissions"];
+      liveCleanups++;
+    }
+
     for (const [id, patch] of Object.entries(liveData.ipos)) {
       const baseIpo = ipos.find((i) => i.id === id);
       if (!baseIpo) continue;
@@ -171,6 +213,20 @@ export function sanitizeAndSync() {
         delete patch.gmp;
         delete patch.estListing;
         liveCleanups++;
+      }
+
+      // Keep live verification synchronized with verified base values
+      if (baseIpo.verification) {
+        if (!patch.verification) patch.verification = {};
+        if (baseIpo.verification.issueSize?.status === "verified") {
+          patch.verification.issueSize = baseIpo.verification.issueSize;
+        }
+        if (baseIpo.verification.freshIssue?.status === "verified") {
+          patch.verification.freshIssue = baseIpo.verification.freshIssue;
+        }
+        if (baseIpo.verification.ofs?.status === "verified") {
+          patch.verification.ofs = baseIpo.verification.ofs;
+        }
       }
     }
   }

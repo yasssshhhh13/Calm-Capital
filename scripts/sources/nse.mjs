@@ -69,8 +69,9 @@ function normalizeRecords(json) {
     // NSE issueSize is often shares count or a "₹ X Cr" string - only trust the Cr form.
     let issueSize = null;
     if (typeof issueSizeRaw === "string" && /cr/i.test(issueSizeRaw)) {
-      const m = issueSizeRaw.replace(/,/g, "").match(/([\d.]+)\s*cr/i);
-      if (m) issueSize = parseFloat(m[1]);
+      const cleaned = issueSizeRaw.replace(/,/g, "");
+      const rupeeM = cleaned.match(/(?:₹|rs\.?|inr)?\s*([\d.]+)\s*(?:cr|crore)\b(?!\s*(?:eq(?:uity)?)?\s*shares)/i);
+      if (rupeeM) issueSize = parseFloat(rupeeM[1]);
     }
     out.push({
       name,

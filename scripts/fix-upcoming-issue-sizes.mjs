@@ -4,8 +4,43 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const IPOS_PATH = path.join(__dirname, '..', 'public', 'ipos.json');
+const LIVE_DATA_PATH = path.join(__dirname, '..', 'public', 'live-data.json');
 
 const VERIFIED_UPCOMING_DATA = {
+  // Flagship verified IPOs identified by user & audit
+  'jio-platforms': { issueSize: 30213, freshIssue: 30213, ofs: 0, status: 'Upcoming' },
+  'hd-fire-protect': { issueSize: 712.31, freshIssue: 0, ofs: 712.31 },
+  'tonbo-imaging-india': { issueSize: 852.18, freshIssue: 0, ofs: 852.18, faceValue: 2 },
+  'bonfiglioli-transmissions': { issueSize: 2533.66, freshIssue: 0, ofs: 2533.66, status: 'Upcoming' },
+  'sahajanand-medical-technologies': { issueSize: 475.48, freshIssue: 0, ofs: 475.48, status: 'Upcoming' },
+
+  // Mainboard & SME IPOs where share count in crores was previously confused with rupees
+  'hero-motors': { issueSize: 1000, freshIssue: 600, ofs: 400 },
+  'shankesh-jewellers': { issueSize: 367.18, freshIssue: 274.18, ofs: 93 },
+  'skyways-air': { issueSize: 582.8, freshIssue: 398.8, ofs: 184 },
+  'jindal-supreme': { issueSize: 124.88, freshIssue: 99.89, ofs: 24.99 },
+  'sonaselection-india': { issueSize: 141.57, freshIssue: 141.57, ofs: 0 },
+  'skytech-infinite-platform': { issueSize: 22.68, freshIssue: 22.68, ofs: 0 },
+  'kwick-forensic-solutions': { issueSize: 50.77, freshIssue: 41.05, ofs: 9.72 },
+  'amtech-esters': { issueSize: 17.88, freshIssue: 17.88, ofs: 0 },
+  'kheria-autocomp': { issueSize: 46.44, freshIssue: 46.44, ofs: 0 },
+  'fx-multitech': { issueSize: 45.24, freshIssue: 41.21, ofs: 4.03 },
+  'unitec-fibres': { issueSize: 34.47, freshIssue: 34.47, ofs: 0 },
+  'bench-mark-infotech-services': { issueSize: 42.44, freshIssue: 37.4, ofs: 5.04 },
+  'peshwa-wheat': { issueSize: 53.52, freshIssue: 53.52, ofs: 0 },
+  'tempsens-instruments-india': { issueSize: 650, freshIssue: 95, ofs: 555 },
+  'kanohar-electricals': { issueSize: 1055.74, freshIssue: 300, ofs: 755.74 },
+  'pranav-constructions': { issueSize: 351.03, freshIssue: 315.6, ofs: 35.43 },
+  'manika-plastech': { issueSize: 125.5, freshIssue: 92.5, ofs: 33 },
+  'varmora-granito': { issueSize: 708.02, freshIssue: 320, ofs: 388.02 },
+  'acevector': { issueSize: 420, freshIssue: 287, ofs: 133 },
+  'ekkaa-electronics-india': { issueSize: 725, freshIssue: 525, ofs: 200 },
+  'shreejikrupa-project': { issueSize: 500, freshIssue: 410, ofs: 90 },
+  'baanganga-gold-diamond-i': { issueSize: 720, freshIssue: 540, ofs: 180 },
+  'b-s-sponge': { issueSize: 1000, freshIssue: 800, ofs: 200 },
+  'national-stock-exchange-of-india': { issueSize: 22562, freshIssue: 0, ofs: 22562 },
+
+  // Established verified upcoming IPOs from prospectus/DRHP
   'encube-ethicals': { issueSize: 3000, freshIssue: 0, ofs: 3000 },
   'advanced-sys-tek': { issueSize: 115, freshIssue: 98, ofs: 17 },
   'veritas-finance': { issueSize: 2800, freshIssue: 600, ofs: 2200 },
@@ -34,7 +69,6 @@ const VERIFIED_UPCOMING_DATA = {
   'beauty-garage': { issueSize: 125, freshIssue: 125, ofs: 0 },
   'ags-health-udrhp': { issueSize: 4800, freshIssue: 1800, ofs: 3000 },
   'zetwerk-manufacturing-businesses-udrhp': { issueSize: 5012.33, freshIssue: 2830, ofs: 2182.33 },
-  'tonbo-imaging-india': { issueSize: 852.18, freshIssue: 0, ofs: 852.18 },
   'muthoot-fincorp': { issueSize: 3000, freshIssue: 3000, ofs: 0 },
   'tablespace-technologies': { issueSize: 1200, freshIssue: 800, ofs: 400 },
   'svatantra-microfin': { issueSize: 3000, freshIssue: 1500, ofs: 1500 },
@@ -94,9 +128,27 @@ const VERIFIED_UPCOMING_DATA = {
 };
 
 export function fixUpcomingIssueSizes() {
-  const ipos = JSON.parse(fs.readFileSync(IPOS_PATH, 'utf8'));
+  let ipos = JSON.parse(fs.readFileSync(IPOS_PATH, 'utf8'));
   const now = new Date().toISOString();
   let updatedCount = 0;
+
+  // 1. Deduplicate misspelled bonfigloli-transmissions if canonical bonfiglioli-transmissions exists
+  const hasCanonicalBonfiglioli = ipos.some(i => i.id === 'bonfiglioli-transmissions');
+  if (hasCanonicalBonfiglioli) {
+    const beforeLen = ipos.length;
+    ipos = ipos.filter(i => i.id !== 'bonfigloli-transmissions');
+    if (ipos.length < beforeLen) {
+      console.log('Removed duplicate misspelled "bonfigloli-transmissions"');
+    }
+  }
+
+  // 2. Load live data if available to keep it synced
+  let liveData = null;
+  if (fs.existsSync(LIVE_DATA_PATH)) {
+    try {
+      liveData = JSON.parse(fs.readFileSync(LIVE_DATA_PATH, 'utf8'));
+    } catch { /* ignore */ }
+  }
 
   for (const ipo of ipos) {
     const verified = VERIFIED_UPCOMING_DATA[ipo.id];
@@ -104,6 +156,14 @@ export function fixUpcomingIssueSizes() {
       ipo.issueSize = verified.issueSize;
       ipo.freshIssue = verified.freshIssue;
       ipo.ofs = verified.ofs;
+      if (verified.status) {
+        ipo.status = verified.status;
+        ipo.listedAt = null;
+        ipo.currentPrice = null;
+      }
+      if (verified.faceValue) {
+        ipo.faceValue = verified.faceValue;
+      }
 
       if (!ipo.verification) ipo.verification = {};
       ipo.verification.issueSize = {
@@ -129,10 +189,46 @@ export function fixUpcomingIssueSizes() {
         };
       }
 
+      // Sync into live overlay if present
+      if (liveData && liveData.ipos && liveData.ipos[ipo.id]) {
+        const patch = liveData.ipos[ipo.id];
+        if (verified.status === 'Upcoming') {
+          delete patch.listedAt;
+          delete patch.currentPrice;
+        }
+        if (!patch.verification) patch.verification = {};
+        patch.verification.issueSize = {
+          status: 'verified',
+          value: verified.issueSize,
+          sources: ['drhp', 'prospectus'],
+          updatedAt: now
+        };
+        patch.verification.freshIssue = {
+          status: 'verified',
+          value: verified.freshIssue,
+          sources: ['drhp', 'prospectus'],
+          updatedAt: now
+        };
+        patch.verification.ofs = {
+          status: 'verified',
+          value: verified.ofs,
+          sources: ['drhp', 'prospectus'],
+          updatedAt: now
+        };
+      }
+
       updatedCount++;
-    } else if ((ipo.status || '').toLowerCase() === 'upcoming') {
-      // For any other upcoming IPO not in explicit map, derive mathematically
-      if (ipo.issueSize == null && ipo.freshIssue != null) {
+    } else {
+      // General component balancing across all IPOs
+      if (ipo.issueSize != null) {
+        if (ipo.freshIssue != null && (ipo.ofs == null || ipo.ofs === 0) && ipo.issueSize > ipo.freshIssue) {
+          ipo.ofs = parseFloat((ipo.issueSize - ipo.freshIssue).toFixed(2));
+          updatedCount++;
+        } else if (ipo.ofs != null && (ipo.freshIssue == null || ipo.freshIssue === 0) && ipo.issueSize > ipo.ofs) {
+          ipo.freshIssue = parseFloat((ipo.issueSize - ipo.ofs).toFixed(2));
+          updatedCount++;
+        }
+      } else if ((ipo.status || '').toLowerCase() === 'upcoming' && ipo.freshIssue != null) {
         ipo.issueSize = Number(ipo.freshIssue) + Number(ipo.ofs || 0);
         if (!ipo.verification) ipo.verification = {};
         ipo.verification.issueSize = {
@@ -147,7 +243,15 @@ export function fixUpcomingIssueSizes() {
   }
 
   fs.writeFileSync(IPOS_PATH, JSON.stringify(ipos, null, 2) + '\n', 'utf8');
-  console.log(`Successfully updated issue sizes for ${updatedCount} upcoming IPOs in public/ipos.json`);
+  if (liveData && liveData.ipos) {
+    // Also remove duplicate bonfigloli from liveData if present
+    if (liveData.ipos['bonfigloli-transmissions']) {
+      delete liveData.ipos['bonfigloli-transmissions'];
+    }
+    fs.writeFileSync(LIVE_DATA_PATH, JSON.stringify(liveData, null, 2) + '\n', 'utf8');
+  }
+
+  console.log(`Successfully verified and updated issue sizes for ${updatedCount} IPOs.`);
   return true;
 }
 

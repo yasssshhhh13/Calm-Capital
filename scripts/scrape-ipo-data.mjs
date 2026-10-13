@@ -120,16 +120,28 @@ function applyDetailInfo(ipo, detailInfo) {
     }
   }
   if (validNum(detailInfo.lot) && ipo.lot == null) { ipo.lot = detailInfo.lot; changed = true; console.log(`[LOT] "${ipo.name}" -> ${ipo.lot} shares`); }
-  if (validNum(detailInfo.freshIssue) && ipo.freshIssue == null) { ipo.freshIssue = detailInfo.freshIssue; changed = true; }
+  const isSuspiciousTinyMainboard = ipo.type === "Mainboard" && validNum(detailInfo.issueSize) && detailInfo.issueSize < 50;
+  if (validNum(detailInfo.freshIssue) && ipo.freshIssue == null && !(ipo.type === "Mainboard" && detailInfo.freshIssue < 10)) {
+    ipo.freshIssue = detailInfo.freshIssue; changed = true;
+  }
   if (validNum(detailInfo.ofs) && ipo.ofs == null) { ipo.ofs = detailInfo.ofs; changed = true; }
-  if (validNum(detailInfo.issueSize) && (ipo.issueSize == null || ipo.issueSize < (ipo.freshIssue || 0))) {
+  if (validNum(detailInfo.issueSize) && !isSuspiciousTinyMainboard && (ipo.issueSize == null || ipo.issueSize < (ipo.freshIssue || 0))) {
     ipo.issueSize = detailInfo.issueSize;
     changed = true;
     console.log(`[ISSUE SIZE] "${ipo.name}" -> ₹${ipo.issueSize} Cr`);
-  } else if (ipo.issueSize == null && validNum(ipo.freshIssue)) {
+  } else if (ipo.issueSize == null && validNum(ipo.freshIssue) && !(ipo.type === "Mainboard" && ipo.freshIssue < 10)) {
     ipo.issueSize = Number(ipo.freshIssue) + Number(ipo.ofs || 0);
     changed = true;
     console.log(`[ISSUE SIZE DERIVED] "${ipo.name}" -> ₹${ipo.issueSize} Cr`);
+  }
+  if (ipo.issueSize != null) {
+    if (ipo.freshIssue != null && (ipo.ofs == null || ipo.ofs === 0) && ipo.issueSize > ipo.freshIssue) {
+      ipo.ofs = parseFloat((ipo.issueSize - ipo.freshIssue).toFixed(2));
+      changed = true;
+    } else if (ipo.ofs != null && (ipo.freshIssue == null || ipo.freshIssue === 0) && ipo.issueSize > ipo.ofs) {
+      ipo.freshIssue = parseFloat((ipo.issueSize - ipo.ofs).toFixed(2));
+      changed = true;
+    }
   }
   if (validNum(detailInfo.faceValue) && ipo.faceValue == null) { ipo.faceValue = detailInfo.faceValue; changed = true; }
   
@@ -357,6 +369,23 @@ async function main() {
       let detailInfo = { registrar: null, leadManager: null, detailUrl: null };
       if (href) detailInfo = await scrapeIpoDetailPage(page, href);
 
+      let finalIssueSize = detailInfo.issueSize || issueSize;
+      if (type === "Mainboard" && finalIssueSize != null && finalIssueSize < 50) {
+        finalIssueSize = null;
+      }
+      let finalFresh = detailInfo.freshIssue != null ? detailInfo.freshIssue : finalIssueSize;
+      if (type === "Mainboard" && finalFresh != null && finalFresh < 10) {
+        finalFresh = null;
+      }
+      let finalOfs = detailInfo.ofs != null ? detailInfo.ofs : 0;
+      if (finalIssueSize != null) {
+        if (finalFresh != null && finalOfs === 0 && finalIssueSize > finalFresh) {
+          finalOfs = parseFloat((finalIssueSize - finalFresh).toFixed(2));
+        } else if (finalOfs != null && (!finalFresh || finalFresh === 0) && finalIssueSize > finalOfs) {
+          finalFresh = parseFloat((finalIssueSize - finalOfs).toFixed(2));
+        }
+      }
+
       const newIpo = {
         id,
         name: cleanedName,
@@ -365,8 +394,10 @@ async function main() {
         status: calculateStatus({ open, close, listing }),
         discoveredAt: new Date().toISOString(),
         open, close, listing, allotment, refund, demat,
-        priceMin, priceMax, faceValue: 10, lot, issueSize,
-        freshIssue: issueSize, ofs: 0,
+        priceMin, priceMax, faceValue: detailInfo.faceValue || 10, lot,
+        issueSize: finalIssueSize,
+        freshIssue: finalFresh,
+        ofs: finalOfs,
         gmp: gmp != null ? gmp : null,
         trend: gmp && gmp > 0 ? "up" : gmp && gmp < 0 ? "down" : "stable",
         estListing, listedAt: null, currentPrice: null,

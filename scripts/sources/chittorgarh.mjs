@@ -98,14 +98,54 @@ async function scrapeDetail(page, url) {
         const m = String(s).replace(/,/g, "").match(/-?\d+(?:\.\d+)?/);
         return m ? parseFloat(m[0]) : null;
       };
-      const toCr = (s) => {
+      const toCr = (s, pMax = null) => {
         if (s == null) return null;
-        const str = String(s).replace(/,/g, "");
-        const m = str.match(/([\d.]+)\s*(?:cr|crore|crores)\b/i);
-        if (m) return parseFloat(m[1]);
-        // Chittorgarh sometimes shows "aggregating up to X Cr" after a share count.
-        const m2 = str.match(/agg[^0-9]*([\d.]+)\s*cr/i);
-        if (m2) return parseFloat(m2[1]);
+        const str = String(s).replace(/,/g, "").trim();
+        if (!str || /^(to be announced|tba|-|n\/a)$/i.test(str)) return null;
+
+        // 1. Explicit Rupee amount with Cr/Crore (e.g. "₹712.31 Cr", "Rs. 852.18 Crore", "aggregating up to ₹ 30,213 Cr")
+        const rupeeCrMatch = str.match(/(?:₹|rs\.?|inr)\s*([\d.]+)\s*(?:cr|crore|crores)\b/i);
+        if (rupeeCrMatch) {
+          const val = parseFloat(rupeeCrMatch[1]);
+          if (!isNaN(val) && val > 0) return val;
+        }
+
+        // 1b. "aggregating up to [₹/Rs] X Cr"
+        const aggMatch = str.match(/agg[^0-9]*([\d.]+)\s*(?:cr|crore|crores)\b/i);
+        if (aggMatch) {
+          const val = parseFloat(aggMatch[1]);
+          if (!isNaN(val) && val > 0) return val;
+        }
+
+        // 1c. "raise [funds of] X Cr" or "issue size of X Cr"
+        const phraseMatch = str.match(/(?:issue\s+size(?:\s+of)?|raise\s+(?:funds\s+of)?|worth)\s*[₹Rs.]*\s*([\d.]+)\s*(?:cr|crore|crores)\b/i);
+        if (phraseMatch) {
+          const val = parseFloat(phraseMatch[1]);
+          if (!isNaN(val) && val > 0) return val;
+        }
+
+        // 2. Check if a number is followed by "Cr Shares" / "Crore Shares" - THIS IS SHARE COUNT, NOT RUPEES!
+        const shareCountCrMatch = str.match(/([\d.]+)\s*(?:cr|crore|crores)\s*(?:eq(?:uity)?)?\s*shares\b/i);
+        if (shareCountCrMatch) {
+          const sharesInCr = parseFloat(shareCountCrMatch[1]);
+          const anyRupeeMatch = str.match(/(?:₹|rs\.?|inr)\s*([\d.]+)/i);
+          if (anyRupeeMatch) {
+            const val = parseFloat(anyRupeeMatch[1]);
+            if (!isNaN(val) && val > 0) return val;
+          }
+          if (pMax && !isNaN(pMax) && pMax > 0 && !isNaN(sharesInCr)) {
+            return parseFloat((sharesInCr * pMax).toFixed(2));
+          }
+          return null;
+        }
+
+        // 3. Generic "X Cr" or "X Crore" NOT followed by "shares"
+        const genericCrMatch = str.match(/([\d.]+)\s*(?:cr|crore|crores)\b(?!\s*(?:eq(?:uity)?)?\s*shares)/i);
+        if (genericCrMatch) {
+          const val = parseFloat(genericCrMatch[1]);
+          if (!isNaN(val) && val > 0) return val;
+        }
+
         return null;
       };
       const parseDate = (s) => {
@@ -145,10 +185,10 @@ async function scrapeDetail(page, url) {
         }
         if (fields.lot == null && label.includes("lot size")) fields.lot = firstNum(value);
         if (fields.faceValue == null && label.includes("face value")) fields.faceValue = firstNum(value);
-        if (fields.issueSize == null && label.includes("total issue size")) fields.issueSize = toCr(value);
-        if (fields.issueSize == null && label === "issue size") fields.issueSize = toCr(value);
-        if (fields.freshIssue == null && label.includes("fresh issue")) fields.freshIssue = toCr(value);
-        if (fields.ofs == null && label.includes("offer for sale")) fields.ofs = toCr(value);
+        if (fields.issueSize == null && label.includes("total issue size")) fields.issueSize = toCr(value, fields.priceMax);
+        if (fields.issueSize == null && label === "issue size") fields.issueSize = toCr(value, fields.priceMax);
+        if (fields.freshIssue == null && label.includes("fresh issue")) fields.freshIssue = toCr(value, fields.priceMax);
+        if (fields.ofs == null && label.includes("offer for sale")) fields.ofs = toCr(value, fields.priceMax);
 
         if (fields.open == null && (label === "ipo date" || label.includes("ipo open") || label.includes("open date"))) {
           // "17 to 21 Sep, 2026" or "Sep 17 to Sep 21, 2026" or a single date
@@ -174,9 +214,15 @@ async function scrapeDetail(page, url) {
         if (fields.listing == null && (label === "listing date" || label.includes("listed on") || label.includes("listing at date"))) fields.listing = parseDate(value);
       }
 
-      // Mathematical derivation: If issueSize is not explicitly in table but components exist
+      // Mathematical derivation & balancing
       if (fields.issueSize == null && (fields.freshIssue != null || fields.ofs != null)) {
         fields.issueSize = (fields.freshIssue || 0) + (fields.ofs || 0);
+      } else if (fields.issueSize != null) {
+        if (fields.freshIssue != null && (fields.ofs == null || fields.ofs === 0) && fields.issueSize > fields.freshIssue) {
+          fields.ofs = parseFloat((fields.issueSize - fields.freshIssue).toFixed(2));
+        } else if (fields.ofs != null && (fields.freshIssue == null || fields.freshIssue === 0) && fields.issueSize > fields.ofs) {
+          fields.freshIssue = parseFloat((fields.issueSize - fields.ofs).toFixed(2));
+        }
       }
 
       // Fallback text extraction from prospectus narrative if still missing

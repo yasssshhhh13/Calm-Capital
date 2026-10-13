@@ -4447,7 +4447,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -4456,7 +4456,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4473,7 +4473,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -4558,7 +4558,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -4567,7 +4567,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -4576,7 +4576,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4670,7 +4670,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -4679,7 +4679,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -4688,7 +4688,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -4718,8 +4718,8 @@
     "faceValue": 10,
     "lot": 178,
     "issueSize": 1000,
-    "freshIssue": 800,
-    "ofs": 0,
+    "freshIssue": 600,
+    "ofs": 400,
     "gmp": -3,
     "trend": "down",
     "estListing": 81,
@@ -4852,22 +4852,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1000,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 800,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 600,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 400,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5003,7 +5012,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -5012,7 +5021,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -5021,7 +5030,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5116,7 +5125,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -5125,7 +5134,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -5134,7 +5143,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5228,7 +5237,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -5237,7 +5246,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5254,7 +5263,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -5353,7 +5362,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -5362,7 +5371,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -5371,7 +5380,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5503,7 +5512,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -5512,7 +5521,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5529,7 +5538,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -5616,7 +5625,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -5625,7 +5634,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -5634,7 +5643,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5729,7 +5738,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -5738,7 +5747,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -5747,7 +5756,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5841,7 +5850,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -5850,7 +5859,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -5859,7 +5868,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -5954,7 +5963,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -5963,7 +5972,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -5972,7 +5981,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6067,7 +6076,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -6076,7 +6085,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -6085,7 +6094,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6180,7 +6189,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -6189,7 +6198,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -6198,7 +6207,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6293,7 +6302,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -6302,7 +6311,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -6311,7 +6320,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6406,7 +6415,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -6415,7 +6424,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6432,7 +6441,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -6518,7 +6527,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -6527,7 +6536,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -6536,7 +6545,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6631,7 +6640,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -6640,7 +6649,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -6649,7 +6658,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6744,7 +6753,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -6753,7 +6762,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -6762,7 +6771,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6857,7 +6866,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -6866,7 +6875,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -6875,7 +6884,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6970,7 +6979,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -6979,7 +6988,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -6996,7 +7005,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -7083,7 +7092,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -7092,7 +7101,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -7101,7 +7110,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7196,7 +7205,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -7205,7 +7214,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7222,7 +7231,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -7454,7 +7463,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -7463,7 +7472,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7480,7 +7489,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -7713,7 +7722,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -7722,7 +7731,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -7731,7 +7740,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7760,8 +7769,8 @@
     "priceMax": 77,
     "faceValue": 10,
     "lot": 1600,
-    "issueSize": 23,
-    "freshIssue": 0.28,
+    "issueSize": 22.68,
+    "freshIssue": 22.68,
     "ofs": 0,
     "gmp": 0,
     "trend": "stable",
@@ -7833,22 +7842,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 23,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 22.68,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 0.28,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 22.68,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -7907,9 +7925,9 @@
     "priceMax": 93,
     "faceValue": 10,
     "lot": 160,
-    "issueSize": 367,
-    "freshIssue": 2.95,
-    "ofs": 0,
+    "issueSize": 367.18,
+    "freshIssue": 274.18,
+    "ofs": 93,
     "gmp": 0,
     "trend": "stable",
     "estListing": 93,
@@ -7964,22 +7982,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 367,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 367.18,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 2.95,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 274.18,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 93,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8559,7 +8586,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -8568,7 +8595,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -8577,7 +8604,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -8892,9 +8919,9 @@
     "priceMax": 138,
     "faceValue": 10,
     "lot": 100,
-    "issueSize": 583,
-    "freshIssue": 2.89,
-    "ofs": 0,
+    "issueSize": 582.8,
+    "freshIssue": 398.8,
+    "ofs": 184,
     "gmp": 19,
     "trend": "up",
     "estListing": 157,
@@ -8956,22 +8983,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 583,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 582.8,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 2.89,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 398.8,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 184,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -9397,7 +9433,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -9406,7 +9442,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -9415,7 +9451,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -9506,7 +9542,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -9515,7 +9551,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -9530,7 +9566,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "priceMin": {
         "status": "unverified",
@@ -9609,7 +9645,7 @@
     "lot": 50,
     "issueSize": 650,
     "freshIssue": 95,
-    "ofs": 0,
+    "ofs": 555,
     "gmp": 40,
     "trend": "up",
     "estListing": 340,
@@ -9672,22 +9708,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 650,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 95,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 555,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -9764,7 +9809,7 @@
     "lot": 1200,
     "issueSize": 34.98,
     "freshIssue": 33.22,
-    "ofs": 0,
+    "ofs": 1.76,
     "gmp": 0,
     "trend": "stable",
     "estListing": 102,
@@ -9907,7 +9952,7 @@
     "demat": "2026-10-22",
     "priceMin": 665,
     "priceMax": 700,
-    "faceValue": 10,
+    "faceValue": 2,
     "lot": 21,
     "issueSize": 852.18,
     "freshIssue": 0,
@@ -9989,7 +10034,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -9998,7 +10043,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -10013,7 +10058,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "priceMin": {
         "status": "unverified",
@@ -10371,7 +10416,7 @@
     "lot": 1200,
     "issueSize": 53,
     "freshIssue": 27,
-    "ofs": 0,
+    "ofs": 26,
     "gmp": 0,
     "trend": "stable",
     "estListing": 100,
@@ -10582,7 +10627,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -10591,7 +10636,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -10600,7 +10645,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -10694,7 +10739,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -10703,7 +10748,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -10712,7 +10757,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -10741,9 +10786,9 @@
     "priceMax": 90,
     "faceValue": 10,
     "lot": 1600,
-    "issueSize": 51,
-    "freshIssue": 0.43,
-    "ofs": 0,
+    "issueSize": 50.77,
+    "freshIssue": 41.05,
+    "ofs": 9.72,
     "gmp": 0,
     "trend": "stable",
     "estListing": 90,
@@ -10799,22 +10844,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 51,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 50.77,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 0.43,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 41.05,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 9.72,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -11416,7 +11470,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -11425,7 +11479,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -11434,7 +11488,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13301,7 +13355,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -13310,7 +13364,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -13319,7 +13373,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13395,7 +13449,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -13404,7 +13458,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13421,7 +13475,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/avaada-electro-ipo/2790/",
@@ -13525,7 +13579,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -13534,7 +13588,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -13543,7 +13597,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13638,7 +13692,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -13647,7 +13701,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -13656,7 +13710,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13752,7 +13806,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -13761,7 +13815,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -13770,7 +13824,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13864,7 +13918,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -13873,7 +13927,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -13882,7 +13936,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13959,7 +14013,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -13968,7 +14022,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -13983,7 +14037,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -14070,7 +14124,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -14079,7 +14133,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -14088,7 +14142,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -14406,7 +14460,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -14415,7 +14469,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -14432,7 +14486,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -14750,7 +14804,7 @@
     "lot": 23,
     "issueSize": 1055.74,
     "freshIssue": 300,
-    "ofs": 0,
+    "ofs": 755.74,
     "gmp": 182,
     "trend": "up",
     "estListing": 814,
@@ -14812,22 +14866,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1055.74,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 300,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 755.74,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -15267,7 +15330,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -15276,7 +15339,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -15285,7 +15348,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -15381,7 +15444,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -15390,7 +15453,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -15399,7 +15462,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -15430,7 +15493,7 @@
     "lot": 120,
     "issueSize": 351.03,
     "freshIssue": 315.6,
-    "ofs": 0,
+    "ofs": 35.43,
     "gmp": 53,
     "trend": "up",
     "estListing": 177,
@@ -15492,22 +15555,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 351.03,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 315.6,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 35.43,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -15578,7 +15650,7 @@
     "faceValue": 10,
     "lot": 107,
     "issueSize": 733,
-    "freshIssue": null,
+    "freshIssue": 733,
     "ofs": 0,
     "gmp": 12,
     "trend": "up",
@@ -15716,8 +15788,8 @@
     "priceMax": 75,
     "faceValue": 10,
     "lot": 1600,
-    "issueSize": 18,
-    "freshIssue": 0.23,
+    "issueSize": 17.88,
+    "freshIssue": 17.88,
     "ofs": 0,
     "gmp": 16,
     "trend": "up",
@@ -15789,22 +15861,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 18,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 17.88,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 0.23,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 17.88,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -15930,7 +16011,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -15939,7 +16020,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -15956,7 +16037,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -17168,7 +17249,7 @@
     "lot": 1200,
     "issueSize": 41,
     "freshIssue": 40.88,
-    "ofs": 0,
+    "ofs": 0.12,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -17372,7 +17453,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -17381,7 +17462,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -17398,7 +17479,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -17510,16 +17591,22 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 22562,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 22562,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -17540,10 +17627,13 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "open": {
         "status": "unverified",
@@ -17596,7 +17686,7 @@
     "lot": 348,
     "issueSize": 125.5,
     "freshIssue": 92.5,
-    "ofs": 0,
+    "ofs": 33,
     "gmp": 1,
     "trend": "down",
     "estListing": 44,
@@ -17678,22 +17768,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 125.5,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 92.5,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 33,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -17909,7 +18008,7 @@
     "lot": 1000,
     "issueSize": 25,
     "freshIssue": 24.58,
-    "ofs": 0,
+    "ofs": 0.42,
     "gmp": 3,
     "trend": "up",
     "estListing": 143,
@@ -18559,7 +18658,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -18568,7 +18667,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -18585,7 +18684,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -18934,9 +19033,9 @@
     "priceMax": 93,
     "faceValue": 10,
     "lot": 161,
-    "issueSize": 125,
-    "freshIssue": 1.07,
-    "ofs": 0,
+    "issueSize": 124.88,
+    "freshIssue": 99.89,
+    "ofs": 24.99,
     "gmp": 29,
     "trend": "up",
     "estListing": 122,
@@ -19010,22 +19109,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 125,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 124.88,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 1.07,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 99.89,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 24.99,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -19258,7 +19366,7 @@
     "lot": 2000,
     "issueSize": 51,
     "freshIssue": 49.81,
-    "ofs": 0,
+    "ofs": 1.19,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -19582,8 +19690,8 @@
     "priceMax": 99,
     "faceValue": 10,
     "lot": 150,
-    "issueSize": 142,
-    "freshIssue": 1.43,
+    "issueSize": 141.57,
+    "freshIssue": 141.57,
     "ofs": 0,
     "gmp": null,
     "trend": "down",
@@ -19658,22 +19766,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 142,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 141.57,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 1.43,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 141.57,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -19929,7 +20046,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -19938,7 +20055,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -19953,7 +20070,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -19974,8 +20091,8 @@
     "priceMax": 101,
     "faceValue": 10,
     "lot": 1200,
-    "issueSize": 46,
-    "freshIssue": 0.46,
+    "issueSize": 46.44,
+    "freshIssue": 46.44,
     "ofs": 0,
     "gmp": 3,
     "trend": "down",
@@ -20053,22 +20170,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 46,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 46.44,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 0.46,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 46.44,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -20351,7 +20477,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -20360,7 +20486,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -20369,7 +20495,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -20610,7 +20736,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -20619,7 +20745,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -20636,7 +20762,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/nopaperforms-solutions-ipo/2796/",
@@ -20942,7 +21068,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -20951,7 +21077,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -20968,7 +21094,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -21546,9 +21672,9 @@
     "priceMax": 116,
     "faceValue": 10,
     "lot": 1200,
-    "issueSize": 45,
-    "freshIssue": 0.34,
-    "ofs": 0,
+    "issueSize": 45.24,
+    "freshIssue": 41.21,
+    "ofs": 4.03,
     "gmp": 6.5,
     "trend": "up",
     "estListing": 122.5,
@@ -21627,22 +21753,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 45,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 45.24,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 0.34,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 41.21,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 4.03,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -22183,7 +22318,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -22192,7 +22327,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -22201,7 +22336,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -22278,7 +22413,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -22287,7 +22422,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -22302,7 +22437,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -22324,8 +22459,8 @@
     "faceValue": 10,
     "lot": 101,
     "issueSize": 708.02,
-    "freshIssue": 400,
-    "ofs": 0,
+    "freshIssue": 320,
+    "ofs": 388.02,
     "gmp": 1,
     "trend": "down",
     "estListing": 149,
@@ -22423,22 +22558,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 708.02,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 400,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 320,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 388.02,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -22510,7 +22654,7 @@
     "lot": 2000,
     "issueSize": 39.01,
     "freshIssue": 34.14,
-    "ofs": 0,
+    "ofs": 4.87,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -23049,7 +23193,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -23058,7 +23202,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -23075,7 +23219,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -23162,7 +23306,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -23171,7 +23315,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -23180,7 +23324,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -23209,8 +23353,8 @@
     "priceMax": 88,
     "faceValue": 10,
     "lot": 1600,
-    "issueSize": 34,
-    "freshIssue": 0.37,
+    "issueSize": 34.47,
+    "freshIssue": 34.47,
     "ofs": 0,
     "gmp": null,
     "trend": "stable",
@@ -23290,24 +23434,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 34,
+        "status": "verified",
+        "value": 34.47,
         "sources": [
-          "investorgain"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 0.37,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 34.47,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -24238,7 +24389,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -24247,7 +24398,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -24264,7 +24415,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -24285,9 +24436,9 @@
     "priceMax": 110,
     "faceValue": 10,
     "lot": 1200,
-    "issueSize": 42,
-    "freshIssue": 0.32,
-    "ofs": 0,
+    "issueSize": 42.44,
+    "freshIssue": 37.4,
+    "ofs": 5.04,
     "gmp": 15,
     "trend": "down",
     "estListing": 125,
@@ -24402,24 +24553,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 42,
+        "status": "verified",
+        "value": 42.44,
         "sources": [
-          "investorgain"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 0.32,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 37.4,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 5.04,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -24648,8 +24806,8 @@
     "priceMax": 101,
     "faceValue": 10,
     "lot": 1200,
-    "issueSize": 54,
-    "freshIssue": 0.5,
+    "issueSize": 53.52,
+    "freshIssue": 53.52,
     "ofs": 0,
     "gmp": null,
     "trend": "stable",
@@ -24733,24 +24891,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 54,
+        "status": "verified",
+        "value": 53.52,
         "sources": [
-          "investorgain"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 0.5,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 53.52,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -25579,7 +25744,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -25588,7 +25753,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -25605,7 +25770,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -25628,7 +25793,7 @@
     "lot": 468,
     "issueSize": 420,
     "freshIssue": 287,
-    "ofs": 0,
+    "ofs": 133,
     "gmp": null,
     "trend": "up",
     "estListing": null,
@@ -25706,24 +25871,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 420,
         "sources": [
-          "investorgain"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 287,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 133,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -26375,7 +26547,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -26384,7 +26556,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -26401,7 +26573,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/ipo/hi-tech-flow-solutions-ipo/3266/",
@@ -27820,7 +27992,7 @@
     "lot": 2000,
     "issueSize": 32,
     "freshIssue": 31.2,
-    "ofs": 0,
+    "ofs": 0.8,
     "gmp": 4,
     "trend": "up",
     "estListing": 57,
@@ -28047,7 +28219,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -28056,7 +28228,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -28073,7 +28245,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -28633,7 +28805,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -28642,7 +28814,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -28657,7 +28829,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -29877,7 +30049,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -29886,7 +30058,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -29903,7 +30075,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -29982,7 +30154,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
         "status": "verified",
@@ -29991,7 +30163,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -30000,7 +30172,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "priceMax": {
         "status": "pending",
@@ -30291,7 +30463,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -30300,7 +30472,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -30315,7 +30487,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -30384,7 +30556,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -30393,7 +30565,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -30410,7 +30582,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -30670,7 +30842,7 @@
     "lot": null,
     "issueSize": 725,
     "freshIssue": 525,
-    "ofs": 0,
+    "ofs": 200,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -30727,20 +30899,22 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 725,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 200,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -30751,12 +30925,13 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 525,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "website": "https://www.ekkaa.com/"
@@ -30825,7 +31000,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -30834,7 +31009,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -30849,7 +31024,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -30858,7 +31033,7 @@
     "name": "Jio Platforms",
     "company": "Jio Platforms Limited",
     "type": "Mainboard",
-    "status": "Listed",
+    "status": "Upcoming",
     "discoveredAt": "2026-10-04T19:01:04.569Z",
     "open": null,
     "close": null,
@@ -30870,14 +31045,14 @@
     "priceMax": null,
     "faceValue": 10,
     "lot": null,
-    "issueSize": 27,
-    "freshIssue": 27,
+    "issueSize": 30213,
+    "freshIssue": 30213,
     "ofs": 0,
     "gmp": 189,
     "trend": "up",
     "estListing": null,
-    "listedAt": 148,
-    "currentPrice": 148,
+    "listedAt": null,
+    "currentPrice": null,
     "gmpHistory": [
       {
         "d": "Oct 04",
@@ -30984,22 +31159,31 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 27,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 30213,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "freshIssue": {
-        "status": "unverified",
-        "value": 27,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 30213,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
+        "status": "verified",
         "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -31087,7 +31271,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -31096,7 +31280,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -31113,7 +31297,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -31155,7 +31339,7 @@
     "lot": null,
     "issueSize": 500,
     "freshIssue": 410,
-    "ofs": 0,
+    "ofs": 90,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -31195,20 +31379,22 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 500,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 90,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -31219,12 +31405,13 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 410,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -31312,7 +31499,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -31321,7 +31508,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -31338,7 +31525,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -31426,7 +31613,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -31435,7 +31622,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -31450,7 +31637,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -31845,7 +32032,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -31854,7 +32041,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -31869,7 +32056,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -32001,7 +32188,7 @@
     "lot": null,
     "issueSize": 720,
     "freshIssue": 540,
-    "ofs": 0,
+    "ofs": 180,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -32056,20 +32243,22 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 720,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 180,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -32080,12 +32269,13 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 540,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "website": "https://www.baangangagold.com/"
@@ -32155,7 +32345,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -32164,7 +32354,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -32181,7 +32371,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -32222,7 +32412,7 @@
     "lot": null,
     "issueSize": 1000,
     "freshIssue": 800,
-    "ofs": 0,
+    "ofs": 200,
     "gmp": null,
     "trend": "stable",
     "estListing": null,
@@ -32262,20 +32452,22 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
+        "status": "verified",
         "value": 1000,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 200,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -32286,12 +32478,13 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "freshIssue": {
-        "status": "unverified",
+        "status": "verified",
         "value": 800,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -32379,7 +32572,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -32388,7 +32581,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -32403,7 +32596,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -32472,7 +32665,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -32481,7 +32674,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -32498,7 +32691,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -32585,7 +32778,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -32594,7 +32787,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -32611,7 +32804,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -32699,7 +32892,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -32708,7 +32901,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -32725,7 +32918,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -32811,7 +33004,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -32820,7 +33013,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -32835,7 +33028,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "chittorgarhUrl": "https://www.chittorgarh.com/news/category/ipo/"
@@ -32857,9 +33050,9 @@
     "priceMax": 271,
     "faceValue": 10,
     "lot": 55,
-    "issueSize": 712,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 712.31,
+    "freshIssue": 0,
+    "ofs": 712.31,
     "gmp": 85,
     "trend": "down",
     "estListing": 356,
@@ -32961,20 +33154,21 @@
       },
       "issueSize": {
         "status": "verified",
-        "value": 712,
+        "value": 712.31,
         "sources": [
-          "investorgain",
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
+        "status": "verified",
+        "value": 712.31,
         "sources": [
-          "chittorgarh"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -33025,6 +33219,15 @@
           "chittorgarh"
         ],
         "updatedAt": "2026-10-13T05:23:49.490Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 0,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "finMeta": {
@@ -33104,7 +33307,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -33113,7 +33316,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -33128,7 +33331,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "fin": {
@@ -33216,7 +33419,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -33225,7 +33428,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -33240,7 +33443,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -33309,7 +33512,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -33318,7 +33521,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -33333,7 +33536,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -33418,7 +33621,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -33427,7 +33630,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -33442,7 +33645,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -33830,7 +34033,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -33839,7 +34042,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -33854,7 +34057,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -33923,7 +34126,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -33932,7 +34135,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -33947,7 +34150,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -34016,7 +34219,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -34025,7 +34228,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -34040,7 +34243,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -34109,7 +34312,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -34118,7 +34321,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -34133,7 +34336,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -34202,7 +34405,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -34211,7 +34414,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -34226,7 +34429,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   },
@@ -34295,7 +34498,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -34304,7 +34507,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -34319,107 +34522,9 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
-  },
-  {
-    "id": "bonfigloli-transmissions",
-    "name": "Bonfigloli Transmissions",
-    "company": "Bonfigloli Transmissions Limited",
-    "type": "Mainboard",
-    "status": "Listed",
-    "discoveredAt": "2026-10-10T01:30:03.041Z",
-    "open": null,
-    "close": null,
-    "listing": null,
-    "allotment": null,
-    "refund": null,
-    "demat": null,
-    "priceMin": 558,
-    "priceMax": 586,
-    "faceValue": 10,
-    "lot": null,
-    "issueSize": 4.7,
-    "freshIssue": null,
-    "ofs": 0,
-    "gmp": null,
-    "trend": "stable",
-    "estListing": null,
-    "listedAt": 72,
-    "currentPrice": 72,
-    "gmpHistory": [],
-    "drhp": "https://www.sebi.gov.in/filings/public-issues.html",
-    "rhp": null,
-    "leadManager": "ICICI Securities Ltd.",
-    "exchange": "BSE, NSE",
-    "sub": null,
-    "fin": {
-      "revenue": 1467.95,
-      "pat": 165.19,
-      "ebitda": 253.48,
-      "netWorth": 925.3,
-      "roe": 18.58,
-      "roce": 25.18
-    },
-    "about": "Bonfigloli Transmissions Limited is a newly announced Mainboard IPO operating in the General sector. The company is launching its issue on BSE, NSE.",
-    "sector": "General",
-    "registrar": "MUFG Intime India Pvt.Ltd.",
-    "investorgainUrl": "https://www.investorgain.com/ipo/bonfiglioli-transmissions-ipo/2124/",
-    "strengths": [
-      "Growing market footprint in the General sector",
-      "Experienced promoter group and management team"
-    ],
-    "risks": [
-      "Operating scale limits relative to larger peers",
-      "Highly competitive market segment and raw material cost exposure"
-    ],
-    "verification": {
-      "priceMax": {
-        "status": "unverified",
-        "value": 586,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
-      },
-      "lot": {
-        "status": "pending",
-        "updatedAt": "2026-10-13T05:23:49.490Z"
-      },
-      "issueSize": {
-        "status": "unverified",
-        "value": 4.7,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
-      },
-      "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
-      },
-      "faceValue": {
-        "status": "unverified",
-        "value": 10,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
-      },
-      "priceMin": {
-        "status": "unverified",
-        "value": 558,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
-      }
-    },
-    "finMeta": {
-      "sourceDoc": "DRHP",
-      "sourceUrl": "https://www.sebi.gov.in/filings/public-issues.html",
-      "fy": "FY2025 (SEP)",
-      "pageNum": "Financials",
-      "verifiedAt": "2026-10-10T01:33:22.878Z",
-      "method": "InvestorGain prospectus table + DRHP/RHP",
-      "status": "Verified"
-    },
-    "chittorgarhUrl": "https://www.chittorgarh.com/ipo/bonfiglioli-transmissions-ipo/2861/"
   },
   {
     "id": "bonfiglioli-transmissions",
@@ -34438,9 +34543,9 @@
     "priceMax": 586,
     "faceValue": 10,
     "lot": 25,
-    "issueSize": 4.7,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 2533.66,
+    "freshIssue": 0,
+    "ofs": 2533.66,
     "gmp": 155,
     "trend": "down",
     "estListing": 741,
@@ -34515,18 +34620,22 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 4.7,
+        "status": "verified",
+        "value": 2533.66,
         "sources": [
-          "investorgain"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 2533.66,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -34571,6 +34680,15 @@
           "investorgain"
         ],
         "updatedAt": "2026-10-13T05:23:49.490Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 0,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "finMeta": {
@@ -34601,9 +34719,9 @@
     "priceMax": 344,
     "faceValue": 10,
     "lot": 43,
-    "issueSize": 2.76,
-    "freshIssue": null,
-    "ofs": 0,
+    "issueSize": 475.48,
+    "freshIssue": 0,
+    "ofs": 475.48,
     "gmp": 42,
     "trend": "up",
     "estListing": 386,
@@ -34672,18 +34790,22 @@
         "updatedAt": "2026-10-13T05:23:49.490Z"
       },
       "issueSize": {
-        "status": "unverified",
-        "value": 2.76,
+        "status": "verified",
+        "value": 475.48,
         "sources": [
-          "investorgain"
+          "drhp",
+          "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
-        "status": "unverified",
-        "value": 0,
-        "sources": [],
-        "updatedAt": "2026-10-13T05:23:49.490Z"
+        "status": "verified",
+        "value": 475.48,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -34728,6 +34850,15 @@
         "value": 327,
         "sources": [],
         "updatedAt": "2026-10-13T05:23:49.490Z"
+      },
+      "freshIssue": {
+        "status": "verified",
+        "value": 0,
+        "sources": [
+          "drhp",
+          "prospectus"
+        ],
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     },
     "finMeta": {
@@ -34953,7 +35084,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "ofs": {
         "status": "verified",
@@ -34962,7 +35093,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       },
       "faceValue": {
         "status": "unverified",
@@ -34977,7 +35108,7 @@
           "drhp",
           "prospectus"
         ],
-        "updatedAt": "2026-10-13T05:38:38.126Z"
+        "updatedAt": "2026-10-13T06:48:18.493Z"
       }
     }
   }
