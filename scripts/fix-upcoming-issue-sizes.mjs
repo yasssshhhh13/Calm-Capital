@@ -124,7 +124,10 @@ const VERIFIED_UPCOMING_DATA = {
   'matangi-rubber': { issueSize: 120, freshIssue: 120, ofs: 0 },
   'royal-chain': { issueSize: 150, freshIssue: 150, ofs: 0 },
   'ultravibrant-integrated-energy': { issueSize: 140, freshIssue: 140, ofs: 0 },
-  'aitmc-ventures-udrhp-i': { issueSize: 100, freshIssue: 100, ofs: 0 }
+  'aitmc-ventures-udrhp-i': { issueSize: 100, freshIssue: 100, ofs: 0 },
+  'oswal-cables': { issueSize: 300, freshIssue: 300, ofs: 0 },
+  'soleos-energy': { issueSize: 150, freshIssue: 113.6, ofs: 36.4 },
+  'paramotor-digital-technology-udrhp-i': { issueSize: 100, freshIssue: 100, ofs: 0 }
 };
 
 export function fixUpcomingIssueSizes() {

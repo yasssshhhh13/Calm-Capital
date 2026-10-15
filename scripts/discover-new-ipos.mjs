@@ -310,7 +310,15 @@ async function main() {
               action: "created",
               details: `Discovered from SEBI DRHP filing. Secondary source check results: ${verifiedSources.length > 0 ? verifiedSources.join(", ") : "None found yet"}`
             }
-          ]
+          ],
+          verification: {
+            issueSize: {
+              status: "pending",
+              value: null,
+              sources: ["sebi"],
+              updatedAt: new Date().toISOString()
+            }
+          }
         };
 
         ipos.push(newIpo);
