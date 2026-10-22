@@ -42,12 +42,38 @@ function getJsonData(filename) {
   return [];
 }
 
+function saveJsonData(filename, data) {
+  if (!Array.isArray(data) || data.length === 0) return;
+  try {
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const filePath = path.resolve(__dirname, filename);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
+    return;
+  } catch (e) {
+    // Fallback to cwd
+  }
+  try {
+    const cwdPath = path.resolve(process.cwd(), "api", filename);
+    fs.writeFileSync(cwdPath, JSON.stringify(data, null, 2), "utf8");
+  } catch (e) {
+    // Read-only filesystem in serverless, silently ignore
+  }
+}
+
+const BROWSER_HEADERS = {
+  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+  "Accept-Language": "en-US,en;q=0.9",
+  "Cache-Control": "no-cache",
+  "Pragma": "no-cache"
+};
+
 // In-memory caches for live company lists with TTL
 const cache = {
   kfin: { data: getJsonData("kfintech-ipos.json"), timestamp: 0 },
-  linkintime: { data: [], timestamp: 0 },
+  linkintime: { data: getJsonData("linkintime-ipos.json"), timestamp: 0 },
   bigshare: { data: getJsonData("bigshare-ipos.json"), timestamp: 0 },
-  maashitla: { data: [], timestamp: 0 }
+  maashitla: { data: getJsonData("maashitla-ipos.json"), timestamp: 0 }
 };
 
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -142,7 +168,7 @@ function encLinkIntimeVal(val) {
 
 async function getLinkIntimeCompanies() {
   const now = Date.now();
-  if (cache.linkintime.data.length > 0 && now - cache.linkintime.timestamp < CACHE_TTL_MS) {
+  if (cache.linkintime.data && cache.linkintime.data.length > 0 && now - cache.linkintime.timestamp < CACHE_TTL_MS) {
     return cache.linkintime.data;
   }
 
@@ -151,9 +177,10 @@ async function getLinkIntimeCompanies() {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=UTF-8",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+        ...BROWSER_HEADERS
       },
-      body: "{}"
+      body: "{}",
+      signal: AbortSignal.timeout(8000)
     });
 
     if (res.ok) {
@@ -162,40 +189,83 @@ async function getLinkIntimeCompanies() {
       const matches = [...xml.matchAll(/<company_id>([^<]+)<\/company_id>\s*<companyname>([^<]+)<\/companyname>/g)];
       const list = matches.map(m => ({ id: m[1].trim(), name: m[2].trim() }));
       if (list.length > 0) {
-        cache.linkintime = { data: list, timestamp: now };
-        return list;
+        const existing = cache.linkintime.data || [];
+        const map = new Map();
+        for (const item of existing) {
+          if (item.id) map.set(String(item.id), item);
+        }
+        for (const item of list) {
+          if (item.id) map.set(String(item.id), item);
+        }
+        const merged = [...map.values()];
+        cache.linkintime = { data: merged, timestamp: now };
+        saveJsonData("linkintime-ipos.json", merged);
+        return merged;
       }
     }
   } catch (e) {
     console.error("Failed to fetch Link Intime companies:", e.message);
   }
 
+  if (!cache.linkintime.data || cache.linkintime.data.length === 0) {
+    cache.linkintime.data = getJsonData("linkintime-ipos.json");
+  }
   return cache.linkintime.data;
 }
 
 async function getKfinCompanies() {
   const now = Date.now();
-  if (cache.kfin.data.length > 0 && now - cache.kfin.timestamp < CACHE_TTL_MS) {
+  if (cache.kfin.data && cache.kfin.data.length > 0 && now - cache.kfin.timestamp < CACHE_TTL_MS) {
     return cache.kfin.data;
   }
 
   try {
-    const pageRes = await fetch("https://ipostatus.kfintech.com/");
+    const pageRes = await fetch("https://ipostatus.kfintech.com/", {
+      headers: BROWSER_HEADERS,
+      signal: AbortSignal.timeout(8000)
+    });
     if (pageRes.ok) {
       const html = await pageRes.text();
       const scriptMatch = html.match(/src="(\.\/static\/js\/main\.[^"]+\.js)"/);
       if (scriptMatch) {
         const bundleUrl = "https://ipostatus.kfintech.com/" + scriptMatch[1].replace("./", "");
-        const bundleRes = await fetch(bundleUrl);
+        const bundleRes = await fetch(bundleUrl, {
+          headers: {
+            ...BROWSER_HEADERS,
+            "Referer": "https://ipostatus.kfintech.com/"
+          },
+          signal: AbortSignal.timeout(10000)
+        });
         if (bundleRes.ok) {
           const bundleJs = await bundleRes.text();
+          let list = null;
           const jsonMatch = bundleJs.match(/rf=JSON\.parse\('([^']+)'\)/);
           if (jsonMatch) {
-            const list = JSON.parse(jsonMatch[1]);
-            if (Array.isArray(list) && list.length > 0) {
-              cache.kfin = { data: list, timestamp: now };
-              return list;
+            try {
+              list = JSON.parse(jsonMatch[1]);
+            } catch {}
+          }
+          if (!list) {
+            const genericMatch = bundleJs.match(/JSON\.parse\('(\[\s*\{\s*\\?"clientId\\?".*?\])'\)/);
+            if (genericMatch) {
+              try {
+                list = JSON.parse(genericMatch[1].replace(/\\"/g, '"'));
+              } catch {}
             }
+          }
+          if (Array.isArray(list) && list.length > 0) {
+            const existing = cache.kfin.data || [];
+            const map = new Map();
+            for (const item of existing) {
+              if (item.clientId) map.set(String(item.clientId), item);
+            }
+            for (const item of list) {
+              if (item.clientId) map.set(String(item.clientId), item);
+            }
+            const merged = [...map.values()];
+            cache.kfin = { data: merged, timestamp: now };
+            saveJsonData("kfintech-ipos.json", merged);
+            return merged;
           }
         }
       }
@@ -204,19 +274,25 @@ async function getKfinCompanies() {
     console.error("Failed to fetch live KFin companies:", e.message);
   }
 
+  if (!cache.kfin.data || cache.kfin.data.length === 0) {
+    cache.kfin.data = getJsonData("kfintech-ipos.json");
+  }
   return cache.kfin.data;
 }
 
 async function getBigshareCompanies() {
   const now = Date.now();
-  if (cache.bigshare.data.length > 0 && now - cache.bigshare.timestamp < CACHE_TTL_MS) {
+  if (cache.bigshare.data && cache.bigshare.data.length > 0 && now - cache.bigshare.timestamp < CACHE_TTL_MS) {
     return cache.bigshare.data;
   }
 
   const hosts = ["ipo.bigshareonline.com", "ipo1.bigshareonline.com", "ipo2.bigshareonline.com"];
   for (const host of hosts) {
     try {
-      const res = await fetch(`https://${host}/ipo_status.html`);
+      const res = await fetch(`https://${host}/ipo_status.html`, {
+        headers: BROWSER_HEADERS,
+        signal: AbortSignal.timeout(6000)
+      });
       if (res.ok) {
         const html = await res.text();
         const regex = /<option[^>]*value=["'](\d+)["'][^>]*>([^<]+)<\/option>/gi;
@@ -230,8 +306,18 @@ async function getBigshareCompanies() {
           }
         }
         if (list.length > 0) {
-          cache.bigshare = { data: list, timestamp: now };
-          return list;
+          const existing = cache.bigshare.data || [];
+          const map = new Map();
+          for (const item of existing) {
+            if (item.code) map.set(String(item.code), item);
+          }
+          for (const item of list) {
+            if (item.code) map.set(String(item.code), item);
+          }
+          const merged = [...map.values()];
+          cache.bigshare = { data: merged, timestamp: now };
+          saveJsonData("bigshare-ipos.json", merged);
+          return merged;
         }
       }
     } catch (e) {
@@ -239,12 +325,15 @@ async function getBigshareCompanies() {
     }
   }
 
+  if (!cache.bigshare.data || cache.bigshare.data.length === 0) {
+    cache.bigshare.data = getJsonData("bigshare-ipos.json");
+  }
   return cache.bigshare.data;
 }
 
 async function getMaashitlaCompanies() {
   const now = Date.now();
-  if (cache.maashitla.data.length > 0 && now - cache.maashitla.timestamp < CACHE_TTL_MS) {
+  if (cache.maashitla.data && cache.maashitla.data.length > 0 && now - cache.maashitla.timestamp < CACHE_TTL_MS) {
     return cache.maashitla.data;
   }
 
@@ -252,13 +341,16 @@ async function getMaashitlaCompanies() {
     const res = await fetch("https://api.maashitla.com/api/public-issue/companies", {
       headers: {
         "Content-Type": "application/json",
-        "ngrok-skip-browser-warning": "true"
-      }
+        "ngrok-skip-browser-warning": "true",
+        ...BROWSER_HEADERS
+      },
+      signal: AbortSignal.timeout(8000)
     });
     if (res.ok) {
       const list = await res.json();
       if (Array.isArray(list) && list.length > 0) {
         cache.maashitla = { data: list, timestamp: now };
+        saveJsonData("maashitla-ipos.json", list);
         return list;
       }
     }
@@ -266,6 +358,9 @@ async function getMaashitlaCompanies() {
     console.error("Failed to fetch Maashitla companies:", e.message);
   }
 
+  if (!cache.maashitla.data || cache.maashitla.data.length === 0) {
+    cache.maashitla.data = getJsonData("maashitla-ipos.json");
+  }
   return cache.maashitla.data;
 }
 
@@ -415,6 +510,26 @@ export default async function handler(req, res) {
 
     // If company is not yet published on KFintech
     if (!matchedKfin) {
+      if (!kfinList || kfinList.length === 0) {
+        const busyResults = normalizedPans.map(item => ({
+          id: item.id,
+          label: item.label,
+          name: item.name,
+          pan: item.pan,
+          status: "Not Checked",
+          sharesApplied: 0,
+          sharesAllotted: 0,
+          lotsAllotted: 0,
+          message: "KFintech registry temporarily busy or unreachable. Please retry.",
+          liveVerified: false
+        }));
+
+        return buildResponse(res, company, registrar, lot, currentGmp, busyResults, {
+          serverBusy: true,
+          note: "Could not reach KFintech registry. Please retry."
+        });
+      }
+
       const notAnnouncedResults = normalizedPans.map(item => ({
         id: item.id,
         label: item.label,

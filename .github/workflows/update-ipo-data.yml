@@ -37,8 +37,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install pdfplumber
 
-      - name: Run scraper, discovery, and financials extraction
+      - name: Run scraper, discovery, registrar sync, and financials extraction
         run: |
+          node scripts/sync-registrar-ipos.mjs
           node scripts/scrape-ipo-data.mjs
           node scripts/discover-new-ipos.mjs
           python scripts/extract-drhp-financials.py
@@ -51,9 +52,9 @@ jobs:
         run: |
           git config user.name "ipo-data-bot"
           git config user.email "actions@github.com"
-          git add public/live-data.json public/ipos.json
+          git add public/live-data.json public/ipos.json api/kfintech-ipos.json api/bigshare-ipos.json api/linkintime-ipos.json api/maashitla-ipos.json
           if ! git diff --cached --quiet; then
-            git commit -m "chore: automated update of live data, discovered IPOs, and extracted financials"
+            git commit -m "chore: automated update of live data, discovered IPOs, registrar registries, and financials"
             git push
           else
             echo "No data changes — skipping commit."
