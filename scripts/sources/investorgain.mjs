@@ -538,7 +538,7 @@ export async function scrapeSubscription(page, iposBase) {
     if (baseSub.retail !== undefined) {
       const lotVal = (ipo.priceMax || ipo.priceMin || 0) * (ipo.lot || 0);
       const maxLots = lotVal > 0 ? Math.floor(200000 / lotVal) : 1;
-      const avgLots = ipo.type === "SME" ? 1.0 : (maxLots >= 10 ? 2.0 : maxLots >= 6 ? 1.6 : maxLots >= 3 ? 1.3 : 1.1);
+      const avgLots = ipo.type === "SME" ? 1.0 : (maxLots >= 10 ? 1.92 : maxLots >= 6 ? 1.6 : maxLots >= 3 ? 1.3 : 1.1);
       baseSub.retail_apps = Number((baseSub.retail / avgLots).toFixed(2));
     }
 

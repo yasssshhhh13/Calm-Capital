@@ -1211,7 +1211,7 @@ function estimateAppsFromShares(label, sharesSub, isSME, ipo) {
     if (ipo && (ipo.priceMax || ipo.priceMin) && ipo.lot) {
       const lotVal = (ipo.priceMax || ipo.priceMin) * ipo.lot;
       const maxLots = lotVal > 0 ? Math.floor(200000 / lotVal) : 1;
-      const avgLots = maxLots >= 10 ? 2.0 : maxLots >= 6 ? 1.6 : maxLots >= 3 ? 1.3 : 1.1;
+      const avgLots = maxLots >= 10 ? 1.92 : maxLots >= 6 ? 1.6 : maxLots >= 3 ? 1.3 : 1.1;
       return Number((sharesSub / avgLots).toFixed(2));
     }
     return Number((sharesSub / 1.30).toFixed(2));
