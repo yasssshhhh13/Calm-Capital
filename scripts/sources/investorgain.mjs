@@ -512,6 +512,40 @@ export async function scrapeSubscription(page, iposBase) {
     const today = new Date();
     const openDate = new Date(ipo.open + "T00:00:00+05:30");
     if (today < openDate) continue;
+    // 1. Direct extraction from main subscription report table row
+    const parseNum = (c) => {
+      if (!c) return undefined;
+      const m = String(c).replace(/,/g, "").match(/(\d+(?:\.\d+)?)/);
+      return m ? parseFloat(m[1]) : undefined;
+    };
+
+    const rowTotal = parseNum(cells[1]);
+    const rowQib = parseNum(cells[2]);
+    const rowSnii = parseNum(cells[3]);
+    const rowBnii = parseNum(cells[4]);
+    const rowNii = parseNum(cells[5]);
+    const rowRetail = parseNum(cells[6]);
+
+    const baseSub = {};
+    if (rowTotal !== undefined) baseSub.overall = rowTotal;
+    if (rowQib !== undefined) baseSub.qib = rowQib;
+    if (rowSnii !== undefined) baseSub.snii = rowSnii;
+    if (rowBnii !== undefined) baseSub.bnii = rowBnii;
+    if (rowNii !== undefined) baseSub.hni = rowNii;
+    if (rowRetail !== undefined) baseSub.retail = rowRetail;
+
+    // Derived application-wise calculation based on lot size if retail is present
+    if (baseSub.retail !== undefined) {
+      const lotVal = (ipo.priceMax || ipo.priceMin || 0) * (ipo.lot || 0);
+      const maxLots = lotVal > 0 ? Math.floor(200000 / lotVal) : 1;
+      const avgLots = ipo.type === "SME" ? 1.0 : (maxLots >= 10 ? 2.0 : maxLots >= 6 ? 1.6 : maxLots >= 3 ? 1.3 : 1.1);
+      baseSub.retail_apps = Number((baseSub.retail / avgLots).toFixed(2));
+    }
+
+    if (Object.keys(baseSub).length > 0) {
+      result[id] = { ...baseSub };
+    }
+
     if (!href) continue;
 
     const match = href.match(/\/gmp\/([^/]+)\/(\d+)\/?/) || href.match(/\/subscription\/([^/]+)\/(\d+)\/?/);
@@ -620,9 +654,8 @@ export async function scrapeSubscription(page, iposBase) {
 
       const s = parsed.shares || {};
       const a = parsed.apps || {};
-      if ([s.qib, s.hni, s.retail, s.overall, s.snii, s.bnii, s.employee, s.shareholder, s.policyholder].every((v) => v === undefined)) continue;
-
       result[id] = {
+        ...(result[id] || {}),
         ...(s.overall !== undefined ? { overall: s.overall } : {}),
         ...(s.qib !== undefined ? { qib: s.qib } : {}),
         ...(s.snii !== undefined ? { snii: s.snii } : {}),

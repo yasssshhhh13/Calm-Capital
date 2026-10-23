@@ -373,6 +373,46 @@ async function scrapeDetail(page, url) {
 
       return { fields, fin: Object.keys(fin).length ? fin : null, website, allocation, sub, fy };
     });
+
+    if (result && !result.sub && url.includes("/ipo/")) {
+      const subUrl = url.replace("/ipo/", "/ipo_subscription/");
+      try {
+        await page.goto(subUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
+        const cgSub = await page.evaluate(() => {
+          const allTbls = Array.from(document.querySelectorAll("table"));
+          for (const tbl of allTbls) {
+            const ths = Array.from(tbl.querySelectorAll("th, td")).map(th => th.innerText.trim().toLowerCase());
+            if (!ths.some(h => h.includes("category")) || !ths.some(h => h.includes("subscription"))) continue;
+            const catIdx = ths.findIndex(h => h.includes("category"));
+            const subIdx = ths.findIndex(h => h.includes("subscription"));
+            if (catIdx === -1 || subIdx === -1 || catIdx === subIdx) continue;
+            const s = {};
+            for (const tr of Array.from(tbl.querySelectorAll("tr"))) {
+              const tds = Array.from(tr.querySelectorAll("th, td")).map(td => td.innerText.trim());
+              if (tds.length <= Math.max(subIdx, catIdx)) continue;
+              const cat = (tds[catIdx] || "").toLowerCase();
+              const m = (tds[subIdx] || "").replace(/,/g, "").match(/-?[\d.]+/);
+              if (!m) continue;
+              const val = parseFloat(m[0]);
+              if (!Number.isFinite(val) || val < 0) continue;
+              if (cat.includes("qib")) s.qib = val;
+              else if (cat.startsWith("bnii") || cat.includes("> ₹10l") || cat.includes("> 10l")) s.bnii = val;
+              else if (cat.startsWith("snii") || cat.includes("< ₹10l") || cat.includes("< 10l")) s.snii = val;
+              else if (cat.startsWith("nii") || cat.startsWith("hni") || cat.includes("non-institutional")) s.nii = val;
+              else if (cat.startsWith("retail")) s.retail = val;
+              else if (cat.startsWith("employee")) s.employee = val;
+              else if (cat.startsWith("shareholder")) s.shareholder = val;
+              else if (cat === "total" || cat.includes("total")) s.total = val;
+            }
+            if (Object.keys(s).length > 0) return s;
+          }
+          return null;
+        });
+        if (cgSub) result.sub = cgSub;
+      } catch { /* ignore */ }
+    }
+
+    return result;
   } catch (err) {
     console.warn(`[Chittorgarh] detail failed (${url}):`, err.message);
     return null;

@@ -1202,14 +1202,24 @@ function dedupeIpoList(ipos) {
 }
 
 /** Prefer real *_apps; else derive application-wise odds from share×. */
-function estimateAppsFromShares(label, sharesSub, isSME) {
+function estimateAppsFromShares(label, sharesSub, isSME, ipo) {
   if (sharesSub == null || !(sharesSub > 0)) return null;
-  if (isSME) return label === "Retail" ? sharesSub : sharesSub / 1.05;
-  if (label === "Retail") return sharesSub / 1.30;
-  if (label === "sHNI" || label === "sNII") return sharesSub / 1.5;
-  if (label === "bHNI" || label === "bNII") return sharesSub / 5.5;
-  if (label === "Employee") return sharesSub / 1.5;
-  if (label === "Shareholder" || label === "Policyholder") return sharesSub / 2.0;
+  if (isSME) return label === "Retail" ? sharesSub : Number((sharesSub / 1.05).toFixed(2));
+  if (label === "Retail") {
+    // If lot size and price are available, calculate max lots under the ₹2,00,000 retail limit.
+    // In mega IPOs with small lot values (like Jio), applicants apply for ~2 lots on average.
+    if (ipo && (ipo.priceMax || ipo.priceMin) && ipo.lot) {
+      const lotVal = (ipo.priceMax || ipo.priceMin) * ipo.lot;
+      const maxLots = lotVal > 0 ? Math.floor(200000 / lotVal) : 1;
+      const avgLots = maxLots >= 10 ? 2.0 : maxLots >= 6 ? 1.6 : maxLots >= 3 ? 1.3 : 1.1;
+      return Number((sharesSub / avgLots).toFixed(2));
+    }
+    return Number((sharesSub / 1.30).toFixed(2));
+  }
+  if (label === "sHNI" || label === "sNII") return Number((sharesSub / 1.5).toFixed(2));
+  if (label === "bHNI" || label === "bNII") return Number((sharesSub / 5.5).toFixed(2));
+  if (label === "Employee") return Number((sharesSub / 1.5).toFixed(2));
+  if (label === "Shareholder" || label === "Policyholder") return Number((sharesSub / 2.0).toFixed(2));
   return null;
 }
 
@@ -4629,7 +4639,7 @@ function getCompareAllotmentOdds(ipo) {
   let appsSub = s.retail_apps;
   const isSME = ipo.type === "SME";
   if ((appsSub == null || appsSub <= 0) && sharesSub != null && sharesSub > 0) {
-    appsSub = estimateAppsFromShares("Retail", sharesSub, isSME);
+    appsSub = estimateAppsFromShares("Retail", sharesSub, isSME, ipo);
   }
   if (appsSub != null && appsSub > 0) {
     if (appsSub <= 1.0) return "Guaranteed";
@@ -5353,7 +5363,7 @@ function SubscriptionDetailsList({ ipo, dark }) {
     // standard category lot averages so odds always display (like Laser Power).
     let finalAppsSub = appsSub;
     if ((finalAppsSub == null || finalAppsSub <= 0) && hasShares && sharesSub > 0) {
-      finalAppsSub = estimateAppsFromShares(label, sharesSub, isSME);
+      finalAppsSub = estimateAppsFromShares(label, sharesSub, isSME, ipo);
     }
 
     const hasApps = finalAppsSub != null && finalAppsSub > 0;
@@ -5368,7 +5378,7 @@ function SubscriptionDetailsList({ ipo, dark }) {
       else {
         const rounded = Math.round(finalAppsSub);
         oddsText = rounded <= 1
-          ? `~1 in ${Number(finalAppsSub).toFixed(1)}`
+          ? `~1 in ${Number(finalAppsSub).toFixed(2)}`
           : `~1 in ${rounded}`;
       }
     }
