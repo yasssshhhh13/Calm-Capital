@@ -4643,8 +4643,7 @@ function getCompareAllotmentOdds(ipo) {
   }
   if (appsSub != null && appsSub > 0) {
     if (appsSub <= 1.0) return "Guaranteed";
-    const rounded = Math.round(appsSub);
-    return rounded <= 1 ? `~1 in ${Number(appsSub).toFixed(1)}` : `~1 in ${rounded}`;
+    return `~1 in ${Number(appsSub).toFixed(2).replace(/\.00$/, "")}`;
   }
   return "—";
 }
@@ -5376,10 +5375,7 @@ function SubscriptionDetailsList({ ipo, dark }) {
     if (canShowOdds) {
       if (finalAppsSub <= 1.0) oddsText = "Guaranteed";
       else {
-        const rounded = Math.round(finalAppsSub);
-        oddsText = rounded <= 1
-          ? `~1 in ${Number(finalAppsSub).toFixed(2)}`
-          : `~1 in ${rounded}`;
+        oddsText = `~1 in ${Number(finalAppsSub).toFixed(2).replace(/\.00$/, "")}`;
       }
     }
 

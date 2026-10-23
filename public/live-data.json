@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-23T13:29:28.848Z",
+  "updatedAt": "2026-10-23T13:45:13.015Z",
   "errors": [],
   "ipos": {
     "q-t-foods": {
@@ -10588,7 +10588,13 @@
       "listedAt": 127,
       "currentPrice": 127,
       "sub": {
-        "overall": 1.88
+        "overall": 1.88,
+        "qib": 119.29,
+        "snii": 0.21,
+        "bnii": 0.03,
+        "hni": 0.09,
+        "retail": 1.1,
+        "retail_apps": 1.1
       }
     },
     "omara-ventures-india": {
@@ -11222,7 +11228,13 @@
       "gmp": 4,
       "estListing": 57,
       "sub": {
-        "overall": 1.98
+        "overall": 1.98,
+        "qib": 1.7,
+        "snii": 3.96,
+        "bnii": 2.5,
+        "hni": 2.98,
+        "retail": 1.72,
+        "retail_apps": 1.72
       }
     },
     "dove-soft": {
@@ -11312,7 +11324,13 @@
       "listedAt": 111,
       "currentPrice": 111,
       "sub": {
-        "overall": 1.38
+        "overall": 1.38,
+        "qib": 1,
+        "snii": 0.21,
+        "bnii": 2.83,
+        "hni": 1.96,
+        "retail": 0.81,
+        "retail_apps": 0.81
       }
     },
     "vans-electroengineerings": {
@@ -11556,7 +11574,13 @@
       "listedAt": 70,
       "currentPrice": 70,
       "sub": {
-        "overall": 55.2
+        "overall": 55.2,
+        "qib": 35.64,
+        "snii": 76.59,
+        "bnii": 114.91,
+        "hni": 102.14,
+        "retail": 46.17,
+        "retail_apps": 46.17
       }
     },
     "acme-india-industries": {
@@ -11648,7 +11672,13 @@
       "listedAt": 239,
       "currentPrice": 239,
       "sub": {
-        "overall": 124.23
+        "overall": 124.23,
+        "qib": 137.93,
+        "snii": 106.29,
+        "bnii": 241.67,
+        "hni": 196.27,
+        "retail": 85.5,
+        "retail_apps": 85.5
       }
     },
     "nityas-gems-jewellery": {
@@ -11740,7 +11770,13 @@
       "listedAt": 76.33000183105469,
       "currentPrice": 68.65,
       "sub": {
-        "overall": 2.26
+        "overall": 2.26,
+        "qib": 1.06,
+        "snii": 3.02,
+        "bnii": 1.56,
+        "hni": 2.05,
+        "retail": 4.07,
+        "retail_apps": 2.04
       }
     },
     "eventions": {
@@ -11830,7 +11866,13 @@
       "listedAt": 118,
       "currentPrice": 118,
       "sub": {
-        "overall": 2.39
+        "overall": 2.39,
+        "qib": 26.18,
+        "snii": 0.92,
+        "bnii": 0.32,
+        "hni": 0.52,
+        "retail": 1.38,
+        "retail_apps": 1.38
       }
     },
     "sollfege-smart-electronics": {
@@ -11922,7 +11964,10 @@
       "gmp": 10,
       "estListing": 65,
       "sub": {
-        "overall": 2.14
+        "overall": 2.14,
+        "hni": 2.28,
+        "retail": 2,
+        "retail_apps": 2
       }
     },
     "sjp-ultrasonic": {
@@ -12012,7 +12057,10 @@
       "listedAt": 67,
       "currentPrice": 67,
       "sub": {
-        "overall": 1.82
+        "overall": 1.82,
+        "hni": 1.86,
+        "retail": 1,
+        "retail_apps": 1
       }
     },
     "vishal-nirmiti": {
@@ -12104,7 +12152,13 @@
       "listedAt": 115.9000015258789,
       "currentPrice": 115.9,
       "sub": {
-        "overall": 1.79
+        "overall": 1.79,
+        "qib": 1.33,
+        "snii": 2.1,
+        "bnii": 1.79,
+        "hni": 1.89,
+        "retail": 1.75,
+        "retail_apps": 0.88
       }
     },
     "r-k-fashion-accessories": {
@@ -12196,7 +12250,13 @@
       "listedAt": 80,
       "currentPrice": 80,
       "sub": {
-        "overall": 2.7
+        "overall": 2.7,
+        "qib": 14.11,
+        "snii": 1.79,
+        "bnii": 1.77,
+        "hni": 1.77,
+        "retail": 3.11,
+        "retail_apps": 3.11
       }
     },
     "jio-platforms": {
@@ -12301,15 +12361,14 @@
       "priceMax": 1119,
       "estListing": 1367,
       "sub": {
-
-        "overall": 18.63,
-        "qib": 56.34,
-        "snii": 10.08,
-        "bnii": 15.78,
-        "hni": 13.88,
-        "retail": 2.72,
+        "overall": 20.58,
+        "qib": 64.07,
+        "snii": 10.15,
+        "bnii": 15.86,
+        "hni": 13.95,
+        "retail": 2.74,
         "nii": 13.88,
-        "retail_apps": 1.36,
+        "retail_apps": 1.37,
         "employee": 2.84,
         "shareholder": 7.26,
         "total": 18.63
@@ -12416,7 +12475,8 @@
         "snii": 137.28,
         "bnii": 236.17,
         "hni": 203.21,
-        "retail": 30.55
+        "retail": 30.55,
+        "retail_apps": 15.28
       }
     },
     "vaibhav-vyapaar": {
@@ -12513,7 +12573,8 @@
         "snii": 4.2,
         "bnii": 7.87,
         "hni": 6.65,
-        "retail": 2.7
+        "retail": 2.7,
+        "retail_apps": 2.7
       }
     },
     "ravita-engineering-services": {
@@ -12610,7 +12671,8 @@
         "snii": 4.06,
         "bnii": 9.11,
         "hni": 7.42,
-        "retail": 3.5
+        "retail": 3.5,
+        "retail_apps": 3.5
       }
     },
     "fusion-cx": {
@@ -12714,7 +12776,8 @@
         "snii": 4.75,
         "bnii": 4.72,
         "hni": 4.73,
-        "retail": 5.99
+        "retail": 5.99,
+        "retail_apps": 3
       }
     },
     "bonfiglioli-transmissions": {
@@ -12816,7 +12879,8 @@
         "snii": 28.28,
         "bnii": 46.44,
         "hni": 40.39,
-        "retail": 5.9
+        "retail": 5.9,
+        "retail_apps": 2.95
       }
     },
     "zetwerk-manufacturing-businesses-udrhp": {
@@ -12920,7 +12984,8 @@
         "snii": 0.86,
         "bnii": 1.74,
         "hni": 1.45,
-        "retail": 0.77
+        "retail": 0.77,
+        "retail_apps": 0.39
       }
     },
     "sahajanand-medical-technologies": {
@@ -13022,7 +13087,8 @@
         "snii": 11.19,
         "bnii": 16.37,
         "hni": 14.64,
-        "retail": 3.04
+        "retail": 3.04,
+        "retail_apps": 1.52
       }
     },
     "tonbo-imaging-india": {
@@ -13126,7 +13192,8 @@
         "snii": 143.37,
         "bnii": 184.73,
         "hni": 156.36,
-        "retail": 31.11
+        "retail": 31.11,
+        "retail_apps": 15.55
       }
     },
     "shellz-india": {
@@ -13223,7 +13290,8 @@
         "snii": 62.41,
         "bnii": 98.42,
         "hni": 86.41,
-        "retail": 56.09
+        "retail": 56.09,
+        "retail_apps": 56.09
       }
     },
     "paras-healthcare": {
@@ -13313,7 +13381,6 @@
         }
       },
       "sub": {
-
         "overall": 2.34,
         "snii": 0.84,
         "bnii": 0.62,
@@ -13321,7 +13388,7 @@
         "retail": 2.1,
         "qib": 3.25,
         "nii": 0.69,
-        "retail_apps": 1.62,
+        "retail_apps": 1.05,
         "total": 2.34
       }
     },
@@ -13497,7 +13564,6 @@
         }
       },
       "sub": {
-
         "overall": 0.08,
         "qib": 0,
         "snii": 0.1,
