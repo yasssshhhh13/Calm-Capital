@@ -85,7 +85,7 @@ const VERIFIED_UPCOMING_DATA = {
   'aragen-life-sciences': { issueSize: 1400, freshIssue: 800, ofs: 600 },
   'kataria-dhulchand-pannalal-jewellers': { issueSize: 160, freshIssue: 160, ofs: 0 },
   'gaurik-fashions': { issueSize: 85, freshIssue: 75, ofs: 10 },
-  'mahanadi-coalfields': { issueSize: 10000, freshIssue: 0, ofs: 10000 },
+  'mahanadi-coalfields': { issueSize: 8981.12, freshIssue: 0, ofs: 8981.12, faceValue: 2 },
   'torrent-gas-udrhp-i': { issueSize: 3500, freshIssue: 0, ofs: 3500 },
   'incred-holdings': { issueSize: 1250, freshIssue: 1250, ofs: 0 },
   'nopaperforms-solutions-udrhp-1': { issueSize: 750, freshIssue: 375, ofs: 375 },
@@ -218,6 +218,14 @@ export function fixUpcomingIssueSizes() {
           sources: ['drhp', 'prospectus'],
           updatedAt: now
         };
+        if (verified.faceValue != null) {
+          patch.verification.faceValue = {
+            status: 'verified',
+            value: verified.faceValue,
+            sources: ['rhp', 'prospectus'],
+            updatedAt: now
+          };
+        }
       }
 
       updatedCount++;
