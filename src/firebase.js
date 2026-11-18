@@ -177,7 +177,7 @@ export async function subscribeUserForexJournal(emailOrUid, callback) {
   const config = getFirebaseConfig();
 
   if (!config.apiKey || !config.projectId) {
-    return () => { };
+    return () => {};
   }
 
   let lastUpdated = "";
