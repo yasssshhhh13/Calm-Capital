@@ -8104,6 +8104,8 @@ export default function App() {
     }
   });
 
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
   const handleSwitchSection = (section, targetTab) => {
     setMainSection(section);
     try { localStorage.setItem("calmcapital-section", section); } catch { /* ignore */ }
@@ -8748,169 +8750,192 @@ export default function App() {
         {/* MAIN */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* HEADER */}
-          <header className="flex items-center gap-3 px-5 py-3.5 border-b sticky top-0 z-20 backdrop-blur-lg"
+          <header className="flex flex-col border-b sticky top-0 z-20 backdrop-blur-lg"
             style={{ 
               borderColor: dark ? "rgba(45,64,86,0.9)" : "rgba(11, 31, 51, 0.08)", 
               background: dark ? "rgba(13,21,36,0.92)" : "rgba(245, 247, 244, 0.85)" 
             }}>
-            {!sidebarOpen && (
-              <button onClick={() => setSidebarOpen(true)} className="text-slate-500 hover:text-[#0B1F33] dark:text-[#8EA1B7] dark:hover:text-white p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl mr-1 transition-all cursor-pointer border-0">
-                <Menu size={18} />
-              </button>
-            )}
-
-            {/* Master Section Toggle: IPOs vs Forex */}
-            <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/5 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 shrink-0">
-              <button
-                type="button"
-                onClick={() => handleSwitchSection("ipos", tab === "forex" ? "overview" : tab)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border-0 flex items-center gap-1.5 ${
-                  mainSection === "ipos"
-                    ? "bg-white dark:bg-[#121D2D] text-[#0B1F33] dark:text-white shadow-sm font-black border border-slate-200/80 dark:border-white/10"
-                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-                }`}
-              >
-                <span>🇮🇳</span>
-                <span className="hidden sm:inline">IPO Suite</span>
-                <span className="sm:hidden">IPOs</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSwitchSection("forex", "news")}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border-0 flex items-center gap-1.5 ${
-                  mainSection === "forex"
-                    ? "bg-[#1c9bda] text-white shadow-sm font-black"
-                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-                }`}
-              >
-                <span>🌐</span>
-                <span className="hidden sm:inline">Forex Hub</span>
-                <span className="sm:hidden">Forex</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
-              </button>
-            </div>
-
-            <HeaderSearchBar query={query} onQueryChange={setQuery} />
-
-            <div className="ml-auto flex items-center gap-2.5 relative">
-              <div className="hidden sm:flex items-center">
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-205 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 text-[#0B1F33] dark:text-[#C9D6E5] shadow-sm cursor-default">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-                  </span>
-                  <span className="text-[11px] font-semibold tracking-tight">Live Prices</span>
-                </div>
-              </div>
-
-              <button disabled={refreshing} onClick={refresh} className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-[#14B8A6] flex items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-[#0B1F33] dark:hover:text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative cursor-pointer border-0">
-                <RefreshCw size={14} className={refreshing ? "animate-spin text-[#14B8A6]" : ""} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setPanManagerOpen(true)}
-                className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-[#1c9bda] dark:hover:border-[#14B8A6] text-[#0B1F33] dark:text-[#C9D6E5] shadow-sm transition-all cursor-pointer text-xs font-bold"
-                title="Manage Family PANs for Batch Allotment"
-              >
-                <Users size={14} className="text-[#1c9bda]" />
-                <span>Family PANs</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-[#1c9bda]/10 text-[#1c9bda] dark:text-[#52b1e4] text-[10px] font-bold">
-                  {familyPans.pans.length}
-                </span>
-              </button>
-
-              {/* Optional User Account / Google Sign In */}
-              {auth.isLoggedIn ? (
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setUserMenuOpen(!userMenuOpen)}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 text-slate-850 dark:text-white transition-all cursor-pointer text-xs font-bold shadow-sm"
-                    title={`Signed in as ${auth.user.name}`}
-                  >
-                    {auth.user?.photoURL ? (
-                      <img src={auth.user.photoURL} alt={auth.user.name} className="w-5 h-5 rounded-full object-cover shrink-0" />
-                    ) : (
-                      <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">
-                        {auth.user.name ? auth.user.name.charAt(0).toUpperCase() : "U"}
-                      </div>
-                    )}
-                    <span className="hidden md:inline max-w-[95px] truncate font-semibold text-[11px]">
-                      {auth.user.name ? auth.user.name.split(" ")[0] : "Account"}
-                    </span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
-                  </button>
-
-                  {userMenuOpen && (
-                    <div 
-                      className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-[#0E1726] border border-slate-200 dark:border-white/10 shadow-2xl py-2 z-50 animate-fade-in"
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      <div className="px-4 py-2 border-b border-slate-100 dark:border-white/5">
-                        <p className="text-xs font-bold text-slate-850 dark:text-white truncate">{auth.user.name}</p>
-                        <p className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
-                          {auth.user.email || auth.user.mobile}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setPanManagerOpen(true)}
-                        className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
-                      >
-                        <Users size={14} className="text-[#1c9bda]" />
-                        <span>Saved PAN Vault ({familyPans.pans.length})</span>
-                      </button>
-                      <div className="border-t border-slate-100 dark:border-white/5 my-1" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          auth.signOut();
-                          setUserMenuOpen(false);
-                        }}
-                        className="w-full text-left px-4 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
-                      >
-                        <LogOut size={14} />
-                        <span>Sign Out</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => auth.openAuthModal("signin")}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white hover:bg-slate-50 dark:bg-[#121D2D]/90 dark:hover:bg-[#1E293B] text-slate-800 dark:text-white transition-all cursor-pointer text-xs font-bold shadow-sm"
-                  title="Sign In with Google / Gmail"
-                >
-                  <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
-                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                  </svg>
-                  <span>Google Sign In</span>
+            {/* Top Navigation Row */}
+            <div className="flex items-center gap-1.5 sm:gap-3 px-3 sm:px-5 py-2.5 sm:py-3.5 w-full">
+              {!sidebarOpen && (
+                <button onClick={() => setSidebarOpen(true)} className="text-slate-500 hover:text-[#0B1F33] dark:text-[#8EA1B7] dark:hover:text-white p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all cursor-pointer border-0 shrink-0">
+                  <Menu size={18} />
                 </button>
               )}
 
-              {/* Theme Toggle */}
-              <button
-                type="button"
-                onClick={() => setDark(!dark)}
-                className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-white/20 flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-sm transition-all cursor-pointer"
-                title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
-              >
-                {dark ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} className="text-slate-600" />}
-              </button>
+              {/* Master Section Toggle: IPOs vs Forex */}
+              <div className="flex items-center gap-1 p-0.5 sm:p-1 rounded-2xl bg-black/5 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleSwitchSection("ipos", tab === "forex" ? "overview" : tab)}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border-0 flex items-center gap-1 sm:gap-1.5 ${
+                    mainSection === "ipos"
+                      ? "bg-white dark:bg-[#121D2D] text-[#0B1F33] dark:text-white shadow-sm font-black border border-slate-200/80 dark:border-white/10"
+                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                  }`}
+                >
+                  <span>🇮🇳</span>
+                  <span className="hidden sm:inline">IPO Suite</span>
+                  <span className="sm:hidden text-[11px]">IPOs</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSwitchSection("forex", "news")}
+                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border-0 flex items-center gap-1 sm:gap-1.5 ${
+                    mainSection === "forex"
+                      ? "bg-[#1c9bda] text-white shadow-sm font-black"
+                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                  }`}
+                >
+                  <span>🌐</span>
+                  <span className="hidden sm:inline">Forex Hub</span>
+                  <span className="sm:hidden text-[11px]">Forex</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+                </button>
+              </div>
 
-              <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />
-              
+              {/* Desktop Search Bar (Hidden on Mobile) */}
+              <div className="hidden md:flex flex-1 max-w-sm sm:max-w-md mx-2">
+                <HeaderSearchBar query={query} onQueryChange={setQuery} />
+              </div>
+
+              {/* Right Action Cluster */}
+              <div className="ml-auto flex items-center gap-1.5 sm:gap-2.5 shrink-0 relative">
+                {/* Mobile Search Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+                  className={`md:hidden w-8 h-8 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
+                    mobileSearchOpen || query
+                      ? "bg-teal-500/10 border-teal-500/30 text-teal-600 dark:text-teal-400"
+                      : "border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 text-slate-500 dark:text-[#C9D6E5]"
+                  }`}
+                  title="Search IPOs"
+                >
+                  <Search size={14} />
+                </button>
+
+                <div className="hidden sm:flex items-center">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-205 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 text-[#0B1F33] dark:text-[#C9D6E5] shadow-sm cursor-default">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                    </span>
+                    <span className="text-[11px] font-semibold tracking-tight">Live Prices</span>
+                  </div>
+                </div>
+
+                <button disabled={refreshing} onClick={refresh} className="hidden sm:flex w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-[#14B8A6] items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-[#0B1F33] dark:hover:text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative cursor-pointer border-0">
+                  <RefreshCw size={14} className={refreshing ? "animate-spin text-[#14B8A6]" : ""} />
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => setPanManagerOpen(true)}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-[#1c9bda] dark:hover:border-[#14B8A6] text-[#0B1F33] dark:text-[#C9D6E5] shadow-sm transition-all cursor-pointer text-xs font-bold"
+                  title="Manage Family PANs for Batch Allotment"
+                >
+                  <Users size={14} className="text-[#1c9bda]" />
+                  <span>Family PANs</span>
+                  <span className="px-1.5 py-0.5 rounded-full bg-[#1c9bda]/10 text-[#1c9bda] dark:text-[#52b1e4] text-[10px] font-bold">
+                    {familyPans.pans.length}
+                  </span>
+                </button>
+
+                {/* User Account / Google Sign In */}
+                {auth.isLoggedIn ? (
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                      className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 text-slate-850 dark:text-white transition-all cursor-pointer text-xs font-bold shadow-sm"
+                      title={`Signed in as ${auth.user.name}`}
+                    >
+                      {auth.user?.photoURL ? (
+                        <img src={auth.user.photoURL} alt={auth.user.name} className="w-5 h-5 rounded-full object-cover shrink-0" />
+                      ) : (
+                        <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                          {auth.user.name ? auth.user.name.charAt(0).toUpperCase() : "U"}
+                        </div>
+                      )}
+                      <span className="hidden md:inline max-w-[95px] truncate font-semibold text-[11px]">
+                        {auth.user.name ? auth.user.name.split(" ")[0] : "Account"}
+                      </span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                    </button>
+
+                    {userMenuOpen && (
+                      <div 
+                        className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-[#0E1726] border border-slate-200 dark:border-white/10 shadow-2xl py-2 z-50 animate-fade-in"
+                        onClick={() => setUserMenuOpen(false)}
+                      >
+                        <div className="px-4 py-2 border-b border-slate-100 dark:border-white/5">
+                          <p className="text-xs font-bold text-slate-850 dark:text-white truncate">{auth.user.name}</p>
+                          <p className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
+                            {auth.user.email || auth.user.mobile}
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setPanManagerOpen(true)}
+                          className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
+                        >
+                          <Users size={14} className="text-[#1c9bda]" />
+                          <span>Saved PAN Vault ({familyPans.pans.length})</span>
+                        </button>
+                        <div className="border-t border-slate-100 dark:border-white/5 my-1" />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            auth.signOut();
+                            setUserMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
+                        >
+                          <LogOut size={14} />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => auth.openAuthModal("signin")}
+                    className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white hover:bg-slate-50 dark:bg-[#121D2D]/90 dark:hover:bg-[#1E293B] text-slate-800 dark:text-white transition-all cursor-pointer text-xs font-bold shadow-sm shrink-0"
+                    title="Sign In with Google / Gmail"
+                  >
+                    <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                    </svg>
+                    <span className="hidden sm:inline">Google Sign In</span>
+                    <span className="sm:hidden text-[11px]">Sign In</span>
+                  </button>
+                )}
+
+                {/* Theme Toggle */}
+                <button
+                  type="button"
+                  onClick={() => setDark(!dark)}
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-white/20 flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-sm transition-all cursor-pointer shrink-0"
+                  title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                >
+                  {dark ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} className="text-slate-600" />}
+                </button>
+
+                <div className="hidden sm:block">
+                  <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />
+                </div>
+              </div>
             </div>
 
-            {/* Toast Notification */}
-            {toastMessage && (
-              <div className="fixed top-5 right-5 z-50 animate-fade-in flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white dark:bg-[#121D2D] border border-emerald-500/30 text-slate-800 dark:text-white shadow-2xl text-xs font-semibold">
-                <CheckCircle size={15} className="text-emerald-500 shrink-0" />
-                <span>{toastMessage}</span>
+            {/* Mobile Expandable Search Bar */}
+            {mobileSearchOpen && (
+              <div className="px-3 pb-2.5 pt-0.5 md:hidden animate-in slide-in-from-top-1 duration-150 border-t border-slate-100 dark:border-white/5">
+                <HeaderSearchBar query={query} onQueryChange={setQuery} />
               </div>
             )}
           </header>

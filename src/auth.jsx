@@ -128,20 +128,12 @@ export function AuthProvider({ children }) {
       const { signInWithFirebaseGoogle } = await import("./firebase.js");
       googleUser = await signInWithFirebaseGoogle();
     } catch (fbErr) {
-      console.warn("Firebase Google login error, offering fallback:", fbErr?.message);
+      console.warn("Firebase Google login error:", fbErr?.message || fbErr);
+      throw fbErr;
     }
 
     if (!googleUser) {
-      // Local fallback for quick preview if Firebase live credentials aren't entered yet
-      const inputEmail = window.prompt("Sign in with Google / Gmail:\nEnter your Gmail address:", "trader@gmail.com");
-      if (!inputEmail) return null;
-      const cleanName = inputEmail.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
-      googleUser = {
-        uid: "google_" + Date.now(),
-        displayName: cleanName,
-        email: inputEmail.toLowerCase(),
-        photoURL: ""
-      };
+      return null;
     }
 
     const cleanEmail = (googleUser.email || "").toLowerCase();
@@ -158,6 +150,37 @@ export function AuthProvider({ children }) {
       name: cleanName,
       email: cleanEmail,
       photoURL: photoURL,
+      authProvider: "google",
+      createdAt: now,
+      lastLoginAt: now,
+      savedPans: existingPans,
+      savedAllotments: {}
+    };
+
+    saveStoredSession(account);
+    setUser(account);
+    setAuthModalOpen(false);
+    return account;
+  }, []);
+
+  /**
+   * Direct Gmail Connect (In-Modal fallback without browser window.prompt dialogs)
+   */
+  const signInWithGmailAddress = useCallback((inputEmail, localPans = []) => {
+    if (!inputEmail || typeof inputEmail !== "string" || !inputEmail.includes("@")) {
+      throw new Error("Please enter a valid Gmail address (e.g. trader@gmail.com).");
+    }
+    const cleanEmail = inputEmail.trim().toLowerCase();
+    const cleanName = cleanEmail.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()) || "Trader";
+    const now = new Date().toISOString();
+    const existingPans = Array.isArray(localPans) ? [...localPans] : [];
+
+    const account = {
+      id: "google_" + Date.now(),
+      uid: "google_" + Date.now(),
+      name: cleanName,
+      email: cleanEmail,
+      photoURL: "",
       authProvider: "google",
       createdAt: now,
       lastLoginAt: now,
@@ -241,6 +264,7 @@ export function AuthProvider({ children }) {
     openAuthModal,
     closeAuthModal,
     signInWithGoogle,
+    signInWithGmailAddress,
     signIn,
     signUp,
     signOut,
@@ -254,6 +278,7 @@ export function AuthProvider({ children }) {
     openAuthModal,
     closeAuthModal,
     signInWithGoogle,
+    signInWithGmailAddress,
     signIn,
     signUp,
     signOut,
