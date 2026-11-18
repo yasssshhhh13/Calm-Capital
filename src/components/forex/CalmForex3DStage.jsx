@@ -158,10 +158,10 @@ const DesktopKinetic3DOrbit = memo(function DesktopKinetic3DOrbit({ selectedCurr
               backfaceVisibility: "hidden"
             }}
             className={`absolute p-2.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-2 backdrop-blur-md shadow-md will-change-transform ${isSelected
-                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-lg scale-110"
-                : isFront
-                  ? "bg-white/90 dark:bg-[#0E1E36]/90 border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-slate-200 hover:border-teal-400"
-                  : "bg-white/60 dark:bg-[#0E1E36]/60 border-slate-200/40 dark:border-white/5 text-slate-500 opacity-75 hover:opacity-100"
+              ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-lg scale-110"
+              : isFront
+                ? "bg-white/90 dark:bg-[#0E1E36]/90 border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-slate-200 hover:border-teal-400"
+                : "bg-white/60 dark:bg-[#0E1E36]/60 border-slate-200/40 dark:border-white/5 text-slate-500 opacity-75 hover:opacity-100"
               }`}
           >
             <span className="text-sm leading-none">{cur.flag}</span>
@@ -207,8 +207,8 @@ function MobileCurrencyMatrix({ selectedCurrency, onSelectCurrency, currencies =
               type="button"
               onClick={() => onSelectCurrency(cur)}
               className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${isSelected
-                  ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-md scale-102 ring-2 ring-teal-500/30"
-                  : "bg-slate-50 dark:bg-white/[0.04] border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-200 active:scale-95"
+                ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-md scale-102 ring-2 ring-teal-500/30"
+                : "bg-slate-50 dark:bg-white/[0.04] border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-200 active:scale-95"
                 }`}
             >
               <span className="text-lg leading-none">{cur.flag}</span>
@@ -247,7 +247,7 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
           );
         }
       })
-      .catch(() => {});
+      .catch(() => { });
     return () => {
       isMounted = false;
     };
@@ -400,15 +400,14 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
                 </span>
               </div>
               <div className="text-right shrink-0">
-                <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded-md ${
-                  selectedCurrency.type === "Commodity Benchmark"
+                <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded-md ${selectedCurrency.type === "Commodity Benchmark"
                     ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
                     : selectedCurrency.stance?.includes("Easing") || selectedCurrency.stance?.includes("Cut")
-                    ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                    : selectedCurrency.stance?.includes("Normalizing") || selectedCurrency.stance?.includes("Hike")
-                    ? "bg-purple-500/10 text-purple-600 dark:text-purple-400"
-                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                }`}>
+                      ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                      : selectedCurrency.stance?.includes("Normalizing") || selectedCurrency.stance?.includes("Hike")
+                        ? "bg-purple-500/10 text-purple-600 dark:text-purple-400"
+                        : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                  }`}>
                   {selectedCurrency.stance || "Active"}
                 </span>
                 <span className="text-[9px] text-slate-400 block mt-0.5 font-mono">
