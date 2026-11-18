@@ -6,9 +6,9 @@
 const DEFAULT_SITE_NAME = "Calm Capital";
 const DEFAULT_OG_PATH = "/og-image.png";
 
-const HOME_TITLE = "Calm Capital — Live GMP & Institutional-Grade IPO Analysis";
+const HOME_TITLE = "Calm Capital — Indian IPO Intelligence & Institutional Forex Desk";
 const HOME_DESCRIPTION =
-  "Track live IPO GMP, subscription status, allotment chances, listing performance, DRHP/RHP, financials, calculators, and comprehensive IPO analysis—all in one place with Calm Capital.";
+  "Dual-market financial intelligence platform: Analyze Indian IPOs with live GMP, subscription odds, and allotment status, or trade global Forex with real-time macro calendars, position calculators, and cloud discipline journals.";
 
 /** Tab id → public path (no trailing slash except root). */
 export const TAB_PATHS = {
@@ -71,8 +71,8 @@ export const SECTION_META = {
     path: "/compare",
   },
   forex: {
-    title: "Institutional Forex Desk — Macro Calendar & Trading Journal | Calm Capital",
-    description: "Track live high-impact economic calendar releases across USD, EUR, GBP, JPY and log currency trades with discipline risk-reward analytics on Calm Capital.",
+    title: "Institutional Forex Desk — Live Macro Calendar, Position Sizer & Discipline Journal | Calm Capital",
+    description: "Track live high-impact macroeconomic releases across USD, EUR, GBP, JPY, calculate precision lot sizes, and audit currency trades with a cloud-synced discipline journal on Calm Capital.",
     path: "/forex",
   },
   about: {
@@ -353,6 +353,103 @@ export function buildWebsiteSchema(siteUrl) {
     url: `${base}/`,
     description: HOME_DESCRIPTION,
     publisher: { "@id": `${base}/#organization` },
+    hasPart: [
+      {
+        "@type": "WebPage",
+        "@id": `${base}/#primary-markets`,
+        name: "Indian IPO Intelligence",
+        url: `${base}/`,
+        description: "Comprehensive Indian IPO analysis, live GMP premiums, QIB institutional subscription tracking, and multi-PAN allotment checking.",
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${base}/forex#forex-desk`,
+        name: "Institutional Forex Desk",
+        url: `${base}/forex`,
+        description: "Live macroeconomic calendar, pip position size calculator, and cloud-synced discipline trading journal.",
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${base}/gmp#live-gmp`,
+        name: "Live IPO GMP Today",
+        url: `${base}/gmp`,
+        description: "Real-time Grey Market Premiums, estimated listing prices, and momentum trends.",
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${base}/allotment#allotment`,
+        name: "IPO Allotment Status",
+        url: `${base}/allotment`,
+        description: "Instant registrar allotment checker for Link Intime, KFintech, Bigshare, and Maashitla.",
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${base}/subscriptions#subscriptions`,
+        name: "IPO Subscription Status Live",
+        url: `${base}/subscriptions`,
+        description: "Live QIB, NII, and Retail subscription updates and 50X QIB demand radar.",
+      },
+      {
+        "@type": "WebPage",
+        "@id": `${base}/score#score`,
+        name: "CalmCapital Quantitative Score",
+        url: `${base}/score`,
+        description: "3-parameter quantitative IPO rating engine combining GMP momentum, financial health, and institutional demand.",
+      },
+    ],
+  };
+}
+
+export function buildSiteNavigationSchema(siteUrl) {
+  const base = getSiteUrl(siteUrl);
+  return {
+    "@type": "ItemList",
+    "@id": `${base}/#sitenav`,
+    name: "Calm Capital Primary Navigation",
+    itemListElement: [
+      {
+        "@type": "SiteNavigationElement",
+        position: 1,
+        name: "Institutional Forex Desk",
+        description: "Live macroeconomic calendar, precision lot sizing calculator, and emotional discipline trading journal.",
+        url: `${base}/forex`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        position: 2,
+        name: "Indian IPO Intelligence",
+        description: "Primary equity market intelligence, live GMP, subscription status, and financials.",
+        url: `${base}/`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        position: 3,
+        name: "Live IPO GMP Today",
+        description: "Real-time Grey Market Premium estimates and expected listing prices.",
+        url: `${base}/gmp`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        position: 4,
+        name: "IPO Allotment Status",
+        description: "Multi-PAN one-click family allotment verification via official registrars.",
+        url: `${base}/allotment`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        position: 5,
+        name: "IPO Subscription Status",
+        description: "QIB, NII, and Retail subscription tracking with 50X institutional demand radar.",
+        url: `${base}/subscriptions`,
+      },
+      {
+        "@type": "SiteNavigationElement",
+        position: 6,
+        name: "CalmCapital Score Ratings",
+        description: "3-parameter quantitative ratings combining GMP, financial audit, and institutional demand.",
+        url: `${base}/score`,
+      },
+    ],
   };
 }
 
@@ -363,9 +460,14 @@ export function buildFinancialServiceSchema(siteUrl) {
     "@id": `${base}/#service`,
     name: DEFAULT_SITE_NAME,
     url: `${base}/`,
-    description: "Institutional-grade IPO analysis, live GMP, subscription tracking and allotment tools for Indian IPOs.",
+    description: "Institutional-grade dual-market intelligence: Indian IPO analysis, live GMP, subscription tracking, allotment tools, and global Forex macroeconomic desk.",
     provider: { "@id": `${base}/#organization` },
-    areaServed: "IN",
+    areaServed: ["IN", "US", "GB", "EU", "AE", "SG"],
+    serviceType: [
+      "Indian Primary Equity Markets & IPO Intelligence",
+      "Global Foreign Exchange (Forex) Analytics & Macro Calendar",
+      "Discipline Trading Journal & Position Sizing Engine",
+    ],
   };
 }
 
@@ -432,6 +534,7 @@ export function buildHomeJsonLd(siteUrl) {
       buildOrganizationSchema(siteUrl),
       buildWebsiteSchema(siteUrl),
       buildFinancialServiceSchema(siteUrl),
+      buildSiteNavigationSchema(siteUrl),
       buildWebPageSchema({ ...meta, siteUrl }),
       buildBreadcrumbSchema([{ name: "Home", path: "/" }], siteUrl),
     ],
@@ -450,6 +553,7 @@ export function buildSectionJsonLd(tabId, siteUrl) {
       buildOrganizationSchema(siteUrl),
       buildWebsiteSchema(siteUrl),
       buildFinancialServiceSchema(siteUrl),
+      buildSiteNavigationSchema(siteUrl),
       buildWebPageSchema({ ...meta, siteUrl }),
       buildBreadcrumbSchema(crumbs, siteUrl),
     ],

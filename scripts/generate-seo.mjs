@@ -35,6 +35,7 @@ const SITE_URL = getSiteUrl(process.env.VITE_SITE_URL);
 
 const SECTION_PATHS = [
   "/",
+  "/forex",
   "/score",
   "/open",
   "/upcoming",
@@ -46,6 +47,7 @@ const SECTION_PATHS = [
   "/financials",
   "/calculator",
   "/compare",
+  "/about",
   "/privacy",
   "/terms",
   "/disclaimer",
@@ -111,7 +113,8 @@ function injectBodyContent(html, summaryHtml) {
 async function writeSitemap(ipos, lastmod) {
   const urls = [];
   for (const p of SECTION_PATHS) {
-    urls.push({ loc: absoluteUrl(p, SITE_URL), lastmod, priority: p === "/" ? "1.0" : "0.8" });
+    const priority = p === "/" ? "1.0" : p === "/forex" || p === "/gmp" || p === "/allotment" ? "0.9" : "0.8";
+    urls.push({ loc: absoluteUrl(p, SITE_URL), lastmod, priority });
   }
   for (const ipo of ipos) {
     if (!ipo?.id) continue;
@@ -163,12 +166,42 @@ Sitemap: ${SITE_URL}/sitemap.xml
 
 function sectionSummaryHtml(tabId) {
   const meta = buildSectionMeta(tabId, SITE_URL);
+  if (tabId === "forex") {
+    return `
+<main id="seo-content" style="display:none" aria-hidden="true">
+  <nav aria-label="Breadcrumb"><a href="/">Home</a> / <span>Institutional Forex Desk</span></nav>
+  <h1>Institutional Forex Desk — Live Macro Calendar, Position Sizer &amp; Discipline Journal</h1>
+  <p>${escapeHtml(meta.description)}</p>
+  <section>
+    <h2>Global Macroeconomic Event Calendar</h2>
+    <p>Track live high-impact macroeconomic releases, central bank decisions (Fed, ECB, BOE, BOJ, RBI), interest rate projections, CPI inflation prints, and NFP employment data across USD, EUR, GBP, JPY, CAD, and AUD pairs.</p>
+  </section>
+  <section>
+    <h2>Institutional Discipline Trading Journal</h2>
+    <p>Audit currency setups, risk-to-reward ratios, win rates, profit factors, and emotional execution composure with zero hindsight bias. Multi-device cloud sync with Google authentication.</p>
+  </section>
+  <section>
+    <h2>Quantitative Pip Valuation &amp; Position Size Calculator</h2>
+    <p>Calculate precision lot sizing, cash risk exposure, target rewards, and pip valuations across FX pairs, Gold (XAU/USD), and commodities.</p>
+  </section>
+  <p>
+    <a href="/">Home / Indian IPOs</a> ·
+    <a href="/forex">Forex Desk</a> ·
+    <a href="/gmp">Live GMP Today</a> ·
+    <a href="/allotment">IPO Allotment</a> ·
+    <a href="/subscriptions">Subscription Status</a> ·
+    <a href="/score">CalmCapital Score</a>
+  </p>
+</main>`.trim();
+  }
   return `
 <main id="seo-content" style="display:none" aria-hidden="true">
+  <nav aria-label="Breadcrumb"><a href="/">Home</a> / <span>${escapeHtml(meta.title.split("|")[0].trim())}</span></nav>
   <h1>${escapeHtml(meta.title)}</h1>
   <p>${escapeHtml(meta.description)}</p>
   <p>
     <a href="/">Home</a> ·
+    <a href="/forex">Institutional Forex Desk</a> ·
     <a href="/open">Open IPOs</a> ·
     <a href="/upcoming">Upcoming</a> ·
     <a href="/listed">Listed</a> ·
