@@ -1,9 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 /**
  * Card3DTilt
  * Ultra-smooth 3D Perspective Tilt wrapper with dynamic specular light reflection.
- * Uses hardware-accelerated CSS 3D transforms for 60fps performance without re-renders.
+ * Automatically disables on mobile / touch viewports to eliminate touch-scroll glitches.
  */
 export default function Card3DTilt({
   children,
@@ -15,11 +15,34 @@ export default function Card3DTilt({
   style = {}
 }) {
   const cardRef = useRef(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [transformStyle, setTransformStyle] = useState("");
   const [glareStyle, setGlareStyle] = useState({ opacity: 0 });
-  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    const checkTouch = () => {
+      const isTouch =
+        (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ||
+        (typeof window !== "undefined" && "ontouchstart" in window) ||
+        (typeof window !== "undefined" && window.innerWidth < 768);
+      setIsTouchDevice(Boolean(isTouch));
+    };
+    checkTouch();
+    window.addEventListener("resize", checkTouch, { passive: true });
+    return () => window.removeEventListener("resize", checkTouch);
+  }, []);
+
+  // On touch / mobile screens, render smoothly without 3D perspective manipulation
+  if (isTouchDevice) {
+    return (
+      <div onClick={onClick} className={className} style={style}>
+        {children}
+      </div>
+    );
+  }
 
   const handlePointerMove = (e) => {
+    if (e.pointerType === "touch") return;
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -36,7 +59,6 @@ export default function Card3DTilt({
     );
 
     if (glare) {
-      const angle = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI - 90;
       setGlareStyle({
         opacity: 0.18,
         background: `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 65%)`
@@ -44,12 +66,7 @@ export default function Card3DTilt({
     }
   };
 
-  const handlePointerEnter = () => {
-    setIsHovered(true);
-  };
-
   const handlePointerLeave = () => {
-    setIsHovered(false);
     setTransformStyle("perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)");
     setGlareStyle({ opacity: 0 });
   };
@@ -59,7 +76,6 @@ export default function Card3DTilt({
       ref={cardRef}
       onClick={onClick}
       onPointerMove={handlePointerMove}
-      onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       className={`relative transition-transform duration-200 ease-out will-change-transform ${className}`}
       style={{

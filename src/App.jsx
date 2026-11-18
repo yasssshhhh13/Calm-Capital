@@ -32,6 +32,7 @@ import AuthModal from "./components/AuthModal.jsx";
 import ForexSection from "./components/forex/ForexSection.jsx";
 import { Card3DTilt } from "./components/3d/index.js";
 import CalmDualGateway3D from "./components/CalmDualGateway3D.jsx";
+import CalmIpoBullBackdrop from "./components/animations/CalmIpoBullBackdrop.jsx";
 
 /* =====================================================================
    BRAND TOKENS
@@ -9055,6 +9056,9 @@ export default function App() {
                     borderColor: "rgba(20, 184, 166, 0.15)"
                   }}
                 >
+                  {/* Cinematic Charging Bull Video & Holographic Market Momentum */}
+                  <CalmIpoBullBackdrop intensity="subtle" />
+
                   {/* Decorative faint financial/candlestick pattern & grid */}
                   <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" style={{
                     backgroundImage: `

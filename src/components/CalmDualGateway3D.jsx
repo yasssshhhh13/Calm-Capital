@@ -1,18 +1,36 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   TrendingUp, Globe, ShieldCheck, ArrowRight, Activity,
   Sparkles, DollarSign, BarChart3, Clock, Zap, BookOpen, Calendar, Shield
 } from "lucide-react";
+import CalmIpoBullBackdrop from "./animations/CalmIpoBullBackdrop";
+import CalmForexGlobeBackdrop from "./animations/CalmForexGlobeBackdrop";
 
 export default function CalmDualGateway3D({ onSelectSection, activeSection = "ipos", dark = true }) {
   const [leftTilt, setLeftTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50 });
   const [rightTilt, setRightTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50 });
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const leftRef = useRef(null);
   const rightRef = useRef(null);
 
+  useEffect(() => {
+    const checkMobile = () => {
+      const isTouch =
+        (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ||
+        (typeof window !== "undefined" && "ontouchstart" in window) ||
+        (typeof window !== "undefined" && window.innerWidth < 768);
+      setIsMobile(Boolean(isTouch));
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile, { passive: true });
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   const handleMouseMove = (e, ref, setTilt) => {
+    if (isMobile) return;
+    if (e.pointerType === "touch") return;
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -20,8 +38,8 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotX = ((y - centerY) / centerY) * -12;
-    const rotY = ((x - centerX) / centerX) * 12;
+    const rotX = ((y - centerY) / centerY) * -10;
+    const rotY = ((x - centerX) / centerX) * 10;
     const glareX = (x / rect.width) * 100;
     const glareY = (y / rect.height) * 100;
 
@@ -34,7 +52,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
   };
 
   return (
-    <div className="relative w-full rounded-3xl overflow-hidden p-6 md:p-8 my-2 border border-slate-200/80 dark:border-white/10 shadow-2xl transition-all"
+    <div className="relative w-full rounded-3xl overflow-hidden p-5 sm:p-6 md:p-8 my-2 border border-slate-200/80 dark:border-white/10 shadow-2xl transition-all"
       style={{
         background: dark
           ? "radial-gradient(ellipse at 50% 0%, #0F233B 0%, #060D1A 100%)"
@@ -46,7 +64,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
       <div className="absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-[#1c9bda]/15 blur-3xl pointer-events-none" />
 
       {/* Header Banner */}
-      <div className="relative z-10 flex flex-col items-center text-center mb-8 space-y-2">
+      <div className="relative z-10 flex flex-col items-center text-center mb-6 md:mb-8 space-y-2">
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-teal-500/15 via-[#1c9bda]/15 to-emerald-500/15 text-teal-600 dark:text-teal-400 border border-teal-500/30 shadow-sm">
           <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#1c9bda]" />
           <span>Calm Capital Institutional Gateway</span>
@@ -59,19 +77,21 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
         </p>
       </div>
 
-      {/* 2-Sided Gateway 3D Arena */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-6" style={{ perspective: "1400px" }}>
+      {/* 2-Sided Gateway Arena */}
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6" style={{ perspective: isMobile ? "none" : "1400px" }}>
 
         {/* LEFT GATE: INDIAN IPO INTELLIGENCE */}
         <div
           ref={leftRef}
           onMouseMove={(e) => {
-            setHoveredCard("ipos");
-            handleMouseMove(e, leftRef, setLeftTilt);
+            if (!isMobile) {
+              setHoveredCard("ipos");
+              handleMouseMove(e, leftRef, setLeftTilt);
+            }
           }}
-          onMouseLeave={() => handleMouseLeave(setLeftTilt)}
+          onMouseLeave={() => !isMobile && handleMouseLeave(setLeftTilt)}
           onClick={() => onSelectSection("ipos")}
-          className={`relative group rounded-3xl p-6 md:p-8 cursor-pointer transition-all duration-300 border ${
+          className={`relative group rounded-3xl p-5 sm:p-6 md:p-8 cursor-pointer transition-all duration-300 border ${
             activeSection === "ipos"
               ? "border-emerald-500/60 ring-2 ring-emerald-500/20 shadow-2xl shadow-emerald-500/10"
               : "border-slate-200/80 dark:border-white/10 hover:border-emerald-500/40"
@@ -80,20 +100,25 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
             background: dark
               ? "linear-gradient(135deg, rgba(11, 31, 51, 0.85) 0%, rgba(6, 17, 30, 0.95) 100%)"
               : "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.9) 100%)",
-            transform: `rotateX(${leftTilt.x}deg) rotateY(${leftTilt.y}deg) translateZ(10px)`,
-            transformStyle: "preserve-3d",
-            willChange: "transform"
+            transform: isMobile ? "none" : `rotateX(${leftTilt.x}deg) rotateY(${leftTilt.y}deg) translateZ(10px)`,
+            transformStyle: isMobile ? "flat" : "preserve-3d",
+            willChange: isMobile ? "auto" : "transform"
           }}
         >
-          {/* Specular Glare overlay */}
-          <div
-            className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none"
-            style={{
-              background: `radial-gradient(circle at ${leftTilt.glareX}% ${leftTilt.glareY}%, rgba(16, 185, 129, 0.8), transparent 60%)`
-            }}
-          />
+          {/* Dynamic Dalal Street Charging Bull & Market Surge Animation */}
+          <CalmIpoBullBackdrop intensity={dark ? "vibrant" : "normal"} />
 
-          <div className="relative z-10 space-y-6">
+          {/* Specular Glare overlay */}
+          {!isMobile && (
+            <div
+              className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none"
+              style={{
+                background: `radial-gradient(circle at ${leftTilt.glareX}% ${leftTilt.glareY}%, rgba(16, 185, 129, 0.8), transparent 60%)`
+              }}
+            />
+          )}
+
+          <div className="relative z-10 space-y-5 sm:space-y-6">
             {/* Top pill & status */}
             <div className="flex items-center justify-between">
               <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
@@ -107,20 +132,20 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
 
             {/* Title & Description */}
             <div>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
                 <span>Indian IPO Intelligence</span>
-                <ArrowRight className="w-5 h-5 text-emerald-500 transform group-hover:translate-x-1.5 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-emerald-500 transform group-hover:translate-x-1.5 transition-transform shrink-0" />
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
                 Comprehensive data, live GMP premiums, institutional QIB subscriptions, financial health scoring, and allotment checking for Mainboard &amp; SME issues.
               </p>
             </div>
 
-            {/* 3D Visual Kinetic Element: Holographic Financial Stack */}
-            <div className="relative h-28 rounded-2xl bg-black/5 dark:bg-black/30 border border-emerald-500/20 p-3 overflow-hidden flex items-end justify-between gap-2">
+            {/* Visual Bar Graph Element */}
+            <div className="relative h-24 sm:h-28 rounded-2xl bg-black/5 dark:bg-black/30 border border-emerald-500/20 p-3 overflow-hidden flex items-end justify-between gap-2">
               <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:12px_12px] opacity-15 pointer-events-none" />
               
-              {/* Mini animated 3D bar columns */}
+              {/* Animated bar columns */}
               {[
                 { h: "55%", gmp: "+32%", label: "Tech" },
                 { h: "82%", gmp: "+68%", label: "Solar", hot: true },
@@ -171,7 +196,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
             {/* Enter CTA */}
             <button
               type="button"
-              className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0"
+              className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
             >
               <span>Explore Indian IPOs (14 Desks)</span>
               <ArrowRight className="w-4 h-4" />
@@ -183,12 +208,14 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
         <div
           ref={rightRef}
           onMouseMove={(e) => {
-            setHoveredCard("forex");
-            handleMouseMove(e, rightRef, setRightTilt);
+            if (!isMobile) {
+              setHoveredCard("forex");
+              handleMouseMove(e, rightRef, setRightTilt);
+            }
           }}
-          onMouseLeave={() => handleMouseLeave(setRightTilt)}
+          onMouseLeave={() => !isMobile && handleMouseLeave(setRightTilt)}
           onClick={() => onSelectSection("forex")}
-          className={`relative group rounded-3xl p-6 md:p-8 cursor-pointer transition-all duration-300 border ${
+          className={`relative group rounded-3xl p-5 sm:p-6 md:p-8 cursor-pointer transition-all duration-300 border ${
             activeSection === "forex"
               ? "border-[#1c9bda]/70 ring-2 ring-[#1c9bda]/30 shadow-2xl shadow-[#1c9bda]/15"
               : "border-slate-200/80 dark:border-white/10 hover:border-[#1c9bda]/40"
@@ -197,20 +224,25 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
             background: dark
               ? "linear-gradient(135deg, rgba(8, 26, 45, 0.85) 0%, rgba(4, 13, 24, 0.95) 100%)"
               : "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.9) 100%)",
-            transform: `rotateX(${rightTilt.x}deg) rotateY(${rightTilt.y}deg) translateZ(10px)`,
-            transformStyle: "preserve-3d",
-            willChange: "transform"
+            transform: isMobile ? "none" : `rotateX(${rightTilt.x}deg) rotateY(${rightTilt.y}deg) translateZ(10px)`,
+            transformStyle: isMobile ? "flat" : "preserve-3d",
+            willChange: isMobile ? "auto" : "transform"
           }}
         >
-          {/* Specular Glare overlay */}
-          <div
-            className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none"
-            style={{
-              background: `radial-gradient(circle at ${rightTilt.glareX}% ${rightTilt.glareY}%, rgba(28, 155, 218, 0.9), transparent 60%)`
-            }}
-          />
+          {/* Dynamic 3D Cyber Globe & Global Telemetry Animation */}
+          <CalmForexGlobeBackdrop intensity={dark ? "vibrant" : "normal"} />
 
-          <div className="relative z-10 space-y-6">
+          {/* Specular Glare overlay */}
+          {!isMobile && (
+            <div
+              className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none"
+              style={{
+                background: `radial-gradient(circle at ${rightTilt.glareX}% ${rightTilt.glareY}%, rgba(28, 155, 218, 0.9), transparent 60%)`
+              }}
+            />
+          )}
+
+          <div className="relative z-10 space-y-5 sm:space-y-6">
             {/* Top pill & status */}
             <div className="flex items-center justify-between">
               <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-[#1c9bda]/15 text-[#1c9bda] dark:text-[#52b1e4] border border-[#1c9bda]/30 flex items-center gap-1.5">
@@ -224,17 +256,17 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
 
             {/* Title & Description */}
             <div>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
                 <span>Global Forex Macro Hub</span>
-                <ArrowRight className="w-5 h-5 text-[#1c9bda] transform group-hover:translate-x-1.5 transition-transform" />
+                <ArrowRight className="w-5 h-5 text-[#1c9bda] transform group-hover:translate-x-1.5 transition-transform shrink-0" />
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
                 Institutional economic calendar, central bank interest rate telemetry, and a precision trading journal designed for prop firm challenges from $5,000.
               </p>
             </div>
 
-            {/* 3D Visual Kinetic Element: Dual Mini Orbital Rings */}
-            <div className="relative h-28 rounded-2xl bg-black/5 dark:bg-black/30 border border-[#1c9bda]/20 p-3 overflow-hidden flex items-center justify-around">
+            {/* Ticker Row */}
+            <div className="relative h-24 sm:h-28 rounded-2xl bg-black/5 dark:bg-black/30 border border-[#1c9bda]/20 p-3 overflow-hidden flex items-center justify-around">
               <div className="absolute inset-0 bg-[radial-gradient(#1c9bda_1px,transparent_1px)] [background-size:12px_12px] opacity-15 pointer-events-none" />
 
               {/* Ticking live currency tickers */}
@@ -244,7 +276,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
                 { pair: "USD/JPY", val: "154.62", chg: "+0.35%", up: true },
                 { pair: "BTC/USD", val: "$91,450", chg: "+2.40%", up: true }
               ].map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center justify-center p-2 rounded-xl bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 text-center shrink-0">
+                <div key={idx} className="flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-xl bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 text-center shrink-0">
                   <span className="text-[10px] font-mono font-black text-slate-900 dark:text-white">
                     {item.pair}
                   </span>
@@ -281,7 +313,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
             {/* Enter CTA */}
             <button
               type="button"
-              className="w-full py-3.5 rounded-xl bg-[#1c9bda] hover:bg-[#1688c2] text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-[#1c9bda]/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0"
+              className="w-full py-3.5 rounded-xl bg-[#1c9bda] hover:bg-[#1688c2] text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-[#1c9bda]/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
             >
               <span>Launch Forex Desk (News &amp; Journal)</span>
               <ArrowRight className="w-4 h-4" />
