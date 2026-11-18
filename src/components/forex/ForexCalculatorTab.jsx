@@ -1,40 +1,205 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import {
   Calculator, DollarSign, TrendingUp, TrendingDown, ShieldCheck,
   AlertTriangle, Target, Percent, ArrowRight, RefreshCw, BarChart2,
   CheckCircle2, Sparkles, Sliders, ArrowUpRight, ArrowDownRight,
-  BookOpen, HelpCircle, Info, Shield, Layers
+  BookOpen, HelpCircle, Info, Shield, Layers, Search, ChevronDown, Check, ExternalLink
 } from "lucide-react";
 
 /**
- * Institutional Instrument Specifications (Matching OctaFX & MetaTrader contract standards)
+ * Institutional Instrument Specifications (MetaTrader, Bloomberg & Institutional Broker Standards)
  */
 const INSTRUMENTS = [
   // G10 USD Majors
-  { id: "EURUSD", pair: "EUR/USD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 1.0542, quoteCurrency: "USD" },
-  { id: "GBPUSD", pair: "GBP/USD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 1.2685, quoteCurrency: "USD" },
-  { id: "USDJPY", pair: "USD/JPY", category: "Majors", contractSize: 100000, pipDigits: 2, pipStep: 0.01, currentPrice: 154.62, quoteCurrency: "JPY" },
-  { id: "USDCHF", pair: "USD/CHF", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 0.8845, quoteCurrency: "CHF" },
-  { id: "USDCAD", pair: "USD/CAD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 1.3980, quoteCurrency: "CAD" },
-  { id: "AUDUSD", pair: "AUD/USD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 0.6515, quoteCurrency: "USD" },
-  { id: "NZDUSD", pair: "NZD/USD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 0.5872, quoteCurrency: "USD" },
+  { id: "EURUSD", symbol: "EUR/USD", pair: "EUR/USD", name: "Euro vs US Dollar", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 1.0542, quoteCurrency: "USD", tvSymbol: "FX:EURUSD" },
+  { id: "GBPUSD", symbol: "GBP/USD", pair: "GBP/USD", name: "British Pound vs US Dollar", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 1.2685, quoteCurrency: "USD", tvSymbol: "FX:GBPUSD" },
+  { id: "USDJPY", symbol: "USD/JPY", pair: "USD/JPY", name: "US Dollar vs Japanese Yen", category: "Majors", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 154.62, quoteCurrency: "JPY", tvSymbol: "FX:USDJPY" },
+  { id: "USDCHF", symbol: "USD/CHF", pair: "USD/CHF", name: "US Dollar vs Swiss Franc", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 0.8845, quoteCurrency: "CHF", tvSymbol: "FX:USDCHF" },
+  { id: "USDCAD", symbol: "USD/CAD", pair: "USD/CAD", name: "US Dollar vs Canadian Dollar", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 1.3980, quoteCurrency: "CAD", tvSymbol: "FX:USDCAD" },
+  { id: "AUDUSD", symbol: "AUD/USD", pair: "AUD/USD", name: "Australian Dollar vs US Dollar", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 0.6515, quoteCurrency: "USD", tvSymbol: "FX:AUDUSD" },
+  { id: "NZDUSD", symbol: "NZD/USD", pair: "NZD/USD", name: "New Zealand Dollar vs US Dollar", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 0.5872, quoteCurrency: "USD", tvSymbol: "FX:NZDUSD" },
 
-  // Metals & Commodities
-  { id: "XAUUSD", pair: "XAU/USD (Gold)", category: "Metals", contractSize: 100, pipDigits: 2, pipStep: 0.1, currentPrice: 2596.40, quoteCurrency: "USD" },
-  { id: "XAGUSD", pair: "XAG/USD (Silver)", category: "Metals", contractSize: 5000, pipDigits: 3, pipStep: 0.01, currentPrice: 30.45, quoteCurrency: "USD" },
-  { id: "WTIUSD", pair: "WTI/USD (Crude Oil)", category: "Energy", contractSize: 1000, pipDigits: 2, pipStep: 0.01, currentPrice: 68.90, quoteCurrency: "USD" },
+  // Global Stock Indices
+  { id: "US30", symbol: "US30", pair: "US30", name: "Wall Street 30 / Dow Jones Index", category: "Indices", contractSize: 1, pipDigits: 1, pipStep: 1.0, defaultPrice: 43440.0, quoteCurrency: "USD", tvSymbol: "BLACKBULL:US30" },
+  { id: "NAS100", symbol: "NAS100", pair: "NAS100", name: "US Tech 100 / Nasdaq Index", category: "Indices", contractSize: 1, pipDigits: 2, pipStep: 0.1, defaultPrice: 20650.0, quoteCurrency: "USD", tvSymbol: "OANDA:NAS100USD" },
+  { id: "SPX500", symbol: "SPX500", pair: "SPX500", name: "US 500 / S&P 500 Index", category: "Indices", contractSize: 10, pipDigits: 2, pipStep: 0.1, defaultPrice: 5870.0, quoteCurrency: "USD", tvSymbol: "OANDA:SPX500USD" },
+  { id: "GER40", symbol: "GER40", pair: "GER40", name: "Germany 40 / DAX Index", category: "Indices", contractSize: 1, pipDigits: 1, pipStep: 1.0, defaultPrice: 19250.0, quoteCurrency: "EUR", tvSymbol: "OANDA:DE40EUR" },
 
-  // Crosses
-  { id: "EURGBP", pair: "EUR/GBP", category: "Crosses", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 0.8310, quoteCurrency: "GBP" },
-  { id: "EURJPY", pair: "EUR/JPY", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, currentPrice: 163.05, quoteCurrency: "JPY" },
-  { id: "GBPJPY", pair: "GBP/JPY", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, currentPrice: 196.15, quoteCurrency: "JPY" },
+  // Precious Metals & Energy
+  { id: "XAUUSD", symbol: "XAU/USD", pair: "XAU/USD", name: "Spot Gold (Troy Ounce)", category: "Metals", contractSize: 100, pipDigits: 2, pipStep: 0.1, defaultPrice: 2596.40, quoteCurrency: "USD", tvSymbol: "OANDA:XAUUSD" },
+  { id: "XAGUSD", symbol: "XAG/USD", pair: "XAG/USD", name: "Spot Silver (Troy Ounce)", category: "Metals", contractSize: 5000, pipDigits: 3, pipStep: 0.01, defaultPrice: 30.45, quoteCurrency: "USD", tvSymbol: "OANDA:XAGUSD" },
+  { id: "WTIUSD", symbol: "WTI/USD", pair: "WTI/USD", name: "US Crude Oil (WTI Light)", category: "Energy", contractSize: 1000, pipDigits: 2, pipStep: 0.01, defaultPrice: 68.90, quoteCurrency: "USD", tvSymbol: "TVC:USOIL" },
+
+  // G10 Crosses
+  { id: "EURGBP", symbol: "EUR/GBP", pair: "EUR/GBP", name: "Euro vs British Pound", category: "Crosses", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 0.8310, quoteCurrency: "GBP", tvSymbol: "FX:EURGBP" },
+  { id: "EURJPY", symbol: "EUR/JPY", pair: "EUR/JPY", name: "Euro vs Japanese Yen", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 163.05, quoteCurrency: "JPY", tvSymbol: "FX:EURJPY" },
+  { id: "GBPJPY", symbol: "GBP/JPY", pair: "GBP/JPY", name: "British Pound vs Japanese Yen", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 196.15, quoteCurrency: "JPY", tvSymbol: "FX:GBPJPY" },
 
   // Emerging & Crypto
-  { id: "USDINR", pair: "USD/INR", category: "Emerging", contractSize: 100000, pipDigits: 2, pipStep: 0.01, currentPrice: 84.42, quoteCurrency: "INR" },
-  { id: "USDAED", pair: "USD/AED", category: "Emerging", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 3.6725, quoteCurrency: "AED" },
-  { id: "BTCUSD", pair: "BTC/USD (Bitcoin)", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 1.0, currentPrice: 91420.00, quoteCurrency: "USD" },
-  { id: "ETHUSD", pair: "ETH/USD (Ethereum)", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 0.1, currentPrice: 3120.00, quoteCurrency: "USD" }
+  { id: "USDINR", symbol: "USD/INR", pair: "USD/INR", name: "US Dollar vs Indian Rupee", category: "Emerging", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 84.42, quoteCurrency: "INR", tvSymbol: "FX_IDC:USDINR" },
+  { id: "USDAED", symbol: "USD/AED", pair: "USD/AED", name: "US Dollar vs UAE Dirham", category: "Emerging", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 3.6725, quoteCurrency: "AED", tvSymbol: "FX_IDC:USDAED" },
+  { id: "BTCUSD", symbol: "BTC/USD", pair: "BTC/USD", name: "Bitcoin vs US Dollar", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 1.0, defaultPrice: 91420.00, quoteCurrency: "USD", tvSymbol: "BINANCE:BTCUSDT" },
+  { id: "ETHUSD", symbol: "ETH/USD", pair: "ETH/USD", name: "Ethereum vs US Dollar", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 0.1, defaultPrice: 3120.00, quoteCurrency: "USD", tvSymbol: "BINANCE:ETHUSDT" }
 ];
+
+/**
+ * Modern Searchable Instrument Selector Dropdown
+ */
+function SearchableInstrumentSelector({ selectedId, onSelect, label = "Trading Asset" }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("ALL");
+  const dropdownRef = useRef(null);
+
+  const selectedItem = useMemo(
+    () => INSTRUMENTS.find((i) => i.id === selectedId) || INSTRUMENTS[0],
+    [selectedId]
+  );
+
+  const categories = ["ALL", "Majors", "Indices", "Metals", "Energy", "Crosses", "Crypto"];
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return INSTRUMENTS.filter((i) => {
+      const matchCat = category === "ALL" || i.category === category;
+      const matchQuery =
+        !q ||
+        i.symbol.toLowerCase().includes(q) ||
+        i.name.toLowerCase().includes(q) ||
+        i.id.toLowerCase().includes(q) ||
+        i.category.toLowerCase().includes(q);
+      return matchCat && matchQuery;
+    });
+  }, [search, category]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
+  return (
+    <div className="space-y-1.5 relative" ref={dropdownRef}>
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+          {label}
+        </label>
+        <span className="text-[10px] font-mono font-bold text-[#1c9bda]">Search &amp; Filter</span>
+      </div>
+
+      {/* Selector Trigger Button */}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="w-full px-4 py-3 rounded-2xl bg-slate-50 hover:bg-slate-100/90 dark:bg-[#071324] dark:hover:bg-[#0A1A32] border border-slate-200/90 dark:border-white/10 text-left transition-all cursor-pointer flex items-center justify-between gap-3 shadow-sm group focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <span className="text-sm font-black font-mono text-slate-900 dark:text-white tracking-tight">
+            {selectedItem.symbol}
+          </span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate hidden sm:inline">
+            • {selectedItem.name}
+          </span>
+          <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:text-teal-400 border border-teal-500/20 shrink-0">
+            {selectedItem.category}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5 shrink-0 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white transition-colors">
+          <Search size={14} />
+          <ChevronDown size={14} className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        </div>
+      </button>
+
+      {/* Popover Dropdown Menu */}
+      {open && (
+        <div className="absolute left-0 right-0 top-full mt-2 z-50 p-3.5 rounded-3xl bg-white dark:bg-[#0A1526] border border-slate-200 dark:border-white/15 shadow-2xl space-y-2.5 animate-in fade-in zoom-in-95 duration-150">
+          
+          {/* Search Box */}
+          <div className="relative">
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              autoFocus
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search symbol or market (e.g. Gold, XAU, US30, EUR)..."
+              className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-[#1c9bda]/40 placeholder:text-slate-400"
+            />
+          </div>
+
+          {/* Category Chips */}
+          <div className="flex items-center gap-1 overflow-x-auto pb-1 no-scrollbar text-[10px] font-bold">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setCategory(cat)}
+                className={`px-2.5 py-1 rounded-lg transition-all shrink-0 cursor-pointer border ${
+                  category === cat
+                    ? "bg-[#1c9bda] text-white border-[#1c9bda] shadow-xs"
+                    : "bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border-transparent hover:border-slate-200"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Results List */}
+          <div className="max-h-56 overflow-y-auto space-y-1 pr-1">
+            {filtered.length > 0 ? (
+              filtered.map((item) => {
+                const isSelected = item.id === selectedId;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      onSelect(item.id);
+                      setOpen(false);
+                      setSearch("");
+                    }}
+                    className={`w-full p-2.5 rounded-xl text-left transition-all cursor-pointer flex items-center justify-between gap-3 border ${
+                      isSelected
+                        ? "bg-teal-500/10 border-teal-500/30 text-teal-700 dark:text-teal-300 font-bold"
+                        : "bg-transparent border-transparent hover:bg-slate-100/80 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300"
+                    }`}
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono font-black text-xs text-slate-900 dark:text-white">
+                          {item.symbol}
+                        </span>
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-400">
+                          {item.category}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                        {item.name}
+                      </p>
+                    </div>
+
+                    {isSelected && <Check size={14} className="text-teal-500 shrink-0" />}
+                  </button>
+                );
+              })
+            ) : (
+              <div className="py-6 text-center text-xs text-slate-400">
+                No matching instruments found for "{search}"
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 const BALANCE_PRESETS = [
   { label: "$5,000", val: 5000 },
@@ -45,10 +210,10 @@ const BALANCE_PRESETS = [
   { label: "$200,000", val: 200000 }
 ];
 
-const LOT_QUICK_PRESETS = [0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0];
+const LOT_QUICK_PRESETS = [0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0];
 
 export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
-  // Active Tab: "profit" (OctaFX style) | "position_size" (Lot size engine) | "pips_table"
+  // Active Tab: "profit" (Institutional P/L) | "position_size" (Capital Guard)
   const [activeTab, setActiveTab] = useState("profit");
 
   // Shared Instrument
@@ -59,25 +224,25 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
   );
 
   // -------------------------------------------------------------
-  // TAB 1: PROFIT / LOSS CALCULATOR (OctaFX Style)
+  // TAB 1: PROFIT / LOSS CALCULATOR
   // -------------------------------------------------------------
   const [profitDirection, setProfitDirection] = useState("BUY");
-  const [profitLots, setProfitLots] = useState(1.0);
-  const [openPrice, setOpenPrice] = useState(inst.currentPrice);
+  const [profitLots, setProfitLots] = useState("1.0");
+  const [openPrice, setOpenPrice] = useState(String(inst.defaultPrice));
   const [closePrice, setClosePrice] = useState(
-    Number((inst.currentPrice + inst.pipStep * 50).toFixed(inst.pipDigits))
+    String(Number((inst.defaultPrice + inst.pipStep * 50).toFixed(inst.pipDigits)))
   );
 
   // When instrument changes in Profit Calculator, auto-fill live defaults
   const handleSelectProfitInst = (newId) => {
     setSelectedInstId(newId);
     const newInst = INSTRUMENTS.find((i) => i.id === newId) || INSTRUMENTS[0];
-    const baseP = newInst.currentPrice;
-    setOpenPrice(baseP);
+    const baseP = newInst.defaultPrice;
+    setOpenPrice(String(baseP));
     if (profitDirection === "BUY") {
-      setClosePrice(Number((baseP + newInst.pipStep * 50).toFixed(newInst.pipDigits)));
+      setClosePrice(String(Number((baseP + newInst.pipStep * 50).toFixed(newInst.pipDigits))));
     } else {
-      setClosePrice(Number((baseP - newInst.pipStep * 50).toFixed(newInst.pipDigits)));
+      setClosePrice(String(Number((baseP - newInst.pipStep * 50).toFixed(newInst.pipDigits))));
     }
   };
 
@@ -85,20 +250,25 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
   const handleToggleProfitDirection = (dir) => {
     if (dir === profitDirection) return;
     setProfitDirection(dir);
-    const diff = Math.abs(closePrice - openPrice);
+    const op = parseFloat(openPrice) || inst.defaultPrice;
+    const cp = parseFloat(closePrice) || inst.defaultPrice;
+    const diff = Math.abs(cp - op);
     if (dir === "BUY") {
-      setClosePrice(Number((openPrice + diff).toFixed(inst.pipDigits)));
+      setClosePrice(String(Number((op + diff).toFixed(inst.pipDigits))));
     } else {
-      setClosePrice(Number((openPrice - diff).toFixed(inst.pipDigits)));
+      setClosePrice(String(Number((op - diff).toFixed(inst.pipDigits))));
     }
   };
 
-  // OctaFX Profit Formula:
+  // Institutional Standard Profit Formula:
   // For BUY: (Close - Open) * Volume * ContractSize
   // For SELL: (Open - Close) * Volume * ContractSize
   const profitResults = useMemo(() => {
     const isBuy = profitDirection === "BUY";
-    const priceDiff = isBuy ? closePrice - openPrice : openPrice - closePrice;
+    const op = parseFloat(openPrice) || inst.defaultPrice;
+    const cp = parseFloat(closePrice) || inst.defaultPrice;
+    const lots = Math.max(0.001, parseFloat(profitLots) || 0);
+    const priceDiff = isBuy ? cp - op : op - cp;
 
     // Currency conversions for cross pairs
     let quoteToUsdRate = 1.0;
@@ -110,16 +280,16 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
     else if (inst.quoteCurrency === "AED") quoteToUsdRate = 1 / 3.6725;
 
     // Gross Profit in Quote Currency -> USD
-    const grossProfitUsd = priceDiff * profitLots * inst.contractSize * quoteToUsdRate;
+    const grossProfitUsd = priceDiff * lots * inst.contractSize * quoteToUsdRate;
 
     // Pips movement
     const pipsMoved = priceDiff / inst.pipStep;
 
     // Pip Value for this lot size in USD
-    const pipValueUsd = inst.pipStep * profitLots * inst.contractSize * quoteToUsdRate;
+    const pipValueUsd = inst.pipStep * lots * inst.contractSize * quoteToUsdRate;
 
     // Required Margin at standard 1:100 leverage
-    const notionalValueUsd = openPrice * profitLots * inst.contractSize * quoteToUsdRate;
+    const notionalValueUsd = op * lots * inst.contractSize * quoteToUsdRate;
     const marginRequired100 = notionalValueUsd / 100;
 
     return {
@@ -128,17 +298,18 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
       pipsMoved: (Math.round(pipsMoved * 10) / 10).toFixed(1),
       pipValueUsd: pipValueUsd.toFixed(2),
       marginRequired100: marginRequired100.toFixed(2),
-      pointDiff: Math.abs(priceDiff).toFixed(inst.pipDigits)
+      pointDiff: Math.abs(priceDiff).toFixed(inst.pipDigits),
+      calculatedLots: lots
     };
   }, [profitDirection, closePrice, openPrice, profitLots, inst]);
 
   // -------------------------------------------------------------
   // TAB 2: POSITION SIZING & LOT CALCULATOR (Capital Guard)
   // -------------------------------------------------------------
-  const [posBalance, setPosBalance] = useState(50000);
+  const [posBalance, setPosBalance] = useState("50000");
   const [posRiskPercent, setPosRiskPercent] = useState(1.0);
-  const [posStopLossPips, setPosStopLossPips] = useState(25);
-  const [posTargetPips, setPosTargetPips] = useState(50);
+  const [posStopLossPips, setPosStopLossPips] = useState("25");
+  const [posTargetPips, setPosTargetPips] = useState("50");
 
   const positionSizingResults = useMemo(() => {
     let quoteToUsdRate = 1.0;
@@ -149,25 +320,29 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
     else if (inst.quoteCurrency === "INR") quoteToUsdRate = 1 / 84.42;
     else if (inst.quoteCurrency === "AED") quoteToUsdRate = 1 / 3.6725;
 
+    const balance = parseFloat(posBalance) || 0;
+    const slPips = parseFloat(posStopLossPips) || 0;
+    const tpPips = parseFloat(posTargetPips) || 0;
+
     // Pip value per 1.0 standard lot in USD
     const pipValue1Lot = inst.pipStep * inst.contractSize * quoteToUsdRate;
 
     // Maximum allowed dollar loss based on risk %
-    const maxDollarRisk = posBalance * (posRiskPercent / 100);
+    const maxDollarRisk = balance * (posRiskPercent / 100);
 
     // Exact Lot Size = Dollar Risk / (StopLossPips * PipValuePerLot)
-    const exactLots = posStopLossPips > 0 ? maxDollarRisk / (posStopLossPips * pipValue1Lot) : 0;
+    const exactLots = slPips > 0 ? maxDollarRisk / (slPips * pipValue1Lot) : 0;
     const roundedLots = Math.max(0.01, Math.round(exactLots * 100) / 100);
 
     // Projected Profit at Target Pips
-    const projectedProfitUsd = roundedLots * posTargetPips * pipValue1Lot;
-    const plannedLossUsd = roundedLots * posStopLossPips * pipValue1Lot;
+    const projectedProfitUsd = roundedLots * tpPips * pipValue1Lot;
+    const plannedLossUsd = roundedLots * slPips * pipValue1Lot;
 
     // Risk to Reward
-    const rrRatio = posStopLossPips > 0 ? posTargetPips / posStopLossPips : 0;
+    const rrRatio = slPips > 0 ? tpPips / slPips : 0;
 
     // Prop firm drawdown limiters
-    const dailyDrawdownFloor = posBalance * 0.05; // 5% daily limit
+    const dailyDrawdownFloor = balance * 0.05; // 5% daily limit
     const isExceedingDailyDrawdown = plannedLossUsd > dailyDrawdownFloor;
 
     return {
@@ -178,7 +353,8 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
       plannedLossUsd: plannedLossUsd.toFixed(2),
       rrRatio: rrRatio.toFixed(2),
       dailyDrawdownFloor: dailyDrawdownFloor.toFixed(0),
-      isExceedingDailyDrawdown
+      isExceedingDailyDrawdown,
+      parsedBalance: balance
     };
   }, [posBalance, posRiskPercent, posStopLossPips, posTargetPips, inst]);
 
@@ -195,7 +371,7 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                 <span>Feature #3 • Institutional Quantitative Engine</span>
               </span>
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                OctaFX-Inspired Easy Precision
+                Institutional Precision Engine
               </span>
             </div>
 
@@ -243,12 +419,12 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
       </div>
 
       {/* ========================================================================= */}
-      {/* MODE 1: OCTAFX-STYLE PROFIT CALCULATOR (Simple, Intuitive, Fast)          */}
+      {/* MODE 1: INSTITUTIONAL PROFIT CALCULATOR (Simple, Intuitive, Fast)          */}
       {/* ========================================================================= */}
       {activeTab === "profit" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-in fade-in duration-200">
           
-          {/* LEFT: Input Form (OctaFX Style: Pair, Volume, Direction, Open, Close) */}
+          {/* LEFT: Input Form (Pair, Volume, Direction, Open, Close) */}
           <div className="lg:col-span-7 p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-6">
             
             <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
@@ -257,27 +433,18 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                 <span>Trade Parameters</span>
               </span>
               <span className="text-[11px] font-mono font-bold text-teal-600 dark:text-teal-400">
-                OctaFX Standard Formula
+                Institutional Standard Formula
               </span>
             </div>
 
             {/* 1. Asset & Direction */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-              <div className="sm:col-span-8 space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  Trading Asset / Currency Pair
-                </label>
-                <select
-                  value={selectedInstId}
-                  onChange={(e) => handleSelectProfitInst(e.target.value)}
-                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white text-xs font-bold font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/40 cursor-pointer"
-                >
-                  {INSTRUMENTS.map((i) => (
-                    <option key={i.id} value={i.id}>
-                      {i.pair} • Current: {i.currentPrice}
-                    </option>
-                  ))}
-                </select>
+              <div className="sm:col-span-8">
+                <SearchableInstrumentSelector
+                  selectedId={selectedInstId}
+                  onSelect={handleSelectProfitInst}
+                  label="Trading Asset / Instrument"
+                />
               </div>
 
               {/* Order Direction: Buy / Sell */}
@@ -312,28 +479,43 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   </button>
                 </div>
               </div>
+
+              {/* TradingView Live Quote Link */}
+              <div className="sm:col-span-12 flex items-center justify-between text-[11px] px-1">
+                <span className="text-slate-400 font-mono">Reference Price: {inst.defaultPrice}</span>
+                <a
+                  href={`https://www.tradingview.com/symbols/${inst.tvSymbol || inst.id}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#1c9bda] hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
+                  title={`Check live real-time rate for ${inst.symbol} on TradingView`}
+                >
+                  <span>View {inst.symbol} Live on TradingView</span>
+                  <ExternalLink size={11} />
+                </a>
+              </div>
             </div>
 
             {/* 2. Volume in Lots */}
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
                   Volume (Lots)
                 </label>
                 <span className="text-xs font-mono font-black text-teal-600 dark:text-teal-400">
-                  {profitLots} Standard Lot{profitLots !== 1 ? "s" : ""}
+                  {profitResults.calculatedLots} Standard Lot{profitResults.calculatedLots !== 1 ? "s" : ""}
                 </span>
               </div>
 
-              {/* Quick Lot Buttons */}
-              <div className="flex items-center gap-2 flex-wrap">
+              {/* Quick Lot Preset Buttons */}
+              <div className="flex items-center gap-1.5 flex-wrap">
                 {LOT_QUICK_PRESETS.map((l) => (
                   <button
                     key={l}
                     type="button"
-                    onClick={() => setProfitLots(l)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer border ${
-                      profitLots === l
+                    onClick={() => setProfitLots(String(l))}
+                    className={`px-2.5 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer border ${
+                      parseFloat(profitLots) === l
                         ? "bg-teal-500 text-white border-teal-500 shadow-sm"
                         : "bg-slate-50 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-slate-300"
                     }`}
@@ -343,12 +525,23 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                 ))}
               </div>
 
+              {/* Fully Editable Number Input (Works seamlessly with Keyboard & Mobile Numeric Keypad) */}
               <input
-                type="number"
-                step="0.01"
-                min="0.01"
+                type="text"
+                inputMode="decimal"
                 value={profitLots}
-                onChange={(e) => setProfitLots(Math.max(0.01, Number(e.target.value)))}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === "" || /^\d*\.?\d*$/.test(val)) {
+                    setProfitLots(val);
+                  }
+                }}
+                onBlur={() => {
+                  if (!profitLots || parseFloat(profitLots) <= 0) {
+                    setProfitLots("0.01");
+                  }
+                }}
+                placeholder="Enter lots (e.g. 1.0, 20, 50)..."
                 className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
               />
             </div>
@@ -356,18 +549,40 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
             {/* 3. Open Price & Close Price */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  Open Price (Entry)
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                    Open Price (Entry)
+                  </label>
+                  <a
+                    href={`https://www.tradingview.com/symbols/${inst.tvSymbol || inst.id}/`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] font-bold text-[#1c9bda] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                    title={`Check live market price on TradingView for ${inst.symbol}`}
+                  >
+                    <span>Live on TradingView</span>
+                    <ExternalLink size={11} />
+                  </a>
+                </div>
                 <input
-                  type="number"
-                  step={inst.pipStep}
+                  type="text"
+                  inputMode="decimal"
                   value={openPrice}
-                  onChange={(e) => setOpenPrice(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || /^\d*\.?\d*$/.test(val)) {
+                      setOpenPrice(val);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (!openPrice || parseFloat(openPrice) <= 0) {
+                      setOpenPrice(String(inst.defaultPrice));
+                    }
+                  }}
                   className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
                 />
                 <span className="text-[10px] text-slate-400 font-mono block">
-                  Benchmark rate: {inst.currentPrice}
+                  Contract reference: {inst.defaultPrice}
                 </span>
               </div>
 
@@ -376,10 +591,20 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   Close Price (Exit)
                 </label>
                 <input
-                  type="number"
-                  step={inst.pipStep}
+                  type="text"
+                  inputMode="decimal"
                   value={closePrice}
-                  onChange={(e) => setClosePrice(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || /^\d*\.?\d*$/.test(val)) {
+                      setClosePrice(val);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (!closePrice || parseFloat(closePrice) <= 0) {
+                      setClosePrice(String(inst.currentPrice));
+                    }
+                  }}
                   className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
                 />
                 <span className={`text-[10px] font-mono block font-bold ${profitResults.isProfit ? "text-emerald-500" : "text-rose-500"}`}>
@@ -398,8 +623,9 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                     type="button"
                     onClick={() => {
                       const move = p * inst.pipStep;
+                      const base = parseFloat(openPrice) || inst.currentPrice;
                       setClosePrice(
-                        Number((profitDirection === "BUY" ? openPrice + move : openPrice - move).toFixed(inst.pipDigits))
+                        String(Number((profitDirection === "BUY" ? base + move : base - move).toFixed(inst.pipDigits)))
                       );
                     }}
                     className="px-2.5 py-1 rounded-lg bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-bold hover:border-teal-500 transition-colors"
@@ -412,7 +638,7 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
 
           </div>
 
-          {/* RIGHT: Live Profit Results (Clean, high-impact OctaFX result card) */}
+          {/* RIGHT: Live Profit Results */}
           <div className="lg:col-span-5 space-y-5">
             
             <div className={`p-6 sm:p-7 rounded-3xl border shadow-xl relative overflow-hidden transition-all ${
@@ -431,19 +657,30 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Calculated Net P&amp;L</span>
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 text-slate-300">
-                  {profitDirection} {inst.pair}
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-black bg-white/10 text-white border border-white/10">
+                  {profitDirection} • {inst.symbol}
                 </span>
               </div>
 
               {/* Main Net Profit Number */}
-              <div className="py-3 space-y-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
-                  Net Profit / Loss
-                </span>
+              <div className="py-3 space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block">
+                    Net Profit / Loss
+                  </span>
+                  {profitResults.isProfit ? (
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      Profitable Trade
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                      Loss Scenario
+                    </span>
+                  )}
+                </div>
                 <div className="flex items-baseline gap-2">
                   <span className={`text-4xl sm:text-5xl font-black font-mono tracking-tight ${
-                    profitResults.isProfit ? "text-emerald-400" : "text-rose-400"
+                    profitResults.isProfit ? "text-emerald-400 drop-shadow-[0_2px_10px_rgba(52,211,153,0.3)]" : "text-rose-400 drop-shadow-[0_2px_10px_rgba(251,113,133,0.3)]"
                   }`}>
                     {profitResults.isProfit ? "+" : ""}${profitResults.grossProfitUsd}
                   </span>
@@ -505,7 +742,7 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
             <div className="p-5 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 text-xs text-slate-600 dark:text-slate-400 space-y-2">
               <span className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 text-xs">
                 <Info className="w-4 h-4 text-[#1c9bda]" />
-                <span>How OctaFX Profit is Calculated:</span>
+                <span>How Profit is Calculated:</span>
               </span>
               <p className="text-[11px] leading-relaxed font-mono bg-slate-50 dark:bg-white/[0.03] p-2.5 rounded-xl border border-slate-100 dark:border-white/5">
                 Profit = (Close Price − Open Price) × Lots × Contract Size
@@ -546,7 +783,7 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   Account Balance
                 </label>
                 <span className="text-xs font-mono font-black text-slate-900 dark:text-white">
-                  ${posBalance.toLocaleString()} USD
+                  ${positionSizingResults.parsedBalance.toLocaleString()} USD
                 </span>
               </div>
 
@@ -556,9 +793,9 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   <button
                     key={p.val}
                     type="button"
-                    onClick={() => setPosBalance(p.val)}
+                    onClick={() => setPosBalance(String(p.val))}
                     className={`py-2 px-1 rounded-xl text-[11px] font-mono font-bold transition-all text-center cursor-pointer border ${
-                      posBalance === p.val
+                      parseFloat(posBalance) === p.val
                         ? "bg-teal-500/15 border-teal-500 text-teal-700 dark:text-teal-300 shadow-sm"
                         : "bg-slate-50 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-slate-300"
                     }`}
@@ -571,9 +808,16 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-slate-400 font-bold text-xs">$</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   value={posBalance}
-                  onChange={(e) => setPosBalance(Math.max(100, Number(e.target.value)))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || /^\d*$/.test(val)) setPosBalance(val);
+                  }}
+                  onBlur={() => {
+                    if (!posBalance || parseFloat(posBalance) <= 0) setPosBalance("10000");
+                  }}
                   className="w-full pl-8 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
                   placeholder="Enter custom account balance..."
                 />
@@ -582,21 +826,12 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
 
             {/* 2. Risk Percentage & Asset */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
-              <div className="sm:col-span-7 space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                  Trading Asset
-                </label>
-                <select
-                  value={selectedInstId}
-                  onChange={(e) => setSelectedInstId(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white text-xs font-bold font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/40 cursor-pointer"
-                >
-                  {INSTRUMENTS.map((i) => (
-                    <option key={i.id} value={i.id}>
-                      {i.pair}
-                    </option>
-                  ))}
-                </select>
+              <div className="sm:col-span-7">
+                <SearchableInstrumentSelector
+                  selectedId={selectedInstId}
+                  onSelect={setSelectedInstId}
+                  label="Trading Asset / Instrument"
+                />
               </div>
 
               <div className="sm:col-span-5 space-y-1.5">
@@ -625,6 +860,21 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   ))}
                 </div>
               </div>
+
+              {/* TradingView Live Quote Link */}
+              <div className="sm:col-span-12 flex items-center justify-between text-[11px] px-1">
+                <span className="text-slate-400 font-mono">Reference Price: {inst.defaultPrice}</span>
+                <a
+                  href={`https://www.tradingview.com/symbols/${inst.tvSymbol || inst.id}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#1c9bda] hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
+                  title={`Check live real-time rate for ${inst.symbol} on TradingView`}
+                >
+                  <span>View {inst.symbol} Live on TradingView</span>
+                  <ExternalLink size={11} />
+                </a>
+              </div>
             </div>
 
             {/* 3. Stop Loss (Pips) and Target (Pips) */}
@@ -635,10 +885,16 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   <span>Stop Loss Distance (Pips)</span>
                 </label>
                 <input
-                  type="number"
-                  min="1"
+                  type="text"
+                  inputMode="decimal"
                   value={posStopLossPips}
-                  onChange={(e) => setPosStopLossPips(Math.max(1, Number(e.target.value)))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || /^\d*\.?\d*$/.test(val)) setPosStopLossPips(val);
+                  }}
+                  onBlur={() => {
+                    if (!posStopLossPips || parseFloat(posStopLossPips) <= 0) setPosStopLossPips("25");
+                  }}
                   className="w-full px-4 py-3 rounded-2xl bg-rose-500/5 dark:bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400 font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/40"
                 />
                 <span className="text-[10px] text-slate-400 font-mono block">
@@ -652,10 +908,16 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   <span>Target Distance (Pips)</span>
                 </label>
                 <input
-                  type="number"
-                  min="1"
+                  type="text"
+                  inputMode="decimal"
                   value={posTargetPips}
-                  onChange={(e) => setPosTargetPips(Math.max(1, Number(e.target.value)))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || /^\d*\.?\d*$/.test(val)) setPosTargetPips(val);
+                  }}
+                  onBlur={() => {
+                    if (!posTargetPips || parseFloat(posTargetPips) <= 0) setPosTargetPips("50");
+                  }}
                   className="w-full px-4 py-3 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
                 />
                 <span className="text-[10px] text-slate-400 font-mono block">
@@ -676,21 +938,21 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   <Sliders className="w-3.5 h-3.5" />
                   <span>Recommended Position Size</span>
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 text-slate-300">
-                  {inst.pair}
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-black bg-white/10 text-white border border-white/10">
+                  {inst.symbol}
                 </span>
               </div>
 
               {/* Exact Lots Output Hero */}
               <div className="py-2 space-y-1">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                <span className="text-[11px] font-black uppercase tracking-wider text-slate-400 block">
                   Enter This Exact Lot Size:
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-[#38bdf8]">
+                  <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-[#38bdf8] drop-shadow-[0_2px_10px_rgba(56,189,248,0.3)]">
                     {positionSizingResults.recommendedLots}
                   </span>
-                  <span className="text-base font-bold text-slate-400 font-mono">Lots</span>
+                  <span className="text-base font-bold text-slate-300 font-mono">Lots</span>
                 </div>
                 <span className="text-xs text-slate-400 font-mono block">
                   Pip Value: ${positionSizingResults.pipValueForPosition} USD / pip

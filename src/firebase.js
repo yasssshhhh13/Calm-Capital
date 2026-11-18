@@ -60,3 +60,104 @@ export async function signInWithFirebaseGoogle() {
   // Graceful fallback for local development before Firebase keys are entered
   return null;
 }
+
+let firestoreDb = null;
+
+export async function getFirestoreDb() {
+  if (firestoreDb) return firestoreDb;
+  try {
+    const { initializeApp, getApps, getApp } = await import("firebase/app");
+    const { getFirestore } = await import("firebase/firestore");
+
+    const firebaseConfig = {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDYbryWRXXfOMZu64dXhCsASffhDdLQY4A",
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "calmcapital-b6c7b.firebaseapp.com",
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "calmcapital-b6c7b",
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "calmcapital-b6c7b.firebasestorage.app",
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "13342434531",
+      appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:13342434531:web:050a5b8dd4ea12e75911d6"
+    };
+
+    if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+      const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+      firestoreDb = getFirestore(app);
+      return firestoreDb;
+    }
+  } catch (err) {
+    console.warn("Firestore dynamic load unavailable:", err?.message);
+  }
+  return null;
+}
+
+export function sanitizeUserKey(emailOrUid) {
+  if (!emailOrUid || typeof emailOrUid !== "string") return "guest";
+  return emailOrUid.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+}
+
+/**
+ * Save user trading journal data to Firebase Firestore (keyed to Gmail / UID).
+ * Persists accounts (with custom starting capital), trades, and rules across all login devices.
+ */
+export async function saveUserForexJournal(emailOrUid, data) {
+  try {
+    const db = await getFirestoreDb();
+    if (!db) return false;
+    const { doc, setDoc } = await import("firebase/firestore");
+    const key = sanitizeUserKey(emailOrUid);
+    const docRef = doc(db, "forex_journals", key);
+    await setDoc(docRef, {
+      ...data,
+      userKey: key,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    return true;
+  } catch (err) {
+    console.warn("Firestore save warning:", err?.message);
+    return false;
+  }
+}
+
+/**
+ * Load user trading journal from Firebase Firestore.
+ */
+export async function loadUserForexJournal(emailOrUid) {
+  try {
+    const db = await getFirestoreDb();
+    if (!db) return null;
+    const { doc, getDoc } = await import("firebase/firestore");
+    const key = sanitizeUserKey(emailOrUid);
+    const docRef = doc(db, "forex_journals", key);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      return snap.data();
+    }
+  } catch (err) {
+    console.warn("Firestore load warning:", err?.message);
+  }
+  return null;
+}
+
+/**
+ * Real-time cross-device listener: When user logs a trade on phone or laptop,
+ * all open sessions update instantly.
+ */
+export async function subscribeUserForexJournal(emailOrUid, callback) {
+  try {
+    const db = await getFirestoreDb();
+    if (!db) return () => {};
+    const { doc, onSnapshot } = await import("firebase/firestore");
+    const key = sanitizeUserKey(emailOrUid);
+    const docRef = doc(db, "forex_journals", key);
+    const unsubscribe = onSnapshot(docRef, (snap) => {
+      if (snap.exists()) {
+        callback(snap.data());
+      }
+    }, (err) => {
+      console.warn("Firestore subscription warning:", err?.message);
+    });
+    return unsubscribe;
+  } catch (err) {
+    console.warn("Firestore subscribe warning:", err?.message);
+    return () => {};
+  }
+}
