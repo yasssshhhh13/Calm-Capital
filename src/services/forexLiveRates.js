@@ -1,36 +1,39 @@
 /**
  * Institutional Real-Time Forex, Commodity & Crypto Live Rates Engine
- * Fetches real-time spot rates from open financial APIs (Open Exchange Rates + Binance API)
- * with zero required keys, full CORS support, and automatic 30-second background polling.
+ * Multi-source failover architecture:
+ * 1. Open Exchange Rates (Interbank Spot FX & Emerging currencies)
+ * 2. CryptoCompare & CoinGecko (Gold PAXG 1:1 Bullion, BTC, ETH - unblocked worldwide & CORS enabled)
+ * 3. Binance API failover
+ * 4. Automatic 15-second cache TTL
  */
 
 let cachedRates = null;
 let lastFetchTime = 0;
-const CACHE_TTL_MS = 25000; // 25 seconds cache
+const CACHE_TTL_MS = 15000; // 15 seconds cache
 
-// Standard fallback rates in case of total network disconnect
+// Updated Institutional Baseline Rates (Q4 2024 / Q1 2025 Market Reality)
 const FALLBACK_RATES = {
-  "EUR/USD": 1.0850,
-  "GBP/USD": 1.2920,
-  "USD/JPY": 154.80,
-  "USD/CHF": 0.8860,
-  "USD/CAD": 1.3960,
-  "AUD/USD": 0.6520,
-  "NZD/USD": 0.5890,
-  "XAU/USD": 2685.50,
-  "XAG/USD": 31.20,
-  "WTI/USD": 69.40,
-  "EUR/GBP": 0.8400,
-  "EUR/JPY": 168.00,
-  "GBP/JPY": 200.00,
+  "EUR/USD": 1.0545,
+  "GBP/USD": 1.2675,
+  "USD/JPY": 154.65,
+  "USD/CHF": 0.8845,
+  "USD/CAD": 1.3975,
+  "AUD/USD": 0.6515,
+  "NZD/USD": 0.5875,
+  "XAU/USD": 2685.80, // Spot Gold
+  "XAG/USD": 31.40,   // Spot Silver
+  "WTI/USD": 69.20,   // WTI Crude Oil
+  "EUR/GBP": 0.8320,
+  "EUR/JPY": 163.10,
+  "GBP/JPY": 196.05,
   "USD/INR": 84.45,
   "USD/AED": 3.6725,
-  "US30": 43500.0,
-  "NAS100": 20700.0,
-  "SPX500": 5890.0,
-  "GER40": 19300.0,
-  "BTC/USD": 91500.0,
-  "ETH/USD": 3150.0
+  "US30": 43450.0,
+  "NAS100": 20680.0,
+  "SPX500": 5875.0,
+  "GER40": 19280.0,
+  "BTC/USD": 91850.0,
+  "ETH/USD": 3140.0
 };
 
 export async function fetchLiveForexRates() {
@@ -41,9 +44,9 @@ export async function fetchLiveForexRates() {
 
   const liveRates = { ...FALLBACK_RATES };
 
-  // 1. Fetch live G10 + Emerging FX rates from Open Exchange Rates (Free, CORS-enabled)
+  // 1. Fetch live G10 + Emerging FX rates from Open Exchange Rates (Free, CORS-enabled, Global)
   try {
-    const fxRes = await fetch("https://open.er-api.com/v6/latest/USD");
+    const fxRes = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
     if (fxRes.ok) {
       const fxData = await fxRes.json();
       const r = fxData.rates || {};
@@ -67,24 +70,75 @@ export async function fetchLiveForexRates() {
     console.warn("FX live rate fetch fallback:", err?.message);
   }
 
-  // 2. Fetch live Spot Gold (PAXG 1:1 troy oz) & Major Crypto from Binance (CORS-enabled public endpoint)
+  // 2. Fetch Live Spot Gold (PAXG 1:1 Bullion) & Crypto from CryptoCompare (100% unblocked globally & CORS enabled)
+  let cryptoGoldFetched = false;
   try {
-    const cryptoRes = await fetch(
-      'https://api.binance.com/api/v3/ticker/price?symbols=["BTCUSDT","ETHUSDT","PAXGUSDT"]'
+    const ccRes = await fetch(
+      "https://min-api.cryptocompare.com/data/pricemulti?fsyms=BTC,ETH,PAXG&tsyms=USD",
+      { cache: "no-store" }
     );
-    if (cryptoRes.ok) {
-      const cryptoData = await cryptoRes.json();
-      if (Array.isArray(cryptoData)) {
-        for (const item of cryptoData) {
-          const p = parseFloat(item.price);
-          if (item.symbol === "BTCUSDT" && p > 0) liveRates["BTC/USD"] = Number(p.toFixed(1));
-          if (item.symbol === "ETHUSDT" && p > 0) liveRates["ETH/USD"] = Number(p.toFixed(2));
-          if (item.symbol === "PAXGUSDT" && p > 0) liveRates["XAU/USD"] = Number(p.toFixed(2));
-        }
+    if (ccRes.ok) {
+      const data = await ccRes.json();
+      if (data.PAXG?.USD && data.PAXG.USD > 1000) {
+        liveRates["XAU/USD"] = Number(data.PAXG.USD.toFixed(2));
+        cryptoGoldFetched = true;
+      }
+      if (data.BTC?.USD && data.BTC.USD > 10000) {
+        liveRates["BTC/USD"] = Number(data.BTC.USD.toFixed(1));
+      }
+      if (data.ETH?.USD && data.ETH.USD > 500) {
+        liveRates["ETH/USD"] = Number(data.ETH.USD.toFixed(2));
       }
     }
   } catch (err) {
-    console.warn("Crypto/Gold live rate fetch fallback:", err?.message);
+    console.warn("CryptoCompare fetch fallback:", err?.message);
+  }
+
+  // 3. Failover: CoinGecko (If CryptoCompare failed)
+  if (!cryptoGoldFetched) {
+    try {
+      const cgRes = await fetch(
+        "https://api.coingecko.com/api/v3/simple/price?ids=pax-gold,bitcoin,ethereum&vs_currencies=usd",
+        { cache: "no-store" }
+      );
+      if (cgRes.ok) {
+        const data = await cgRes.json();
+        if (data["pax-gold"]?.usd && data["pax-gold"].usd > 1000) {
+          liveRates["XAU/USD"] = Number(data["pax-gold"].usd.toFixed(2));
+          cryptoGoldFetched = true;
+        }
+        if (data.bitcoin?.usd) {
+          liveRates["BTC/USD"] = Number(data.bitcoin.usd.toFixed(1));
+        }
+        if (data.ethereum?.usd) {
+          liveRates["ETH/USD"] = Number(data.ethereum.usd.toFixed(2));
+        }
+      }
+    } catch (err) {
+      console.warn("CoinGecko fetch fallback:", err?.message);
+    }
+  }
+
+  // 4. Failover: Binance Public API (where permitted by ISP)
+  if (!cryptoGoldFetched) {
+    try {
+      const bRes = await fetch(
+        'https://api.binance.com/api/v3/ticker/price?symbols=["BTCUSDT","ETHUSDT","PAXGUSDT"]'
+      );
+      if (bRes.ok) {
+        const items = await bRes.json();
+        if (Array.isArray(items)) {
+          for (const item of items) {
+            const p = parseFloat(item.price);
+            if (item.symbol === "BTCUSDT" && p > 0) liveRates["BTC/USD"] = Number(p.toFixed(1));
+            if (item.symbol === "ETHUSDT" && p > 0) liveRates["ETH/USD"] = Number(p.toFixed(2));
+            if (item.symbol === "PAXGUSDT" && p > 0) liveRates["XAU/USD"] = Number(p.toFixed(2));
+          }
+        }
+      }
+    } catch (err) {
+      // expected in regions where Binance domain is restricted
+    }
   }
 
   cachedRates = liveRates;

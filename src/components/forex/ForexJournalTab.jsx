@@ -17,6 +17,7 @@ import {
   loadUserForexJournal,
   subscribeUserForexJournal
 } from "../../firebase.js";
+import { fetchLiveForexRates } from "../../services/forexLiveRates.js";
 
 const LOCAL_STORAGE_KEY = "calm_capital_forex_journal_v4";
 
@@ -340,6 +341,19 @@ export default function ForexJournalTab({ dark }) {
     chartUrl: ""
   };
   const [form, setForm] = useState(defaultForm);
+  const [journalLiveRates, setJournalLiveRates] = useState({});
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchLiveForexRates()
+      .then((rates) => {
+        if (isMounted && rates) setJournalLiveRates(rates);
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Sync to LocalStorage (User isolated)
   useEffect(() => {
@@ -1589,7 +1603,15 @@ export default function ForexJournalTab({ dark }) {
                   </label>
                   <select
                     value={form.pair}
-                    onChange={(e) => setForm({ ...form, pair: e.target.value })}
+                    onChange={(e) => {
+                      const newPair = e.target.value;
+                      const live = journalLiveRates[newPair];
+                      setForm((prev) => ({
+                        ...prev,
+                        pair: newPair,
+                        entryPrice: (!prev.entryPrice || prev.entryPrice === "0") && live ? String(live) : prev.entryPrice
+                      }));
+                    }}
                     className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-900 dark:text-white"
                   >
                     {MAJOR_PAIRS.map((p) => (
@@ -1662,9 +1684,21 @@ export default function ForexJournalTab({ dark }) {
               {/* Price Stack */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                    Entry Price
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                      Entry Price
+                    </label>
+                    {journalLiveRates[form.pair] && (
+                      <button
+                        type="button"
+                        onClick={() => setForm((prev) => ({ ...prev, entryPrice: String(journalLiveRates[form.pair]) }))}
+                        className="text-[9px] font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 hover:bg-emerald-500/20 cursor-pointer active:scale-95"
+                        title="Click to paste live market price"
+                      >
+                        Live: {journalLiveRates[form.pair]}
+                      </button>
+                    )}
+                  </div>
                   <input
                     type="number"
                     step="any"

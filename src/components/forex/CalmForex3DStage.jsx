@@ -277,30 +277,33 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
           </div>
 
           {/* Quick Triple Action Navigation */}
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1 sm:pt-2">
+          <div className="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 pt-1 sm:pt-2">
             <button
               onClick={() => onSelectTab("news")}
-              className="flex-1 sm:flex-initial px-4 sm:px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
+              className="px-2 sm:px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs shadow-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer border-0 active:scale-[0.99]"
             >
               <Calendar className="w-4 h-4 text-teal-400 dark:text-teal-600 shrink-0" />
-              <span className="truncate">Economic News</span>
-              <ArrowRight className="w-3.5 h-3.5 ml-1 shrink-0" />
+              <span className="truncate sm:hidden">News</span>
+              <span className="hidden sm:inline">Economic News</span>
+              <ArrowRight className="w-3.5 h-3.5 ml-1 shrink-0 hidden sm:inline" />
             </button>
 
             <button
               onClick={() => onSelectTab("journal")}
-              className="flex-1 sm:flex-initial px-4 sm:px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-800 dark:text-white font-bold text-xs border border-slate-200/80 dark:border-white/10 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
+              className="px-2 sm:px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-800 dark:text-white font-bold text-xs border border-slate-200/80 dark:border-white/10 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer border-0 active:scale-[0.99]"
             >
               <BookOpen className="w-4 h-4 text-[#1c9bda] shrink-0" />
-              <span className="truncate">Trading Journal Suite</span>
+              <span className="truncate sm:hidden">Journal</span>
+              <span className="hidden sm:inline">Journal Suite</span>
             </button>
 
             <button
               onClick={() => onSelectTab("calculator")}
-              className="flex-1 sm:flex-initial px-4 sm:px-5 py-3 rounded-2xl bg-teal-500/10 hover:bg-teal-500/15 text-teal-700 dark:text-teal-400 font-bold text-xs border border-teal-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
+              className="px-2 sm:px-5 py-3 rounded-2xl bg-teal-500/10 hover:bg-teal-500/15 text-teal-700 dark:text-teal-400 font-bold text-xs border border-teal-500/30 transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer border-0 active:scale-[0.99]"
             >
               <Calculator className="w-4 h-4 text-teal-500 shrink-0" />
-              <span className="truncate">Profit Calculator</span>
+              <span className="truncate sm:hidden">Calculator</span>
+              <span className="hidden sm:inline">Profit Calculator</span>
             </button>
           </div>
 

@@ -27,20 +27,20 @@ const INSTRUMENTS = [
   { id: "GER40", symbol: "GER40", pair: "GER40", name: "Germany 40 / DAX Index", category: "Indices", contractSize: 1, pipDigits: 1, pipStep: 1.0, defaultPrice: 19250.0, quoteCurrency: "EUR", tvSymbol: "OANDA:DE40EUR" },
 
   // Precious Metals & Energy
-  { id: "XAUUSD", symbol: "XAU/USD", pair: "XAU/USD", name: "Spot Gold (Troy Ounce)", category: "Metals", contractSize: 100, pipDigits: 2, pipStep: 0.1, defaultPrice: 2596.40, quoteCurrency: "USD", tvSymbol: "OANDA:XAUUSD" },
-  { id: "XAGUSD", symbol: "XAG/USD", pair: "XAG/USD", name: "Spot Silver (Troy Ounce)", category: "Metals", contractSize: 5000, pipDigits: 3, pipStep: 0.01, defaultPrice: 30.45, quoteCurrency: "USD", tvSymbol: "OANDA:XAGUSD" },
-  { id: "WTIUSD", symbol: "WTI/USD", pair: "WTI/USD", name: "US Crude Oil (WTI Light)", category: "Energy", contractSize: 1000, pipDigits: 2, pipStep: 0.01, defaultPrice: 68.90, quoteCurrency: "USD", tvSymbol: "TVC:USOIL" },
+  { id: "XAUUSD", symbol: "XAU/USD", pair: "XAU/USD", name: "Spot Gold (Troy Ounce)", category: "Metals", contractSize: 100, pipDigits: 2, pipStep: 0.1, defaultPrice: 2685.80, quoteCurrency: "USD", tvSymbol: "OANDA:XAUUSD" },
+  { id: "XAGUSD", symbol: "XAG/USD", pair: "XAG/USD", name: "Spot Silver (Troy Ounce)", category: "Metals", contractSize: 5000, pipDigits: 3, pipStep: 0.01, defaultPrice: 31.40, quoteCurrency: "USD", tvSymbol: "OANDA:XAGUSD" },
+  { id: "WTIUSD", symbol: "WTI/USD", pair: "WTI/USD", name: "US Crude Oil (WTI Light)", category: "Energy", contractSize: 1000, pipDigits: 2, pipStep: 0.01, defaultPrice: 69.20, quoteCurrency: "USD", tvSymbol: "TVC:USOIL" },
 
   // G10 Crosses
-  { id: "EURGBP", symbol: "EUR/GBP", pair: "EUR/GBP", name: "Euro vs British Pound", category: "Crosses", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 0.8310, quoteCurrency: "GBP", tvSymbol: "FX:EURGBP" },
-  { id: "EURJPY", symbol: "EUR/JPY", pair: "EUR/JPY", name: "Euro vs Japanese Yen", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 163.05, quoteCurrency: "JPY", tvSymbol: "FX:EURJPY" },
-  { id: "GBPJPY", symbol: "GBP/JPY", pair: "GBP/JPY", name: "British Pound vs Japanese Yen", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 196.15, quoteCurrency: "JPY", tvSymbol: "FX:GBPJPY" },
+  { id: "EURGBP", symbol: "EUR/GBP", pair: "EUR/GBP", name: "Euro vs British Pound", category: "Crosses", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 0.8320, quoteCurrency: "GBP", tvSymbol: "FX:EURGBP" },
+  { id: "EURJPY", symbol: "EUR/JPY", pair: "EUR/JPY", name: "Euro vs Japanese Yen", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 163.10, quoteCurrency: "JPY", tvSymbol: "FX:EURJPY" },
+  { id: "GBPJPY", symbol: "GBP/JPY", pair: "GBP/JPY", name: "British Pound vs Japanese Yen", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 196.05, quoteCurrency: "JPY", tvSymbol: "FX:GBPJPY" },
 
   // Emerging & Crypto
-  { id: "USDINR", symbol: "USD/INR", pair: "USD/INR", name: "US Dollar vs Indian Rupee", category: "Emerging", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 84.42, quoteCurrency: "INR", tvSymbol: "FX_IDC:USDINR" },
+  { id: "USDINR", symbol: "USD/INR", pair: "USD/INR", name: "US Dollar vs Indian Rupee", category: "Emerging", contractSize: 100000, pipDigits: 2, pipStep: 0.01, defaultPrice: 84.45, quoteCurrency: "INR", tvSymbol: "FX_IDC:USDINR" },
   { id: "USDAED", symbol: "USD/AED", pair: "USD/AED", name: "US Dollar vs UAE Dirham", category: "Emerging", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, defaultPrice: 3.6725, quoteCurrency: "AED", tvSymbol: "FX_IDC:USDAED" },
-  { id: "BTCUSD", symbol: "BTC/USD", pair: "BTC/USD", name: "Bitcoin vs US Dollar", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 1.0, defaultPrice: 91420.00, quoteCurrency: "USD", tvSymbol: "BINANCE:BTCUSDT" },
-  { id: "ETHUSD", symbol: "ETH/USD", pair: "ETH/USD", name: "Ethereum vs US Dollar", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 0.1, defaultPrice: 3120.00, quoteCurrency: "USD", tvSymbol: "BINANCE:ETHUSDT" }
+  { id: "BTCUSD", symbol: "BTC/USD", pair: "BTC/USD", name: "Bitcoin vs US Dollar", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 1.0, defaultPrice: 91850.00, quoteCurrency: "USD", tvSymbol: "BINANCE:BTCUSDT" },
+  { id: "ETHUSD", symbol: "ETH/USD", pair: "ETH/USD", name: "Ethereum vs US Dollar", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 0.1, defaultPrice: 3140.00, quoteCurrency: "USD", tvSymbol: "BINANCE:ETHUSDT" }
 ];
 
 /**
@@ -103,16 +103,19 @@ function SearchableInstrumentSelector({ selectedId, onSelect, label = "Trading A
           <span className="text-sm font-black font-mono text-slate-900 dark:text-white tracking-tight">
             {selectedItem.symbol}
           </span>
-          {liveRates && liveRates[selectedItem.symbol] ? (
-            <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Live: {liveRates[selectedItem.symbol]}</span>
+          <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>
+              Live:{" "}
+              {(() => {
+                const val = (liveRates && liveRates[selectedItem.symbol]) || selectedItem.defaultPrice;
+                if (selectedItem.quoteCurrency === "USD" && (selectedItem.category === "Metals" || selectedItem.category === "Crypto" || selectedItem.category === "Indices" || selectedItem.category === "Energy")) {
+                  return `$${Number(val).toLocaleString()}`;
+                }
+                return Number(val).toFixed(selectedItem.pipDigits);
+              })()}
             </span>
-          ) : (
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate hidden sm:inline">
-              • {selectedItem.name}
-            </span>
-          )}
+          </span>
           <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:text-teal-400 border border-teal-500/20 shrink-0">
             {selectedItem.category}
           </span>
@@ -194,14 +197,20 @@ function SearchableInstrumentSelector({ selectedId, onSelect, label = "Trading A
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      {liveRates && liveRates[item.symbol] && (
-                        <div className="text-right">
-                          <span className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 block">
-                            ${Number(liveRates[item.symbol]).toLocaleString()}
-                          </span>
-                          <span className="text-[9px] font-bold text-slate-400 block">Live Spot</span>
-                        </div>
-                      )}
+                      <div className="text-right">
+                        <span className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 block">
+                          {(() => {
+                            const val = (liveRates && liveRates[item.symbol]) || item.defaultPrice;
+                            if (item.quoteCurrency === "USD" && (item.category === "Metals" || item.category === "Crypto" || item.category === "Indices" || item.category === "Energy")) {
+                              return `$${Number(val).toLocaleString()}`;
+                            }
+                            return Number(val).toFixed(item.pipDigits);
+                          })()}
+                        </span>
+                        <span className="text-[9px] font-bold text-slate-400 block">
+                          {liveRates && liveRates[item.symbol] ? "Live Spot" : "Market Rate"}
+                        </span>
+                      </div>
                       {isSelected && <Check size={14} className="text-teal-500 shrink-0" />}
                     </div>
                   </button>
@@ -228,7 +237,7 @@ const BALANCE_PRESETS = [
   { label: "$200,000", val: 200000 }
 ];
 
-const LOT_QUICK_PRESETS = [0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0];
+const LOT_QUICK_PRESETS = [0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0];
 
 export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
   // Active Tab: "profit" (Institutional P/L) | "position_size" (Capital Guard)
@@ -534,7 +543,9 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
 
               {/* TradingView Live Quote Link */}
               <div className="sm:col-span-12 flex items-center justify-between text-[11px] px-1">
-                <span className="text-slate-400 font-mono">Reference Price: {inst.defaultPrice}</span>
+                <span className="text-slate-500 dark:text-slate-400 font-mono">
+                  Live Rate: <strong className="text-emerald-600 dark:text-emerald-400">{(liveRates && liveRates[inst.symbol]) || inst.defaultPrice}</strong>
+                </span>
                 <a
                   href={`https://www.tradingview.com/symbols/${inst.tvSymbol || inst.id}/`}
                   target="_blank"
@@ -577,25 +588,61 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                 ))}
               </div>
 
-              {/* Fully Editable Number Input (Works seamlessly with Keyboard & Mobile Numeric Keypad) */}
-              <input
-                type="text"
-                inputMode="decimal"
-                value={profitLots}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  if (val === "" || /^\d*\.?\d*$/.test(val)) {
-                    setProfitLots(val);
-                  }
-                }}
-                onBlur={() => {
-                  if (!profitLots || parseFloat(profitLots) <= 0) {
-                    setProfitLots("0.01");
-                  }
-                }}
-                placeholder="Enter lots (e.g. 1.0, 20, 50)..."
-                className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
-              />
+              {/* Stepper + Direct Numeric Input */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = parseFloat(profitLots) || 0.01;
+                    const step = current >= 10 ? 5 : current >= 1 ? 1 : 0.05;
+                    const next = Math.max(0.01, Number((current - step).toFixed(2)));
+                    setProfitLots(String(next));
+                  }}
+                  className="w-12 h-12 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-white font-black text-xl flex items-center justify-center border border-slate-200/80 dark:border-white/10 cursor-pointer select-none active:scale-95 transition-all shrink-0 shadow-xs"
+                  title="Decrease lots"
+                >
+                  −
+                </button>
+
+                <div className="relative flex-1">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={profitLots}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/,/g, ".");
+                      if (val === "" || /^\d*\.?\d*$/.test(val)) {
+                        setProfitLots(val);
+                      }
+                    }}
+                    onFocus={(e) => e.target.select()}
+                    onBlur={() => {
+                      if (!profitLots || parseFloat(profitLots) <= 0) {
+                        setProfitLots("0.01");
+                      }
+                    }}
+                    placeholder="Enter lots (e.g. 20)..."
+                    className="w-full h-12 px-4 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/90 dark:border-white/10 text-slate-900 dark:text-white font-mono text-base font-black text-center focus:outline-none focus:ring-2 focus:ring-teal-500/40 shadow-inner"
+                  />
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[10px] font-mono font-bold text-slate-400 pointer-events-none hidden sm:inline">
+                    LOTS
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const current = parseFloat(profitLots) || 0.01;
+                    const step = current >= 10 ? 5 : current >= 1 ? 1 : 0.05;
+                    const next = Number((current + step).toFixed(2));
+                    setProfitLots(String(next));
+                  }}
+                  className="w-12 h-12 rounded-2xl bg-slate-100 hover:bg-slate-200 dark:bg-white/10 dark:hover:bg-white/15 text-slate-700 dark:text-white font-black text-xl flex items-center justify-center border border-slate-200/80 dark:border-white/10 cursor-pointer select-none active:scale-95 transition-all shrink-0 shadow-xs"
+                  title="Increase lots"
+                >
+                  +
+                </button>
+              </div>
             </div>
 
             {/* 3. Open Price & Close Price */}
@@ -606,25 +653,23 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                     Open Price (Entry)
                   </label>
                   <div className="flex items-center gap-2">
-                    {liveRates[inst.symbol] && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const lp = liveRates[inst.symbol];
-                          setOpenPrice(String(lp));
-                          if (profitDirection === "BUY") {
-                            setClosePrice(String(Number((lp + inst.pipStep * 50).toFixed(inst.pipDigits))));
-                          } else {
-                            setClosePrice(String(Number((lp - inst.pipStep * 50).toFixed(inst.pipDigits))));
-                          }
-                        }}
-                        className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 flex items-center gap-1 cursor-pointer transition-all"
-                        title="Click to apply live real-time rate"
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span>Live: {liveRates[inst.symbol]}</span>
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const lp = (liveRates && liveRates[inst.symbol]) || inst.defaultPrice;
+                        setOpenPrice(String(lp));
+                        if (profitDirection === "BUY") {
+                          setClosePrice(String(Number((lp + inst.pipStep * 50).toFixed(inst.pipDigits))));
+                        } else {
+                          setClosePrice(String(Number((lp - inst.pipStep * 50).toFixed(inst.pipDigits))));
+                        }
+                      }}
+                      className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 flex items-center gap-1 cursor-pointer transition-all active:scale-95"
+                      title="Click to apply live real-time rate"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>Live Sync: {(liveRates && liveRates[inst.symbol]) || inst.defaultPrice}</span>
+                    </button>
                     <a
                       href={`https://www.tradingview.com/symbols/${inst.tvSymbol || inst.id}/`}
                       target="_blank"
@@ -641,8 +686,9 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   type="text"
                   inputMode="decimal"
                   value={openPrice}
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) => {
-                    const val = e.target.value;
+                    const val = e.target.value.replace(/,/g, ".");
                     if (val === "" || /^\d*\.?\d*$/.test(val)) {
                       setOpenPrice(val);
                     }
@@ -655,7 +701,7 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
                 />
                 <span className="text-[10px] text-slate-400 font-mono block">
-                  Contract reference: {inst.defaultPrice}
+                  Current Market Rate: {(liveRates && liveRates[inst.symbol]) || inst.defaultPrice}
                 </span>
               </div>
 
@@ -667,8 +713,9 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   type="text"
                   inputMode="decimal"
                   value={closePrice}
+                  onFocus={(e) => e.target.select()}
                   onChange={(e) => {
-                    const val = e.target.value;
+                    const val = e.target.value.replace(/,/g, ".");
                     if (val === "" || /^\d*\.?\d*$/.test(val)) {
                       setClosePrice(val);
                     }
@@ -904,6 +951,7 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   selectedId={selectedInstId}
                   onSelect={setSelectedInstId}
                   label="Trading Asset / Instrument"
+                  liveRates={liveRates}
                 />
               </div>
 
@@ -936,7 +984,9 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
 
               {/* TradingView Live Quote Link */}
               <div className="sm:col-span-12 flex items-center justify-between text-[11px] px-1">
-                <span className="text-slate-400 font-mono">Reference Price: {inst.defaultPrice}</span>
+                <span className="text-slate-500 dark:text-slate-400 font-mono">
+                  Live Rate: <strong className="text-emerald-600 dark:text-emerald-400">{(liveRates && liveRates[inst.symbol]) || inst.defaultPrice}</strong>
+                </span>
                 <a
                   href={`https://www.tradingview.com/symbols/${inst.tvSymbol || inst.id}/`}
                   target="_blank"
