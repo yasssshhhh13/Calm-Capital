@@ -20,7 +20,7 @@ export default function ForexSection({ dark, initialSubTab = "news", onSubTabCha
 
   return (
     <div className="space-y-6">
-      
+
       {/* Calm Capital 3D Kinetic Macro & Currency Orbital Stage */}
       <CalmForex3DStage
         dark={dark}
@@ -41,11 +41,10 @@ export default function ForexSection({ dark, initialSubTab = "news", onSubTabCha
           <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-100 dark:bg-white/5 w-fit border border-slate-200/60 dark:border-white/5">
             <button
               onClick={() => setActiveSubTab("news")}
-              className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
-                activeSubTab === "news"
-                  ? "bg-white dark:bg-[#121D2D] text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-white/10"
-                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-              }`}
+              className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${activeSubTab === "news"
+                ? "bg-white dark:bg-[#121D2D] text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-white/10"
+                : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                }`}
             >
               <Calendar className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
               <span>Economic News &amp; Calendar</span>
@@ -53,11 +52,10 @@ export default function ForexSection({ dark, initialSubTab = "news", onSubTabCha
 
             <button
               onClick={() => setActiveSubTab("journal")}
-              className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
-                activeSubTab === "journal"
-                  ? "bg-white dark:bg-[#121D2D] text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-white/10"
-                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-              }`}
+              className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${activeSubTab === "journal"
+                ? "bg-white dark:bg-[#121D2D] text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-white/10"
+                : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                }`}
             >
               <BookOpen className="w-3.5 h-3.5 text-[#1c9bda]" />
               <span>Discipline Trading Journal</span>
@@ -65,11 +63,10 @@ export default function ForexSection({ dark, initialSubTab = "news", onSubTabCha
 
             <button
               onClick={() => setActiveSubTab("calculator")}
-              className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
-                activeSubTab === "calculator"
-                  ? "bg-white dark:bg-[#121D2D] text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-white/10"
-                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
-              }`}
+              className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${activeSubTab === "calculator"
+                ? "bg-white dark:bg-[#121D2D] text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-white/10"
+                : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                }`}
             >
               <Calculator className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>Profit &amp; Risk Calculator</span>

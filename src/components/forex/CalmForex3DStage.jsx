@@ -20,7 +20,7 @@ const G10_CURRENCIES = [
  * Desktop-Only 3D Kinetic Orbital Stage
  * Isolated in its own component so continuous rotation does NOT re-render the left editorial text or metrics.
  */
-const DesktopKinetic3DOrbit = memo(function DesktopKinetic3DOrbit({ selectedCurrency, onSelectCurrency }) {
+const DesktopKinetic3DOrbit = memo(function DesktopKinetic3DOrbit({ selectedCurrency, onSelectCurrency, currencies = G10_CURRENCIES }) {
   const [rotationAngle, setRotationAngle] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -79,7 +79,7 @@ const DesktopKinetic3DOrbit = memo(function DesktopKinetic3DOrbit({ selectedCurr
       </div>
 
       {/* Orbiting 3D Currency Nodes */}
-      {G10_CURRENCIES.map((cur, idx) => {
+      {currencies.map((cur, idx) => {
         const angleRad = ((idx * 60 + rotationAngle) * Math.PI) / 180;
         const radius = 115;
         const xPos = Math.cos(angleRad) * radius;
@@ -124,7 +124,7 @@ const DesktopKinetic3DOrbit = memo(function DesktopKinetic3DOrbit({ selectedCurr
  * Mobile-Optimized Executive Currency Matrix
  * 100% Glitch-free, butter-smooth touch interaction with 0% CPU frame drops.
  */
-function MobileCurrencyMatrix({ selectedCurrency, onSelectCurrency }) {
+function MobileCurrencyMatrix({ selectedCurrency, onSelectCurrency, currencies = G10_CURRENCIES }) {
   return (
     <div className="w-full space-y-3 pt-2">
       <div className="flex items-center justify-between text-xs pb-1 border-b border-slate-100 dark:border-white/5">
@@ -139,7 +139,7 @@ function MobileCurrencyMatrix({ selectedCurrency, onSelectCurrency }) {
 
       {/* 2x3 Grid of Currency Badges (Rock solid on all smartphones) */}
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-        {G10_CURRENCIES.map((cur) => {
+        {currencies.map((cur) => {
           const isSelected = selectedCurrency.code === cur.code;
           return (
             <button
@@ -167,8 +167,31 @@ function MobileCurrencyMatrix({ selectedCurrency, onSelectCurrency }) {
 }
 
 export default function CalmMacro3DStage({ onSelectTab, dark }) {
+  const [currencies, setCurrencies] = useState(G10_CURRENCIES);
   const [selectedCurrency, setSelectedCurrency] = useState(G10_CURRENCIES[0]);
   const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchLiveForexRates()
+      .then((data) => {
+        if (!isMounted || !data || !data.rates) return;
+        const goldPrice = data.rates["XAU/USD"];
+        if (goldPrice && goldPrice > 1000) {
+          const formattedRate = `$${Math.round(goldPrice).toLocaleString("en-US")}`;
+          setCurrencies((prev) =>
+            prev.map((c) => (c.code === "XAU" ? { ...c, rate: formattedRate } : c))
+          );
+          setSelectedCurrency((prev) =>
+            prev.code === "XAU" ? { ...prev, rate: formattedRate } : prev
+          );
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -290,11 +313,13 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
             <MobileCurrencyMatrix
               selectedCurrency={selectedCurrency}
               onSelectCurrency={setSelectedCurrency}
+              currencies={currencies}
             />
           ) : (
             <DesktopKinetic3DOrbit
               selectedCurrency={selectedCurrency}
               onSelectCurrency={setSelectedCurrency}
+              currencies={currencies}
             />
           )}
 
@@ -302,10 +327,10 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
           <div className="mt-3 w-full max-w-[340px] p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex items-center justify-between text-xs">
             <div>
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                {selectedCurrency.name} Central Bank Rate
+                {selectedCurrency.code === "XAU" ? "Global Spot Gold Benchmark" : `${selectedCurrency.name} Central Bank Rate`}
               </span>
               <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">
-                Policy Rate: {selectedCurrency.rate}
+                {selectedCurrency.code === "XAU" ? `Spot Price: ${selectedCurrency.rate}` : `Official Policy Rate: ${selectedCurrency.rate}`}
               </span>
             </div>
             <div className="text-right">
