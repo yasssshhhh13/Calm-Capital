@@ -2,302 +2,297 @@ import React, { useState, useMemo } from "react";
 import {
   Calculator, DollarSign, TrendingUp, TrendingDown, ShieldCheck,
   AlertTriangle, Target, Percent, ArrowRight, RefreshCw, BarChart2,
-  CheckCircle2, HelpCircle, Layers, Sparkles, Sliders, Compass, Award,
-  Flame, Lock, ArrowUpRight, ArrowDownRight, BookOpen
+  CheckCircle2, Sparkles, Sliders, ArrowUpRight, ArrowDownRight,
+  BookOpen, HelpCircle, Info, Shield, Layers
 } from "lucide-react";
 
-// Institutional FX, Commodity, and Crypto Instruments with precise contract specifications
+/**
+ * Institutional Instrument Specifications (Matching OctaFX & MetaTrader contract standards)
+ */
 const INSTRUMENTS = [
   // G10 USD Majors
-  { id: "EURUSD", pair: "EUR/USD", category: "Majors", pipSize: 0.0001, pipValuePerLot: 10, currentPrice: 1.0542, lotUnit: "100,000 EUR" },
-  { id: "GBPUSD", pair: "GBP/USD", category: "Majors", pipSize: 0.0001, pipValuePerLot: 10, currentPrice: 1.2685, lotUnit: "100,000 GBP" },
-  { id: "USDJPY", pair: "USD/JPY", category: "Majors", pipSize: 0.01, pipValuePerLot: 6.47, currentPrice: 154.62, lotUnit: "100,000 USD" },
-  { id: "USDCHF", pair: "USD/CHF", category: "Majors", pipSize: 0.0001, pipValuePerLot: 11.31, currentPrice: 0.8845, lotUnit: "100,000 USD" },
-  { id: "USDCAD", pair: "USD/CAD", category: "Majors", pipSize: 0.0001, pipValuePerLot: 7.15, currentPrice: 1.3980, lotUnit: "100,000 USD" },
-  { id: "AUDUSD", pair: "AUD/USD", category: "Majors", pipSize: 0.0001, pipValuePerLot: 10, currentPrice: 0.6515, lotUnit: "100,000 AUD" },
-  { id: "NZDUSD", pair: "NZD/USD", category: "Majors", pipSize: 0.0001, pipValuePerLot: 10, currentPrice: 0.5872, lotUnit: "100,000 NZD" },
-  
-  // Cross Majors
-  { id: "EURGBP", pair: "EUR/GBP", category: "Crosses", pipSize: 0.0001, pipValuePerLot: 12.68, currentPrice: 0.8310, lotUnit: "100,000 EUR" },
-  { id: "EURJPY", pair: "EUR/JPY", category: "Crosses", pipSize: 0.01, pipValuePerLot: 6.47, currentPrice: 163.05, lotUnit: "100,000 EUR" },
-  { id: "GBPJPY", pair: "GBP/JPY", category: "Crosses", pipSize: 0.01, pipValuePerLot: 6.47, currentPrice: 196.15, lotUnit: "100,000 GBP" },
-  
-  // Commodities & Precious Metals
-  { id: "XAUUSD", pair: "XAU/USD (Gold)", category: "Metals", pipSize: 0.1, pipValuePerLot: 10, currentPrice: 2596.40, lotUnit: "100 oz Gold" },
-  { id: "XAGUSD", pair: "XAG/USD (Silver)", category: "Metals", pipSize: 0.01, pipValuePerLot: 50, currentPrice: 30.45, lotUnit: "5,000 oz Silver" },
-  { id: "WTIUSD", pair: "WTI/USD (Crude Oil)", category: "Energy", pipSize: 0.01, pipValuePerLot: 10, currentPrice: 68.90, lotUnit: "1,000 Barrels" },
-  
-  // Emerging USD Pairs
-  { id: "USDINR", pair: "USD/INR", category: "Emerging", pipSize: 0.01, pipValuePerLot: 1.18, currentPrice: 84.42, lotUnit: "100,000 USD" },
-  { id: "USDAED", pair: "USD/AED", category: "Emerging", pipSize: 0.0001, pipValuePerLot: 2.72, currentPrice: 3.6725, lotUnit: "100,000 USD" },
-  
-  // Crypto Majors
-  { id: "BTCUSD", pair: "BTC/USD (Bitcoin)", category: "Crypto", pipSize: 1.0, pipValuePerLot: 1.0, currentPrice: 91420.00, lotUnit: "1 BTC" },
-  { id: "ETHUSD", pair: "ETH/USD (Ethereum)", category: "Crypto", pipSize: 0.1, pipValuePerLot: 1.0, currentPrice: 3120.00, lotUnit: "10 ETH" }
+  { id: "EURUSD", pair: "EUR/USD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 1.0542, quoteCurrency: "USD" },
+  { id: "GBPUSD", pair: "GBP/USD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 1.2685, quoteCurrency: "USD" },
+  { id: "USDJPY", pair: "USD/JPY", category: "Majors", contractSize: 100000, pipDigits: 2, pipStep: 0.01, currentPrice: 154.62, quoteCurrency: "JPY" },
+  { id: "USDCHF", pair: "USD/CHF", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 0.8845, quoteCurrency: "CHF" },
+  { id: "USDCAD", pair: "USD/CAD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 1.3980, quoteCurrency: "CAD" },
+  { id: "AUDUSD", pair: "AUD/USD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 0.6515, quoteCurrency: "USD" },
+  { id: "NZDUSD", pair: "NZD/USD", category: "Majors", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 0.5872, quoteCurrency: "USD" },
+
+  // Metals & Commodities
+  { id: "XAUUSD", pair: "XAU/USD (Gold)", category: "Metals", contractSize: 100, pipDigits: 2, pipStep: 0.1, currentPrice: 2596.40, quoteCurrency: "USD" },
+  { id: "XAGUSD", pair: "XAG/USD (Silver)", category: "Metals", contractSize: 5000, pipDigits: 3, pipStep: 0.01, currentPrice: 30.45, quoteCurrency: "USD" },
+  { id: "WTIUSD", pair: "WTI/USD (Crude Oil)", category: "Energy", contractSize: 1000, pipDigits: 2, pipStep: 0.01, currentPrice: 68.90, quoteCurrency: "USD" },
+
+  // Crosses
+  { id: "EURGBP", pair: "EUR/GBP", category: "Crosses", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 0.8310, quoteCurrency: "GBP" },
+  { id: "EURJPY", pair: "EUR/JPY", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, currentPrice: 163.05, quoteCurrency: "JPY" },
+  { id: "GBPJPY", pair: "GBP/JPY", category: "Crosses", contractSize: 100000, pipDigits: 2, pipStep: 0.01, currentPrice: 196.15, quoteCurrency: "JPY" },
+
+  // Emerging & Crypto
+  { id: "USDINR", pair: "USD/INR", category: "Emerging", contractSize: 100000, pipDigits: 2, pipStep: 0.01, currentPrice: 84.42, quoteCurrency: "INR" },
+  { id: "USDAED", pair: "USD/AED", category: "Emerging", contractSize: 100000, pipDigits: 4, pipStep: 0.0001, currentPrice: 3.6725, quoteCurrency: "AED" },
+  { id: "BTCUSD", pair: "BTC/USD (Bitcoin)", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 1.0, currentPrice: 91420.00, quoteCurrency: "USD" },
+  { id: "ETHUSD", pair: "ETH/USD (Ethereum)", category: "Crypto", contractSize: 1, pipDigits: 2, pipStep: 0.1, currentPrice: 3120.00, quoteCurrency: "USD" }
 ];
 
-const FUNDED_PRESETS = [
-  { label: "$5K Tier 1", value: 5000 },
-  { label: "$10K Tier 2", value: 10000 },
-  { label: "$25K Tier 3", value: 25000 },
-  { label: "$50K Tier 4", value: 50000 },
-  { label: "$100K Master", value: 100000 },
-  { label: "$200K Exec", value: 200000 }
+const BALANCE_PRESETS = [
+  { label: "$5,000", val: 5000 },
+  { label: "$10,000", val: 10000 },
+  { label: "$25,000", val: 25000 },
+  { label: "$50,000", val: 50000 },
+  { label: "$100,000", val: 100000 },
+  { label: "$200,000", val: 200000 }
 ];
 
-const LOT_PRESETS = [0.1, 0.25, 0.5, 1.0, 2.0, 3.0, 5.0];
+const LOT_QUICK_PRESETS = [0.01, 0.05, 0.1, 0.5, 1.0, 2.0, 5.0];
 
 export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
-  // Mode selection: "profit" | "position_size" | "pip_value"
-  const [calcMode, setCalcMode] = useState("profit");
+  // Active Tab: "profit" (OctaFX style) | "position_size" (Lot size engine) | "pips_table"
+  const [activeTab, setActiveTab] = useState("profit");
 
-  // Core parameters
+  // Shared Instrument
   const [selectedInstId, setSelectedInstId] = useState("EURUSD");
-  const [direction, setDirection] = useState("BUY"); // "BUY" (Long) | "SELL" (Short)
-  const [accountBalance, setAccountBalance] = useState(50000);
-  const [riskPercent, setRiskPercent] = useState(1.0);
-  const [lotSize, setLotSize] = useState(1.0);
-
-  // Price parameters
-  const selectedInstrument = useMemo(
+  const inst = useMemo(
     () => INSTRUMENTS.find((i) => i.id === selectedInstId) || INSTRUMENTS[0],
     [selectedInstId]
   );
 
-  const [entryPrice, setEntryPrice] = useState(selectedInstrument.currentPrice);
-  const [exitPrice, setExitPrice] = useState(
-    Number((selectedInstrument.currentPrice + selectedInstrument.pipSize * 35).toFixed(4))
-  );
-  const [stopLossPrice, setStopLossPrice] = useState(
-    Number((selectedInstrument.currentPrice - selectedInstrument.pipSize * 15).toFixed(4))
+  // -------------------------------------------------------------
+  // TAB 1: PROFIT / LOSS CALCULATOR (OctaFX Style)
+  // -------------------------------------------------------------
+  const [profitDirection, setProfitDirection] = useState("BUY");
+  const [profitLots, setProfitLots] = useState(1.0);
+  const [openPrice, setOpenPrice] = useState(inst.currentPrice);
+  const [closePrice, setClosePrice] = useState(
+    Number((inst.currentPrice + inst.pipStep * 50).toFixed(inst.pipDigits))
   );
 
-  // When instrument changes, update entry/exit prices to reasonable live defaults
-  const handleSelectInstrument = (instId) => {
-    setSelectedInstId(instId);
-    const inst = INSTRUMENTS.find((i) => i.id === instId) || INSTRUMENTS[0];
-    const defaultEntry = inst.currentPrice;
-    setEntryPrice(defaultEntry);
-    if (direction === "BUY") {
-      setExitPrice(Number((defaultEntry + inst.pipSize * 35).toFixed(4)));
-      setStopLossPrice(Number((defaultEntry - inst.pipSize * 15).toFixed(4)));
+  // When instrument changes in Profit Calculator, auto-fill live defaults
+  const handleSelectProfitInst = (newId) => {
+    setSelectedInstId(newId);
+    const newInst = INSTRUMENTS.find((i) => i.id === newId) || INSTRUMENTS[0];
+    const baseP = newInst.currentPrice;
+    setOpenPrice(baseP);
+    if (profitDirection === "BUY") {
+      setClosePrice(Number((baseP + newInst.pipStep * 50).toFixed(newInst.pipDigits)));
     } else {
-      setExitPrice(Number((defaultEntry - inst.pipSize * 35).toFixed(4)));
-      setStopLossPrice(Number((defaultEntry + inst.pipSize * 15).toFixed(4)));
+      setClosePrice(Number((baseP - newInst.pipStep * 50).toFixed(newInst.pipDigits)));
     }
   };
 
-  // Toggle Buy / Sell and flip Target & Stop Loss
-  const handleToggleDirection = (newDir) => {
-    if (newDir === direction) return;
-    setDirection(newDir);
-    // Invert target and stop loss distances
-    const targetDiff = Math.abs(exitPrice - entryPrice);
-    const slDiff = Math.abs(entryPrice - stopLossPrice);
-    if (newDir === "BUY") {
-      setExitPrice(Number((entryPrice + targetDiff).toFixed(4)));
-      setStopLossPrice(Number((entryPrice - slDiff).toFixed(4)));
+  // Flip direction in profit calculator
+  const handleToggleProfitDirection = (dir) => {
+    if (dir === profitDirection) return;
+    setProfitDirection(dir);
+    const diff = Math.abs(closePrice - openPrice);
+    if (dir === "BUY") {
+      setClosePrice(Number((openPrice + diff).toFixed(inst.pipDigits)));
     } else {
-      setExitPrice(Number((entryPrice - targetDiff).toFixed(4)));
-      setStopLossPrice(Number((entryPrice + slDiff).toFixed(4)));
+      setClosePrice(Number((openPrice - diff).toFixed(inst.pipDigits)));
     }
   };
 
-  // Mathematical Analytics Engine
-  const calculations = useMemo(() => {
-    const pipSize = selectedInstrument.pipSize;
-    const basePipValPerLot = selectedInstrument.pipValuePerLot;
+  // OctaFX Profit Formula:
+  // For BUY: (Close - Open) * Volume * ContractSize
+  // For SELL: (Open - Close) * Volume * ContractSize
+  const profitResults = useMemo(() => {
+    const isBuy = profitDirection === "BUY";
+    const priceDiff = isBuy ? closePrice - openPrice : openPrice - closePrice;
 
-    // Total Lot Pip Value in USD
-    const currentLotPipValue = lotSize * basePipValPerLot;
+    // Currency conversions for cross pairs
+    let quoteToUsdRate = 1.0;
+    if (inst.quoteCurrency === "JPY") quoteToUsdRate = 1 / 154.62;
+    else if (inst.quoteCurrency === "CHF") quoteToUsdRate = 1 / 0.8845;
+    else if (inst.quoteCurrency === "CAD") quoteToUsdRate = 1 / 1.3980;
+    else if (inst.quoteCurrency === "GBP") quoteToUsdRate = 1.2685;
+    else if (inst.quoteCurrency === "INR") quoteToUsdRate = 1 / 84.42;
+    else if (inst.quoteCurrency === "AED") quoteToUsdRate = 1 / 3.6725;
 
-    // Pip Gain / Loss
-    let gainPips = 0;
-    let riskPips = 0;
+    // Gross Profit in Quote Currency -> USD
+    const grossProfitUsd = priceDiff * profitLots * inst.contractSize * quoteToUsdRate;
 
-    if (direction === "BUY") {
-      gainPips = (exitPrice - entryPrice) / pipSize;
-      riskPips = (entryPrice - stopLossPrice) / pipSize;
-    } else {
-      gainPips = (entryPrice - exitPrice) / pipSize;
-      riskPips = (stopLossPrice - entryPrice) / pipSize;
-    }
+    // Pips movement
+    const pipsMoved = priceDiff / inst.pipStep;
 
-    gainPips = Math.round(gainPips * 10) / 10;
-    riskPips = Math.round(riskPips * 10) / 10;
+    // Pip Value for this lot size in USD
+    const pipValueUsd = inst.pipStep * profitLots * inst.contractSize * quoteToUsdRate;
 
-    // Profit & Loss in USD
-    const profitUsd = gainPips * currentLotPipValue;
-    const lossUsd = riskPips * currentLotPipValue;
-
-    // ROI percentages
-    const returnPct = accountBalance > 0 ? (profitUsd / accountBalance) * 100 : 0;
-    const riskPct = accountBalance > 0 ? (lossUsd / accountBalance) * 100 : 0;
-
-    // Risk to Reward
-    const rrRatio = riskPips > 0 ? gainPips / riskPips : 0;
-
-    // Position Size Recommendation based on account risk %
-    const maxAllowedDollarRisk = accountBalance * (riskPercent / 100);
-    const recommendedLots =
-      riskPips > 0
-        ? Math.max(0.01, Math.round((maxAllowedDollarRisk / (riskPips * basePipValPerLot)) * 100) / 100)
-        : 0.1;
-
-    // Prop Firm Drawdown limits
-    const dailyDrawdownFloor = accountBalance * 0.05; // 5% limit
-    const maxDrawdownFloor = accountBalance * 0.10; // 10% limit
-    const isExceedingDailyDrawdown = lossUsd > dailyDrawdownFloor;
+    // Required Margin at standard 1:100 leverage
+    const notionalValueUsd = openPrice * profitLots * inst.contractSize * quoteToUsdRate;
+    const marginRequired100 = notionalValueUsd / 100;
 
     return {
-      gainPips,
-      riskPips,
-      profitUsd: profitUsd.toFixed(2),
-      lossUsd: lossUsd.toFixed(2),
-      returnPct: returnPct.toFixed(2),
-      riskPct: riskPct.toFixed(2),
+      grossProfitUsd: grossProfitUsd.toFixed(2),
+      isProfit: grossProfitUsd >= 0,
+      pipsMoved: (Math.round(pipsMoved * 10) / 10).toFixed(1),
+      pipValueUsd: pipValueUsd.toFixed(2),
+      marginRequired100: marginRequired100.toFixed(2),
+      pointDiff: Math.abs(priceDiff).toFixed(inst.pipDigits)
+    };
+  }, [profitDirection, closePrice, openPrice, profitLots, inst]);
+
+  // -------------------------------------------------------------
+  // TAB 2: POSITION SIZING & LOT CALCULATOR (Capital Guard)
+  // -------------------------------------------------------------
+  const [posBalance, setPosBalance] = useState(50000);
+  const [posRiskPercent, setPosRiskPercent] = useState(1.0);
+  const [posStopLossPips, setPosStopLossPips] = useState(25);
+  const [posTargetPips, setPosTargetPips] = useState(50);
+
+  const positionSizingResults = useMemo(() => {
+    let quoteToUsdRate = 1.0;
+    if (inst.quoteCurrency === "JPY") quoteToUsdRate = 1 / 154.62;
+    else if (inst.quoteCurrency === "CHF") quoteToUsdRate = 1 / 0.8845;
+    else if (inst.quoteCurrency === "CAD") quoteToUsdRate = 1 / 1.3980;
+    else if (inst.quoteCurrency === "GBP") quoteToUsdRate = 1.2685;
+    else if (inst.quoteCurrency === "INR") quoteToUsdRate = 1 / 84.42;
+    else if (inst.quoteCurrency === "AED") quoteToUsdRate = 1 / 3.6725;
+
+    // Pip value per 1.0 standard lot in USD
+    const pipValue1Lot = inst.pipStep * inst.contractSize * quoteToUsdRate;
+
+    // Maximum allowed dollar loss based on risk %
+    const maxDollarRisk = posBalance * (posRiskPercent / 100);
+
+    // Exact Lot Size = Dollar Risk / (StopLossPips * PipValuePerLot)
+    const exactLots = posStopLossPips > 0 ? maxDollarRisk / (posStopLossPips * pipValue1Lot) : 0;
+    const roundedLots = Math.max(0.01, Math.round(exactLots * 100) / 100);
+
+    // Projected Profit at Target Pips
+    const projectedProfitUsd = roundedLots * posTargetPips * pipValue1Lot;
+    const plannedLossUsd = roundedLots * posStopLossPips * pipValue1Lot;
+
+    // Risk to Reward
+    const rrRatio = posStopLossPips > 0 ? posTargetPips / posStopLossPips : 0;
+
+    // Prop firm drawdown limiters
+    const dailyDrawdownFloor = posBalance * 0.05; // 5% daily limit
+    const isExceedingDailyDrawdown = plannedLossUsd > dailyDrawdownFloor;
+
+    return {
+      maxDollarRisk: maxDollarRisk.toFixed(2),
+      recommendedLots: roundedLots.toFixed(2),
+      pipValueForPosition: (roundedLots * pipValue1Lot).toFixed(2),
+      projectedProfitUsd: projectedProfitUsd.toFixed(2),
+      plannedLossUsd: plannedLossUsd.toFixed(2),
       rrRatio: rrRatio.toFixed(2),
-      currentLotPipValue: currentLotPipValue.toFixed(2),
-      recommendedLots: recommendedLots.toFixed(2),
-      maxAllowedDollarRisk: maxAllowedDollarRisk.toFixed(2),
       dailyDrawdownFloor: dailyDrawdownFloor.toFixed(0),
-      maxDrawdownFloor: maxDrawdownFloor.toFixed(0),
       isExceedingDailyDrawdown
     };
-  }, [
-    selectedInstrument,
-    direction,
-    entryPrice,
-    exitPrice,
-    stopLossPrice,
-    lotSize,
-    accountBalance,
-    riskPercent
-  ]);
-
-  // Quick Scenario Matrix: +10, +25, +50, +100 pips vs -10, -20, -30 pips
-  const scenarioMatrix = useMemo(() => {
-    const pipCost = lotSize * selectedInstrument.pipValuePerLot;
-    const pipsSteps = [10, 25, 50, 75, 100, 150];
-    return pipsSteps.map((p) => {
-      const gainDollar = p * pipCost;
-      const gainPercent = accountBalance > 0 ? (gainDollar / accountBalance) * 100 : 0;
-      const lossDollar = p * pipCost;
-      const lossPercent = accountBalance > 0 ? (lossDollar / accountBalance) * 100 : 0;
-      return {
-        pips: p,
-        gainDollar: gainDollar.toFixed(2),
-        gainPercent: gainPercent.toFixed(2),
-        lossDollar: lossDollar.toFixed(2),
-        lossPercent: lossPercent.toFixed(2)
-      };
-    });
-  }, [lotSize, selectedInstrument, accountBalance]);
+  }, [posBalance, posRiskPercent, posStopLossPips, posTargetPips, inst]);
 
   return (
     <div className="space-y-6">
       
-      {/* 1. Header Banner: Institutional Profit & Position Size Engine */}
+      {/* 1. Header Banner & Mode Selector */}
       <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm relative overflow-hidden">
-        {/* Subtle Ambient Radial Glow */}
-        <div className="absolute top-0 right-1/4 w-80 h-80 bg-teal-500/[0.04] dark:bg-teal-500/[0.08] rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-80 h-80 bg-[#1c9bda]/[0.04] dark:bg-[#1c9bda]/[0.08] rounded-full blur-3xl pointer-events-none" />
-
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:text-teal-400 border border-teal-500/20 flex items-center gap-1.5">
                 <Calculator className="w-3.5 h-3.5" />
-                <span>Feature #3 • Institutional Quantitative Suite</span>
+                <span>Feature #3 • Institutional Quantitative Engine</span>
               </span>
               <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                Live Pip &amp; Profit Engine
+                OctaFX-Inspired Easy Precision
               </span>
             </div>
-            
+
             <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
-              Forex Profit, Lot Size &amp;{" "}
+              Forex Profit &amp;{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-600 via-[#1c9bda] to-blue-600 dark:from-teal-400 dark:via-cyan-300 dark:to-blue-400">
-                Risk Management Engine
+                Position Size Calculator
               </span>
             </h2>
-            
+
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">
-              Model precise profit payouts, pip value exposure, and exact position sizes across G10 majors, gold, and crypto. Engineered with strict capital preservation guardrails for funded challenges starting from $5,000.
+              Simple, instantaneous calculation of net profit, pip valuation, and recommended lot sizing across all currency pairs, gold, and commodities.
             </p>
           </div>
 
-          {/* Quick Mode Toggle Switch */}
+          {/* Clean 2-Way Tab Switcher (Actually toggles distinct calculators) */}
           <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 shrink-0 self-start md:self-auto">
             <button
-              onClick={() => setCalcMode("profit")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                calcMode === "profit"
+              type="button"
+              onClick={() => setActiveTab("profit")}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                activeTab === "profit"
                   ? "bg-white dark:bg-[#121D2D] text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-white/10"
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Profit / Loss</span>
+              <TrendingUp className="w-4 h-4 text-emerald-500" />
+              <span>Profit Calculator (P/L)</span>
             </button>
 
             <button
-              onClick={() => setCalcMode("position_size")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-                calcMode === "position_size"
+              type="button"
+              onClick={() => setActiveTab("position_size")}
+              className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                activeTab === "position_size"
                   ? "bg-white dark:bg-[#121D2D] text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-white/10"
                   : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              <Sliders className="w-3.5 h-3.5 text-[#1c9bda]" />
-              <span>Position Sizing</span>
+              <Sliders className="w-4 h-4 text-[#1c9bda]" />
+              <span>Position Size (Lots)</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* 2. Main Calculator Workspace Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        
-        {/* LEFT COLUMN: Input Configuration Dashboard (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
+      {/* ========================================================================= */}
+      {/* MODE 1: OCTAFX-STYLE PROFIT CALCULATOR (Simple, Intuitive, Fast)          */}
+      {/* ========================================================================= */}
+      {activeTab === "profit" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-in fade-in duration-200">
           
-          <div className="p-6 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-5">
+          {/* LEFT: Input Form (OctaFX Style: Pair, Volume, Direction, Open, Close) */}
+          <div className="lg:col-span-7 p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-6">
             
-            {/* Step 1: Instrument & Trade Direction Selector */}
-            <div className="space-y-3">
-              <label className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 flex items-center justify-between">
-                <span>1. Select Trading Pair &amp; Order Direction</span>
-                <span className="text-[10px] font-mono font-bold text-teal-600 dark:text-teal-400">
-                  Live Benchmarks Synced
-                </span>
-              </label>
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white flex items-center gap-2">
+                <Calculator className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+                <span>Trade Parameters</span>
+              </span>
+              <span className="text-[11px] font-mono font-bold text-teal-600 dark:text-teal-400">
+                OctaFX Standard Formula
+              </span>
+            </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                {/* Instrument Dropdown */}
-                <div className="sm:col-span-8">
-                  <select
-                    value={selectedInstId}
-                    onChange={(e) => handleSelectInstrument(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white text-xs font-bold font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/40 cursor-pointer"
-                  >
-                    {INSTRUMENTS.map((inst) => (
-                      <option key={inst.id} value={inst.id}>
-                        {inst.pair} • Current: {inst.currentPrice} ({inst.category})
-                      </option>
-                    ))}
-                  </select>
-                </div>
+            {/* 1. Asset & Direction */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
+              <div className="sm:col-span-8 space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Trading Asset / Currency Pair
+                </label>
+                <select
+                  value={selectedInstId}
+                  onChange={(e) => handleSelectProfitInst(e.target.value)}
+                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white text-xs font-bold font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/40 cursor-pointer"
+                >
+                  {INSTRUMENTS.map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.pair} • Current: {i.currentPrice}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-                {/* Long (Buy) / Short (Sell) Direction Toggle */}
-                <div className="sm:col-span-4 flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10">
+              {/* Order Direction: Buy / Sell */}
+              <div className="sm:col-span-4 space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Direction
+                </label>
+                <div className="flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10">
                   <button
                     type="button"
-                    onClick={() => handleToggleDirection("BUY")}
+                    onClick={() => handleToggleProfitDirection("BUY")}
                     className={`flex-1 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                      direction === "BUY"
+                      profitDirection === "BUY"
                         ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/30"
-                        : "text-slate-500 dark:text-slate-400 hover:text-slate-900"
+                        : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -305,11 +300,11 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   </button>
                   <button
                     type="button"
-                    onClick={() => handleToggleDirection("SELL")}
+                    onClick={() => handleToggleProfitDirection("SELL")}
                     className={`flex-1 py-2 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1 cursor-pointer ${
-                      direction === "SELL"
+                      profitDirection === "SELL"
                         ? "bg-rose-600 text-white shadow-md shadow-rose-600/30"
-                        : "text-slate-500 dark:text-slate-400 hover:text-slate-900"
+                        : "text-slate-500 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
                     <ArrowDownRight className="w-3.5 h-3.5" />
@@ -319,27 +314,252 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
               </div>
             </div>
 
-            {/* Step 2: Account Balance & Prop Firm Presets */}
-            <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-white/5">
+            {/* 2. Volume in Lots */}
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                  2. Account Balance (Funded / Personal)
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Volume (Lots)
                 </label>
-                <span className="text-xs font-mono font-bold text-slate-900 dark:text-white">
-                  ${Number(accountBalance).toLocaleString()} USD
+                <span className="text-xs font-mono font-black text-teal-600 dark:text-teal-400">
+                  {profitLots} Standard Lot{profitLots !== 1 ? "s" : ""}
                 </span>
               </div>
 
-              {/* Quick Presets starting from $5K */}
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                {FUNDED_PRESETS.map((p) => (
+              {/* Quick Lot Buttons */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {LOT_QUICK_PRESETS.map((l) => (
                   <button
-                    key={p.value}
+                    key={l}
                     type="button"
-                    onClick={() => setAccountBalance(p.value)}
-                    className={`py-2 px-2 rounded-xl text-[11px] font-mono font-bold transition-all text-center cursor-pointer border ${
-                      accountBalance === p.value
-                        ? "bg-teal-500/15 border-teal-500/50 text-teal-700 dark:text-teal-300 shadow-sm"
+                    onClick={() => setProfitLots(l)}
+                    className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer border ${
+                      profitLots === l
+                        ? "bg-teal-500 text-white border-teal-500 shadow-sm"
+                        : "bg-slate-50 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-slate-300"
+                    }`}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+
+              <input
+                type="number"
+                step="0.01"
+                min="0.01"
+                value={profitLots}
+                onChange={(e) => setProfitLots(Math.max(0.01, Number(e.target.value)))}
+                className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+              />
+            </div>
+
+            {/* 3. Open Price & Close Price */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Open Price (Entry)
+                </label>
+                <input
+                  type="number"
+                  step={inst.pipStep}
+                  value={openPrice}
+                  onChange={(e) => setOpenPrice(Number(e.target.value))}
+                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+                />
+                <span className="text-[10px] text-slate-400 font-mono block">
+                  Benchmark rate: {inst.currentPrice}
+                </span>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Close Price (Exit)
+                </label>
+                <input
+                  type="number"
+                  step={inst.pipStep}
+                  value={closePrice}
+                  onChange={(e) => setClosePrice(Number(e.target.value))}
+                  className="w-full px-4 py-3 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+                />
+                <span className={`text-[10px] font-mono block font-bold ${profitResults.isProfit ? "text-emerald-500" : "text-rose-500"}`}>
+                  Move: {profitResults.isProfit ? "+" : ""}{profitResults.pipsMoved} pips ({profitResults.pointDiff} points)
+                </span>
+              </div>
+            </div>
+
+            {/* Quick Price Bump Buttons */}
+            <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-100 dark:border-white/5 flex items-center justify-between gap-2 flex-wrap text-xs">
+              <span className="text-slate-500 text-[11px] font-medium">Quick Close Adjust:</span>
+              <div className="flex gap-1.5">
+                {[10, 25, 50, 100].map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => {
+                      const move = p * inst.pipStep;
+                      setClosePrice(
+                        Number((profitDirection === "BUY" ? openPrice + move : openPrice - move).toFixed(inst.pipDigits))
+                      );
+                    }}
+                    className="px-2.5 py-1 rounded-lg bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-300 font-mono text-[10px] font-bold hover:border-teal-500 transition-colors"
+                  >
+                    +{p} pips
+                  </button>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* RIGHT: Live Profit Results (Clean, high-impact OctaFX result card) */}
+          <div className="lg:col-span-5 space-y-5">
+            
+            <div className={`p-6 sm:p-7 rounded-3xl border shadow-xl relative overflow-hidden transition-all ${
+              profitResults.isProfit
+                ? "bg-slate-900 dark:bg-[#071324] border-emerald-500/30 text-white"
+                : "bg-slate-900 dark:bg-[#071324] border-rose-500/30 text-white"
+            }`}>
+              
+              {/* Radial Glow */}
+              <div className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl pointer-events-none opacity-20 ${
+                profitResults.isProfit ? "bg-emerald-500" : "bg-rose-500"
+              }`} />
+
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <span className="text-[10px] font-black uppercase tracking-widest text-teal-400 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Calculated Net P&amp;L</span>
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 text-slate-300">
+                  {profitDirection} {inst.pair}
+                </span>
+              </div>
+
+              {/* Main Net Profit Number */}
+              <div className="py-3 space-y-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                  Net Profit / Loss
+                </span>
+                <div className="flex items-baseline gap-2">
+                  <span className={`text-4xl sm:text-5xl font-black font-mono tracking-tight ${
+                    profitResults.isProfit ? "text-emerald-400" : "text-rose-400"
+                  }`}>
+                    {profitResults.isProfit ? "+" : ""}${profitResults.grossProfitUsd}
+                  </span>
+                  <span className="text-sm font-bold text-slate-400 font-mono">USD</span>
+                </div>
+              </div>
+
+              {/* Breakdown Grid */}
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/10">
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">
+                    Pips Movement
+                  </span>
+                  <span className={`text-base font-black font-mono block mt-0.5 ${
+                    profitResults.isProfit ? "text-emerald-400" : "text-rose-400"
+                  }`}>
+                    {profitResults.isProfit ? "+" : ""}{profitResults.pipsMoved} pips
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">
+                    Pip Value
+                  </span>
+                  <span className="text-base font-black font-mono text-slate-200 block mt-0.5">
+                    ${profitResults.pipValueUsd} / pip
+                  </span>
+                </div>
+              </div>
+
+              {/* Margin & Contract Details */}
+              <div className="space-y-2 pt-3 border-t border-white/10 text-xs text-slate-300">
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-slate-400">Required Margin (1:100):</span>
+                  <span className="font-mono font-bold text-white">${profitResults.marginRequired100} USD</span>
+                </div>
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-slate-400">Contract Size:</span>
+                  <span className="font-mono font-bold text-white">{inst.contractSize.toLocaleString()} units</span>
+                </div>
+              </div>
+
+              {/* Quick Action: Log into Journal */}
+              {onNavigateJournal && (
+                <button
+                  type="button"
+                  onClick={onNavigateJournal}
+                  className="w-full mt-4 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-[#1c9bda] hover:brightness-110 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-teal-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Log Setup to Trading Journal</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+
+            </div>
+
+            {/* Formula Explainer Card */}
+            <div className="p-5 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 text-xs text-slate-600 dark:text-slate-400 space-y-2">
+              <span className="font-bold text-slate-800 dark:text-white flex items-center gap-1.5 text-xs">
+                <Info className="w-4 h-4 text-[#1c9bda]" />
+                <span>How OctaFX Profit is Calculated:</span>
+              </span>
+              <p className="text-[11px] leading-relaxed font-mono bg-slate-50 dark:bg-white/[0.03] p-2.5 rounded-xl border border-slate-100 dark:border-white/5">
+                Profit = (Close Price − Open Price) × Lots × Contract Size
+              </p>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                For EUR/USD, 1 lot = 100,000 EUR. For Gold (XAU/USD), 1 lot = 100 ounces. Results update live as you type.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODE 2: POSITION SIZING & RISK ENGINE (Capital Guard / Prop Firm)          */}
+      {/* ========================================================================= */}
+      {activeTab === "position_size" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start animate-in fade-in duration-200">
+          
+          {/* LEFT: Position Sizing Input Form */}
+          <div className="lg:col-span-7 p-6 sm:p-7 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-6">
+            
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-white/5 pb-3">
+              <span className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-[#1c9bda]" />
+                <span>Position Sizing &amp; Capital Protection</span>
+              </span>
+              <span className="text-[11px] font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                Zero Overleveraging
+              </span>
+            </div>
+
+            {/* 1. Account Balance & Prop Firm Presets */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Account Balance
+                </label>
+                <span className="text-xs font-mono font-black text-slate-900 dark:text-white">
+                  ${posBalance.toLocaleString()} USD
+                </span>
+              </div>
+
+              {/* Presets */}
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {BALANCE_PRESETS.map((p) => (
+                  <button
+                    key={p.val}
+                    type="button"
+                    onClick={() => setPosBalance(p.val)}
+                    className={`py-2 px-1 rounded-xl text-[11px] font-mono font-bold transition-all text-center cursor-pointer border ${
+                      posBalance === p.val
+                        ? "bg-teal-500/15 border-teal-500 text-teal-700 dark:text-teal-300 shadow-sm"
                         : "bg-slate-50 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-slate-300"
                     }`}
                   >
@@ -348,373 +568,203 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                 ))}
               </div>
 
-              {/* Custom Balance Input */}
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 font-mono text-slate-400 font-bold text-xs">$</span>
                 <input
                   type="number"
-                  value={accountBalance}
-                  onChange={(e) => setAccountBalance(Math.max(100, Number(e.target.value)))}
+                  value={posBalance}
+                  onChange={(e) => setPosBalance(Math.max(100, Number(e.target.value)))}
                   className="w-full pl-8 pr-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
                   placeholder="Enter custom account balance..."
                 />
               </div>
             </div>
 
-            {/* Step 3: Lot Size & Risk Percentage */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100 dark:border-white/5">
-              
-              {/* Lot Size Slider & Presets */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                    Position Lots
-                  </label>
-                  <span className="text-xs font-mono font-black text-teal-600 dark:text-teal-400">
-                    {lotSize} Lots
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {LOT_PRESETS.map((l) => (
-                    <button
-                      key={l}
-                      type="button"
-                      onClick={() => setLotSize(l)}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer border ${
-                        lotSize === l
-                          ? "bg-teal-500 text-white border-teal-500 shadow-sm"
-                          : "bg-slate-50 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-400"
-                      }`}
-                    >
-                      {l}
-                    </button>
+            {/* 2. Risk Percentage & Asset */}
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
+              <div className="sm:col-span-7 space-y-1.5">
+                <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Trading Asset
+                </label>
+                <select
+                  value={selectedInstId}
+                  onChange={(e) => setSelectedInstId(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white text-xs font-bold font-mono focus:outline-none focus:ring-2 focus:ring-teal-500/40 cursor-pointer"
+                >
+                  {INSTRUMENTS.map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.pair}
+                    </option>
                   ))}
-                </div>
-
-                <input
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  max="100"
-                  value={lotSize}
-                  onChange={(e) => setLotSize(Math.max(0.01, Number(e.target.value)))}
-                  className="w-full px-4 py-2 rounded-xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
-                />
-                <span className="text-[10px] text-slate-400 block font-mono">
-                  1.0 Standard Lot = {selectedInstrument.lotUnit}
-                </span>
+                </select>
               </div>
 
-              {/* Risk Percentage Cap */}
-              <div className="space-y-2">
+              <div className="sm:col-span-5 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                    Target Risk %
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                    Risk Percentage
                   </label>
-                  <span className="text-xs font-mono font-black text-rose-600 dark:text-rose-400">
-                    {riskPercent}% Max
+                  <span className="text-xs font-mono font-black text-rose-500">
+                    {posRiskPercent}%
                   </span>
                 </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {[0.5, 1.0, 1.5, 2.0, 3.0].map((rp) => (
+                <div className="flex gap-1">
+                  {[0.5, 1.0, 1.5, 2.0].map((r) => (
                     <button
-                      key={rp}
+                      key={r}
                       type="button"
-                      onClick={() => setRiskPercent(rp)}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer border ${
-                        riskPercent === rp
+                      onClick={() => setPosRiskPercent(r)}
+                      className={`flex-1 py-2 rounded-xl text-[11px] font-mono font-bold transition-all cursor-pointer border ${
+                        posRiskPercent === r
                           ? "bg-rose-500 text-white border-rose-500 shadow-sm"
                           : "bg-slate-50 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-400"
                       }`}
                     >
-                      {rp}%
+                      {r}%
                     </button>
                   ))}
                 </div>
-
-                <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 flex items-center justify-between">
-                  <span className="text-[11px] text-slate-500">Max Dollar Risk:</span>
-                  <span className="text-xs font-mono font-black text-rose-500">
-                    ${calculations.maxAllowedDollarRisk}
-                  </span>
-                </div>
-                <span className="text-[10px] text-slate-400 block font-mono">
-                  Recommended Lot: <strong>{calculations.recommendedLots} Lots</strong>
-                </span>
               </div>
             </div>
 
-            {/* Step 4: Price Levels: Entry, Take Profit, and Stop Loss */}
-            <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-white/5">
-              <label className="text-xs font-black uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
-                3. Execution Price Levels (Entry, Target, Stop Loss)
-              </label>
+            {/* 3. Stop Loss (Pips) and Target (Pips) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <span>Stop Loss Distance (Pips)</span>
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={posStopLossPips}
+                  onChange={(e) => setPosStopLossPips(Math.max(1, Number(e.target.value)))}
+                  className="w-full px-4 py-3 rounded-2xl bg-rose-500/5 dark:bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400 font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/40"
+                />
+                <span className="text-[10px] text-slate-400 font-mono block">
+                  Example: 20 or 30 pips
+                </span>
+              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Entry Price */}
-                <div className="space-y-1.5">
-                  <span className="text-[11px] font-bold text-slate-500 block">Entry Price</span>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={entryPrice}
-                    onChange={(e) => setEntryPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
-                  />
-                  <span className="text-[9px] text-slate-400 font-mono block">Current market rate</span>
-                </div>
-
-                {/* Take Profit Price */}
-                <div className="space-y-1.5">
-                  <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                    <Target className="w-3 h-3" />
-                    <span>Take Profit</span>
-                  </span>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={exitPrice}
-                    onChange={(e) => setExitPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
-                  />
-                  <span className="text-[9px] text-emerald-600 font-mono block font-bold">
-                    +{calculations.gainPips} pips gain
-                  </span>
-                </div>
-
-                {/* Stop Loss Price */}
-                <div className="space-y-1.5">
-                  <span className="text-[11px] font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1">
-                    <AlertTriangle className="w-3 h-3" />
-                    <span>Stop Loss</span>
-                  </span>
-                  <input
-                    type="number"
-                    step="0.0001"
-                    value={stopLossPrice}
-                    onChange={(e) => setStopLossPrice(Number(e.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl bg-rose-500/5 dark:bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400 font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-rose-500/40"
-                  />
-                  <span className="text-[9px] text-rose-600 font-mono block font-bold">
-                    -{calculations.riskPips} pips risk
-                  </span>
-                </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                  <Target className="w-3.5 h-3.5" />
+                  <span>Target Distance (Pips)</span>
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={posTargetPips}
+                  onChange={(e) => setPosTargetPips(Math.max(1, Number(e.target.value)))}
+                  className="w-full px-4 py-3 rounded-2xl bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-400 font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                />
+                <span className="text-[10px] text-slate-400 font-mono block">
+                  R:R: 1 : {positionSizingResults.rrRatio}
+                </span>
               </div>
             </div>
 
           </div>
 
-          {/* Quick Pip Steps Scenario Matrix */}
-          <div className="p-6 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white flex items-center gap-2">
-                <BarChart2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                <span>Pips Projection Scenario Matrix ({lotSize} Lots on {selectedInstrument.pair})</span>
-              </h4>
-              <span className="text-[11px] font-mono text-slate-400">
-                1 Pip = ${calculations.currentLotPipValue} USD
-              </span>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs font-mono">
-                <thead>
-                  <tr className="border-b border-slate-100 dark:border-white/5 text-[10px] uppercase text-slate-400">
-                    <th className="py-2 px-3">Price Move</th>
-                    <th className="py-2 px-3 text-emerald-600 dark:text-emerald-400">Target Profit ($)</th>
-                    <th className="py-2 px-3 text-emerald-600 dark:text-emerald-400">Target ROI %</th>
-                    <th className="py-2 px-3 text-rose-600 dark:text-rose-400">Stop Loss ($)</th>
-                    <th className="py-2 px-3 text-rose-600 dark:text-rose-400">Drawdown %</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-white/5">
-                  {scenarioMatrix.map((s) => (
-                    <tr key={s.pips} className="hover:bg-slate-50/60 dark:hover:bg-white/[0.02] transition-colors">
-                      <td className="py-2.5 px-3 font-bold text-slate-800 dark:text-white">
-                        ±{s.pips} Pips
-                      </td>
-                      <td className="py-2.5 px-3 text-emerald-600 dark:text-emerald-400 font-bold">
-                        +${s.gainDollar}
-                      </td>
-                      <td className="py-2.5 px-3 text-emerald-600 dark:text-emerald-400 font-bold">
-                        +{s.gainPercent}%
-                      </td>
-                      <td className="py-2.5 px-3 text-rose-600 dark:text-rose-400 font-bold">
-                        -${s.lossDollar}
-                      </td>
-                      <td className="py-2.5 px-3 text-rose-600 dark:text-rose-400 font-bold">
-                        -{s.lossPercent}%
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-        </div>
-
-        {/* RIGHT COLUMN: Quantitative Execution Telemetry & PnL Card (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
-          
-          {/* Executive PnL & R:R Verdict Card */}
-          <div className="p-6 rounded-3xl bg-slate-900 dark:bg-[#071324] border border-teal-500/30 text-white shadow-xl space-y-5 relative overflow-hidden">
-            {/* Background Laser Watermark */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <span className="text-[10px] font-black uppercase tracking-widest text-teal-400 flex items-center gap-1.5">
-                <Sparkles className="w-3 h-3" />
-                <span>Trade Telemetry Report</span>
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 text-slate-300">
-                {direction} {selectedInstrument.pair}
-              </span>
-            </div>
-
-            {/* Projected Net Profit Hero */}
-            <div className="space-y-1">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                Projected Take Profit Gain
-              </span>
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl sm:text-4xl font-black font-mono tracking-tight text-emerald-400">
-                  +${calculations.profitUsd}
-                </span>
-                <span className="text-base font-black font-mono text-emerald-400/90">
-                  (+{calculations.returnPct}%)
-                </span>
-              </div>
-              <span className="text-xs text-slate-400 font-mono block">
-                Target Move: +{calculations.gainPips} pips
-              </span>
-            </div>
-
-            {/* Maximum Capital Risk Floor */}
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider">
-                  Planned Max Loss (SL)
-                </span>
-                <span className="font-mono font-black text-rose-400">
-                  -${calculations.lossUsd} (-{calculations.riskPct}%)
-                </span>
-              </div>
+          {/* RIGHT: Calculated Lot Sizing & Safety Telemetry Card */}
+          <div className="lg:col-span-5 space-y-5">
+            
+            <div className="p-6 sm:p-7 rounded-3xl bg-slate-900 dark:bg-[#071324] border border-[#1c9bda]/30 text-white shadow-xl space-y-5 relative overflow-hidden">
               
-              <div className="flex items-center justify-between text-xs pt-1 border-t border-white/5">
-                <span className="text-slate-400 text-[11px]">Stop Loss Distance:</span>
-                <span className="font-mono text-slate-300">-{calculations.riskPips} pips</span>
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <span className="text-[10px] font-black uppercase tracking-widest text-[#1c9bda] flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>Recommended Position Size</span>
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 text-slate-300">
+                  {inst.pair}
+                </span>
               </div>
-            </div>
 
-            {/* Risk to Reward Evaluation Ribbon */}
-            <div className="p-4 rounded-2xl bg-teal-500/10 border border-teal-500/20 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-teal-300 uppercase tracking-wider">
-                  Planned Risk : Reward (R:R)
+              {/* Exact Lots Output Hero */}
+              <div className="py-2 space-y-1">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                  Enter This Exact Lot Size:
                 </span>
-                <span className="text-base font-black font-mono text-teal-300">
-                  1 : {calculations.rrRatio}
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-[#38bdf8]">
+                    {positionSizingResults.recommendedLots}
+                  </span>
+                  <span className="text-base font-bold text-slate-400 font-mono">Lots</span>
+                </div>
+                <span className="text-xs text-slate-400 font-mono block">
+                  Pip Value: ${positionSizingResults.pipValueForPosition} USD / pip
                 </span>
               </div>
-              
-              <div className="flex items-center gap-1.5 text-xs">
-                {Number(calculations.rrRatio) >= 2.0 ? (
-                  <span className="px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 font-bold text-[10px] flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span>Institutional Expectancy Positive</span>
+
+              {/* Risk vs Reward Metrics */}
+              <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/10">
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">
+                    Dollar Risk at SL
                   </span>
-                ) : Number(calculations.rrRatio) >= 1.5 ? (
-                  <span className="px-2 py-0.5 rounded-md bg-teal-500/20 text-teal-300 font-bold text-[10px]">
-                    Acceptable Setup (1:1.5+)
+                  <span className="text-base font-black font-mono text-rose-400 block mt-0.5">
+                    -${positionSizingResults.plannedLossUsd}
                   </span>
+                  <span className="text-[9px] text-slate-400 block font-mono">
+                    ({posRiskPercent}% of balance)
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">
+                    Projected Gain at TP
+                  </span>
+                  <span className="text-base font-black font-mono text-emerald-400 block mt-0.5">
+                    +${positionSizingResults.projectedProfitUsd}
+                  </span>
+                  <span className="text-[9px] text-slate-400 block font-mono">
+                    (1 : {positionSizingResults.rrRatio} R:R)
+                  </span>
+                </div>
+              </div>
+
+              {/* Prop Firm Drawdown Guard */}
+              <div className="space-y-2 pt-2 border-t border-white/10 text-xs">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">Daily Drawdown Floor (5%):</span>
+                  <span className="font-mono font-bold text-slate-200">
+                    ${positionSizingResults.dailyDrawdownFloor} USD
+                  </span>
+                </div>
+
+                {positionSizingResults.isExceedingDailyDrawdown ? (
+                  <div className="p-2.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-[11px] text-rose-300 font-bold flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
+                    <span>Risk exceeds daily 5% limit! Reduce risk percentage.</span>
+                  </div>
                 ) : (
-                  <span className="px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 font-bold text-[10px] flex items-center gap-1">
-                    <AlertTriangle className="w-3 h-3" />
-                    <span>Sub-optimal R:R (Min 1:2.0 recommended)</span>
-                  </span>
+                  <div className="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-[11px] text-emerald-300 font-bold flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                    <span>Capital safe within prop firm daily buffer.</span>
+                  </div>
                 )}
               </div>
-            </div>
 
-            {/* Institutional Prop Firm Drawdown Guard */}
-            <div className="space-y-2 pt-2 border-t border-white/10 text-xs">
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-slate-400">Daily Max Loss Floor (5%):</span>
-                <span className="font-mono font-bold text-slate-200">
-                  ${calculations.dailyLossFloor}
-                </span>
-              </div>
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-slate-400">Total Max Drawdown (10%):</span>
-                <span className="font-mono font-bold text-slate-200">
-                  ${calculations.maxDrawdownFloor}
-                </span>
-              </div>
-
-              {calculations.isExceedingDailyDrawdown && (
-                <div className="p-2.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-[11px] text-rose-300 font-bold flex items-center gap-2 mt-2">
-                  <AlertTriangle className="w-4 h-4 shrink-0 text-rose-400" />
-                  <span>Warning: Planned risk exceeds standard 5% daily drawdown floor! Reduce lot size.</span>
-                </div>
+              {/* Log into Journal */}
+              {onNavigateJournal && (
+                <button
+                  type="button"
+                  onClick={onNavigateJournal}
+                  className="w-full mt-3 py-3 rounded-xl bg-gradient-to-r from-teal-500 to-[#1c9bda] hover:brightness-110 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-teal-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
+                >
+                  <BookOpen className="w-4 h-4" />
+                  <span>Execute in Discipline Journal</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
               )}
+
             </div>
 
-            {/* Quick Transition: Log into Discipline Journal */}
-            {onNavigateJournal && (
-              <button
-                type="button"
-                onClick={onNavigateJournal}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-teal-500 to-[#1c9bda] hover:brightness-110 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-teal-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
-              >
-                <BookOpen className="w-4 h-4" />
-                <span>Log to Discipline Trading Journal</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            )}
-
-          </div>
-
-          {/* Institutional Pip Value Quick Card */}
-          <div className="p-6 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-3">
-            <h4 className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-white flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-500" />
-              <span>Pip Formula &amp; Leverage Specifications</span>
-            </h4>
-            
-            <div className="space-y-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-100 dark:border-white/5 font-mono text-[11px] space-y-1">
-                <div className="flex justify-between">
-                  <span>Standard Lot (1.0):</span>
-                  <span className="font-bold text-slate-900 dark:text-white">
-                    ${selectedInstrument.pipValuePerLot} / pip
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Mini Lot (0.10):</span>
-                  <span className="font-bold text-slate-900 dark:text-white">
-                    ${(selectedInstrument.pipValuePerLot * 0.1).toFixed(2)} / pip
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Micro Lot (0.01):</span>
-                  <span className="font-bold text-slate-900 dark:text-white">
-                    ${(selectedInstrument.pipValuePerLot * 0.01).toFixed(2)} / pip
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-[11px] text-slate-500 pt-1">
-                Calm Capital computes pip valuation dynamically using benchmark exchange ticks. For USD quote pairs (EUR/USD, GBP/USD, XAU/USD), 1 standard lot is exactly $10/pip.
-              </p>
-            </div>
           </div>
 
         </div>
-
-      </div>
+      )}
 
     </div>
   );

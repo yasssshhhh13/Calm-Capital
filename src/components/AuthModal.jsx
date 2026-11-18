@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, ShieldCheck, Lock, Sparkles, CheckCircle, Mail, ArrowRight, AlertCircle, Key } from "lucide-react";
 import { useAuth } from "../auth";
 
-export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark }) {
+export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark, onNavigateTab }) {
   const { signInWithGoogle, signInWithGmailAddress } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -226,43 +226,34 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
           </div>
         </div>
 
-        {/* Transparent Terms, Privacy & Gmail Data Sharing Policy Footer */}
-        <div className="p-4 px-6 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 text-center space-y-2">
-          <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+        {/* Transparent Terms & Privacy Policy Link */}
+        <div className="p-4 px-6 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 text-center">
+          <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
             By continuing with Google, you agree to Calm Capital's{" "}
-            <a
-              href="/terms"
-              onClick={(e) => {
-                e.preventDefault();
+            <button
+              type="button"
+              onClick={() => {
                 onClose();
-                window.location.hash = "#terms";
+                if (onNavigateTab) onNavigateTab("terms");
+                else window.location.hash = "#terms";
               }}
-              className="text-[#1c9bda] hover:underline font-bold"
+              className="text-[#1c9bda] hover:underline font-bold bg-transparent border-0 p-0 cursor-pointer text-[11px]"
             >
               Terms of Use
-            </a>{" "}
+            </button>{" "}
             and{" "}
-            <a
-              href="/privacy"
-              onClick={(e) => {
-                e.preventDefault();
+            <button
+              type="button"
+              onClick={() => {
                 onClose();
-                window.location.hash = "#privacy";
+                if (onNavigateTab) onNavigateTab("privacy");
+                else window.location.hash = "#privacy";
               }}
-              className="text-[#1c9bda] hover:underline font-bold"
+              className="text-[#1c9bda] hover:underline font-bold bg-transparent border-0 p-0 cursor-pointer text-[11px]"
             >
               Privacy Policy
-            </a>.
+            </button>.
           </p>
-          <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-white/[0.03] border border-slate-200/60 dark:border-white/5 text-[10px] text-slate-500 dark:text-slate-400 text-left leading-relaxed space-y-1">
-            <div className="flex items-center gap-1.5 font-bold text-slate-700 dark:text-slate-300">
-              <ShieldCheck size={12} className="text-emerald-500 shrink-0" />
-              <span>Gmail &amp; Account Privacy Commitment</span>
-            </div>
-            <p>
-              Calm Capital only accesses your verified basic Google profile (Name, Gmail address, and profile photo) to securely isolate your private trading logs and saved PANs. We <u>never</u> access your emails, Google Drive, or contacts. Your information is 100% private, never sold, and never shared with third parties or brokers.
-            </p>
-          </div>
         </div>
       </div>
     </div>
