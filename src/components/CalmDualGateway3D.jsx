@@ -91,11 +91,10 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
           }}
           onMouseLeave={() => !isMobile && handleMouseLeave(setLeftTilt)}
           onClick={() => onSelectSection("ipos")}
-          className={`relative group rounded-3xl p-5 sm:p-6 md:p-8 cursor-pointer transition-all duration-300 border ${
-            activeSection === "ipos"
+          className={`relative group rounded-3xl p-5 sm:p-6 md:p-8 cursor-pointer transition-all duration-300 border ${activeSection === "ipos"
               ? "border-emerald-500/60 ring-2 ring-emerald-500/20 shadow-2xl shadow-emerald-500/10"
               : "border-slate-200/80 dark:border-white/10 hover:border-emerald-500/40"
-          }`}
+            }`}
           style={{
             background: dark
               ? "linear-gradient(135deg, rgba(11, 31, 51, 0.85) 0%, rgba(6, 17, 30, 0.95) 100%)"
@@ -106,7 +105,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
           }}
         >
           {/* Dynamic Dalal Street Charging Bull & Market Surge Animation */}
-          <CalmIpoBullBackdrop intensity={dark ? "vibrant" : "normal"} />
+          <CalmIpoBullBackdrop dark={dark} intensity={dark ? "vibrant" : "subtle"} />
 
           {/* Specular Glare overlay */}
           {!isMobile && (
@@ -142,9 +141,9 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
             </div>
 
             {/* Visual Bar Graph Element */}
-            <div className="relative h-24 sm:h-28 rounded-2xl bg-black/5 dark:bg-black/30 border border-emerald-500/20 p-3 overflow-hidden flex items-end justify-between gap-2">
+            <div className="relative h-24 sm:h-28 rounded-2xl bg-slate-50/90 dark:bg-black/30 border border-slate-200/80 dark:border-emerald-500/20 p-3 overflow-hidden flex items-end justify-between gap-2 shadow-sm">
               <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:12px_12px] opacity-15 pointer-events-none" />
-              
+
               {/* Animated bar columns */}
               {[
                 { h: "55%", gmp: "+32%", label: "Tech" },
@@ -159,11 +158,10 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
                     {bar.gmp}
                   </span>
                   <div
-                    className={`w-full rounded-t-lg transition-all duration-500 ${
-                      bar.hot
+                    className={`w-full rounded-t-lg transition-all duration-500 ${bar.hot
                         ? "bg-gradient-to-t from-emerald-600 to-teal-400 shadow-md shadow-emerald-500/30"
                         : "bg-slate-300 dark:bg-slate-700 group-hover:bg-teal-600/60"
-                    }`}
+                      }`}
                     style={{ height: bar.h }}
                   />
                   <span className="text-[8px] text-slate-400 font-semibold mt-1">
@@ -215,11 +213,10 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
           }}
           onMouseLeave={() => !isMobile && handleMouseLeave(setRightTilt)}
           onClick={() => onSelectSection("forex")}
-          className={`relative group rounded-3xl p-5 sm:p-6 md:p-8 cursor-pointer transition-all duration-300 border ${
-            activeSection === "forex"
+          className={`relative group rounded-3xl p-5 sm:p-6 md:p-8 cursor-pointer transition-all duration-300 border ${activeSection === "forex"
               ? "border-[#1c9bda]/70 ring-2 ring-[#1c9bda]/30 shadow-2xl shadow-[#1c9bda]/15"
               : "border-slate-200/80 dark:border-white/10 hover:border-[#1c9bda]/40"
-          }`}
+            }`}
           style={{
             background: dark
               ? "linear-gradient(135deg, rgba(8, 26, 45, 0.85) 0%, rgba(4, 13, 24, 0.95) 100%)"
@@ -230,7 +227,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
           }}
         >
           {/* Dynamic 3D Cyber Globe & Global Telemetry Animation */}
-          <CalmForexGlobeBackdrop intensity={dark ? "vibrant" : "normal"} />
+          <CalmForexGlobeBackdrop dark={dark} intensity={dark ? "vibrant" : "subtle"} />
 
           {/* Specular Glare overlay */}
           {!isMobile && (
@@ -266,7 +263,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
             </div>
 
             {/* Ticker Row */}
-            <div className="relative h-24 sm:h-28 rounded-2xl bg-black/5 dark:bg-black/30 border border-[#1c9bda]/20 p-3 overflow-hidden flex items-center justify-around">
+            <div className="relative h-24 sm:h-28 rounded-2xl bg-slate-50/90 dark:bg-black/30 border border-slate-200/80 dark:border-[#1c9bda]/20 p-3 overflow-hidden flex items-center justify-around shadow-sm">
               <div className="absolute inset-0 bg-[radial-gradient(#1c9bda_1px,transparent_1px)] [background-size:12px_12px] opacity-15 pointer-events-none" />
 
               {/* Ticking live currency tickers */}

@@ -187,7 +187,7 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
   return (
     <div className="relative w-full rounded-3xl overflow-hidden bg-white dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 shadow-sm p-5 sm:p-8 lg:p-10 select-none transition-all">
       {/* High-Tech Forex Globe Video Loop & Live Interbank Hologram */}
-      <CalmForexGlobeBackdrop intensity="subtle" />
+      <CalmForexGlobeBackdrop dark={dark} intensity={dark ? "normal" : "subtle"} />
 
       {/* Subtle Background Radial Gradient */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-teal-500/[0.04] dark:bg-teal-500/[0.07] rounded-full blur-3xl pointer-events-none" />

@@ -9050,61 +9050,45 @@ export default function App() {
                 />
 
                 {/* 1. Hero Section */}
-                <div id="ipo-primary-hero" className="relative rounded-3xl overflow-hidden p-6 md:p-8 shadow-xl border"
+                <div id="ipo-primary-hero" className="relative rounded-3xl overflow-hidden p-6 md:p-8 sm:p-10 shadow-2xl border border-emerald-500/25 select-none"
                   style={{
-                    background: "linear-gradient(135deg, #0B1F33 0%, #123B4A 100%)",
-                    borderColor: "rgba(20, 184, 166, 0.15)"
+                    background: "linear-gradient(135deg, #061423 0%, #092035 60%, #040D17 100%)",
+                    boxShadow: "0 20px 50px -15px rgba(2, 12, 27, 0.5)"
                   }}
                 >
-                  {/* Cinematic Charging Bull Video & Holographic Market Momentum */}
-                  <CalmIpoBullBackdrop intensity="subtle" />
+                  {/* Cinematic Charging Bull & Market Surge Animation (Always deep & rich) */}
+                  <CalmIpoBullBackdrop dark={true} intensity="normal" />
 
-                  {/* Decorative faint financial/candlestick pattern & grid */}
-                  <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" style={{
-                    backgroundImage: `
-                      linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
-                      linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px)
-                    `,
-                    backgroundSize: '24px 24px'
-                  }} />
-                  {/* Faint financial wavy graph background line (using an SVG overlay) */}
-                  <div className="absolute bottom-0 right-0 left-0 h-24 z-0 opacity-5 pointer-events-none">
-                    <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                      <path d="M0,80 Q25,30 50,70 T100,20 L100,100 L0,100 Z" fill="rgba(20, 184, 166, 0.4)" stroke="rgba(20, 184, 166, 0.8)" strokeWidth="1" />
-                    </svg>
-                  </div>
-                  {/* Teal/Blue radial soft glow */}
-                  <div className="absolute inset-0 z-0 pointer-events-none opacity-40" style={{
-                    background: "radial-gradient(circle at 80% 20%, rgba(20, 184, 166, 0.18) 0%, rgba(28, 155, 218, 0.1) 40%, transparent 70%)"
-                  }} />
-
-                  <div className="relative z-10 grid md:grid-cols-12 gap-6 items-center">
+                  <div className="relative z-10 grid md:grid-cols-12 gap-6 lg:gap-8 items-center">
                     {/* Left Column: Heading and Tagline */}
                     <div className="md:col-span-7 space-y-4 text-left">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-white/5 text-[#14B8A6] border border-white/10 shadow-[0_0_12px_rgba(20,184,166,0.15)] backdrop-blur-md">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#14B8A6] animate-pulse"></span>
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shadow-sm backdrop-blur-md">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         Designed by Discipline
                       </div>
                       
-                      <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-[1.2] text-white">
-                        Calm Capital — Live GMP &amp; Institutional-Grade IPO Analysis
+                      <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-[1.18] text-white">
+                        Calm Capital —{" "}
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-300">
+                          Live GMP &amp; Institutional-Grade IPO Analysis
+                        </span>
                       </h1>
                       
-                      <p className="text-sm leading-relaxed text-[#B8C5D6] max-w-xl">
+                      <p className="text-xs sm:text-sm leading-relaxed text-slate-300 max-w-xl font-normal">
                         Live GMP, IPO subscriptions, allotment chances, financials, DRHP/RHP, listing data and more, all in one place.
                       </p>
 
                       <div className="flex flex-wrap gap-3 pt-2">
                         <button
                           onClick={() => navigateToTab("open")}
-                          className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-[#1C9BDA] to-[#0F766E] hover:from-[#1C9BDA]/90 hover:to-[#0F766E]/90 shadow-md shadow-[#1c9bda]/10 cursor-pointer flex items-center gap-1.5 border-0 hover:scale-[1.01] active:scale-[0.98] transition-all"
+                          className="px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-emerald-600 via-teal-600 to-[#1C9BDA] hover:brightness-110 shadow-lg shadow-emerald-600/20 cursor-pointer flex items-center gap-1.5 border-0 hover:scale-[1.01] active:scale-[0.98] transition-all"
                         >
                           Explore Open IPOs
                           <ChevronRight size={14} />
                         </button>
                         <button
                           onClick={() => navigateToTab("gmp")}
-                          className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border border-white/15 bg-white/5 hover:bg-white/10 text-[#E2E8F0] hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
+                          className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border border-white/20 bg-white/10 hover:bg-white/15 text-white hover:scale-[1.01] active:scale-[0.98] cursor-pointer backdrop-blur-sm"
                         >
                           View Live GMP
                         </button>
@@ -9113,18 +9097,18 @@ export default function App() {
 
                     {/* Right Column: Visual Graphics Card */}
                     <div className="md:col-span-5 hidden md:block">
-                      <div className="relative p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md animate-float flex flex-col items-center text-center space-y-3">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1C9BDA] to-[#14B8A6] flex items-center justify-center text-white shadow-lg shadow-[#1C9BDA]/20">
+                      <div className="relative p-6 rounded-2xl border border-emerald-500/20 bg-slate-900/60 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center space-y-3">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1C9BDA] to-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/25">
                           <Activity size={22} />
                         </div>
-                        <h4 className="text-sm font-bold text-white">Institutional Intelligence</h4>
-                        <p className="text-[11px] text-[#8FA3BA] leading-relaxed max-w-[200px]">
+                        <h4 className="text-sm font-bold text-white tracking-wide">Institutional Intelligence</h4>
+                        <p className="text-[11px] text-slate-400 leading-relaxed max-w-[210px]">
                           Real-time multi-source verified data, tracked with financial discipline.
                         </p>
-                        <div className="flex gap-2 items-center text-[10px] font-bold text-[#14B8A6] bg-[#14B8A6]/10 px-2.5 py-1 rounded-full border border-[#14B8A6]/20">
+                        <div className="flex gap-2 items-center text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/25">
                           <span className="relative flex h-1.5 w-1.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#14B8A6] opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#14B8A6]"></span>
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
                           </span>
                           Live Data Synced
                         </div>
