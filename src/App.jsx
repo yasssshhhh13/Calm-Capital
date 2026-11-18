@@ -8,11 +8,11 @@ import {
   Calendar, Building2, ChevronRight, Sparkles, Search, Bell, RefreshCw,
   Sun, Moon, Menu, Bookmark, BookmarkCheck, Calculator as CalcIcon,
   LayoutGrid, Activity, PieChart as PieIcon, BarChart3, Landmark,
-  ExternalLink, Clock, ArrowUpRight, ArrowDownRight,
+  ExternalLink, Clock, ArrowUpRight, ArrowDownRight, ArrowRight,
   Home, CircleDollarSign, ChevronsLeft, PlusCircle, Award, CheckCircle, Inbox,
   ShieldCheck, AlertTriangle, HelpCircle, ArrowLeftRight, GitCompare,
   Copy, Check, Users, CreditCard, Eye, EyeOff, Trash2, Edit2, Loader2,
-  LogIn, LogOut, UserCheck
+  LogIn, LogOut, UserCheck, Globe, BookOpen
 } from "lucide-react";
 import { trackTabView, trackPageView } from "./analytics.js";
 import {
@@ -26,9 +26,12 @@ import {
   displayIpoName,
 } from "./seo.js";
 
-import initialIpoData from "../public/ipos.json";
+const initialIpoData = [];
 import { useAuth } from "./auth.jsx";
 import AuthModal from "./components/AuthModal.jsx";
+import ForexSection from "./components/forex/ForexSection.jsx";
+import { Card3DTilt } from "./components/3d/index.js";
+import CalmDualGateway3D from "./components/CalmDualGateway3D.jsx";
 
 /* =====================================================================
    BRAND TOKENS
@@ -5553,7 +5556,7 @@ function useFamilyPans() {
       const userSession = localStorage.getItem("calmcapital_user_session");
       if (userSession) {
         const u = JSON.parse(userSession);
-        if (Array.isArray(u?.savedPans) && u.savedPans.length > 0) {
+        if (u && u.authProvider === "google" && Array.isArray(u?.savedPans) && u.savedPans.length > 0) {
           return u.savedPans;
         }
       }
@@ -5680,7 +5683,7 @@ function useFamilyAllotments() {
       const userSession = localStorage.getItem("calmcapital_user_session");
       if (userSession) {
         const u = JSON.parse(userSession);
-        if (u?.savedAllotments && Object.keys(u.savedAllotments).length > 0) {
+        if (u && u.authProvider === "google" && u?.savedAllotments && Object.keys(u.savedAllotments).length > 0) {
           return u.savedAllotments;
         }
       }
@@ -5881,7 +5884,7 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
               <div className="flex items-center gap-2 text-xs text-emerald-800 dark:text-emerald-300 min-w-0">
                 <UserCheck size={16} className="shrink-0 text-emerald-500" />
                 <span className="truncate">
-                  Logged in as <strong>{user.name}</strong> ({user.mobile ? `+91 ${user.mobile}` : user.email}) • PANs backed up
+                  Logged in as <strong>{user.name}</strong> ({user.email}) • PANs backed up
                 </span>
               </div>
               <button 
@@ -5897,7 +5900,7 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
               <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-200">
                 <Sparkles size={16} className="text-[#1c9bda] shrink-0" />
                 <span className="leading-snug">
-                  <strong>Optional:</strong> Want to access your saved PANs on another phone or browser?
+                  <strong>Optional:</strong> Want to access your saved PANs on another device?
                 </span>
               </div>
               <button
@@ -5905,7 +5908,7 @@ function FamilyPanManagerModal({ isOpen, onClose, familyPans, dark }) {
                 onClick={() => openAuthModal("signin")}
                 className="px-3.5 py-1.5 rounded-xl bg-[#1c9bda] hover:bg-[#1c9bda]/90 text-white text-[11px] font-bold shadow-sm shrink-0 cursor-pointer border-0"
               >
-                Sign In / Sign Up
+                Google Sign In
               </button>
             </div>
           )}
@@ -7711,23 +7714,25 @@ const StatCard = React.memo(function StatCard({ icon: Icon, label, value, tint, 
   }
 
   return (
-    <div
-      onClick={onClick}
-      role={clickable ? "button" : undefined}
-      tabIndex={clickable ? 0 : undefined}
-      onKeyDown={clickable ? (e) => (e.key === "Enter" || e.key === " ") && onClick() : undefined}
-      className={`border p-4 flex items-center justify-between rounded-2xl shadow-sm transition-all duration-200 ${cardClass} ${className}
-        ${clickable ? "cursor-pointer hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98]" : ""}`}
-    >
-      <div>
-        <p className="text-3xl font-extrabold text-slate-850 dark:text-[#F8FAFC] font-mono tracking-tight leading-none">{value}</p>
-        <p className="text-xs text-slate-500 dark:text-[#B8C5D6] mt-1.5 font-semibold tracking-wide">{label}</p>
-        {clickable && <p className="text-[9px] text-slate-400 dark:text-[#6F849C] mt-1 tracking-wider uppercase">View all →</p>}
+    <Card3DTilt className={className} maxTilt={7} scale={1.02}>
+      <div
+        onClick={onClick}
+        role={clickable ? "button" : undefined}
+        tabIndex={clickable ? 0 : undefined}
+        onKeyDown={clickable ? (e) => (e.key === "Enter" || e.key === " ") && onClick() : undefined}
+        className={`border p-4 flex items-center justify-between rounded-2xl shadow-sm transition-all duration-200 ${cardClass}
+          ${clickable ? "cursor-pointer hover:shadow-md active:scale-[0.98]" : ""}`}
+      >
+        <div>
+          <p className="text-3xl font-extrabold text-slate-850 dark:text-[#F8FAFC] font-mono tracking-tight leading-none">{value}</p>
+          <p className="text-xs text-slate-500 dark:text-[#B8C5D6] mt-1.5 font-semibold tracking-wide">{label}</p>
+          {clickable && <p className="text-[9px] text-slate-400 dark:text-[#6F849C] mt-1 tracking-wider uppercase">View all →</p>}
+        </div>
+        <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-110" style={{ background: tint }}>
+          <Icon size={18} color="#ffffff" strokeWidth={2.2} />
+        </div>
       </div>
-      <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-110" style={{ background: tint }}>
-        <Icon size={18} color="#ffffff" strokeWidth={2.2} />
-      </div>
-    </div>
+    </Card3DTilt>
   );
 });
 
@@ -7739,7 +7744,7 @@ const StatCard = React.memo(function StatCard({ icon: Icon, label, value, tint, 
 // needs to change, this just hides its nav entry and header shortcut.
 const AI_ASSISTANT_ENABLED = false;
 
-const NAV = [
+const IPO_NAV = [
   { id: "ai", label: "AI Assistant", icon: Sparkles },
   { id: "overview", label: "Overview", icon: Home },
   { id: "score", label: "CalmCapital Score", icon: ShieldCheck },
@@ -7757,6 +7762,16 @@ const NAV = [
   { id: "watchlist", label: "Watchlist", icon: Bookmark },
   { id: "demat", label: "Open Demat Account", icon: Landmark },
 ].filter((n) => n.id !== "ai" || AI_ASSISTANT_ENABLED);
+
+const FOREX_NAV = [
+  { id: "news", label: "Economic News & Calendar", icon: Calendar },
+  { id: "journal", label: "Discipline Trading Journal", icon: BookOpen },
+];
+
+const NAV = [
+  ...IPO_NAV,
+  { id: "forex", label: "Forex", icon: Globe }
+];
 
 function HeaderSearchBar({ query, onQueryChange }) {
   const [localVal, setLocalVal] = useState(query || "");
@@ -8027,7 +8042,11 @@ export default function App() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          IPOS_BASE = data;
+          IPOS_BASE = data.map(ipo => ({
+            ...ipo,
+            company: cleanCompanyName(ipo.company || ipo.name),
+            name: cleanCompanyName(ipo.name || ipo.company)
+          }));
           invalidateLiveIposCache();
           setTick((t) => t + 1);
           setLiveDataVersion((v) => v + 1);
@@ -8045,11 +8064,73 @@ export default function App() {
 
   const isMobile = () => typeof window !== "undefined" && window.innerWidth < 768;
   const [sidebarOpen, setSidebarOpen] = useState(() => !isMobile());
-  const [dark, setDark] = useState(false); // Force light mode as default
+  const [dark, setDark] = useState(() => {
+    try {
+      const saved = localStorage.getItem("calmcapital-theme");
+      return saved !== null ? JSON.parse(saved) : false;
+    } catch {
+      return false;
+    }
+  });
+  const [enable3D, setEnable3D] = useState(() => {
+    try {
+      const saved = localStorage.getItem("calmcapital-3d");
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
+
+  // Master Section: "ipos" (Indian IPO Intelligence) vs "forex" (Global Forex Hub)
+  const [mainSection, setMainSection] = useState(() => {
+    try {
+      const url = typeof window !== "undefined" ? window.location.pathname.toLowerCase() : "";
+      if (url.startsWith("/forex")) return "forex";
+      const saved = localStorage.getItem("calmcapital-section");
+      return saved === "forex" ? "forex" : "ipos";
+    } catch {
+      return "ipos";
+    }
+  });
+
+  // Forex sub-tabs: "news" | "journal"
+  const [forexSubTab, setForexSubTab] = useState(() => {
+    try {
+      const saved = localStorage.getItem("calmcapital-forex-subtab");
+      return saved === "journal" ? "journal" : "news";
+    } catch {
+      return "news";
+    }
+  });
+
+  const handleSwitchSection = (section, targetTab) => {
+    setMainSection(section);
+    try { localStorage.setItem("calmcapital-section", section); } catch { /* ignore */ }
+    if (section === "forex") {
+      setTab("forex");
+      if (targetTab === "journal" || targetTab === "news") {
+        setForexSubTab(targetTab);
+        try { localStorage.setItem("calmcapital-forex-subtab", targetTab); } catch { /* ignore */ }
+      }
+    } else {
+      if (tab === "forex") {
+        navigateToTab(targetTab || "overview");
+      }
+    }
+  };
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("calmcapital-3d", JSON.stringify(enable3D));
+    } catch { /* storage unavailable */ }
+  }, [enable3D]);
 
   useEffect(() => {
     try {
       localStorage.setItem("calmcapital-theme", JSON.stringify(dark));
+      if (typeof document !== "undefined") {
+        document.documentElement.classList.toggle("dark", !!dark);
+      }
     } catch { /* storage unavailable */ }
   }, [dark]);
 
@@ -8075,6 +8156,13 @@ export default function App() {
   const setTab = (id) => {
     setSelected(null);
     setTabRaw(id);
+    if (id === "forex") {
+      setMainSection("forex");
+      try { localStorage.setItem("calmcapital-section", "forex"); } catch { /* ignore */ }
+    } else if (IPO_NAV.some(n => n.id === id)) {
+      setMainSection("ipos");
+      try { localStorage.setItem("calmcapital-section", "ipos"); } catch { /* ignore */ }
+    }
     try { localStorage.setItem("calmcapital-tab", id); } catch { /* storage unavailable */ }
     const path = TAB_PATHS[id] || "/";
     lastTabPathRef.current = path;
@@ -8419,7 +8507,7 @@ export default function App() {
 
   return (
     <div className={dark ? "dark" : ""}>
-      <div className="h-screen flex overflow-hidden" style={{
+      <div className="h-screen flex overflow-hidden relative z-10" style={{
         background: dark
           ? "radial-gradient(circle at 30% 50%, rgba(28,155,218,0.18), transparent 60%), radial-gradient(circle at 80% 20%, rgba(174,215,104,0.06), transparent 50%), #0A1020"
           : "radial-gradient(circle at 50% 0%, rgba(11, 31, 51, 0.03), transparent 60%), #F5F7F4",
@@ -8456,6 +8544,7 @@ export default function App() {
           input:focus, select:focus, textarea:focus { outline: none; box-shadow: 0 0 0 3px ${dark ? "rgba(28,155,218,0.25)" : "rgba(28,155,218,0.12)"}; border-color: ${BRAND.blue} !important; }
 
           /* Dark-mode text contrast overrides */
+          .dark .text-slate-850, .dark .text-slate-855, .dark .text-slate-900 { color: #f8fafc !important; }
           .dark .text-slate-800 { color: #f8fafc; }
           .dark .text-slate-700 { color: #f1f5f9; }
           .dark .text-slate-600 { color: #e2e8f0; }
@@ -8509,36 +8598,148 @@ export default function App() {
               </button>
             </div>
 
-            <nav className="mt-4 space-y-1 flex-1 overflow-y-auto">
-              {NAV.map((n) => {
-                const isActive = tab === n.id && !selected;
-                const IconComponent = n.icon;
-                return (
-                  <a
-                    key={n.id}
-                    href={TAB_PATHS[n.id] || "/"}
-                    onClick={(e) => {
-                      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-                      e.preventDefault();
-                      navigateToTab(n.id);
-                    }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold relative transition-all no-underline cursor-pointer group ${
-                      isActive
-                        ? "bg-[#0B1F33]/5 dark:bg-[#14B8A6]/10 text-[#0B1F33] dark:text-[#14B8A6] font-bold border-l-[3px] border-[#0F766E] dark:border-[#14B8A6] pl-2.5 shadow-xs"
-                        : "text-slate-700 dark:text-[#C2D0E0] hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-[#38BDF8] pl-3 font-semibold"
-                    }`}
-                  >
-                    <IconComponent
-                      size={16}
-                      strokeWidth={isActive ? 2.4 : 2.2}
-                      className={`shrink-0 transition-colors ${
-                        isActive ? "text-[#0F766E] dark:text-[#14B8A6]" : "text-slate-600 dark:text-[#8FA3BA] group-hover:text-[#0B1F33] dark:group-hover:text-[#38BDF8]"
-                      }`}
-                    />
-                    <span className="truncate tracking-tight">{n.label}</span>
-                  </a>
-                );
-              })}
+            {/* Active Desk Switcher Pill */}
+            <div className="px-1 py-1.5 mb-2 rounded-2xl bg-black/5 dark:bg-white/5 border border-slate-200/60 dark:border-white/5">
+              <div className="flex items-center gap-1 p-1 rounded-xl bg-white/70 dark:bg-[#121D2D] border border-slate-200/80 dark:border-white/10 shadow-xs">
+                <button
+                  type="button"
+                  onClick={() => handleSwitchSection("ipos", tab === "forex" ? "overview" : tab)}
+                  className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer border-0 ${
+                    mainSection === "ipos"
+                      ? "bg-[#0B1F33] dark:bg-teal-600 text-white shadow-xs font-black"
+                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                  }`}
+                >
+                  <span>🇮🇳 IPOs</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSwitchSection("forex", "news")}
+                  className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold transition-all flex items-center justify-center gap-1 cursor-pointer border-0 ${
+                    mainSection === "forex"
+                      ? "bg-[#1c9bda] text-white shadow-xs font-black"
+                      : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                  }`}
+                >
+                  <span>🌐 Forex</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                </button>
+              </div>
+            </div>
+
+            <nav className="mt-2 space-y-1 flex-1 overflow-y-auto">
+              {mainSection === "ipos" ? (
+                <>
+                  <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                    <span>IPO Intelligence (14)</span>
+                    <span className="text-[9px] font-mono text-emerald-500">LIVE</span>
+                  </div>
+                  {IPO_NAV.map((n) => {
+                    const isActive = tab === n.id && !selected;
+                    const IconComponent = n.icon;
+                    return (
+                      <a
+                        key={n.id}
+                        href={TAB_PATHS[n.id] || "/"}
+                        onClick={(e) => {
+                          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                          e.preventDefault();
+                          navigateToTab(n.id);
+                        }}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold relative transition-all no-underline cursor-pointer group ${
+                          isActive
+                            ? "bg-[#0B1F33]/5 dark:bg-[#14B8A6]/10 text-[#0B1F33] dark:text-[#14B8A6] font-bold border-l-[3px] border-[#0F766E] dark:border-[#14B8A6] pl-2.5 shadow-xs"
+                            : "text-slate-700 dark:text-[#C2D0E0] hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-[#38BDF8] pl-3 font-semibold"
+                        }`}
+                      >
+                        <IconComponent
+                          size={16}
+                          strokeWidth={isActive ? 2.4 : 2.2}
+                          className={`shrink-0 transition-colors ${
+                            isActive ? "text-[#0F766E] dark:text-[#14B8A6]" : "text-slate-600 dark:text-[#8FA3BA] group-hover:text-[#0B1F33] dark:group-hover:text-[#38BDF8]"
+                          }`}
+                        />
+                        <span className="truncate tracking-tight">{n.label}</span>
+                      </a>
+                    );
+                  })}
+                  {/* Quick Switch to Forex Desk Card */}
+                  <div className="pt-3 pb-1">
+                    <button
+                      type="button"
+                      onClick={() => handleSwitchSection("forex", "news")}
+                      className="w-full p-3 rounded-2xl bg-gradient-to-br from-[#1c9bda]/10 to-teal-500/10 border border-[#1c9bda]/30 hover:border-[#1c9bda] text-left transition-all cursor-pointer group"
+                    >
+                      <div className="flex items-center justify-between text-xs font-black text-slate-800 dark:text-white">
+                        <span className="flex items-center gap-1.5">
+                          <Globe size={14} className="text-[#1c9bda]" />
+                          <span>Global Forex Hub</span>
+                        </span>
+                        <ArrowRight size={13} className="text-[#1c9bda] group-hover:translate-x-1 transition-transform" />
+                      </div>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+                        Macro news &amp; trading journal from $5K.
+                      </p>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center justify-between">
+                    <span>Global Forex Desk (2)</span>
+                    <span className="text-[9px] font-mono text-teal-400">INSTITUTIONAL</span>
+                  </div>
+                  {FOREX_NAV.map((n) => {
+                    const isActive = tab === "forex" && forexSubTab === n.id;
+                    const IconComponent = n.icon;
+                    return (
+                      <button
+                        key={n.id}
+                        type="button"
+                        onClick={() => {
+                          setTab("forex");
+                          setForexSubTab(n.id);
+                          try { localStorage.setItem("calmcapital-forex-subtab", n.id); } catch { /* ignore */ }
+                          if (isMobile()) setSidebarOpen(false);
+                        }}
+                        className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold relative transition-all cursor-pointer border-0 text-left ${
+                          isActive
+                            ? "bg-[#1c9bda]/10 text-[#1c9bda] font-black border-l-[3px] border-[#1c9bda] pl-2.5 shadow-xs"
+                            : "text-slate-700 dark:text-[#C2D0E0] hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-[#38BDF8] pl-3 font-semibold bg-transparent"
+                        }`}
+                      >
+                        <IconComponent
+                          size={16}
+                          strokeWidth={isActive ? 2.4 : 2.2}
+                          className={`shrink-0 transition-colors ${
+                            isActive ? "text-[#1c9bda]" : "text-slate-600 dark:text-[#8FA3BA]"
+                          }`}
+                        />
+                        <span className="truncate tracking-tight">{n.label}</span>
+                      </button>
+                    );
+                  })}
+                  {/* Quick Switch back to IPO Suite */}
+                  <div className="pt-3 pb-1">
+                    <button
+                      type="button"
+                      onClick={() => handleSwitchSection("ipos", "overview")}
+                      className="w-full p-3 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/30 hover:border-emerald-500 text-left transition-all cursor-pointer group"
+                    >
+                      <div className="flex items-center justify-between text-xs font-black text-slate-800 dark:text-white">
+                        <span className="flex items-center gap-1.5">
+                          <ShieldCheck size={14} className="text-emerald-500" />
+                          <span>Indian IPO Suite</span>
+                        </span>
+                        <ArrowRight size={13} className="text-emerald-500 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1">
+                        All 14 IPO analysis desks, GMP &amp; allotment.
+                      </p>
+                    </button>
+                  </div>
+                </>
+              )}
             </nav>
           </div>
         </aside>
@@ -8556,6 +8757,37 @@ export default function App() {
                 <Menu size={18} />
               </button>
             )}
+
+            {/* Master Section Toggle: IPOs vs Forex */}
+            <div className="flex items-center gap-1 p-1 rounded-2xl bg-black/5 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 shrink-0">
+              <button
+                type="button"
+                onClick={() => handleSwitchSection("ipos", tab === "forex" ? "overview" : tab)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border-0 flex items-center gap-1.5 ${
+                  mainSection === "ipos"
+                    ? "bg-white dark:bg-[#121D2D] text-[#0B1F33] dark:text-white shadow-sm font-black border border-slate-200/80 dark:border-white/10"
+                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                }`}
+              >
+                <span>🇮🇳</span>
+                <span className="hidden sm:inline">IPO Suite</span>
+                <span className="sm:hidden">IPOs</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSwitchSection("forex", "news")}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border-0 flex items-center gap-1.5 ${
+                  mainSection === "forex"
+                    ? "bg-[#1c9bda] text-white shadow-sm font-black"
+                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                }`}
+              >
+                <span>🌐</span>
+                <span className="hidden sm:inline">Forex Hub</span>
+                <span className="sm:hidden">Forex</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+              </button>
+            </div>
 
             <HeaderSearchBar query={query} onQueryChange={setQuery} />
 
@@ -8586,7 +8818,7 @@ export default function App() {
                 </span>
               </button>
 
-              {/* Optional User Account / Sign In */}
+              {/* Optional User Account / Google Sign In */}
               {auth.isLoggedIn ? (
                 <div className="relative">
                   <button
@@ -8595,10 +8827,14 @@ export default function App() {
                     className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 text-slate-850 dark:text-white transition-all cursor-pointer text-xs font-bold shadow-sm"
                     title={`Signed in as ${auth.user.name}`}
                   >
-                    <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">
-                      {auth.user.name ? auth.user.name.charAt(0).toUpperCase() : "U"}
-                    </div>
-                    <span className="hidden md:inline max-w-[85px] truncate font-semibold text-[11px]">
+                    {auth.user?.photoURL ? (
+                      <img src={auth.user.photoURL} alt={auth.user.name} className="w-5 h-5 rounded-full object-cover shrink-0" />
+                    ) : (
+                      <div className="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                        {auth.user.name ? auth.user.name.charAt(0).toUpperCase() : "U"}
+                      </div>
+                    )}
+                    <span className="hidden md:inline max-w-[95px] truncate font-semibold text-[11px]">
                       {auth.user.name ? auth.user.name.split(" ")[0] : "Account"}
                     </span>
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
@@ -8612,7 +8848,7 @@ export default function App() {
                       <div className="px-4 py-2 border-b border-slate-100 dark:border-white/5">
                         <p className="text-xs font-bold text-slate-850 dark:text-white truncate">{auth.user.name}</p>
                         <p className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
-                          {auth.user.mobile ? `+91 ${auth.user.mobile}` : auth.user.email}
+                          {auth.user.email || auth.user.mobile}
                         </p>
                       </div>
                       <button
@@ -8642,13 +8878,28 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => auth.openAuthModal("signin")}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#1c9bda]/30 bg-[#1c9bda]/10 hover:bg-[#1c9bda]/20 text-[#1c9bda] dark:text-[#52b1e4] transition-all cursor-pointer text-xs font-bold shadow-sm"
-                  title="Optional: Sign In to save PANs across devices"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 bg-white hover:bg-slate-50 dark:bg-[#121D2D]/90 dark:hover:bg-[#1E293B] text-slate-800 dark:text-white transition-all cursor-pointer text-xs font-bold shadow-sm"
+                  title="Sign In with Google / Gmail"
                 >
-                  <LogIn size={13} />
-                  <span>Sign In</span>
+                  <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                  </svg>
+                  <span>Google Sign In</span>
                 </button>
               )}
+
+              {/* Theme Toggle */}
+              <button
+                type="button"
+                onClick={() => setDark(!dark)}
+                className="w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-white/20 flex items-center justify-center text-slate-600 dark:text-slate-300 shadow-sm transition-all cursor-pointer"
+                title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              >
+                {dark ? <Sun size={15} className="text-amber-400" /> : <Moon size={15} className="text-slate-600" />}
+              </button>
 
               <NotificationBell hook={notifHook} onOpenIpo={(ipoId) => { const found = getLiveIPOS().find((i) => i.id === ipoId); if (found) handleSelectIpo(found); }} />
               
@@ -8782,8 +9033,23 @@ export default function App() {
                   <>
                     {tab === "overview" && (
               <div className="space-y-6">
+                {/* 2-Sided Gateway: Indian IPOs vs Global Forex with Crazy 3D Animations */}
+                <CalmDualGateway3D
+                  dark={dark}
+                  activeSection={mainSection}
+                  onSelectSection={(sec) => {
+                    if (sec === "forex") {
+                      handleSwitchSection("forex", "news");
+                    } else {
+                      handleSwitchSection("ipos", "overview");
+                      const el = document.getElementById("ipo-primary-hero");
+                      if (el) el.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }}
+                />
+
                 {/* 1. Hero Section */}
-                <div className="relative rounded-3xl overflow-hidden p-6 md:p-8 shadow-xl border"
+                <div id="ipo-primary-hero" className="relative rounded-3xl overflow-hidden p-6 md:p-8 shadow-xl border"
                   style={{
                     background: "linear-gradient(135deg, #0B1F33 0%, #123B4A 100%)",
                     borderColor: "rgba(20, 184, 166, 0.15)"
@@ -8844,7 +9110,6 @@ export default function App() {
                     {/* Right Column: Visual Graphics Card */}
                     <div className="md:col-span-5 hidden md:block">
                       <div className="relative p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md animate-float flex flex-col items-center text-center space-y-3">
-                        {/* Styled visual chart/avatar represent Calm Capital discipline */}
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1C9BDA] to-[#14B8A6] flex items-center justify-center text-white shadow-lg shadow-[#1C9BDA]/20">
                           <Activity size={22} />
                         </div>
@@ -8992,42 +9257,43 @@ export default function App() {
                               "text-amber-500";
 
                             return (
-                              <div
-                                key={ipo.id}
-                                onClick={() => handleSelectIpo(ipo)}
-                                className="p-3.5 rounded-2xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] hover:border-[#1C9BDA]/40 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
-                              >
-                                <div className="flex items-center gap-3 min-w-0">
-                                  <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} website={ipo.website} />
-                                  <div className="min-w-0">
-                                    <p className="text-xs font-bold text-[#0B1F33] dark:text-white truncate">{ipo.company}</p>
-                                    <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5 flex-wrap">
-                                      <span className={`${statusDotColor} text-[8px] leading-none`}>●</span>
-                                      <span className="font-bold text-[#102A43] dark:text-slate-200">
-                                        {status === "Open" ? "Open" : status === "Upcoming" ? "Upcoming" : "Closed"}
-                                      </span>
-                                      <span className="text-slate-300 dark:text-slate-600">|</span>
-                                      <span>{ipo.type}</span>
-                                    </p>
+                              <Card3DTilt key={ipo.id} maxTilt={enable3D ? 8 : 0} scale={enable3D ? 1.02 : 1}>
+                                <div
+                                  onClick={() => handleSelectIpo(ipo)}
+                                  className="p-3.5 rounded-2xl border border-slate-150 dark:border-white/5 bg-slate-50/50 dark:bg-white/[0.01] hover:border-[#1C9BDA]/40 hover:shadow-md transition-all cursor-pointer flex items-center justify-between"
+                                >
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={38} website={ipo.website} />
+                                    <div className="min-w-0">
+                                      <p className="text-xs font-bold text-[#0B1F33] dark:text-white truncate">{ipo.company}</p>
+                                      <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1.5 flex-wrap">
+                                        <span className={`${statusDotColor} text-[8px] leading-none`}>●</span>
+                                        <span className="font-bold text-[#102A43] dark:text-slate-200">
+                                          {status === "Open" ? "Open" : status === "Upcoming" ? "Upcoming" : "Closed"}
+                                        </span>
+                                        <span className="text-slate-300 dark:text-slate-600">|</span>
+                                        <span>{ipo.type}</span>
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="text-right shrink-0">
+                                    <span className={`font-mono font-bold text-sm block ${
+                                      isPos ? "text-emerald-600 dark:text-emerald-400" :
+                                      isNeg ? "text-[#DC2626] dark:text-rose-400" :
+                                      "text-slate-500 dark:text-slate-450"
+                                    }`}>
+                                      {ipo.gmp > 0 ? "+" : ipo.gmp < 0 ? "-" : ""}₹{Math.abs(ipo.gmp || 0)}
+                                    </span>
+                                    <span className={`text-[10px] font-semibold font-mono px-1.5 py-0.5 rounded ${
+                                      isPos ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
+                                      isNeg ? "bg-rose-50 dark:bg-rose-500/10 text-[#DC2626] dark:text-rose-400" :
+                                      "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400"
+                                    }`}>
+                                      {isPos ? "+" : ""}{gmpPct}%
+                                    </span>
                                   </div>
                                 </div>
-                                <div className="text-right shrink-0">
-                                  <span className={`font-mono font-bold text-sm block ${
-                                    isPos ? "text-emerald-600 dark:text-emerald-400" :
-                                    isNeg ? "text-[#DC2626] dark:text-rose-400" :
-                                    "text-slate-500 dark:text-slate-450"
-                                  }`}>
-                                    {ipo.gmp > 0 ? "+" : ipo.gmp < 0 ? "-" : ""}₹{Math.abs(ipo.gmp || 0)}
-                                  </span>
-                                  <span className={`text-[10px] font-semibold font-mono px-1.5 py-0.5 rounded ${
-                                    isPos ? "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" :
-                                    isNeg ? "bg-rose-50 dark:bg-rose-500/10 text-[#DC2626] dark:text-rose-400" :
-                                    "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400"
-                                  }`}>
-                                    {isPos ? "+" : ""}{gmpPct}%
-                                  </span>
-                                </div>
-                              </div>
+                              </Card3DTilt>
                             );
                           })}
                         </div>
@@ -9608,6 +9874,16 @@ export default function App() {
             {tab === "calculator" && <CalculatorTab tick={tick} onOpen={handleSelectIpo} />}
             {tab === "watchlist" && <WatchlistTab watchlist={watchlist} onOpen={handleSelectIpo} dark={dark} query={query} />}
             {tab === "demat" && <DematTab dark={dark} />}
+            {tab === "forex" && (
+              <ForexSection
+                dark={dark}
+                initialSubTab={forexSubTab}
+                onSubTabChange={(st) => {
+                  setForexSubTab(st);
+                  try { localStorage.setItem("calmcapital-forex-subtab", st); } catch { /* ignore */ }
+                }}
+              />
+            )}
             {AI_ASSISTANT_ENABLED && tab === "ai" && <div className="glass rounded-2xl p-5"><AssistantPane embedded tick={tick} /></div>}
             {tab === "about" && <AboutPage navigateToTab={navigateToTab} />}
             {tab === "privacy" && <PrivacyPage onBack={() => navigateToTab("overview")} />}
@@ -9839,6 +10115,37 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
             </svg>
             <span className="text-[13px] font-semibold text-[#FF0000] group-hover:text-[#cc0000] transition-colors">YouTube</span>
           </a>
+        </div>
+      </div>
+
+      {/* Google Authentication & Data Transparency Card */}
+      <div className="mt-8 p-5 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/5 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <h4 className="text-xs font-black uppercase tracking-wider text-[#102A43] dark:text-white">
+              Institutional Google Sign-In &amp; Privacy Framework
+            </h4>
+          </div>
+          <span className="text-[10px] font-bold text-slate-400 font-mono">
+            Zero Passwords • 100% Encrypted
+          </span>
+        </div>
+        <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed">
+          Calm Capital offers 1-click Google authentication solely to isolate your private Forex Trading Journal and synchronize your Family PAN Vault across devices. In compliance with the Google API Services User Data Policy: we only access your verified basic profile (Name, Gmail address, and profile photo). We <strong>never</strong> request inbox access, read your emails, or share your data with advertisers, third-party brokers, or data brokers.
+        </p>
+        <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+          <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+            ✓ 256-Bit SSL Encrypted
+          </span>
+          <span>•</span>
+          <span className="flex items-center gap-1 text-[#1c9bda]">
+            ✓ Zero Password Storage
+          </span>
+          <span>•</span>
+          <span className="flex items-center gap-1 text-teal-600 dark:text-teal-400">
+            ✓ Complete Data Isolation
+          </span>
         </div>
       </div>
 
@@ -10111,6 +10418,18 @@ function PrivacyPage({ onBack }) {
         </div>
 
         <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Google Sign-In &amp; Gmail Data Privacy</h2>
+          <p>
+            Calm Capital offers Google Single Sign-On (SSO) as an optional convenience to isolate your private Forex Trading Journal and synchronize your Family PAN Vault across devices. In strict compliance with Google API Services User Data Policies:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Requested Scopes:</strong> We only access standard Google OAuth profile identity scopes (your Name, verified Gmail address, and profile photo URL).</li>
+            <li><strong>Zero Inbox or File Access:</strong> We never request, read, or process your personal Gmail messages, attachments, Google Drive files, calendar events, or contacts.</li>
+            <li><strong>No Data Monetization or Resale:</strong> Your Google identity and trading journal data are encrypted and strictly private. We never share, rent, or sell your email address or activity to third parties, brokerages, or advertisers.</li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
           <h2 className="text-lg font-bold text-slate-800 dark:text-white">7. Contact Information</h2>
           <p>
             If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href="mailto:calmcapital.in@gmail.com" className="text-[#1c9bda] hover:underline font-semibold">calmcapital.in@gmail.com</a>.
@@ -10167,7 +10486,14 @@ function TermsPage({ onBack }) {
         </div>
 
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Contact</h2>
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Google Sign-In &amp; User Accounts</h2>
+          <p>
+            By opting into Google Sign-In, you authorize Calm Capital to verify your identity via Google Identity Services to unlock authenticated features (your private Discipline Trading Journal and synchronized Family PAN Vault). You remain responsible for maintaining the security of your Google account credentials. Calm Capital is not responsible for any unauthorized activity resulting from a compromised Google account.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">7. Contact</h2>
           <p>
             If you have any questions, concerns, feedback, or requests regarding these Terms of Use or the Calm Capital platform, you can contact us at:
           </p>

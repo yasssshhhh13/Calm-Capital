@@ -5,6 +5,22 @@ import "./index.css";
 import { initAnalytics } from "./analytics.js";
 import { AuthProvider } from "./auth.jsx";
 
+// Wipe legacy non-Google local storage authentication keys
+try {
+  localStorage.removeItem("calmcapital_accounts");
+  const rawSession = localStorage.getItem("calmcapital_user_session");
+  if (rawSession) {
+    try {
+      const parsed = JSON.parse(rawSession);
+      if (!parsed || parsed.authProvider !== "google" || !parsed.email) {
+        localStorage.removeItem("calmcapital_user_session");
+      }
+    } catch {
+      localStorage.removeItem("calmcapital_user_session");
+    }
+  }
+} catch { /* ignore */ }
+
 try {
   initAnalytics();
 } catch (e) {
