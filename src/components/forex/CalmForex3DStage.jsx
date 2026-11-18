@@ -85,20 +85,11 @@ const DesktopKinetic3DOrbit = memo(function DesktopKinetic3DOrbit({ selectedCurr
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    let animId;
-    let lastTime = performance.now();
-
-    const loop = (currentTime) => {
-      const delta = (currentTime - lastTime) / 1000;
-      lastTime = currentTime;
-      if (!isHovered) {
-        setRotationAngle((prev) => (prev + delta * 12) % 360);
-      }
-      animId = requestAnimationFrame(loop);
-    };
-
-    animId = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(animId);
+    if (isHovered) return;
+    const interval = setInterval(() => {
+      setRotationAngle((prev) => (prev + 0.6) % 360);
+    }, 50);
+    return () => clearInterval(interval);
   }, [isHovered]);
 
   return (

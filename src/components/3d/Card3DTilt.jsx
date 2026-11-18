@@ -15,6 +15,7 @@ export default function Card3DTilt({
   style = {}
 }) {
   const cardRef = useRef(null);
+  const rafRef = useRef(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [transformStyle, setTransformStyle] = useState("");
   const [glareStyle, setGlareStyle] = useState({ opacity: 0 });
@@ -29,7 +30,10 @@ export default function Card3DTilt({
     };
     checkTouch();
     window.addEventListener("resize", checkTouch, { passive: true });
-    return () => window.removeEventListener("resize", checkTouch);
+    return () => {
+      window.removeEventListener("resize", checkTouch);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   // On touch / mobile screens, render smoothly without 3D perspective manipulation
@@ -44,26 +48,35 @@ export default function Card3DTilt({
   const handlePointerMove = (e) => {
     if (e.pointerType === "touch") return;
     if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    if (rafRef.current) return;
 
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+    const clientX = e.clientX;
+    const clientY = e.clientY;
 
-    const rotX = ((y - centerY) / centerY) * -maxTilt;
-    const rotY = ((x - centerX) / centerX) * maxTilt;
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      if (!cardRef.current) return;
+      const rect = cardRef.current.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
 
-    setTransformStyle(
-      `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(${scale}, ${scale}, ${scale})`
-    );
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
 
-    if (glare) {
-      setGlareStyle({
-        opacity: 0.18,
-        background: `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 65%)`
-      });
-    }
+      const rotX = ((y - centerY) / centerY) * -maxTilt;
+      const rotY = ((x - centerX) / centerX) * maxTilt;
+
+      setTransformStyle(
+        `perspective(1000px) rotateX(${rotX.toFixed(2)}deg) rotateY(${rotY.toFixed(2)}deg) scale3d(${scale}, ${scale}, ${scale})`
+      );
+
+      if (glare) {
+        setGlareStyle({
+          opacity: 0.18,
+          background: `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 65%)`
+        });
+      }
+    });
   };
 
   const handlePointerLeave = () => {

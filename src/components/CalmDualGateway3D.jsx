@@ -14,6 +14,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
 
   const leftRef = useRef(null);
   const rightRef = useRef(null);
+  const rafRef = useRef(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -25,25 +26,37 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
     };
     checkMobile();
     window.addEventListener("resize", checkMobile, { passive: true });
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   const handleMouseMove = (e, ref, setTilt) => {
     if (isMobile) return;
     if (e.pointerType === "touch") return;
     if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+    if (rafRef.current) return;
 
-    const rotX = ((y - centerY) / centerY) * -10;
-    const rotY = ((x - centerX) / centerX) * 10;
-    const glareX = (x / rect.width) * 100;
-    const glareY = (y / rect.height) * 100;
+    const clientX = e.clientX;
+    const clientY = e.clientY;
 
-    setTilt({ x: rotX, y: rotY, glareX, glareY });
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotX = ((y - centerY) / centerY) * -8;
+      const rotY = ((x - centerX) / centerX) * 8;
+      const glareX = (x / rect.width) * 100;
+      const glareY = (y / rect.height) * 100;
+
+      setTilt({ x: rotX, y: rotY, glareX, glareY });
+    });
   };
 
   const handleMouseLeave = (setTilt) => {

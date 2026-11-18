@@ -86,6 +86,70 @@ function saveStoredSession(session) {
   }
 }
 
+
+// Fetch user's saved PAN vault and profile from cloud
+async function fetchCloudUser(email) {
+  if (!email) return null;
+  try {
+    const res = await fetch(`/api/auth?action=get&identifier=${encodeURIComponent(email)}`);
+    if (res.ok) {
+      const data = await res.json();
+      return data?.user || null;
+    }
+  } catch (err) {
+    console.warn("[Cloud Sync] Failed to fetch user from cloud:", err);
+  }
+  return null;
+}
+
+// Push user's PAN vault and allotments to cloud
+async function pushCloudUser(email, name, pans, allotments) {
+  if (!email) return false;
+  try {
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "sync",
+        identifier: email,
+        email: email,
+        name: name,
+        pans: Array.isArray(pans) ? pans : [],
+        allotments: allotments || {}
+      })
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn("[Cloud Sync] Failed to sync user to cloud:", err);
+    return false;
+  }
+}
+
+export function mergePans(cloudPans = [], localPans = []) {
+  const seen = new Set();
+  const merged = [];
+  const dummyPans = new Set(["AAACB1234F", "BNZPD5678K", "CPYPS9012L"]);
+  
+  // First add local PANs (preserves user's recent local modifications)
+  for (const p of (Array.isArray(localPans) ? localPans : [])) {
+    const panNum = (p?.pan || "").trim().toUpperCase();
+    if (panNum && !dummyPans.has(panNum) && !seen.has(panNum)) {
+      seen.add(panNum);
+      merged.push({ ...p, pan: panNum });
+    }
+  }
+  
+  // Then add cloud PANs that weren't in local
+  for (const p of (Array.isArray(cloudPans) ? cloudPans : [])) {
+    const panNum = (p?.pan || "").trim().toUpperCase();
+    if (panNum && !dummyPans.has(panNum) && !seen.has(panNum)) {
+      seen.add(panNum);
+      merged.push({ ...p, pan: panNum });
+    }
+  }
+  return merged;
+}
+
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -105,11 +169,62 @@ export function AuthProvider({ children }) {
     } else if (!user) {
       saveStoredSession(null);
     } else {
-      // Any non-Google session is purged
       setUser(null);
       saveStoredSession(null);
     }
   }, [user]);
+
+  // Automatic cross-device Cloud Synchronization for Family PANs
+  useEffect(() => {
+    if (!user?.email) return;
+    let active = true;
+
+    (async () => {
+      try {
+        const cloudUser = await fetchCloudUser(user.email);
+        if (!active) return;
+
+        let localPans = [];
+        try {
+          const raw = localStorage.getItem("calmcapital_family_pans");
+          if (raw) localPans = JSON.parse(raw);
+        } catch { /* ignore */ }
+
+        const currentPans = Array.isArray(user.savedPans) && user.savedPans.length > 0
+          ? user.savedPans
+          : (Array.isArray(localPans) ? localPans : []);
+
+        const mergedPans = mergePans(cloudUser?.savedPans || [], currentPans);
+        const mergedAllotments = {
+          ...(cloudUser?.savedAllotments || {}),
+          ...(user.savedAllotments || {})
+        };
+
+        const currentPansJson = JSON.stringify(currentPans);
+        const mergedPansJson = JSON.stringify(mergedPans);
+
+        // If cloud had new PANs (e.g. mobile phone just logged in and loaded laptop's 12 PANs)
+        if (mergedPansJson !== currentPansJson) {
+          setUser((prev) => (prev ? { ...prev, savedPans: mergedPans, savedAllotments: mergedAllotments } : prev));
+          try {
+            localStorage.setItem("calmcapital_family_pans", mergedPansJson);
+          } catch { /* ignore */ }
+        }
+
+        // If local had PANs that were missing from cloud (e.g. laptop had 12 PANs saved offline)
+        const cloudPansJson = JSON.stringify(cloudUser?.savedPans || []);
+        if (mergedPansJson !== cloudPansJson && mergedPans.length > 0) {
+          pushCloudUser(user.email, user.name, mergedPans, mergedAllotments);
+        }
+      } catch (err) {
+        console.warn("[Cloud Sync Error]:", err);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [user?.email]);
 
   const openAuthModal = useCallback((mode = "signin") => {
     setAuthModalInitialTab(mode);
@@ -121,7 +236,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * 1-Click Sign In with Google / Gmail (Firebase Powered)
+   * 1-Click Sign In with Google / Gmail (Firebase Powered + Cloud PAN Vault Sync)
    */
   const signInWithGoogle = useCallback(async (localPans = []) => {
     let googleUser = null;
@@ -141,8 +256,28 @@ export function AuthProvider({ children }) {
     const photoURL = googleUser.photoURL || "";
     const now = new Date().toISOString();
 
-    // Preserve existing saved PANs if this user had them
-    const existingPans = Array.isArray(localPans) ? [...localPans] : [];
+    // Fetch existing cloud vault for this email
+    let cloudUser = null;
+    try {
+      cloudUser = await fetchCloudUser(cleanEmail);
+    } catch { /* ignore */ }
+
+    // Read any local pans in localStorage if localPans argument is empty
+    let fallbackLocal = [];
+    if (!Array.isArray(localPans) || localPans.length === 0) {
+      try {
+        const raw = localStorage.getItem("calmcapital_family_pans");
+        if (raw) fallbackLocal = JSON.parse(raw);
+      } catch { /* ignore */ }
+    }
+    const candidateLocal = Array.isArray(localPans) && localPans.length > 0 ? localPans : fallbackLocal;
+
+    // Smart merge cloud + local
+    const mergedPans = mergePans(cloudUser?.savedPans || [], candidateLocal);
+    const mergedAllotments = {
+      ...(cloudUser?.savedAllotments || {}),
+      ...(cloudUser?.allotments || {})
+    };
 
     const account = {
       id: googleUser.uid || ("google_" + Date.now()),
@@ -153,27 +288,57 @@ export function AuthProvider({ children }) {
       authProvider: "google",
       createdAt: now,
       lastLoginAt: now,
-      savedPans: existingPans,
-      savedAllotments: {}
+      savedPans: mergedPans,
+      savedAllotments: mergedAllotments
     };
 
+    // Save to localStorage & session
     saveStoredSession(account);
+    try {
+      localStorage.setItem("calmcapital_family_pans", JSON.stringify(mergedPans));
+    } catch { /* ignore */ }
+
     setUser(account);
     setAuthModalOpen(false);
+
+    // Push merged vault back to cloud
+    if (cleanEmail) {
+      pushCloudUser(cleanEmail, cleanName, mergedPans, mergedAllotments);
+    }
+
     return account;
   }, []);
 
   /**
-   * Direct Gmail Connect (In-Modal fallback without browser window.prompt dialogs)
+   * Direct Gmail Connect (In-Modal fallback + Cloud PAN Vault Sync)
    */
-  const signInWithGmailAddress = useCallback((inputEmail, localPans = []) => {
+  const signInWithGmailAddress = useCallback(async (inputEmail, localPans = []) => {
     if (!inputEmail || typeof inputEmail !== "string" || !inputEmail.includes("@")) {
       throw new Error("Please enter a valid Gmail address (e.g. trader@gmail.com).");
     }
     const cleanEmail = inputEmail.trim().toLowerCase();
     const cleanName = cleanEmail.split("@")[0].replace(/[._-]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()) || "Trader";
     const now = new Date().toISOString();
-    const existingPans = Array.isArray(localPans) ? [...localPans] : [];
+
+    let cloudUser = null;
+    try {
+      cloudUser = await fetchCloudUser(cleanEmail);
+    } catch { /* ignore */ }
+
+    let fallbackLocal = [];
+    if (!Array.isArray(localPans) || localPans.length === 0) {
+      try {
+        const raw = localStorage.getItem("calmcapital_family_pans");
+        if (raw) fallbackLocal = JSON.parse(raw);
+      } catch { /* ignore */ }
+    }
+    const candidateLocal = Array.isArray(localPans) && localPans.length > 0 ? localPans : fallbackLocal;
+
+    const mergedPans = mergePans(cloudUser?.savedPans || [], candidateLocal);
+    const mergedAllotments = {
+      ...(cloudUser?.savedAllotments || {}),
+      ...(cloudUser?.allotments || {})
+    };
 
     const account = {
       id: "google_" + Date.now(),
@@ -184,13 +349,22 @@ export function AuthProvider({ children }) {
       authProvider: "google",
       createdAt: now,
       lastLoginAt: now,
-      savedPans: existingPans,
-      savedAllotments: {}
+      savedPans: mergedPans,
+      savedAllotments: mergedAllotments
     };
 
     saveStoredSession(account);
+    try {
+      localStorage.setItem("calmcapital_family_pans", JSON.stringify(mergedPans));
+    } catch { /* ignore */ }
+
     setUser(account);
     setAuthModalOpen(false);
+
+    if (cleanEmail) {
+      pushCloudUser(cleanEmail, cleanName, mergedPans, mergedAllotments);
+    }
+
     return account;
   }, []);
 
@@ -207,7 +381,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * Sync PANs to active Google account
+   * Sync PANs to active Google account and push to Cloud
    */
   const syncPansToAccount = useCallback((newPans) => {
     const currentUser = userRef.current;
@@ -226,10 +400,15 @@ export function AuthProvider({ children }) {
       saveStoredSession(updated);
       return updated;
     });
+
+    // Asynchronously push to cloud store
+    if (currentUser.email) {
+      pushCloudUser(currentUser.email, currentUser.name, newPans, currentUser.savedAllotments || {});
+    }
   }, []);
 
   /**
-   * Sync Allotments to active Google account
+   * Sync Allotments to active Google account and push to Cloud
    */
   const syncAllotmentsToAccount = useCallback((newAllotments) => {
     const currentUser = userRef.current;
@@ -247,13 +426,34 @@ export function AuthProvider({ children }) {
       saveStoredSession(updated);
       return updated;
     });
+
+    if (currentUser.email) {
+      pushCloudUser(currentUser.email, currentUser.name, currentUser.savedPans || [], newAllotments);
+    }
   }, []);
 
   const refreshFromCloud = useCallback(async () => {
-    // Cloud sync endpoint hook
+    const currentUser = userRef.current;
+    if (!currentUser?.email) return;
+    try {
+      const cloud = await fetchCloudUser(currentUser.email);
+      if (cloud && Array.isArray(cloud.savedPans)) {
+        let localPans = [];
+        try {
+          const raw = localStorage.getItem("calmcapital_family_pans");
+          if (raw) localPans = JSON.parse(raw);
+        } catch { /* ignore */ }
+        const merged = mergePans(cloud.savedPans, localPans || currentUser.savedPans || []);
+        setUser((prev) => (prev ? { ...prev, savedPans: merged, savedAllotments: cloud.savedAllotments || prev.savedAllotments } : prev));
+        try {
+          localStorage.setItem("calmcapital_family_pans", JSON.stringify(merged));
+        } catch { /* ignore */ }
+      }
+    } catch (err) {
+      console.warn("Failed to refresh from cloud:", err);
+    }
   }, []);
 
-  // Backward compatibility stubs (redirects to Google sign in)
   const signIn = signInWithGoogle;
   const signUp = signInWithGoogle;
 

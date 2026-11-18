@@ -1,78 +1,44 @@
-import React, { useRef, useState, useEffect, memo } from "react";
+import React, { memo } from "react";
 
 /**
  * CalmForexGlobeBackdrop
- * Ultra-Aesthetic 3D Cyber Globe & Interbank Telemetry Animation.
- * Engineered for 100% foreground text clarity, rich institutional feel, and zero clutter.
- * Supports both Dark Mode (deep obsidian + neon cyan/teal) and Light Mode (crisp white + soft cyan watermark).
+ * Ultra-Smooth 3D Cyber Globe & Interbank Telemetry Animation.
+ * 100% GPU-accelerated CSS and SVG vectors with zero external video latency.
+ * Engineered for 120 FPS butter-smooth scrolling and crisp typography.
  */
 export const CalmForexGlobeBackdrop = memo(function CalmForexGlobeBackdrop({
   className = "",
   intensity = "normal", // "subtle" | "normal" | "vibrant"
   dark = true
 }) {
-  const [videoLoaded, setVideoLoaded] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (dark && videoRef.current) {
-      videoRef.current.playbackRate = 0.8;
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          setVideoFailed(true);
-        });
-      }
-    }
-  }, [dark]);
-
-  const videoOpacity =
-    intensity === "vibrant"
-      ? "opacity-30 dark:opacity-40"
-      : intensity === "subtle"
-      ? "opacity-15 dark:opacity-25"
-      : "opacity-20 dark:opacity-30";
-
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none rounded-[inherit] ${className}`}>
       
       {/* 1. Base Tone: Obsidian Navy in Dark Mode vs Soft Luminous Sky in Light Mode */}
       {dark ? (
-        <div className="absolute inset-0 bg-gradient-to-r from-[#040E1B] via-[#07172A] to-[#0A223B] opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#040E1B] via-[#07172A] to-[#0A223B] opacity-95" />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/[0.03] via-transparent to-blue-500/[0.04]" />
       )}
 
-      {/* 2. Cinematic Earth / Financial Mesh Video Loop (Dark Mode Only) */}
-      {dark && !videoFailed && (
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          onLoadedData={() => setVideoLoaded(true)}
-          onError={() => setVideoFailed(true)}
-          className={`absolute right-0 top-0 bottom-0 w-full sm:w-3/4 h-full object-cover transition-opacity duration-1000 ${
-            videoLoaded ? videoOpacity : "opacity-0"
-          }`}
-          style={{
-            mixBlendMode: "screen",
-            filter: "hue-rotate(185deg) contrast(1.2) brightness(1.1)",
-            maskImage: "linear-gradient(to right, transparent 0%, black 50%, black 100%)",
-            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 50%, black 100%)"
-          }}
-        >
-          <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-global-digital-network-connections-41585-large.mp4"
-            type="video/mp4"
+      {/* 2. Hardware-Accelerated Ambient Glowing Mesh */}
+      {dark && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+          <div
+            className="absolute -right-20 -top-20 w-[450px] h-[450px] rounded-full blur-[80px]"
+            style={{
+              background: "radial-gradient(circle, rgba(28, 155, 218, 0.25) 0%, rgba(14, 165, 233, 0.12) 40%, transparent 70%)",
+              transform: "translate3d(0, 0, 0)"
+            }}
           />
-          <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-planet-earth-rotating-in-space-41584-large.mp4"
-            type="video/mp4"
+          <div
+            className="absolute right-40 bottom-[-50px] w-[350px] h-[350px] rounded-full blur-[70px]"
+            style={{
+              background: "radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(28, 155, 218, 0.08) 50%, transparent 75%)",
+              transform: "translate3d(0, 0, 0)"
+            }}
           />
-        </video>
+        </div>
       )}
 
       {/* 3. Holographic Earth Core & Orbital Currency Telemetry (Positioned on the Right) */}
@@ -93,7 +59,7 @@ export const CalmForexGlobeBackdrop = memo(function CalmForexGlobeBackdrop({
         {/* Holographic Earth Wireframe Sphere */}
         <svg
           className={`w-full max-w-[360px] h-auto max-h-[360px] animate-spin-slow transition-transform duration-700 ${
-            dark ? "opacity-50" : "opacity-15"
+            dark ? "opacity-55" : "opacity-18"
           }`}
           viewBox="0 0 400 400"
           fill="none"
@@ -130,15 +96,12 @@ export const CalmForexGlobeBackdrop = memo(function CalmForexGlobeBackdrop({
           />
 
           {/* Global Financial Nodes */}
-          {/* New York */}
           <circle cx="120" cy="160" r="4" fill="#38bdf8" className="animate-ping" opacity="0.8" />
           <circle cx="120" cy="160" r="3" fill="#ffffff" />
           
-          {/* London */}
           <circle cx="200" cy="120" r="3.5" fill="#10b981" />
           <circle cx="200" cy="120" r="2" fill="#ffffff" />
           
-          {/* Tokyo */}
           <circle cx="280" cy="170" r="3.5" fill="#f59e0b" />
           <circle cx="280" cy="170" r="2" fill="#ffffff" />
 

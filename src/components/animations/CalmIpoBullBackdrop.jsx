@@ -1,78 +1,44 @@
-import React, { useRef, useState, useEffect, memo } from "react";
+import React, { memo } from "react";
 
 /**
  * CalmIpoBullBackdrop
- * Ultra-Aesthetic Dalal Street & Wall Street Charging Bull Financial Animation.
- * Engineered for 100% foreground text clarity, rich institutional feel, and zero clutter.
- * Supports both Dark Mode (deep obsidian + neon gold/emerald) and Light Mode (crisp white + soft emerald watermark).
+ * Ultra-Smooth Dalal Street & Wall Street Charging Bull Financial Animation.
+ * 100% GPU-accelerated CSS and SVG vectors with zero external video latency.
+ * Engineered for 120 FPS butter-smooth scrolling and crisp typography.
  */
 export const CalmIpoBullBackdrop = memo(function CalmIpoBullBackdrop({
   className = "",
   intensity = "normal", // "subtle" | "normal" | "vibrant"
   dark = true
 }) {
-  const [videoLoaded, setVideoLoaded] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-  const videoRef = useRef(null);
-
-  useEffect(() => {
-    if (dark && videoRef.current) {
-      videoRef.current.playbackRate = 0.85;
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          setVideoFailed(true);
-        });
-      }
-    }
-  }, [dark]);
-
-  const videoOpacity =
-    intensity === "vibrant"
-      ? "opacity-35 dark:opacity-45"
-      : intensity === "subtle"
-      ? "opacity-15 dark:opacity-25"
-      : "opacity-25 dark:opacity-35";
-
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none rounded-[inherit] ${className}`}>
       
       {/* 1. Base Tone: Obsidian Navy in Dark Mode vs Soft Luminous Mint in Light Mode */}
       {dark ? (
-        <div className="absolute inset-0 bg-gradient-to-r from-[#06121E] via-[#091D30] to-[#0D2942] opacity-90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06121E] via-[#091D30] to-[#0D2942] opacity-95" />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.03] via-transparent to-teal-500/[0.04]" />
       )}
 
-      {/* 2. Cinematic Golden/Emerald Financial Surge Video Loop (Dark Mode Only to prevent light-mode smudges) */}
-      {dark && !videoFailed && (
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          onLoadedData={() => setVideoLoaded(true)}
-          onError={() => setVideoFailed(true)}
-          className={`absolute right-0 top-0 bottom-0 w-full sm:w-3/4 h-full object-cover transition-opacity duration-1000 ${
-            videoLoaded ? videoOpacity : "opacity-0"
-          }`}
-          style={{
-            mixBlendMode: "screen",
-            filter: "hue-rotate(65deg) contrast(1.25) brightness(1.1)",
-            maskImage: "linear-gradient(to right, transparent 0%, black 50%, black 100%)",
-            WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 50%, black 100%)"
-          }}
-        >
-          <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-with-charts-31913-large.mp4"
-            type="video/mp4"
+      {/* 2. Hardware-Accelerated Ambient Glowing Mesh & Financial Waves */}
+      {dark && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+          <div
+            className="absolute -right-20 -top-20 w-[450px] h-[450px] rounded-full blur-[80px]"
+            style={{
+              background: "radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(20, 184, 166, 0.15) 40%, transparent 70%)",
+              transform: "translate3d(0, 0, 0)"
+            }}
           />
-          <source
-            src="https://assets.mixkit.co/videos/preview/mixkit-golden-particles-rising-in-the-dark-42407-large.mp4"
-            type="video/mp4"
+          <div
+            className="absolute right-40 bottom-[-50px] w-[350px] h-[350px] rounded-full blur-[70px]"
+            style={{
+              background: "radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(16, 185, 129, 0.1) 50%, transparent 75%)",
+              transform: "translate3d(0, 0, 0)"
+            }}
           />
-        </video>
+        </div>
       )}
 
       {/* 3. Majestic Dalal Street Charging Bull Hologram (Positioned on the Right) */}
@@ -93,7 +59,7 @@ export const CalmIpoBullBackdrop = memo(function CalmIpoBullBackdrop({
         {/* Artistic Charging Bull & Ascending Momentum Vector */}
         <svg
           className={`w-full max-w-[400px] h-auto max-h-[300px] transition-transform duration-700 ${
-            dark ? "opacity-55" : "opacity-15"
+            dark ? "opacity-60" : "opacity-20"
           }`}
           viewBox="0 0 500 360"
           fill="none"
