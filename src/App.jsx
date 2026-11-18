@@ -10017,4 +10017,642 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
           </p>
           
           <div className="flex items-center gap-3 pt-1">
-... [truncated for diff preview]
+            <a
+              href="mailto:yash@calmcapital.space"
+              className="text-slate-400 hover:text-[#1c9bda] transition-colors"
+              title="Email us"
+            >
+              <Send size={16} />
+            </a>
+            <a
+              href="https://www.instagram.com/calmcapital.space?utm_source=qr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-[#E1306C] transition-colors"
+              title="Follow on Instagram"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+            <a
+              href="https://youtube.com/@calm.capital?si=BLBBI-Ynp0kC791N"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-slate-400 hover:text-[#FF0000] transition-colors"
+              title="Subscribe on YouTube"
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+                <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        {/* Product Column */}
+        <div className="col-span-2 space-y-3">
+          <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs">Product</h4>
+          <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
+            {[
+              { label: "Open IPOs", tabId: "open" },
+              { label: "Upcoming IPOs", tabId: "upcoming" },
+              { label: "Closed IPOs", tabId: "closed" },
+              { label: "Listed IPOs", tabId: "listed" },
+              { label: "IPO Allotment", tabId: "allotment" },
+            ].map(lnk => (
+              <li key={lnk.label}>
+                <button onClick={() => navigateToTab(lnk.tabId)} className="bg-transparent border-0 p-0 text-[#52667A] hover:text-[#1c9bda] dark:text-slate-400 dark:hover:text-[#1c9bda] transition-colors cursor-pointer text-left text-[14px] font-medium">
+                  {lnk.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Tools Column */}
+        <div className="col-span-2 space-y-3">
+          <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs">Tools</h4>
+          <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
+            {[
+              { label: "Live GMP", tabId: "gmp" },
+              { label: "IPO Comparison", tabId: "compare" },
+              { label: "IPO Subscription", tabId: "subscriptions" },
+              { label: "Financials", tabId: "financials" },
+              { label: "Profit Calculator", tabId: "calculator" },
+              { label: "Watchlist", tabId: "watchlist" },
+            ].map(lnk => (
+              <li key={lnk.label}>
+                <button onClick={() => navigateToTab(lnk.tabId)} className="bg-transparent border-0 p-0 text-[#52667A] hover:text-[#1c9bda] dark:text-slate-400 dark:hover:text-[#1c9bda] transition-colors cursor-pointer text-left text-[14px] font-medium">
+                  {lnk.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Research Column */}
+        <div className="col-span-2 space-y-3">
+          <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs">Research</h4>
+          <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
+            {[
+              { label: "DRHP / RHP", tabId: "docs" },
+              { label: "IPO Subscriptions", tabId: "subscriptions" },
+              { label: "Financial Analysis", tabId: "financials" },
+              { label: "Live GMP Trends", tabId: "gmp" },
+            ].map(lnk => (
+              <li key={lnk.label}>
+                <button onClick={() => navigateToTab(lnk.tabId)} className="bg-transparent border-0 p-0 text-[#52667A] hover:text-[#1c9bda] dark:text-slate-400 dark:hover:text-[#1c9bda] transition-colors cursor-pointer text-left text-[14px] font-medium">
+                  {lnk.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Information Column */}
+        <div className="col-span-2 space-y-3">
+          <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs">Information</h4>
+          <ul className="space-y-2.5 p-0 m-0 list-none text-[14px]">
+            {[
+              { label: "About Calm Capital", tabId: "about" },
+              { label: "Privacy Policy", tabId: "privacy" },
+              { label: "Terms of Use", tabId: "terms" },
+              { label: "Disclaimer", tabId: "disclaimer" },
+            ].map(lnk => (
+              <li key={lnk.label}>
+                <button onClick={() => navigateToTab(lnk.tabId)} className="bg-transparent border-0 p-0 text-[#52667A] hover:text-[#1c9bda] dark:text-slate-400 dark:hover:text-[#1c9bda] transition-colors cursor-pointer text-left text-[14px] font-medium">
+                  {lnk.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+      </div>
+
+      {/* Connect With Us */}
+      <div className="mt-8 pt-6 border-t" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
+        <h4 className="font-bold text-[#102A43] dark:text-white uppercase tracking-wider text-xs mb-4">Connect With Us</h4>
+        <div className="flex items-center gap-3">
+          {/* Instagram */}
+          <a
+            href="https://www.instagram.com/calmcapital.space?utm_source=qr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-200 no-underline"
+            style={{ borderColor: dark ? "rgba(225,48,108,0.25)" : "rgba(225,48,108,0.2)", background: dark ? "rgba(225,48,108,0.06)" : "rgba(225,48,108,0.04)" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E1306C" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="0.5" fill="#E1306C" stroke="none"/>
+            </svg>
+            <span className="text-[13px] font-semibold text-[#E1306C] group-hover:text-[#c1175a] transition-colors">Instagram</span>
+          </a>
+
+          {/* YouTube */}
+          <a
+            href="https://youtube.com/@calm.capital?si=BLBBI-Ynp0kC791N"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-200 no-underline"
+            style={{ borderColor: dark ? "rgba(255,0,0,0.25)" : "rgba(255,0,0,0.2)", background: dark ? "rgba(255,0,0,0.06)" : "rgba(255,0,0,0.04)" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FF0000" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/>
+              <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#FF0000" stroke="none"/>
+            </svg>
+            <span className="text-[13px] font-semibold text-[#FF0000] group-hover:text-[#cc0000] transition-colors">YouTube</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Google Authentication & Data Transparency Card */}
+      <div className="mt-8 p-5 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/5 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <h4 className="text-xs font-black uppercase tracking-wider text-[#102A43] dark:text-white">
+              Institutional Google Sign-In &amp; Privacy Framework
+            </h4>
+          </div>
+          <span className="text-[10px] font-bold text-slate-400 font-mono">
+            Zero Passwords • 100% Encrypted
+          </span>
+        </div>
+        <p className="text-[12px] text-slate-500 dark:text-slate-400 leading-relaxed">
+          Calm Capital offers 1-click Google authentication solely to isolate your private Forex Trading Journal and synchronize your Family PAN Vault across devices. In compliance with the Google API Services User Data Policy: we only access your verified basic profile (Name, Gmail address, and profile photo). We <strong>never</strong> request inbox access, read your emails, or share your data with advertisers, third-party brokers, or data brokers.
+        </p>
+        <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+          <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+            ✓ 256-Bit SSL Encrypted
+          </span>
+          <span>•</span>
+          <span className="flex items-center gap-1 text-[#1c9bda]">
+            ✓ Zero Password Storage
+          </span>
+          <span>•</span>
+          <span className="flex items-center gap-1 text-teal-600 dark:text-teal-400">
+            ✓ Complete Data Isolation
+          </span>
+        </div>
+      </div>
+
+      <div className="mt-6 pt-5 border-t flex flex-col md:flex-row md:items-center md:justify-between gap-4" style={{ borderColor: dark ? "rgba(45,64,86,0.9)" : "#D9E4EC" }}>
+        <p className="text-[13px] text-slate-400 dark:text-slate-500">
+          © 2026 Calm Capital. All rights reserved.
+        </p>
+        <div className="flex gap-4 text-[13px]">
+          <button onClick={() => navigateToTab("privacy")} className="bg-transparent border-0 p-0 text-slate-400 hover:text-[#1c9bda] cursor-pointer text-[13px]">Privacy Policy</button>
+          <button onClick={() => navigateToTab("terms")} className="bg-transparent border-0 p-0 text-slate-400 hover:text-[#1c9bda] cursor-pointer text-[13px]">Terms of Use</button>
+          <button onClick={() => navigateToTab("disclaimer")} className="bg-transparent border-0 p-0 text-slate-400 hover:text-[#1c9bda] cursor-pointer text-[13px]">Disclaimer</button>
+        </div>
+      </div>
+
+      <p className="text-[11px] text-slate-400 dark:text-slate-500 leading-relaxed mt-4 border-t pt-4" style={{ borderColor: dark ? "rgba(255,255,255,0.04)" : "#D9E4EC" }}>
+        Calm Capital is an informational platform providing IPO-related data and research tools. Information including GMP and market estimates may be unofficial or subject to change. Nothing on this platform constitutes investment advice or a recommendation to buy or sell securities.
+      </p>
+    </footer>
+  );
+}
+
+/* =====================================================================
+   REACT ERROR BOUNDARY FOR IPO DETAILS
+===================================================================== */
+class IpoErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("[IpoErrorBoundary] Caught error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-10 text-center space-y-4 my-6 shadow-sm">
+          <AlertTriangle size={42} className="mx-auto text-amber-500" />
+          <h2 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight">
+            Unable to load this IPO
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto leading-relaxed font-medium">
+            We couldn't display some details for this IPO right now. Please try again or return to the main dashboard.
+          </p>
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <button
+              onClick={() => {
+                this.setState({ hasError: false, error: null });
+                if (this.props.onBack) this.props.onBack();
+              }}
+              className="px-5 py-2.5 rounded-xl bg-[#1c9bda] text-white text-xs font-bold shadow-md hover:brightness-110 cursor-pointer border-0"
+            >
+              Back to IPOs
+            </button>
+            <button
+              onClick={() => this.setState({ hasError: false, error: null })}
+              className="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white text-xs font-bold hover:bg-slate-200 cursor-pointer border border-slate-200 dark:border-white/10"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+/* =====================================================================
+   ABOUT CALM CAPITAL PAGE
+===================================================================== */
+function AboutPage({ navigateToTab }) {
+  return (
+    <div className="space-y-8 max-w-4xl mx-auto py-2">
+      {/* Hero Banner */}
+      <div className="relative rounded-3xl overflow-hidden glass border border-slate-205 dark:border-white/5 p-8 md:p-10 text-center space-y-4">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-[#1c9bda]/10 text-[#1c9bda] dark:bg-[#1c9bda]/20 dark:text-[#52b1e4] mx-auto">
+          Designed by Discipline
+        </div>
+        <h1 className="text-3xl md:text-4xl font-black text-slate-855 dark:text-white tracking-tight leading-tight">
+          About Calm Capital
+        </h1>
+        <p className="text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium">
+          Calm Capital is an independent information and research platform built to make Indian IPO research simpler, clearer and easier to access.
+        </p>
+      </div>
+
+      {/* What You Can Research Section */}
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-lg font-bold text-slate-855 dark:text-white tracking-tight">
+            Comprehensive IPO Intelligence
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            Calm Capital brings together all essential IPO metrics into one clean, structured dashboard. On our platform, investors and researchers can find:
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {[
+            "Live GMP estimates",
+            "IPO subscription data",
+            "Allotment information & registrar links",
+            "IPO timelines & important dates",
+            "Company overview & business highlights",
+            "Verified financial performance metrics",
+            "IPO structure & share allocation",
+            "Official DRHP / RHP documents",
+            "Interactive IPO lot size calculator",
+            "GMP trends & historical performance",
+            "Mainboard & SME IPO tracking",
+            "IPO comparison & research tools",
+          ].map((item, idx) => (
+            <div key={idx} className="p-3.5 rounded-2xl bg-slate-50/70 dark:bg-white/[0.02] border border-slate-150 dark:border-white/5 flex items-center gap-2.5">
+              <span className="w-5 h-5 rounded-full bg-[#1c9bda]/10 text-[#1c9bda] flex items-center justify-center font-bold text-xs shrink-0">✓</span>
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">{item}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Why Calm Capital Section */}
+      <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-lg font-bold text-slate-855 dark:text-white tracking-tight">
+            Why Calm Capital?
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+            We built Calm Capital to eliminate clutter and provide disciplined IPO research tools.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            {
+              title: "Everything in One Place",
+              desc: "No need to jump between multiple stock exchange filings, news portals, and registrar sites.",
+            },
+            {
+              title: "Easy to Understand",
+              desc: "Complex IPO structures, price bands, and allocation quotas are presented in clean, visual formats.",
+            },
+            {
+              title: "Research-Focused",
+              desc: "Designed specifically to help users evaluate company business models and financial health.",
+            },
+            {
+              title: "Mainboard + SME Coverage",
+              desc: "Track both Mainboard and SME category public issues with seamless category filtering.",
+            },
+            {
+              title: "Data-Driven Insights",
+              desc: "Multi-source verified subscription numbers, lot calculations, and timeline tracking.",
+            },
+            {
+              title: "Built for Informed Research",
+              desc: "Calm Capital provides objective information and analytical tools, not investment recommendations.",
+            },
+          ].map((feature, idx) => (
+            <div key={idx} className="p-4 rounded-2xl bg-slate-50/50 dark:bg-white/[0.01] border border-slate-150 dark:border-white/5 space-y-1.5">
+              <h3 className="text-sm font-bold text-[#102A43] dark:text-white">{feature.title}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Call to Action Section */}
+      <div className="rounded-3xl p-8 bg-gradient-to-r from-[#1c9bda]/10 via-emerald-500/5 to-transparent border border-[#1c9bda]/20 text-center space-y-4">
+        <h2 className="text-xl font-bold text-slate-855 dark:text-white">
+          Ready to start your IPO research?
+        </h2>
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button
+            onClick={() => navigateToTab("open")}
+            className="px-6 py-3 rounded-2xl bg-[#1c9bda] text-white text-xs font-bold shadow-md hover:brightness-110 transition-all cursor-pointer border-0"
+          >
+            Explore Open IPOs →
+          </button>
+          <button
+            onClick={() => navigateToTab("overview")}
+            className="px-6 py-3 rounded-2xl bg-slate-100 dark:bg-white/10 text-slate-700 dark:text-white text-xs font-bold hover:bg-slate-200 dark:hover:bg-white/20 transition-all cursor-pointer border border-slate-200 dark:border-white/10"
+          >
+            Explore All IPOs →
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   LEGAL INFORMATION PAGES (Privacy, Terms, Disclaimer)
+===================================================================== */
+function LegalHeader({ title, onBack }) {
+  return (
+    <div className="border-b border-slate-150 dark:border-white/5 pb-4 mb-6">
+      <button
+        onClick={onBack}
+        className="flex items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors cursor-pointer border-0 bg-transparent mb-3 animate-pulse"
+      >
+        ← Back to Dashboard
+      </button>
+      <h1 className="text-2xl md:text-3xl font-black text-slate-850 dark:text-white tracking-tight leading-tight">
+        {title}
+      </h1>
+    </div>
+  );
+}
+
+function PrivacyPage({ onBack }) {
+  return (
+    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+      <LegalHeader title="Privacy Policy" onBack={onBack} />
+      
+      <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
+        <p>
+          At Calm Capital, accessible from calmcapital.space, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by Calm Capital and how we use it.
+        </p>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">1. Information We Collect</h2>
+          <p>
+            We collect information in the following ways when you use our platform:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Usage Data:</strong> We automatically collect information about how you interact with our platform (such as tabs clicked, pages viewed, and timing).</li>
+            <li><strong>Device Information:</strong> We collect technical parameters including browser type, operating system version, screen resolution, and theme preference (light/dark mode).</li>
+            <li><strong>Watchlist Data:</strong> If you use our watchlist feature, your selections are stored locally in your browser's local storage. This data never leaves your device unless you backup/sync it explicitly.</li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">2. How We Use Your Information</h2>
+          <p>
+            We use the collected information to:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Provide, operate, and maintain the platform's core dashboard, metrics, and tools.</li>
+            <li>Improve, personalize, and expand platform usability and layout.</li>
+            <li>Understand and analyze how you navigate the site to refine page load times and user experience.</li>
+            <li>Monitor and prevent technical issues, performance bottlenecks, or security abnormalities.</li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">3. Cookies & Local Storage</h2>
+          <p>
+            Like any other website, Calm Capital uses cookies and browser local storage. These are used to store information including visitors' preferences, such as selected theme (light/dark), watchlist items, and the last active dashboard tab. This allows us to provide a consistent, fast, and high-quality user experience without requiring users to log in or create an account.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">4. Web Analytics</h2>
+          <p>
+            We may use third-party analytics services (such as Google Analytics) to monitor and analyze the use of our service. These services track page views, tab visits, and search query terms. This data helps us understand search trends and optimize search index crawlability.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">5. External Links</h2>
+          <p>
+            Our service contains links to external websites that are not operated by us (for example, official SEBI filing links or registrar allotment websites). If you click on a third-party link, you will be directed to that third party's site. We strongly advise you to review the Privacy Policy of every site you visit, as we have no control over and assume no responsibility for their content or policies.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Google Sign-In &amp; Gmail Data Privacy</h2>
+          <p>
+            Calm Capital offers Google Single Sign-On (SSO) as an optional convenience to isolate your private Forex Trading Journal and synchronize your Family PAN Vault across devices. In strict compliance with Google API Services User Data Policies:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Requested Scopes:</strong> We only access standard Google OAuth profile identity scopes (your Name, verified Gmail address, and profile photo URL).</li>
+            <li><strong>Zero Inbox or File Access:</strong> We never request, read, or process your personal Gmail messages, attachments, Google Drive files, calendar events, or contacts.</li>
+            <li><strong>No Data Monetization or Resale:</strong> Your Google identity and trading journal data are encrypted and strictly private. We never share, rent, or sell your email address or activity to third parties, brokerages, or advertisers.</li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Forex Trading Journal &amp; Calculator Privacy</h2>
+          <p>
+            When you use our Global Forex Desk, Trading Journal, or Profit &amp; Position Size Calculators:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Local &amp; Vault Storage:</strong> Trade entries, lot sizes, currency pairs, stop-loss levels, and journal notes are stored client-side in your device's browser memory or isolated user cloud vault.</li>
+            <li><strong>No Strategy Sharing:</strong> Calm Capital never reads, monitors, transmits, or sells your proprietary trading strategies, win rates, or trade logs to third-party brokers, prop firms, or advertisers.</li>
+            <li><strong>Prop Account Simulation:</strong> Any prop firm challenge levels ($5,000 to $200,000) or demo balances you configure are simulated parameters for mathematical discipline tracking.</li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">7. Contact Information</h2>
+          <p>
+            If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href="mailto:yash@calmcapital.space" className="text-[#1c9bda] hover:underline font-semibold">yash@calmcapital.space</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function TermsPage({ onBack }) {
+  return (
+    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+      <LegalHeader title="Terms of Use" onBack={onBack} />
+      
+      <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
+        <p>
+          Welcome to Calm Capital. By accessing and using our website (calmcapital.space), you agree to comply with and be bound by the following Terms of Use. If you disagree with any part of these terms, please do not use our service.
+        </p>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">1. Informational Nature of Platform</h2>
+          <p>
+            Calm Capital is a platform designed purely for educational and informational purposes. All information provided, including grey market premiums (GMP), subscription multiples, allotment schedules, and financial summaries, is compiled from publicly available data sources. We do not provide investment, tax, or legal advice.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">2. User Responsibility</h2>
+          <p>
+            You acknowledge that any investment decisions you make are solely your responsibility. You should perform your own research, verify all metrics against official regulatory filings, and consult a certified SEBI-registered financial advisor before applying for any IPO or buying/selling securities.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">3. Data Accuracy & Limitations</h2>
+          <p>
+            While we strive to keep all metrics up to date and correct, we do not guarantee the completeness, accuracy, reliability, or availability of the information on the website. Metrics such as GMP are unofficial, highly volatile indicators of market sentiment and are subject to immediate change without notice.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">4. Intellectual Property</h2>
+          <p>
+            All logos, branding, layout designs, calculator tools, and software logic on Calm Capital are the intellectual property of the platform developers unless otherwise specified. You may view and print content for personal, non-commercial use only.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">4. Global Forex Desk &amp; Analytical Tools Terms</h2>
+          <p>
+            The Forex section—including live currency rates, economic calendar feeds, pip and position sizing calculators, and discipline trading journals—is designed strictly as an educational and mathematical modeling utility:
+          </p>
+          <ul className="list-disc pl-5 space-y-1">
+            <li><strong>Not a Broker or Exchange:</strong> Calm Capital does not execute currency trades, operate an electronic trading platform (ETP), hold client margins, accept financial deposits, or act as an intermediary or dealer.</li>
+            <li><strong>Jurisdictional Compliance:</strong> Users are solely responsible for ensuring their trading activities comply with applicable regional laws. For Indian residents, foreign currency derivative transactions are governed strictly by the Reserve Bank of India (RBI) under FEMA; trading on unapproved electronic trading platforms is prohibited by law.</li>
+            <li><strong>Simulated Modeling:</strong> Calculators provide theoretical estimates based on interbank pricing algorithms and standard contract multipliers. Market slippage, spreads, and broker commission structures may vary in live execution.</li>
+          </ul>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">5. Limitation of Liability</h2>
+          <p>
+            In no event shall Calm Capital, its developers, or its affiliates be liable for any direct, indirect, special, or consequential damages or financial losses arising out of or in connection with the use of the platform or the reliance on any data presented.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Google Sign-In &amp; User Accounts</h2>
+          <p>
+            By opting into Google Sign-In, you authorize Calm Capital to verify your identity via Google Identity Services to unlock authenticated features (your private Discipline Trading Journal and synchronized Family PAN Vault). You remain responsible for maintaining the security of your Google account credentials. Calm Capital is not responsible for any unauthorized activity resulting from a compromised Google account.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">7. Contact</h2>
+          <p>
+            If you have any questions, concerns, feedback, or requests regarding these Terms of Use or the Calm Capital platform, you can contact us at:
+          </p>
+          <p className="font-semibold">
+            Email:{" "}
+            <a href="mailto:yash@calmcapital.space" className="text-[#1c9bda] hover:underline font-semibold">yash@calmcapital.space</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DisclaimerPage({ onBack }) {
+  return (
+    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-3xl p-6 md:p-8 space-y-6">
+      <LegalHeader title="Regulatory Disclaimer" onBack={onBack} />
+      
+      <div className="text-[15px] leading-relaxed text-slate-655 dark:text-slate-350 space-y-6">
+        <div className="p-4 bg-amber-500/5 border border-amber-500/20 rounded-2xl">
+          <p className="font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1.5 text-sm uppercase tracking-wide">
+            <AlertTriangle size={15} /> SEBI Regulatory Status Disclosure
+          </p>
+          <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-semibold">
+            Calm Capital is a platform focused on making IPO research and statistics easy to understand. We are NOT registered with the Securities and Exchange Board of India (SEBI) as a certified investment adviser, research analyst, or portfolio manager. Nothing on this website constitutes a recommendation to subscribe, apply, purchase, or trade in any securities market offerings.
+          </p>
+        </div>
+        <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-2xl">
+          <p className="font-bold text-blue-800 dark:text-blue-400 flex items-center gap-1.5 text-sm uppercase tracking-wide">
+            <Globe size={15} /> Global Forex &amp; Macro Regulatory Warning
+          </p>
+          <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed font-semibold">
+            Calm Capital provides currency rate data, economic calendars, and mathematical calculators strictly for educational and discipline tracking purposes. Forex, CFD, and leveraged derivatives trading carry substantial risk of loss and are not appropriate for all investors. Indian residents must strictly adhere to RBI and FEMA regulations regarding permitted currency pairs and authorized domestic exchanges.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">1. Informational & Educational Scope</h2>
+          <p>
+            All materials published on Calm Capital—including financial highlights, debt ratios, allotment timelines, subscription counts, and GMP figures—are for informational and educational purposes only. They are not intended as financial advisory, nor do they constitute a solicitation or offer to buy or sell securities.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">2. Grey Market Premium (GMP) Disclaimer</h2>
+          <p>
+            Grey market premiums (GMP) are compiled from unofficial market reports and compiled solely as a sentiment indicator. They represent unofficial transaction indicators and are highly volatile, unregulated, and subject to high speculation. Listing gains are never guaranteed, and GMP should never be used as the sole criteria for applying for an IPO.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">3. Data Source Accuracy</h2>
+          <p>
+            Data presented on Calm Capital is sourced from public records, registrar portals, news publications, and official exchange websites. Although we employ multi-source verification and crosscheck metrics, errors may occasionally occur. Before taking action, you should check the official Draft Red Herring Prospectus (DRHP) or Red Herring Prospectus (RHP) filed with SEBI or exchange portals.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">4. No Investment Guarantees</h2>
+          <p>
+            We do not make guarantees, assurances, or predictions regarding the accuracy, completeness, listing price, allotment odds, or performance of any IPO. Bidding for IPOs involves risk, and you may lose part or all of your invested capital. You must consult with a certified financial advisor to assess your risk profile before investing.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">5. Global Forex Desk &amp; RBI FEMA Regulatory Compliance</h2>
+          <p>
+            Foreign exchange (Forex) rate tracking, economic calendars, pip calculators, and discipline trading journals provided on Calm Capital are exclusively for analytical simulation, educational modeling, and personal discipline record-keeping. Under Reserve Bank of India (RBI) circulars and the Foreign Exchange Management Act (FEMA), Indian residents are strictly prohibited from trading foreign currencies on unapproved electronic trading platforms (ETPs) or remitting funds abroad for speculative margin FX trading. Resident Indian users must trade only RBI-approved currency derivative pairs (e.g. USDINR, EURINR, GBPINR, JPYINR) through SEBI-registered brokers on recognized Indian exchanges (NSE/BSE). Calm Capital does not provide trading execution, broker services, margin facilities, or foreign remittances.
+          </p>
+        </div>
+      
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">6. Contact for Legal &amp; Compliance Queries</h2>
+          <p>
+            For any regulatory, compliance, or data inquiries, reach out directly to:
+          </p>
+          <p className="font-semibold">
+            Email:{" "}
+            <a href="mailto:yash@calmcapital.space" className="text-[#1c9bda] hover:underline font-semibold">yash@calmcapital.space</a>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
+}
