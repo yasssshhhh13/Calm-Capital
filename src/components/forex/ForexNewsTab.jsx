@@ -50,19 +50,42 @@ export default function ForexNewsTab({ dark }) {
   const [lastRefreshed, setLastRefreshed] = useState(null);
   const [activeDateFilter, setActiveDateFilter] = useState("TODAY"); // Defaults to TODAY per user requirement
 
-  // Fetch Forex Factory Calendar Data
+  // Fetch Forex Factory Calendar Data (API proxy with local fallback)
   const loadData = async () => {
     setLoading(true);
     try {
-      // First try live official endpoint if accessible, fallback to local cached JSON
-      let res;
+      let data = null;
+      // 1. Try serverless edge proxy (CORS-free, cached)
       try {
-        res = await fetch("https://nfs.faireconomy.media/ff_calendar_thisweek.json", { cache: "no-store" });
-        if (!res.ok) throw new Error("Remote failed");
-      } catch (e) {
-        res = await fetch("/forex-news.json");
+        const apiRes = await fetch("/api/forex-calendar", { cache: "no-store" });
+        if (apiRes.ok) {
+          const json = await apiRes.json();
+          if (Array.isArray(json) && json.length > 0) data = json;
+        }
+      } catch (e) { /* fallback */ }
+
+      // 2. Try static local json
+      if (!data) {
+        try {
+          const localRes = await fetch("/forex-news.json");
+          if (localRes.ok) {
+            const json = await localRes.json();
+            if (Array.isArray(json) && json.length > 0) data = json;
+          }
+        } catch (e) { /* fallback */ }
       }
-      const data = await res.json();
+
+      // 3. Try direct upstream if accessible
+      if (!data) {
+        try {
+          const directRes = await fetch("https://nfs.faireconomy.media/ff_calendar_thisweek.json", { cache: "no-store" });
+          if (directRes.ok) {
+            const json = await directRes.json();
+            if (Array.isArray(json) && json.length > 0) data = json;
+          }
+        } catch (e) { /* ignore */ }
+      }
+
       if (Array.isArray(data)) {
         setEvents(data);
         setLastRefreshed(new Date());

@@ -44,6 +44,7 @@ jobs:
           node scripts/discover-new-ipos.mjs
           python scripts/extract-drhp-financials.py
           node scripts/sanitize-and-sync.mjs
+          node scripts/sync-forex-news.mjs
 
       - name: Automated Quality Gate — Comprehensive System Audit
         run: node scripts/monthly-system-audit.mjs
@@ -52,7 +53,7 @@ jobs:
         run: |
           git config user.name "ipo-data-bot"
           git config user.email "actions@github.com"
-          git add public/live-data.json public/ipos.json api/kfintech-ipos.json api/bigshare-ipos.json api/linkintime-ipos.json api/maashitla-ipos.json
+          git add public/live-data.json public/ipos.json public/forex-news.json api/kfintech-ipos.json api/bigshare-ipos.json api/linkintime-ipos.json api/maashitla-ipos.json
           if ! git diff --cached --quiet; then
             git commit -m "chore: automated update of live data, discovered IPOs, registrar registries, and financials"
             git push

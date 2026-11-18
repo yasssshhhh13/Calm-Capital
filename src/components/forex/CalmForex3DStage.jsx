@@ -6,14 +6,74 @@ import {
 import CalmForexGlobeBackdrop from "../animations/CalmForexGlobeBackdrop";
 import { fetchLiveForexRates } from "../../services/forexLiveRates.js";
 
-// Official Central Bank Benchmark Rates & Macro Nodes
+// Official Central Bank Benchmark Rates & Global Commodity Nodes
 const G10_CURRENCIES = [
-  { code: "USD", name: "US Dollar", flag: "🇺🇸", rate: "4.75%", bias: "Bullish", vol: "Elevated", type: "Fed Funds Rate" },
-  { code: "EUR", name: "Euro", flag: "🇪🇺", rate: "3.25%", bias: "Neutral", vol: "Moderate", type: "ECB Deposit Rate" },
-  { code: "GBP", name: "British Pound", flag: "🇬🇧", rate: "4.75%", bias: "Neutral", vol: "Moderate", type: "BoE Bank Rate" },
-  { code: "JPY", name: "Japanese Yen", flag: "🇯🇵", rate: "0.25%", bias: "Bearish", vol: "Elevated", type: "BoJ Policy Rate" },
-  { code: "XAU", name: "Gold Bullion", flag: "🥇", rate: "$2,685", bias: "Bullish", vol: "High", type: "Spot Benchmark" },
-  { code: "AUD", name: "Australian Dollar", flag: "🇦🇺", rate: "4.35%", bias: "Bullish", vol: "Normal", type: "RBA Cash Rate" }
+  {
+    code: "USD",
+    name: "US Dollar",
+    flag: "🇺🇸",
+    rate: "4.50%–4.75%",
+    bank: "US Federal Reserve",
+    benchmark: "Fed Funds Target Rate",
+    stance: "Data-Dependent",
+    action: "Target: 4.50% - 4.75%",
+    type: "Central Bank Rate"
+  },
+  {
+    code: "INR",
+    name: "Indian Rupee",
+    flag: "🇮🇳",
+    rate: "6.50%",
+    bank: "Reserve Bank of India",
+    benchmark: "Policy Repo Rate",
+    stance: "Neutral / Vigilant",
+    action: "Official MPC Repo Rate",
+    type: "Central Bank Rate"
+  },
+  {
+    code: "EUR",
+    name: "Euro",
+    flag: "🇪🇺",
+    rate: "3.00%",
+    bank: "European Central Bank",
+    benchmark: "Deposit Facility Rate",
+    stance: "Easing Cycle",
+    action: "Official Deposit Rate",
+    type: "Central Bank Rate"
+  },
+  {
+    code: "GBP",
+    name: "British Pound",
+    flag: "🇬🇧",
+    rate: "4.75%",
+    bank: "Bank of England",
+    benchmark: "Official Bank Rate",
+    stance: "Gradual Easing",
+    action: "Official Bank Rate",
+    type: "Central Bank Rate"
+  },
+  {
+    code: "JPY",
+    name: "Japanese Yen",
+    flag: "🇯🇵",
+    rate: "0.25%",
+    bank: "Bank of Japan",
+    benchmark: "Policy Call Rate",
+    stance: "Normalizing",
+    action: "Uncollateralized Target",
+    type: "Central Bank Rate"
+  },
+  {
+    code: "XAU",
+    name: "Spot Gold",
+    flag: "🥇",
+    rate: "$2,685",
+    bank: "Global Commodity Fix",
+    benchmark: "Spot Gold (XAU/USD)",
+    stance: "Reserve Asset",
+    action: "Interbank Spot Bullion",
+    type: "Commodity Benchmark"
+  }
 ];
 
 /**
@@ -130,7 +190,7 @@ function MobileCurrencyMatrix({ selectedCurrency, onSelectCurrency, currencies =
       <div className="flex items-center justify-between text-xs pb-1 border-b border-slate-100 dark:border-white/5">
         <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
           <Activity size={12} className="text-teal-500" />
-          Tap to Inspect Central Bank Benchmark
+          Official Central Bank &amp; Gold Benchmarks
         </span>
         <span className="font-mono text-xs font-black text-teal-600 dark:text-teal-400">
           {selectedCurrency.code} Active
@@ -327,28 +387,40 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
           )}
 
           {/* Selected Node Quantitative Detail Card */}
-          <div className="mt-3 w-full max-w-[340px] p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex items-center justify-between text-xs">
-            <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                {selectedCurrency.code === "XAU" ? "Global Spot Gold Benchmark" : `${selectedCurrency.name} Central Bank Rate`}
-              </span>
-              <span className="font-mono font-bold text-slate-900 dark:text-white text-sm">
-                {selectedCurrency.code === "XAU" ? `Spot Price: ${selectedCurrency.rate}` : `Official Policy Rate: ${selectedCurrency.rate}`}
-              </span>
-            </div>
-            <div className="text-right">
-              <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded-md ${selectedCurrency.bias === "Bullish"
-                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                  : selectedCurrency.bias === "Bearish"
-                    ? "bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                    : "bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300"
+          <div className="mt-3 w-full max-w-[340px] p-3.5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex flex-col gap-1.5 text-xs">
+            <div className="flex items-center justify-between">
+              <div className="min-w-0 flex-1">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block truncate">
+                  {selectedCurrency.bank || selectedCurrency.name} • {selectedCurrency.benchmark || "Benchmark"}
+                </span>
+                <span className="font-mono font-black text-slate-900 dark:text-white text-sm">
+                  {selectedCurrency.type === "Commodity Benchmark"
+                    ? `Spot: ${selectedCurrency.rate} / oz`
+                    : `Policy Target: ${selectedCurrency.rate}`}
+                </span>
+              </div>
+              <div className="text-right shrink-0">
+                <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded-md ${
+                  selectedCurrency.type === "Commodity Benchmark"
+                    ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                    : selectedCurrency.stance?.includes("Easing") || selectedCurrency.stance?.includes("Cut")
+                    ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                    : selectedCurrency.stance?.includes("Normalizing") || selectedCurrency.stance?.includes("Hike")
+                    ? "bg-purple-500/10 text-purple-600 dark:text-purple-400"
+                    : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                 }`}>
-                {selectedCurrency.bias}
-              </span>
-              <span className="text-[10px] text-slate-400 block mt-0.5 font-mono">
-                Vol: {selectedCurrency.vol}
-              </span>
+                  {selectedCurrency.stance || "Active"}
+                </span>
+                <span className="text-[9px] text-slate-400 block mt-0.5 font-mono">
+                  {selectedCurrency.action || "Official Stance"}
+                </span>
+              </div>
             </div>
+            <p className="text-[9px] text-slate-400 dark:text-slate-500 border-t border-slate-200/60 dark:border-white/5 pt-1 mt-0.5 leading-tight">
+              {selectedCurrency.type === "Commodity Benchmark"
+                ? "Global interbank physical bullion benchmark. Precious metal commodity, not an interest rate."
+                : "Official monetary policy interest rate published by the central bank. For educational reference only."}
+            </p>
           </div>
 
         </div>

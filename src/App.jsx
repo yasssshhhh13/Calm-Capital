@@ -4646,7 +4646,7 @@ function getCompareAllotmentOdds(ipo) {
     appsSub = estimateAppsFromShares("Retail", sharesSub, isSME, ipo);
   }
   if (appsSub != null && appsSub > 0) {
-    if (appsSub <= 1.0) return "Guaranteed";
+    if (appsSub <= 1.0) return "100% Expected (Undersubscribed)";
     return `~1 in ${Number(appsSub).toFixed(2).replace(/\.00$/, "")}`;
   }
   return "—";
@@ -5377,7 +5377,7 @@ function SubscriptionDetailsList({ ipo, dark }) {
 
     let oddsText = null;
     if (canShowOdds) {
-      if (finalAppsSub <= 1.0) oddsText = "Guaranteed";
+      if (finalAppsSub <= 1.0) oddsText = "100% Expected (Undersubscribed)";
       else {
         oddsText = `~1 in ${Number(finalAppsSub).toFixed(2).replace(/\.00$/, "")}`;
       }
@@ -10599,6 +10599,13 @@ function DisclaimerPage({ onBack }) {
           <h2 className="text-lg font-bold text-slate-800 dark:text-white">4. No Investment Guarantees</h2>
           <p>
             We do not make guarantees, assurances, or predictions regarding the accuracy, completeness, listing price, allotment odds, or performance of any IPO. Bidding for IPOs involves risk, and you may lose part or all of your invested capital. You must consult with a certified financial advisor to assess your risk profile before investing.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">5. Global Forex Desk &amp; RBI FEMA Regulatory Compliance</h2>
+          <p>
+            Foreign exchange (Forex) rate tracking, economic calendars, pip calculators, and discipline trading journals provided on Calm Capital are exclusively for analytical simulation, educational modeling, and personal discipline record-keeping. Under Reserve Bank of India (RBI) circulars and the Foreign Exchange Management Act (FEMA), Indian residents are strictly prohibited from trading foreign currencies on unapproved electronic trading platforms (ETPs) or remitting funds abroad for speculative margin FX trading. Resident Indian users must trade only RBI-approved currency derivative pairs (e.g. USDINR, EURINR, GBPINR, JPYINR) through SEBI-registered brokers on recognized Indian exchanges (NSE/BSE). Calm Capital does not provide trading execution, broker services, margin facilities, or foreign remittances.
           </p>
         </div>
       </div>
