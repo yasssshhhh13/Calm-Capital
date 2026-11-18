@@ -3,8 +3,9 @@ import {
   Calculator, DollarSign, TrendingUp, TrendingDown, ShieldCheck,
   AlertTriangle, Target, Percent, ArrowRight, RefreshCw, BarChart2,
   CheckCircle2, Sparkles, Sliders, ArrowUpRight, ArrowDownRight,
-  BookOpen, HelpCircle, Info, Shield, Layers, Search, ChevronDown, Check, ExternalLink
+  BookOpen, HelpCircle, Info, Shield, Layers, Search, ChevronDown, Check, ExternalLink, Activity
 } from "lucide-react";
+import { fetchLiveForexRates } from "../../services/forexLiveRates.js";
 
 /**
  * Institutional Instrument Specifications (MetaTrader, Bloomberg & Institutional Broker Standards)
@@ -45,7 +46,7 @@ const INSTRUMENTS = [
 /**
  * Modern Searchable Instrument Selector Dropdown
  */
-function SearchableInstrumentSelector({ selectedId, onSelect, label = "Trading Asset" }) {
+function SearchableInstrumentSelector({ selectedId, onSelect, label = "Trading Asset", liveRates = {} }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("ALL");
@@ -102,9 +103,16 @@ function SearchableInstrumentSelector({ selectedId, onSelect, label = "Trading A
           <span className="text-sm font-black font-mono text-slate-900 dark:text-white tracking-tight">
             {selectedItem.symbol}
           </span>
-          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate hidden sm:inline">
-            • {selectedItem.name}
-          </span>
+          {liveRates && liveRates[selectedItem.symbol] ? (
+            <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Live: {liveRates[selectedItem.symbol]}</span>
+            </span>
+          ) : (
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium truncate hidden sm:inline">
+              • {selectedItem.name}
+            </span>
+          )}
           <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:text-teal-400 border border-teal-500/20 shrink-0">
             {selectedItem.category}
           </span>
@@ -185,7 +193,17 @@ function SearchableInstrumentSelector({ selectedId, onSelect, label = "Trading A
                       </p>
                     </div>
 
-                    {isSelected && <Check size={14} className="text-teal-500 shrink-0" />}
+                    <div className="flex items-center gap-2 shrink-0">
+                      {liveRates && liveRates[item.symbol] && (
+                        <div className="text-right">
+                          <span className="text-xs font-mono font-black text-emerald-600 dark:text-emerald-400 block">
+                            ${Number(liveRates[item.symbol]).toLocaleString()}
+                          </span>
+                          <span className="text-[9px] font-bold text-slate-400 block">Live Spot</span>
+                        </div>
+                      )}
+                      {isSelected && <Check size={14} className="text-teal-500 shrink-0" />}
+                    </div>
                   </button>
                 );
               })
@@ -216,6 +234,9 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
   // Active Tab: "profit" (Institutional P/L) | "position_size" (Capital Guard)
   const [activeTab, setActiveTab] = useState("profit");
 
+  // Live Exchange Rates state
+  const [liveRates, setLiveRates] = useState({});
+
   // Shared Instrument
   const [selectedInstId, setSelectedInstId] = useState("EURUSD");
   const inst = useMemo(
@@ -233,11 +254,41 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
     String(Number((inst.defaultPrice + inst.pipStep * 50).toFixed(inst.pipDigits)))
   );
 
+  // Fetch real live prices on load and sync every 25 seconds
+  useEffect(() => {
+    let isMounted = true;
+
+    fetchLiveForexRates().then((rates) => {
+      if (!isMounted || !rates) return;
+      setLiveRates(rates);
+      const liveP = rates[inst.symbol];
+      if (liveP) {
+        setOpenPrice(String(liveP));
+        if (profitDirection === "BUY") {
+          setClosePrice(String(Number((liveP + inst.pipStep * 50).toFixed(inst.pipDigits))));
+        } else {
+          setClosePrice(String(Number((liveP - inst.pipStep * 50).toFixed(inst.pipDigits))));
+        }
+      }
+    });
+
+    const timer = setInterval(() => {
+      fetchLiveForexRates().then((rates) => {
+        if (isMounted && rates) setLiveRates(rates);
+      });
+    }, 25000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(timer);
+    };
+  }, []);
+
   // When instrument changes in Profit Calculator, auto-fill live defaults
   const handleSelectProfitInst = (newId) => {
     setSelectedInstId(newId);
     const newInst = INSTRUMENTS.find((i) => i.id === newId) || INSTRUMENTS[0];
-    const baseP = newInst.defaultPrice;
+    const baseP = liveRates[newInst.symbol] || newInst.defaultPrice;
     setOpenPrice(String(baseP));
     if (profitDirection === "BUY") {
       setClosePrice(String(Number((baseP + newInst.pipStep * 50).toFixed(newInst.pipDigits))));
@@ -444,6 +495,7 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   selectedId={selectedInstId}
                   onSelect={handleSelectProfitInst}
                   label="Trading Asset / Instrument"
+                  liveRates={liveRates}
                 />
               </div>
 
@@ -553,16 +605,37 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                   <label className="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">
                     Open Price (Entry)
                   </label>
-                  <a
-                    href={`https://www.tradingview.com/symbols/${inst.tvSymbol || inst.id}/`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] font-bold text-[#1c9bda] hover:underline inline-flex items-center gap-1 cursor-pointer"
-                    title={`Check live market price on TradingView for ${inst.symbol}`}
-                  >
-                    <span>Live on TradingView</span>
-                    <ExternalLink size={11} />
-                  </a>
+                  <div className="flex items-center gap-2">
+                    {liveRates[inst.symbol] && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const lp = liveRates[inst.symbol];
+                          setOpenPrice(String(lp));
+                          if (profitDirection === "BUY") {
+                            setClosePrice(String(Number((lp + inst.pipStep * 50).toFixed(inst.pipDigits))));
+                          } else {
+                            setClosePrice(String(Number((lp - inst.pipStep * 50).toFixed(inst.pipDigits))));
+                          }
+                        }}
+                        className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 flex items-center gap-1 cursor-pointer transition-all"
+                        title="Click to apply live real-time rate"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <span>Live: {liveRates[inst.symbol]}</span>
+                      </button>
+                    )}
+                    <a
+                      href={`https://www.tradingview.com/symbols/${inst.tvSymbol || inst.id}/`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] font-bold text-[#1c9bda] hover:underline inline-flex items-center gap-1 cursor-pointer"
+                      title={`Check live market price on TradingView for ${inst.symbol}`}
+                    >
+                      <span>TradingView</span>
+                      <ExternalLink size={11} />
+                    </a>
+                  </div>
                 </div>
                 <input
                   type="text"

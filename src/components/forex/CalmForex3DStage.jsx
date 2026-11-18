@@ -4,15 +4,16 @@ import {
   BarChart2, ArrowRight, Calendar, BookOpen, Layers, CheckCircle2, Calculator
 } from "lucide-react";
 import CalmForexGlobeBackdrop from "../animations/CalmForexGlobeBackdrop";
+import { fetchLiveForexRates } from "../../services/forexLiveRates.js";
 
-// Institutional G10 Currency Node Data
+// Official Central Bank Benchmark Rates & Macro Nodes
 const G10_CURRENCIES = [
-  { code: "USD", name: "US Dollar", flag: "🇺🇸", rate: "4.75%", bias: "Bullish", vol: "Elevated" },
-  { code: "EUR", name: "Euro", flag: "🇪🇺", rate: "3.25%", bias: "Neutral", vol: "Moderate" },
-  { code: "GBP", name: "British Pound", flag: "🇬🇧", rate: "4.75%", bias: "Neutral", vol: "Moderate" },
-  { code: "JPY", name: "Japanese Yen", flag: "🇯🇵", rate: "0.25%", bias: "Bearish", vol: "Elevated" },
-  { code: "XAU", name: "Gold Bullion", flag: "🥇", rate: "$2,596", bias: "Bullish", vol: "High" },
-  { code: "AUD", name: "Australian Dollar", flag: "🇦🇺", rate: "4.35%", bias: "Bullish", vol: "Normal" }
+  { code: "USD", name: "US Dollar", flag: "🇺🇸", rate: "4.75%", bias: "Bullish", vol: "Elevated", type: "Fed Funds Rate" },
+  { code: "EUR", name: "Euro", flag: "🇪🇺", rate: "3.25%", bias: "Neutral", vol: "Moderate", type: "ECB Deposit Rate" },
+  { code: "GBP", name: "British Pound", flag: "🇬🇧", rate: "4.75%", bias: "Neutral", vol: "Moderate", type: "BoE Bank Rate" },
+  { code: "JPY", name: "Japanese Yen", flag: "🇯🇵", rate: "0.25%", bias: "Bearish", vol: "Elevated", type: "BoJ Policy Rate" },
+  { code: "XAU", name: "Gold Bullion", flag: "🥇", rate: "$2,685", bias: "Bullish", vol: "High", type: "Spot Benchmark" },
+  { code: "AUD", name: "Australian Dollar", flag: "🇦🇺", rate: "4.35%", bias: "Bullish", vol: "Normal", type: "RBA Cash Rate" }
 ];
 
 /**

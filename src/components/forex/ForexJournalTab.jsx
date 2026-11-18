@@ -25,18 +25,53 @@ const DEFAULT_USER_ACCOUNTS = [
   { id: "REAL_MAIN", name: "Personal Real Account", startingBalance: 2500, type: "Real / Live" }
 ];
 
+// Automatically wipe all legacy dummy trades and old sample accounts from localStorage on load
+function purgeLegacyDummyTrades() {
+  try {
+    const dummyIds = new Set(["trade-1", "trade-2", "trade-3", "trade-4", "trade-5"]);
+    const dummyPropIds = new Set(["FUNDED_5K", "FUNDED_10K", "FUNDED_25K", "FUNDED_50K", "FUNDED_100K", "FUNDED_200K"]);
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k) continue;
+
+      if (k.includes("forex_trades") || k.includes("forex_journal")) {
+        try {
+          const raw = JSON.parse(localStorage.getItem(k));
+          if (Array.isArray(raw)) {
+            const cleaned = raw.filter(t => t && t.id && !dummyIds.has(t.id));
+            localStorage.setItem(k, JSON.stringify(cleaned));
+          }
+        } catch {}
+      }
+
+      if (k.includes("forex_accounts")) {
+        try {
+          const raw = JSON.parse(localStorage.getItem(k));
+          if (Array.isArray(raw)) {
+            const cleaned = raw.filter(a => a && a.id && !dummyPropIds.has(a.id));
+            localStorage.setItem(k, JSON.stringify(cleaned.length > 0 ? cleaned : DEFAULT_USER_ACCOUNTS));
+          }
+        } catch {}
+      }
+    }
+  } catch {}
+}
+
+purgeLegacyDummyTrades();
+
 // Ensure no dummy trades or auto numbers from old sample presets ever leak into the journal
 function sanitizeLoadedTrades(raw) {
   if (!Array.isArray(raw)) return [];
-  const dummyIds = ["trade-1", "trade-2", "trade-3", "trade-4", "trade-5"];
-  return raw.filter((t) => t && t.id && !dummyIds.includes(t.id));
+  const dummyIds = new Set(["trade-1", "trade-2", "trade-3", "trade-4", "trade-5"]);
+  return raw.filter((t) => t && t.id && !dummyIds.has(t.id));
 }
 
 // Ensure no dummy tiers from old prop presets leak into the user's real account list
 function sanitizeLoadedAccounts(raw) {
   if (!Array.isArray(raw) || raw.length === 0) return DEFAULT_USER_ACCOUNTS;
-  const dummyPropIds = ["FUNDED_5K", "FUNDED_10K", "FUNDED_25K", "FUNDED_50K", "FUNDED_100K", "FUNDED_200K"];
-  const filtered = raw.filter((a) => a && a.id && !dummyPropIds.includes(a.id));
+  const dummyPropIds = new Set(["FUNDED_5K", "FUNDED_10K", "FUNDED_25K", "FUNDED_50K", "FUNDED_100K", "FUNDED_200K"]);
+  const filtered = raw.filter((a) => a && a.id && !dummyPropIds.has(a.id));
   return filtered.length > 0 ? filtered : DEFAULT_USER_ACCOUNTS;
 }
 
@@ -627,6 +662,31 @@ export default function ForexJournalTab({ dark }) {
               <Download className="w-3.5 h-3.5" />
               <span>Export</span>
             </button>
+
+            {trades.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm("Clear all trades and reset your journal to 0?")) {
+                    setTrades([]);
+                    try { localStorage.setItem(storageKey, JSON.stringify([])); } catch {}
+                    if (userGmailKey) {
+                      saveUserForexJournal(userGmailKey, {
+                        email: user?.email || userGmailKey,
+                        trades: [],
+                        accounts,
+                        checklistRules
+                      });
+                    }
+                  }
+                }}
+                className="px-3 py-2.5 rounded-xl text-rose-500 hover:bg-rose-500/10 border border-rose-500/20 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                title="Reset all trades to zero"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Reset Trades</span>
+              </button>
+            )}
 
             <button
               onClick={handleOpenAddModal}
