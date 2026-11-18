@@ -7,7 +7,6 @@ import CalmForex3DStage from "./CalmForex3DStage";
 import ForexNewsTab from "./ForexNewsTab";
 import ForexJournalTab from "./ForexJournalTab";
 import ForexCalculatorTab from "./ForexCalculatorTab";
-import TradingViewTickerTape from "./TradingViewTickerTape";
 
 export default function ForexSection({ dark, initialSubTab = "news", onSubTabChange }) {
   const [internalSubTab, setInternalSubTab] = useState(initialSubTab);
@@ -30,9 +29,6 @@ export default function ForexSection({ dark, initialSubTab = "news", onSubTabCha
           if (el) el.scrollIntoView({ behavior: "smooth" });
         }}
       />
-
-      {/* Official TradingView Real-Time Market Ticker */}
-      <TradingViewTickerTape dark={dark} />
 
       {/* Forex Sub-navigation */}
       <div id="forex-subnav" className="p-3 sm:p-4 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm">
