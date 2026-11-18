@@ -969,10 +969,8 @@ export default function ForexJournalTab({ dark }) {
         </div>
       </div>
 
-    </div>
-
-      {/* Cumulative Equity Growth Chart */ }
-  <div className="p-6 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
+      {/* Cumulative Equity Growth Chart */}
+      <div className="p-6 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm space-y-4">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2">
         <TrendingUp className="w-4 h-4 text-teal-500" />
