@@ -136,6 +136,21 @@ export default function ForexJournalTab({ dark }) {
     return DEFAULT_USER_ACCOUNTS;
   });
 
+  // Pre-Trade Checklist State (User Customizable with LocalStorage persistence)
+  const [checklistRules, setChecklistRules] = useState(() => {
+    try {
+      const saved = localStorage.getItem("calmcapital_forex_checklist_rules");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch { /* ignore */ }
+    return DEFAULT_PRE_TRADE_RULES;
+  });
+  const [isEditingRules, setIsEditingRules] = useState(false);
+  const [checklistChecks, setChecklistChecks] = useState(() => new Array(DEFAULT_PRE_TRADE_RULES.length).fill(true));
+  const [showChecklistModal, setShowChecklistModal] = useState(false);
+
   // Cloud sync status across devices ("synced" | "saving" | "offline")
   const [cloudSyncStatus, setCloudSyncStatus] = useState("synced");
   const isInitialCloudLoadDone = useRef(false);
@@ -264,21 +279,6 @@ export default function ForexJournalTab({ dark }) {
   const [filterStatus, setFilterStatus] = useState("ALL");
   const [filterSession, setFilterSession] = useState("ALL");
   const [searchQuery, setSearchQuery] = useState("");
-
-  // Pre-Trade Checklist State (User Customizable with LocalStorage persistence)
-  const [checklistRules, setChecklistRules] = useState(() => {
-    try {
-      const saved = localStorage.getItem("calmcapital_forex_checklist_rules");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch { /* ignore */ }
-    return DEFAULT_PRE_TRADE_RULES;
-  });
-  const [isEditingRules, setIsEditingRules] = useState(false);
-  const [checklistChecks, setChecklistChecks] = useState(() => new Array(checklistRules.length).fill(true));
-  const [showChecklistModal, setShowChecklistModal] = useState(false);
 
   // Sync checklist checks whenever rules length changes
   useEffect(() => {

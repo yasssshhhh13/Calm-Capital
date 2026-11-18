@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { signInWithFirebaseGoogle } from "./firebase.js";
 
 /**
  * Calm Capital - Google & Firebase Authentication Engine
@@ -125,7 +126,6 @@ export function AuthProvider({ children }) {
   const signInWithGoogle = useCallback(async (localPans = []) => {
     let googleUser = null;
     try {
-      const { signInWithFirebaseGoogle } = await import("./firebase.js");
       googleUser = await signInWithFirebaseGoogle();
     } catch (fbErr) {
       console.warn("Firebase Google login error:", fbErr?.message || fbErr);
