@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from "react";
-import { signInWithFirebaseGoogle } from "./firebase.js";
+import { signInWithFirebaseGoogle, signOutFirebase } from "./firebase.js";
 
 /**
  * Calm Capital - Google & Firebase Authentication Engine
@@ -198,6 +198,7 @@ export function AuthProvider({ children }) {
    * Sign Out
    */
   const signOut = useCallback(() => {
+    signOutFirebase();
     setUser(null);
     try {
       localStorage.removeItem(SESSION_STORAGE_KEY);

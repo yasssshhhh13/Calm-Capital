@@ -1,6 +1,6 @@
-// Firebase & Firestore Client Engine (Zero-Dependency Architecture)
-// Uses Google Cloud Firestore REST API & Google Identity Services.
-// Eliminates 50MB of bloated node_modules and protobufjs postinstall failures.
+// Firebase Authentication & Firestore Cloud Engine
+import { initializeApp, getApps } from "firebase/app";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut } from "firebase/auth";
 
 function getFirebaseConfig() {
   return {
@@ -13,82 +13,55 @@ function getFirebaseConfig() {
   };
 }
 
+let authInstance = null;
+let googleProvider = null;
+
+export function getFirebaseAuth() {
+  if (authInstance) return authInstance;
+  const config = getFirebaseConfig();
+  if (config.apiKey && config.projectId) {
+    const app = getApps().length ? getApps()[0] : initializeApp(config);
+    authInstance = getAuth(app);
+    googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: "select_account" });
+  }
+  return authInstance;
+}
+
 export function sanitizeUserKey(emailOrUid) {
   if (!emailOrUid || typeof emailOrUid !== "string") return "guest";
   return emailOrUid.trim().toLowerCase().replace(/[^a-z0-9_-]/g, "_");
 }
 
-export async function getFirebaseServices() {
-  return { auth: null, googleProvider: null };
-}
-
-export async function getFirestoreDb() {
-  const config = getFirebaseConfig();
-  if (config.apiKey && config.projectId) {
-    return { projectId: config.projectId, apiKey: config.apiKey };
+/**
+ * 1-Click Sign In with Google
+ * Direct synchronous popup invocation to prevent mobile/desktop popup blockers.
+ */
+export async function signInWithFirebaseGoogle() {
+  const auth = getFirebaseAuth();
+  if (!auth || !googleProvider) {
+    throw new Error("Firebase Authentication is not configured.");
   }
-  return null;
+
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    return result?.user || null;
+  } catch (err) {
+    console.warn("[Firebase Auth] Google popup error:", err?.code, err?.message);
+    throw err;
+  }
 }
 
 /**
- * 1-Click Sign In with Google
- * If Firebase credentials exist, utilizes Google Identity / popup.
- * If credentials are not configured, provides a seamless Google profile session.
+ * Sign Out from Firebase Session
  */
-export async function signInWithFirebaseGoogle() {
-  const config = getFirebaseConfig();
-
-  // If Firebase web keys are available, we can load official CDN
-  if (config.apiKey && config.projectId && typeof window !== "undefined") {
-    try {
-      if (!window.__firebase_loaded) {
-        await new Promise((resolve, reject) => {
-          const s1 = document.createElement("script");
-          s1.type = "module";
-          s1.innerHTML = `
-            import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-            import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-            const cfg = ${JSON.stringify(config)};
-            const app = getApps().length ? getApps()[0] : initializeApp(cfg);
-            const auth = getAuth(app);
-            const provider = new GoogleAuthProvider();
-            window.__firebase_auth = auth;
-            window.__firebase_provider = provider;
-            window.__firebase_signInWithPopup = signInWithPopup;
-            window.__firebase_loaded = true;
-          `;
-          s1.onload = resolve;
-          s1.onerror = reject;
-          document.head.appendChild(s1);
-          setTimeout(resolve, 1500);
-        });
-      }
-
-      if (window.__firebase_auth && window.__firebase_signInWithPopup) {
-        const res = await window.__firebase_signInWithPopup(window.__firebase_auth, window.__firebase_provider);
-        return res?.user || null;
-      }
-    } catch (cdnErr) {
-      console.warn("CDN Google Auth fallback to prompt:", cdnErr?.message);
-    }
+export async function signOutFirebase() {
+  try {
+    const auth = getFirebaseAuth();
+    if (auth) await fbSignOut(auth);
+  } catch (e) {
+    console.warn("[Firebase Auth] Sign out error:", e);
   }
-
-  // Graceful interactive Google prompt for instant zero-setup cross-device access
-  if (typeof window !== "undefined") {
-    const enteredEmail = window.prompt("Enter your Gmail address to sync your Forex Journal & Accounts:", "");
-    if (enteredEmail && enteredEmail.includes("@")) {
-      const email = enteredEmail.trim().toLowerCase();
-      const name = email.split("@")[0].replace(/[^a-zA-Z0-9]/g, " ");
-      return {
-        uid: "google_" + sanitizeUserKey(email),
-        email,
-        displayName: name.charAt(0).toUpperCase() + name.slice(1),
-        photoURL: ""
-      };
-    }
-  }
-
-  return null;
 }
 
 /**

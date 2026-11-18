@@ -8727,27 +8727,80 @@ export default function App() {
                 </>
               )}
             </nav>
+
+            {/* Mobile / Sidebar Account & Logout Card */}
+            <div className="pt-3 border-t border-slate-200/80 dark:border-white/10 mt-auto">
+              {auth.isLoggedIn ? (
+                <div className="p-3 rounded-2xl bg-white/80 dark:bg-white/[0.04] border border-slate-200/70 dark:border-white/5 shadow-xs">
+                  <div className="flex items-center gap-2.5 mb-2.5">
+                    {auth.user?.photoURL ? (
+                      <img src={auth.user.photoURL} alt={auth.user.name} className="w-8 h-8 rounded-full object-cover border border-emerald-500/40 shrink-0" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-emerald-500 text-white font-black text-xs flex items-center justify-center shrink-0">
+                        {auth.user?.name ? auth.user.name.charAt(0).toUpperCase() : "U"}
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-black text-slate-800 dark:text-white truncate">{auth.user?.name}</p>
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate font-mono">{auth.user?.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => { setPanManagerOpen(true); if (isMobile()) setSidebarOpen(false); }}
+                      className="flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 flex items-center justify-center gap-1 cursor-pointer border-0 transition-colors"
+                    >
+                      <Users size={12} className="text-[#1c9bda]" />
+                      <span>PANs ({familyPans.pans.length})</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { auth.signOut(); if (isMobile()) setSidebarOpen(false); }}
+                      className="py-1.5 px-2.5 rounded-xl text-[11px] font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center gap-1 cursor-pointer border border-rose-500/20 transition-colors"
+                    >
+                      <LogOut size={12} />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => { auth.openAuthModal("signin"); if (isMobile()) setSidebarOpen(false); }}
+                  className="w-full py-2.5 px-3 rounded-2xl bg-[#0B1F33] hover:bg-[#122A42] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold shadow-sm flex items-center justify-center gap-2 transition-all cursor-pointer border-0"
+                >
+                  <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                  </svg>
+                  <span>Google Sign In</span>
+                </button>
+              )}
+            </div>
           </div>
         </aside>
 
         {/* MAIN */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* HEADER */}
-          <header className="flex flex-col border-b sticky top-0 z-20 backdrop-blur-lg overflow-x-hidden max-w-full"
+          <header className="flex flex-col border-b sticky top-0 z-20 backdrop-blur-lg max-w-full"
             style={{ 
               borderColor: dark ? "rgba(45,64,86,0.9)" : "rgba(11, 31, 51, 0.08)", 
               background: dark ? "rgba(13,21,36,0.92)" : "rgba(245, 247, 244, 0.85)" 
             }}>
             {/* Top Navigation Row */}
-            <div className="flex items-center gap-1.5 sm:gap-3 px-2.5 sm:px-5 py-2 sm:py-3.5 w-full max-w-full min-w-0">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 px-2.5 sm:px-5 py-2 sm:py-3 w-full max-w-full min-w-0">
               {!sidebarOpen && (
                 <button onClick={() => setSidebarOpen(true)} className="text-slate-500 hover:text-[#0B1F33] dark:text-[#8EA1B7] dark:hover:text-white p-2 hover:bg-black/5 dark:hover:bg-white/5 rounded-xl transition-all cursor-pointer border-0 shrink-0">
                   <Menu size={18} />
                 </button>
               )}
 
-              {/* Master Section Toggle: IPOs vs Forex */}
-              <div className="flex items-center gap-1 p-0.5 sm:p-1 rounded-2xl bg-black/5 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 shrink-0">
+              {/* Master Section Toggle: IPOs vs Forex (Visible when sidebar is closed or on wide displays) */}
+              <div className={`items-center gap-1 p-0.5 sm:p-1 rounded-2xl bg-black/5 dark:bg-white/5 border border-slate-200/80 dark:border-white/10 shrink-0 ${sidebarOpen ? "hidden 2xl:flex" : "flex"}`}>
                 <button
                   type="button"
                   onClick={() => handleSwitchSection("ipos", tab === "forex" ? "overview" : tab)}
@@ -8778,12 +8831,12 @@ export default function App() {
               </div>
 
               {/* Desktop Search Bar (Hidden on Mobile) */}
-              <div className="hidden md:flex flex-1 max-w-sm sm:max-w-md mx-2">
+              <div className="hidden md:flex flex-1 max-w-xs sm:max-w-sm lg:max-w-md mx-2 min-w-0">
                 <HeaderSearchBar query={query} onQueryChange={setQuery} />
               </div>
 
               {/* Right Action Cluster */}
-              <div className="ml-auto flex items-center gap-1.5 sm:gap-2.5 shrink-0 relative">
+              <div className="ml-auto flex items-center gap-1.5 sm:gap-2 shrink-0 relative">
                 {/* Mobile Search Toggle Button */}
                 <button
                   type="button"
@@ -8798,7 +8851,7 @@ export default function App() {
                   <Search size={14} />
                 </button>
 
-                <div className="hidden sm:flex items-center">
+                <div className="hidden xl:flex items-center">
                   <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border border-slate-205 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 text-[#0B1F33] dark:text-[#C9D6E5] shadow-sm cursor-default">
                     <span className="relative flex h-1.5 w-1.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -8808,18 +8861,18 @@ export default function App() {
                   </div>
                 </div>
 
-                <button disabled={refreshing} onClick={refresh} className="hidden sm:flex w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-[#14B8A6] items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-[#0B1F33] dark:hover:text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative cursor-pointer border-0">
+                <button disabled={refreshing} onClick={refresh} className="hidden lg:flex w-9 h-9 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-slate-300 dark:hover:border-[#14B8A6] items-center justify-center text-slate-500 dark:text-[#C9D6E5] hover:text-[#0B1F33] dark:hover:text-white shadow-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all relative cursor-pointer border-0">
                   <RefreshCw size={14} className={refreshing ? "animate-spin text-[#14B8A6]" : ""} />
                 </button>
                 
                 <button
                   type="button"
                   onClick={() => setPanManagerOpen(true)}
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-[#1c9bda] dark:hover:border-[#14B8A6] text-[#0B1F33] dark:text-[#C9D6E5] shadow-sm transition-all cursor-pointer text-xs font-bold"
+                  className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-slate-200 dark:border-[#34465C] bg-[#FFFFFF]/60 dark:bg-[#121D2D]/80 hover:border-[#1c9bda] dark:hover:border-[#14B8A6] text-[#0B1F33] dark:text-[#C9D6E5] shadow-sm transition-all cursor-pointer text-xs font-bold shrink-0"
                   title="Manage Family PANs for Batch Allotment"
                 >
                   <Users size={14} className="text-[#1c9bda]" />
-                  <span>Family PANs</span>
+                  <span className="hidden xl:inline">Family PANs</span>
                   <span className="px-1.5 py-0.5 rounded-full bg-[#1c9bda]/10 text-[#1c9bda] dark:text-[#52b1e4] text-[10px] font-bold">
                     {familyPans.pans.length}
                   </span>
@@ -8831,7 +8884,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => setUserMenuOpen(!userMenuOpen)}
-                      className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 text-slate-850 dark:text-white transition-all cursor-pointer text-xs font-bold shadow-sm"
+                      className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/15 text-slate-850 dark:text-white transition-all cursor-pointer text-xs font-bold shadow-sm shrink-0"
                       title={`Signed in as ${auth.user.name}`}
                     >
                       {auth.user?.photoURL ? (
@@ -8841,44 +8894,47 @@ export default function App() {
                           {auth.user.name ? auth.user.name.charAt(0).toUpperCase() : "U"}
                         </div>
                       )}
-                      <span className="hidden md:inline max-w-[95px] truncate font-semibold text-[11px]">
+                      <span className="hidden md:inline max-w-[85px] truncate font-semibold text-[11px]">
                         {auth.user.name ? auth.user.name.split(" ")[0] : "Account"}
                       </span>
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
                     </button>
 
                     {userMenuOpen && (
-                      <div 
-                        className="absolute right-0 mt-2 w-56 rounded-2xl bg-white dark:bg-[#0E1726] border border-slate-200 dark:border-white/10 shadow-2xl py-2 z-50 animate-fade-in"
-                        onClick={() => setUserMenuOpen(false)}
-                      >
-                        <div className="px-4 py-2 border-b border-slate-100 dark:border-white/5">
-                          <p className="text-xs font-bold text-slate-850 dark:text-white truncate">{auth.user.name}</p>
-                          <p className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
-                            {auth.user.email || auth.user.mobile}
-                          </p>
+                      <>
+                        <div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
+                        <div 
+                          className="absolute right-0 top-full mt-2 w-56 rounded-2xl bg-white dark:bg-[#0E1726] border border-slate-200 dark:border-white/10 shadow-2xl py-2 z-50 animate-fade-in"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          <div className="px-4 py-2 border-b border-slate-100 dark:border-white/5">
+                            <p className="text-xs font-bold text-slate-850 dark:text-white truncate">{auth.user.name}</p>
+                            <p className="text-[10px] text-slate-400 font-mono truncate mt-0.5">
+                              {auth.user.email || auth.user.mobile}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setPanManagerOpen(true)}
+                            className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
+                          >
+                            <Users size={14} className="text-[#1c9bda]" />
+                            <span>Saved PAN Vault ({familyPans.pans.length})</span>
+                          </button>
+                          <div className="border-t border-slate-100 dark:border-white/5 my-1" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              auth.signOut();
+                              setUserMenuOpen(false);
+                            }}
+                            className="w-full text-left px-4 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
+                          >
+                            <LogOut size={14} />
+                            <span>Sign Out</span>
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => setPanManagerOpen(true)}
-                          className="w-full text-left px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
-                        >
-                          <Users size={14} className="text-[#1c9bda]" />
-                          <span>Saved PAN Vault ({familyPans.pans.length})</span>
-                        </button>
-                        <div className="border-t border-slate-100 dark:border-white/5 my-1" />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            auth.signOut();
-                            setUserMenuOpen(false);
-                          }}
-                          className="w-full text-left px-4 py-2 text-xs font-bold text-rose-500 hover:bg-rose-500/10 flex items-center gap-2 cursor-pointer border-0 bg-transparent"
-                        >
-                          <LogOut size={14} />
-                          <span>Sign Out</span>
-                        </button>
-                      </div>
+                      </>
                     )}
                   </div>
                 ) : (
