@@ -8083,17 +8083,8 @@ export default function App() {
     }
   });
 
-  // Master Section: "ipos" (Indian IPO Intelligence) vs "forex" (Global Forex Hub)
-  const [mainSection, setMainSection] = useState(() => {
-    try {
-      const url = typeof window !== "undefined" ? window.location.pathname.toLowerCase() : "";
-      if (url.startsWith("/forex")) return "forex";
-      const saved = localStorage.getItem("calmcapital-section");
-      return saved === "forex" ? "forex" : "ipos";
-    } catch {
-      return "ipos";
-    }
-  });
+  // Master Section: strictly synchronized with active tab ("forex" vs "ipos")
+  const mainSection = tab === "forex" ? "forex" : "ipos";
 
   // Forex sub-tabs: "news" | "journal" | "calculator"
   const [forexSubTab, setForexSubTab] = useState(() => {
@@ -8108,7 +8099,6 @@ export default function App() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   const handleSwitchSection = (section, targetTab) => {
-    setMainSection(section);
     try { localStorage.setItem("calmcapital-section", section); } catch { /* ignore */ }
     if (section === "forex") {
       setTab("forex");
@@ -8117,9 +8107,7 @@ export default function App() {
         try { localStorage.setItem("calmcapital-forex-subtab", targetTab); } catch { /* ignore */ }
       }
     } else {
-      if (tab === "forex") {
-        navigateToTab(targetTab || "overview");
-      }
+      navigateToTab(targetTab && targetTab !== "forex" ? targetTab : "overview");
     }
   };
 
@@ -8160,13 +8148,7 @@ export default function App() {
   const setTab = (id) => {
     setSelected(null);
     setTabRaw(id);
-    if (id === "forex") {
-      setMainSection("forex");
-      try { localStorage.setItem("calmcapital-section", "forex"); } catch { /* ignore */ }
-    } else if (IPO_NAV.some(n => n.id === id)) {
-      setMainSection("ipos");
-      try { localStorage.setItem("calmcapital-section", "ipos"); } catch { /* ignore */ }
-    }
+    try { localStorage.setItem("calmcapital-section", id === "forex" ? "forex" : "ipos"); } catch { /* ignore */ }
     try { localStorage.setItem("calmcapital-tab", id); } catch { /* storage unavailable */ }
     const path = TAB_PATHS[id] || "/";
     lastTabPathRef.current = path;
