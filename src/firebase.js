@@ -16,12 +16,12 @@ export async function getFirebaseServices() {
     const { getAuth, GoogleAuthProvider } = await import("firebase/auth");
 
     const firebaseConfig = {
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
-      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "",
-      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "",
-      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "",
-      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "",
-      appId: import.meta.env.VITE_FIREBASE_APP_ID || ""
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDYbryWRXXfOMZu64dXhCsASffhDdLQY4A",
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "calmcapital-b6c7b.firebaseapp.com",
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "calmcapital-b6c7b",
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "calmcapital-b6c7b.firebasestorage.app",
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "13342434531",
+      appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:13342434531:web:050a5b8dd4ea12e75911d6"
     };
 
     if (firebaseConfig.apiKey && firebaseConfig.projectId) {
