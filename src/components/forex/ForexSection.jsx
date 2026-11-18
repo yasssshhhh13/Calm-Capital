@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import {
   Globe, Calendar, BookOpen, TrendingUp, TrendingDown,
-  ArrowRight, ShieldCheck, Activity, DollarSign
+  ArrowRight, ShieldCheck, Activity, DollarSign, Calculator
 } from "lucide-react";
 import CalmForex3DStage from "./CalmForex3DStage";
 import ForexNewsTab from "./ForexNewsTab";
 import ForexJournalTab from "./ForexJournalTab";
+import ForexCalculatorTab from "./ForexCalculatorTab";
 
 // Curated live FX benchmark rates ticker with all USD pairs
 const BENCHMARK_RATES = [
@@ -103,6 +104,18 @@ export default function ForexSection({ dark, initialSubTab = "news", onSubTabCha
               <BookOpen className="w-3.5 h-3.5 text-[#1c9bda]" />
               <span>Discipline Trading Journal</span>
             </button>
+
+            <button
+              onClick={() => setActiveSubTab("calculator")}
+              className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 cursor-pointer ${
+                activeSubTab === "calculator"
+                  ? "bg-white dark:bg-[#121D2D] text-slate-900 dark:text-white shadow-sm border border-slate-200/80 dark:border-white/10"
+                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+              }`}
+            >
+              <Calculator className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Profit &amp; Risk Calculator</span>
+            </button>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-semibold">
@@ -115,6 +128,11 @@ export default function ForexSection({ dark, initialSubTab = "news", onSubTabCha
       {/* Active Tab View */}
       {activeSubTab === "news" ? (
         <ForexNewsTab dark={dark} />
+      ) : activeSubTab === "calculator" ? (
+        <ForexCalculatorTab
+          dark={dark}
+          onNavigateJournal={() => setActiveSubTab("journal")}
+        />
       ) : (
         <ForexJournalTab dark={dark} />
       )}

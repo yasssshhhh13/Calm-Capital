@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, memo } from "react";
 import {
   Globe, Shield, TrendingUp, TrendingDown, Activity, Zap,
-  BarChart2, ArrowRight, Calendar, BookOpen, Layers, CheckCircle2
+  BarChart2, ArrowRight, Calendar, BookOpen, Layers, CheckCircle2, Calculator
 } from "lucide-react";
 import CalmForexGlobeBackdrop from "../animations/CalmForexGlobeBackdrop";
 
@@ -96,13 +96,12 @@ const DesktopKinetic3DOrbit = memo(function DesktopKinetic3DOrbit({ selectedCurr
               zIndex: isSelected ? 40 : isFront ? 30 : 10,
               backfaceVisibility: "hidden"
             }}
-            className={`absolute p-2.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-2 backdrop-blur-md shadow-md will-change-transform ${
-              isSelected
+            className={`absolute p-2.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-2 backdrop-blur-md shadow-md will-change-transform ${isSelected
                 ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-lg scale-110"
                 : isFront
-                ? "bg-white/90 dark:bg-[#0E1E36]/90 border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-slate-200 hover:border-teal-400"
-                : "bg-white/60 dark:bg-[#0E1E36]/60 border-slate-200/40 dark:border-white/5 text-slate-500 opacity-75 hover:opacity-100"
-            }`}
+                  ? "bg-white/90 dark:bg-[#0E1E36]/90 border-slate-200/80 dark:border-white/15 text-slate-800 dark:text-slate-200 hover:border-teal-400"
+                  : "bg-white/60 dark:bg-[#0E1E36]/60 border-slate-200/40 dark:border-white/5 text-slate-500 opacity-75 hover:opacity-100"
+              }`}
           >
             <span className="text-sm leading-none">{cur.flag}</span>
             <div>
@@ -146,11 +145,10 @@ function MobileCurrencyMatrix({ selectedCurrency, onSelectCurrency }) {
               key={cur.code}
               type="button"
               onClick={() => onSelectCurrency(cur)}
-              className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${
-                isSelected
+              className={`p-2.5 rounded-2xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1 ${isSelected
                   ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-md scale-102 ring-2 ring-teal-500/30"
                   : "bg-slate-50 dark:bg-white/[0.04] border-slate-200/80 dark:border-white/10 text-slate-700 dark:text-slate-200 active:scale-95"
-              }`}
+                }`}
             >
               <span className="text-lg leading-none">{cur.flag}</span>
               <span className="text-xs font-black font-mono leading-none mt-0.5">
@@ -194,10 +192,10 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#1c9bda]/[0.04] dark:bg-[#1c9bda]/[0.07] rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-        
+
         {/* Left Editorial Narrative Column (Calm Capital Voice) */}
         <div className="lg:col-span-7 space-y-4 sm:space-y-5">
-          
+
           <div className="flex items-center gap-2.5">
             <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-teal-500/10 text-teal-700 dark:text-teal-400 border border-teal-500/20 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
@@ -254,7 +252,7 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
             </div>
           </div>
 
-          {/* Quick Dual Action Navigation */}
+          {/* Quick Triple Action Navigation */}
           <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1 sm:pt-2">
             <button
               onClick={() => onSelectTab("news")}
@@ -272,13 +270,21 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
               <BookOpen className="w-4 h-4 text-[#1c9bda] shrink-0" />
               <span className="truncate">Trading Journal Suite</span>
             </button>
+
+            <button
+              onClick={() => onSelectTab("calculator")}
+              className="flex-1 sm:flex-initial px-4 sm:px-5 py-3 rounded-2xl bg-teal-500/10 hover:bg-teal-500/15 text-teal-700 dark:text-teal-400 font-bold text-xs border border-teal-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
+            >
+              <Calculator className="w-4 h-4 text-teal-500 shrink-0" />
+              <span className="truncate">Profit Calculator</span>
+            </button>
           </div>
 
         </div>
 
         {/* Right Stage: Desktop 3D Kinetic vs Mobile Executive Matrix */}
         <div className="lg:col-span-5 flex flex-col items-center justify-center w-full">
-          
+
           {isMobile ? (
             <MobileCurrencyMatrix
               selectedCurrency={selectedCurrency}
@@ -302,13 +308,12 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
               </span>
             </div>
             <div className="text-right">
-              <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded-md ${
-                selectedCurrency.bias === "Bullish"
+              <span className={`text-[10px] font-bold font-mono px-2 py-0.5 rounded-md ${selectedCurrency.bias === "Bullish"
                   ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                   : selectedCurrency.bias === "Bearish"
-                  ? "bg-rose-500/10 text-rose-600 dark:text-rose-400"
-                  : "bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300"
-              }`}>
+                    ? "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                    : "bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300"
+                }`}>
                 {selectedCurrency.bias}
               </span>
               <span className="text-[10px] text-slate-400 block mt-0.5 font-mono">

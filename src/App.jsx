@@ -7767,6 +7767,7 @@ const IPO_NAV = [
 const FOREX_NAV = [
   { id: "news", label: "Economic News & Calendar", icon: Calendar },
   { id: "journal", label: "Discipline Trading Journal", icon: BookOpen },
+  { id: "calculator", label: "Profit & Risk Calculator", icon: CalcIcon },
 ];
 
 const NAV = [
@@ -8094,11 +8095,11 @@ export default function App() {
     }
   });
 
-  // Forex sub-tabs: "news" | "journal"
+  // Forex sub-tabs: "news" | "journal" | "calculator"
   const [forexSubTab, setForexSubTab] = useState(() => {
     try {
       const saved = localStorage.getItem("calmcapital-forex-subtab");
-      return saved === "journal" ? "journal" : "news";
+      return saved === "journal" || saved === "calculator" ? saved : "news";
     } catch {
       return "news";
     }
@@ -8111,7 +8112,7 @@ export default function App() {
     try { localStorage.setItem("calmcapital-section", section); } catch { /* ignore */ }
     if (section === "forex") {
       setTab("forex");
-      if (targetTab === "journal" || targetTab === "news") {
+      if (targetTab === "journal" || targetTab === "news" || targetTab === "calculator") {
         setForexSubTab(targetTab);
         try { localStorage.setItem("calmcapital-forex-subtab", targetTab); } catch { /* ignore */ }
       }
@@ -8689,7 +8690,7 @@ export default function App() {
               ) : (
                 <>
                   <div className="px-3 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400 flex items-center justify-between">
-                    <span>Global Forex Desk (2)</span>
+                    <span>Global Forex Desk (3)</span>
                     <span className="text-[9px] font-mono text-teal-400">INSTITUTIONAL</span>
                   </div>
                   {FOREX_NAV.map((n) => {

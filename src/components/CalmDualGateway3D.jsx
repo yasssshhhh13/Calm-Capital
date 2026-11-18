@@ -247,7 +247,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
                 <span>🌐 Global Currency Desk</span>
               </span>
               <span className="text-[11px] font-mono font-bold text-slate-400">
-                2 Focused Desks
+                3 Focused Desks
               </span>
             </div>
 
@@ -258,7 +258,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
                 <ArrowRight className="w-5 h-5 text-[#1c9bda] transform group-hover:translate-x-1.5 transition-transform shrink-0" />
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                Institutional economic calendar, central bank interest rate telemetry, and a precision trading journal designed for prop firm challenges from $5,000.
+                Institutional economic calendar, profit &amp; lot size calculator, and precision trading journal designed for prop firm challenges from $5,000.
               </p>
             </div>
 
@@ -312,7 +312,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
               type="button"
               className="w-full py-3.5 rounded-xl bg-[#1c9bda] hover:bg-[#1688c2] text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-[#1c9bda]/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
             >
-              <span>Launch Forex Desk (News &amp; Journal)</span>
+              <span>Launch Forex Desk (3 Desks)</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
