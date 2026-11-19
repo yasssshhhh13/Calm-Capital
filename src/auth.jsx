@@ -125,23 +125,29 @@ async function pushCloudUser(email, name, pans, allotments) {
   }
 }
 
-// Asynchronously triggers the institutional welcome email upon user sign-in
+// Asynchronously triggers the institutional welcome email upon user sign-in (Strictly 1-time ever per email)
 function triggerWelcomeEmail(email, name) {
   if (!email) return;
   try {
-    const sentKey = `calmcapital_welcome_sent_${email.toLowerCase()}`;
-    const alreadySent = sessionStorage.getItem(sentKey);
+    const cleanEmail = email.toLowerCase().trim();
+    const sentKey = `calmcapital_welcome_sent_${cleanEmail}`;
+    const alreadySent = localStorage.getItem(sentKey);
     if (alreadySent) return;
-    sessionStorage.setItem(sentKey, "true");
+    localStorage.setItem(sentKey, "true");
 
     fetch("/api/send-welcome-email", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        email,
+        email: cleanEmail,
         name,
         loginTime: new Date().toUTCString()
       })
+    }).then(async (res) => {
+      const data = await res.json();
+      if (data?.alreadySent || data?.success) {
+        localStorage.setItem(sentKey, "true");
+      }
     }).catch((err) => {
       console.warn("[Welcome Email Trigger]:", err?.message || err);
     });
