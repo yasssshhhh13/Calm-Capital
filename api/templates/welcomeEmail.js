@@ -267,7 +267,7 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
                             Follow Us on Instagram: <a href="https://www.instagram.com/calmcapital_space?utm_source=qr" target="_blank" style="color: #E1306C; text-decoration: underline;">@calmcapital_space</a>
                           </span>
                           <span style="font-size: 12px; line-height: 18px; color: #94A3B8; display: block;">
-                            Daily IPO GMP updates, listing gain alerts, forex setups, and market infographics.
+                            Daily IPO GMP updates, listing gain alerts, economic calendar insights, and market analytics.
                           </span>
                         </td>
                       </tr>
