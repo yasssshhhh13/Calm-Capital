@@ -324,7 +324,6 @@ export function AuthProvider({ children }) {
     } catch { /* ignore */ }
 
     setUser(account);
-    setAuthModalOpen(false);
 
     // Push merged vault back to cloud
     if (cleanEmail) {
@@ -385,7 +384,6 @@ export function AuthProvider({ children }) {
     } catch { /* ignore */ }
 
     setUser(account);
-    setAuthModalOpen(false);
 
     if (cleanEmail) {
       pushCloudUser(cleanEmail, cleanName, mergedPans, mergedAllotments);

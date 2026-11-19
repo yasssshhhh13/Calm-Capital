@@ -12,7 +12,12 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
   const [unauthDomainWarning, setUnauthDomainWarning] = useState(false);
   const [successUser, setSuccessUser] = useState(null);
 
-  if (!isOpen) return null;
+  const handleSafeClose = () => {
+    setSuccessUser(null);
+    onClose();
+  };
+
+  if (!isOpen && !successUser) return null;
 
   const handleGoogleLogin = async () => {
     setError("");
@@ -25,9 +30,8 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
       if (user) {
         setSuccessUser(user);
         setTimeout(() => {
-          onClose();
-          setSuccessUser(null);
-        }, 2400);
+          handleSafeClose();
+        }, 2800);
       } else {
         // Firebase keys not detected on this domain -> open in-modal direct Gmail form
         setShowDirectInput(true);
@@ -63,11 +67,11 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
 
     try {
       const user = await signInWithGmailAddress(directEmail, currentLocalPans);
-      setSuccessUser(user || { name: directEmail.split("@")[0], email: directEmail });
+      const activeUser = user || { name: directEmail.split("@")[0], email: directEmail };
+      setSuccessUser(activeUser);
       setTimeout(() => {
-        onClose();
-        setSuccessUser(null);
-      }, 2400);
+        handleSafeClose();
+      }, 2800);
     } catch (err) {
       setError(err?.message || "Could not sign in with this Gmail.");
     } finally {
@@ -78,7 +82,7 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
-      onClick={onClose}
+      onClick={handleSafeClose}
     >
       <div
         className="bg-white dark:bg-[#0A1020] border border-slate-200 dark:border-white/10 rounded-3xl w-full max-w-md flex flex-col shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden animate-in zoom-in-95 duration-200"
@@ -108,7 +112,7 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
 
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleSafeClose}
             className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all cursor-pointer border-0 bg-transparent"
           >
             <X size={18} />
@@ -175,10 +179,7 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
             <div className="pt-2 relative z-10 space-y-3">
               <button
                 type="button"
-                onClick={() => {
-                  onClose();
-                  setSuccessUser(null);
-                }}
+                onClick={handleSafeClose}
                 className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-[#1c9bda] text-white font-black text-xs shadow-xl shadow-teal-500/25 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
               >
                 <span>Launch Your Trading Desk</span>
