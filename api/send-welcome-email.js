@@ -122,11 +122,11 @@ export default async function handler(req, res) {
     // OPTION B: Resend HTTP API (if RESEND_API_KEY is configured)
     // -------------------------------------------------------------
     const resendKey = process.env.RESEND_API_KEY;
-    const fromAddress = process.env.EMAIL_FROM || "Calm Capital <yash@calmcapital.space>";
+    const preferredFrom = process.env.EMAIL_FROM || "Calm Capital <yash@calmcapital.space>";
 
     if (resendKey) {
-      const emailPayload = {
-        from: fromAddress,
+      let emailPayload = {
+        from: preferredFrom,
         to: [targetEmail],
         reply_to: "yash@calmcapital.space",
         subject,
@@ -134,7 +134,7 @@ export default async function handler(req, res) {
         text
       };
 
-      const resendRes = await fetch("https://api.resend.com/emails", {
+      let resendRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${resendKey}`,
@@ -143,7 +143,22 @@ export default async function handler(req, res) {
         body: JSON.stringify(emailPayload)
       });
 
-      const resendData = await resendRes.json();
+      let resendData = await resendRes.json();
+
+      // Graceful Auto-Fallback: If calmcapital.space domain is not yet verified in Resend, send via onboarding@resend.dev
+      if (!resendRes.ok && (resendData?.message?.includes("domain") || resendData?.name === "validation_error")) {
+        console.warn("[Welcome Email] Retrying with Resend verified sandbox sender...");
+        emailPayload.from = "Calm Capital <onboarding@resend.dev>";
+        resendRes = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${resendKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(emailPayload)
+        });
+        resendData = await resendRes.json();
+      }
 
       if (!resendRes.ok) {
         console.warn("[Welcome Email] Resend delivery warning:", resendData);
@@ -158,6 +173,7 @@ export default async function handler(req, res) {
         success: true,
         provider: "resend",
         id: resendData.id,
+        from: emailPayload.from,
         to: targetEmail,
         subject
       });
