@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, ShieldCheck, Lock, Sparkles, CheckCircle, Mail, ArrowRight, AlertCircle, Key } from "lucide-react";
+import { X, ShieldCheck, Lock, Sparkles, CheckCircle, Mail, ArrowRight, AlertCircle, Key, Check } from "lucide-react";
 import { useAuth } from "../auth";
 
 export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark, onNavigateTab }) {
@@ -10,6 +10,7 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
   const [showDirectInput, setShowDirectInput] = useState(false);
   const [directEmail, setDirectEmail] = useState("");
   const [unauthDomainWarning, setUnauthDomainWarning] = useState(false);
+  const [successUser, setSuccessUser] = useState(null);
 
   if (!isOpen) return null;
 
@@ -22,10 +23,11 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
     try {
       const user = await signInWithGoogle(currentLocalPans);
       if (user) {
-        setSuccessMsg("Signed in with Google successfully!");
+        setSuccessUser(user);
         setTimeout(() => {
           onClose();
-        }, 500);
+          setSuccessUser(null);
+        }, 2400);
       } else {
         // Firebase keys not detected on this domain -> open in-modal direct Gmail form
         setShowDirectInput(true);
@@ -50,7 +52,7 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
     }
   };
 
-  const handleDirectGmailSubmit = (e) => {
+  const handleDirectGmailSubmit = async (e) => {
     e.preventDefault();
     if (!directEmail || !directEmail.includes("@")) {
       setError("Please enter a valid Gmail address (e.g. name@gmail.com).");
@@ -60,11 +62,12 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
     setLoading(true);
 
     try {
-      signInWithGmailAddress(directEmail, currentLocalPans);
-      setSuccessMsg("Connected with Gmail successfully!");
+      const user = await signInWithGmailAddress(directEmail, currentLocalPans);
+      setSuccessUser(user || { name: directEmail.split("@")[0], email: directEmail });
       setTimeout(() => {
         onClose();
-      }, 500);
+        setSuccessUser(null);
+      }, 2400);
     } catch (err) {
       setError(err?.message || "Could not sign in with this Gmail.");
     } finally {
@@ -112,8 +115,83 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
           </button>
         </div>
 
-        {/* Modal Body */}
-        <div className="p-6 space-y-5">
+                {successUser ? (
+          <div className="p-8 sm:p-10 text-center space-y-6 relative overflow-hidden animate-in zoom-in-95 duration-300">
+            {/* Ambient Background Glow Aura */}
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none animate-pulse" />
+            <div className="absolute -bottom-20 right-10 w-56 h-56 bg-[#1c9bda]/20 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Glowing Animated Shield with Pulsing Ripple */}
+            <div className="relative mx-auto w-20 h-20 flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full bg-emerald-500/25 animate-ping opacity-60" />
+              <div className="absolute inset-[-8px] rounded-full border border-emerald-500/30 animate-pulse" />
+              <div className="relative z-10 w-20 h-20 rounded-full bg-gradient-to-tr from-emerald-500 via-teal-400 to-[#1c9bda] p-0.5 shadow-2xl shadow-emerald-500/30 flex items-center justify-center">
+                <div className="w-full h-full rounded-full bg-[#071324] flex items-center justify-center text-emerald-400">
+                  <ShieldCheck size={42} className="text-emerald-400 animate-in zoom-in-50 duration-300" />
+                </div>
+              </div>
+            </div>
+
+            {/* Success Headlines */}
+            <div className="space-y-2 relative z-10">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm">
+                <Sparkles size={12} className="animate-spin text-[#1c9bda]" />
+                <span>Authentication Confirmed</span>
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                Welcome to the Desk, {successUser.name || "Trader"}!
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium max-w-xs mx-auto leading-relaxed">
+                Single Sign-On verified for{" "}
+                <span className="text-slate-800 dark:text-slate-200 font-mono font-bold">
+                  {successUser.email}
+                </span>
+              </p>
+            </div>
+
+            {/* Unlocked Capabilities */}
+            <div className="space-y-2 max-w-sm mx-auto text-left relative z-10">
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/10 flex items-center gap-3 text-xs text-slate-700 dark:text-slate-300 font-semibold shadow-sm">
+                <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
+                  <Check size={13} strokeWidth={3} />
+                </div>
+                <span>Family PAN Vault synced to cloud</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/10 flex items-center gap-3 text-xs text-slate-700 dark:text-slate-300 font-semibold shadow-sm">
+                <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
+                  <Check size={13} strokeWidth={3} />
+                </div>
+                <span>Private Discipline Trading Journal activated</span>
+              </div>
+              <div className="p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/10 flex items-center gap-3 text-xs text-slate-700 dark:text-slate-300 font-semibold shadow-sm">
+                <div className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0">
+                  <Check size={13} strokeWidth={3} />
+                </div>
+                <span>Institutional welcome kit sent from <strong>yash@calmcapital.space</strong></span>
+              </div>
+            </div>
+
+            {/* Launch Button & Countdown */}
+            <div className="pt-2 relative z-10 space-y-3">
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  setSuccessUser(null);
+                }}
+                className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-[#1c9bda] text-white font-black text-xs shadow-xl shadow-teal-500/25 hover:opacity-95 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
+              >
+                <span>Launch Your Trading Desk</span>
+                <ArrowRight size={14} />
+              </button>
+              <div className="flex items-center justify-center gap-2 text-[10px] text-slate-400 font-mono">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                <span>Redirecting to your dashboard...</span>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="p-6 space-y-5">
           {error && (
             <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs text-amber-700 dark:text-amber-300 font-medium flex items-start gap-2.5">
               <AlertCircle size={16} className="text-amber-500 shrink-0 mt-0.5" />
@@ -225,6 +303,7 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
             </div>
           </div>
         </div>
+        )}
 
         {/* Transparent Terms & Privacy Policy Link */}
         <div className="p-4 px-6 bg-slate-50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5 text-center">

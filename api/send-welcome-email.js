@@ -48,7 +48,7 @@ export default async function handler(req, res) {
   // 2. Dispatch Mode: POST request
   try {
     const resendKey = process.env.RESEND_API_KEY;
-    const fromAddress = process.env.EMAIL_FROM || "Calm Capital <welcome@calmcapital.space>";
+    const fromAddress = process.env.EMAIL_FROM || "Calm Capital <yash@calmcapital.space>";
 
     if (resendKey) {
       const emailPayload = {
