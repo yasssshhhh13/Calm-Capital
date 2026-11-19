@@ -1,14 +1,13 @@
 import { generateWelcomeEmail } from "./templates/welcomeEmail.js";
+import nodemailer from "nodemailer";
 
 /**
  * Calm Capital - Automated Welcome Email Dispatcher API
  * 
- * Triggers an institutional welcome email when a user signs in.
- * 
- * Supported Providers:
- * - Resend (RESEND_API_KEY)
- * - Custom SMTP / Webhook
- * - Built-in Visual Preview Engine (?preview=true)
+ * Supports:
+ * 1. Direct Mailbox SMTP (Google Workspace, Zoho, Hostinger, Titan, Private cPanel)
+ * 2. Resend API (RESEND_API_KEY)
+ * 3. In-Browser Visual Preview Engine (?preview=true)
  */
 export default async function handler(req, res) {
   // CORS Headers
@@ -47,6 +46,81 @@ export default async function handler(req, res) {
 
   // 2. Dispatch Mode: POST request
   try {
+    // -------------------------------------------------------------
+    // OPTION A: Direct Mailbox Connection via SMTP (Nodemailer)
+    // -------------------------------------------------------------
+    const smtpUser = process.env.SMTP_USER || process.env.MAIL_USER || process.env.EMAIL_USER;
+    const smtpPass = process.env.SMTP_PASS || process.env.MAIL_PASS || process.env.EMAIL_PASS || process.env.SMTP_PASSWORD;
+
+    if (smtpUser && smtpPass) {
+      // Auto-detect host if not explicitly specified
+      let smtpHost = process.env.SMTP_HOST || process.env.MAIL_HOST;
+      let smtpPort = parseInt(process.env.SMTP_PORT || "465", 10);
+      let isSecure = smtpPort === 465;
+
+      if (!smtpHost) {
+        const domain = (smtpUser.split("@")[1] || "").toLowerCase();
+        if (domain.includes("gmail") || domain.includes("google")) {
+          smtpHost = "smtp.gmail.com";
+          smtpPort = 465;
+          isSecure = true;
+        } else if (domain.includes("zoho")) {
+          smtpHost = domain.endsWith(".in") ? "smtppro.zoho.in" : "smtp.zoho.com";
+          smtpPort = 465;
+          isSecure = true;
+        } else if (domain.includes("hostinger")) {
+          smtpHost = "smtp.hostinger.com";
+          smtpPort = 465;
+          isSecure = true;
+        } else if (domain.includes("titan")) {
+          smtpHost = "smtp.titan.email";
+          smtpPort = 465;
+          isSecure = true;
+        } else {
+          // Default Google Workspace / standard TLS
+          smtpHost = "smtp.gmail.com";
+          smtpPort = 465;
+          isSecure = true;
+        }
+      }
+
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: smtpPort,
+        secure: isSecure,
+        auth: {
+          user: smtpUser,
+          pass: smtpPass
+        }
+      });
+
+      const senderName = process.env.SENDER_NAME || "Calm Capital";
+      const fromFormatted = `"${senderName}" <${smtpUser}>`;
+
+      const info = await transporter.sendMail({
+        from: fromFormatted,
+        to: targetEmail,
+        replyTo: smtpUser,
+        subject,
+        html,
+        text
+      });
+
+      console.log(`[Welcome Email] Delivered via SMTP (${smtpHost}) to ${targetEmail}, messageId: ${info.messageId}`);
+
+      return res.status(200).json({
+        success: true,
+        provider: "smtp",
+        host: smtpHost,
+        messageId: info.messageId,
+        to: targetEmail,
+        subject
+      });
+    }
+
+    // -------------------------------------------------------------
+    // OPTION B: Resend HTTP API (if RESEND_API_KEY is configured)
+    // -------------------------------------------------------------
     const resendKey = process.env.RESEND_API_KEY;
     const fromAddress = process.env.EMAIL_FROM || "Calm Capital <yash@calmcapital.space>";
 
@@ -89,11 +163,11 @@ export default async function handler(req, res) {
       });
     }
 
-    // Fallback: Return simulated dispatch if RESEND_API_KEY is not yet added in Vercel settings
+    // Fallback: Return simulated dispatch if credentials are not yet set
     return res.status(200).json({
       success: true,
       simulated: true,
-      message: "Welcome email generated and verified. Set RESEND_API_KEY in Vercel environment to enable live email delivery.",
+      message: "Welcome email generated and verified. Set SMTP credentials or RESEND_API_KEY in Vercel to dispatch live.",
       to: targetEmail,
       subject
     });
@@ -101,7 +175,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error("[Welcome Email Error]:", error);
     return res.status(500).json({
-      error: "Internal error generating welcome email",
+      error: "Internal error delivering welcome email",
       message: error?.message
     });
   }
