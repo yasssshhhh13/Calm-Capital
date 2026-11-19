@@ -1,17 +1,13 @@
 /**
- * Calm Capital - Premium Institutional Welcome Email Template
+ * Calm Capital - Premium Welcome Email Template
  * 
- * High-End FinTech Aesthetic (Stripe / Mercury / Linear inspired)
- * Bulletproof HTML engineered for 100% fidelity across:
- * - Gmail (Web, iOS, Android)
- * - Apple Mail (macOS, iOS)
- * - Outlook (Desktop, Web, Mobile)
- * - Yahoo Mail & Superhuman
+ * Showcases the 4 Hero Features:
+ * 1. Multi-PAN Allotment Vault
+ * 2. Live GMP & IPO Forensics
+ * 3. Discipline Forex Journal
+ * 4. Live Forex News & Macro Calendar
  * 
- * Strict Email Client Safety:
- * - All padding strictly placed on <td> elements (never on <table> tags) to prevent text touching borders
- * - Generous breathing room (24px - 32px inner padding on cards)
- * - Clean mobile stacking
+ * Official Instagram Handle: @calmcapital_space (https://instagram.com/calmcapital_space)
  */
 
 export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = "" }) {
@@ -19,7 +15,7 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
   const displayName = name && name !== "Trader" ? name.trim() : "Trader";
   const userEmail = email ? email.toLowerCase() : "";
 
-  const subject = `Welcome to Calm Capital — Your Institutional Trading Desk is Ready`;
+  const subject = `Welcome to Calm Capital — Your IPO & Forex Trading Desk is Ready`;
 
   const html = `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
@@ -47,7 +43,6 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
       .mobile-p-6 { padding: 24px 16px !important; }
       .mobile-p-4 { padding: 20px 16px !important; }
       .mobile-h1 { font-size: 24px !important; line-height: 32px !important; }
-      .metric-col { display: block !important; width: 100% !important; border-right: none !important; border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; padding: 12px !important; }
       .mobile-btn { width: 100% !important; text-align: center !important; }
     }
   </style>
@@ -76,18 +71,18 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
                     <table role="presentation" cellspacing="0" cellpadding="0" border="0">
                       <tr>
                         <td valign="middle" style="padding-right: 14px;">
-                          <img src="https://calmcapital.space/logo.png" alt="Calm Capital" width="40" height="40" style="display: block; border-radius: 12px; width: 40px; height: 40px; background-color: #0A1628; border: 1px solid rgba(255, 255, 255, 0.1);" />
+                          <img src="https://calmcapital.space/logo.png" alt="Calm Capital" width="42" height="42" style="display: block; border-radius: 12px; width: 42px; height: 42px; background-color: #0A1628; border: 1px solid rgba(255, 255, 255, 0.1);" />
                         </td>
                         <td valign="middle">
-                          <span style="font-size: 19px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.4px; display: block; line-height: 22px;">Calm Capital</span>
+                          <span style="font-size: 20px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.4px; display: block; line-height: 24px;">Calm Capital</span>
                           <span style="font-size: 10px; font-weight: 700; color: #10B981; text-transform: uppercase; letter-spacing: 1.5px; display: block; line-height: 14px; margin-top: 3px;">Designed by Discipline</span>
                         </td>
                       </tr>
                     </table>
                   </td>
                   <td align="right" valign="middle">
-                    <span style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.28); border-radius: 20px; padding: 5px 13px; font-size: 10.5px; font-weight: 700; color: #34D399; letter-spacing: 0.8px; text-transform: uppercase;">
-                      &#x25CF; DESK ACTIVE
+                    <span style="display: inline-block; background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 5px 13px; font-size: 10.5px; font-weight: 700; color: #34D399; letter-spacing: 0.8px; text-transform: uppercase;">
+                      &#x25CF; DESK LIVE
                     </span>
                   </td>
                 </tr>
@@ -95,21 +90,21 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
             </td>
           </tr>
 
-          <!-- HERO BANNER: Clean Typography & Spacious Value Statement -->
+          <!-- HERO BANNER: Personal Greeting & Core Value -->
           <tr>
-            <td style="padding: 4px 40px 28px 40px;" class="mobile-p-6">
+            <td style="padding: 4px 40px 24px 40px;" class="mobile-p-6">
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: linear-gradient(145deg, #091527 0%, #0C1E37 100%); border: 1px solid rgba(28, 155, 218, 0.25); border-radius: 20px; overflow: hidden;">
                 <tr>
                   <td style="padding: 32px 30px;" class="mobile-p-4">
                     <div style="display: inline-block; background-color: rgba(28, 155, 218, 0.12); border: 1px solid rgba(28, 155, 218, 0.25); border-radius: 6px; padding: 4px 10px; font-size: 10px; font-weight: 800; color: #38BDF8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;">
-                      INSTITUTIONAL GATEWAY ACCESS
+                      DUAL-MARKET TRADING DESK
                     </div>
                     <h1 class="mobile-h1" style="font-size: 28px; line-height: 36px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.6px; margin-bottom: 12px;">
-                      Welcome to the Desk,<br />
-                      <span style="color: #38BDF8;">${displayName}.</span>
+                      Welcome to Calm Capital,<br />
+                      <span style="color: #38BDF8;">${displayName}!</span>
                     </h1>
-                    <p style="font-size: 14px; line-height: 23px; color: #94A3B8; margin: 0; font-weight: 400;">
-                      Your Google Single Sign-On was confirmed. Your private trading workspace, encrypted Family PAN Vault, and dual-market intelligence desks are ready.
+                    <p style="font-size: 14.5px; line-height: 24px; color: #94A3B8; margin: 0; font-weight: 400;">
+                      Your single destination for disciplined Indian IPO forensics and quantitative Forex trading intelligence. Your personalized workspace and hero tools are ready to explore.
                     </p>
                   </td>
                 </tr>
@@ -117,79 +112,15 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
             </td>
           </tr>
 
-          <!-- ACCOUNT SPECIFICATION MATRIX (FinTech Stats Row) -->
+          <!-- HERO FEATURES SECTION (Multi-PAN, Live GMP, Forex Journal, Forex News) -->
           <tr>
-            <td style="padding: 0 40px 24px 40px;" class="mobile-p-6">
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #07101E; border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; overflow: hidden;">
-                <tr>
-                  <!-- Metric 1 -->
-                  <td width="33.3%" align="center" style="padding: 16px 12px; border-right: 1px solid rgba(255, 255, 255, 0.06);" class="metric-col">
-                    <span style="font-size: 9.5px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">
-                      WORKSPACE TIER
-                    </span>
-                    <span style="font-size: 12.5px; font-weight: 700; color: #F1F5F9; display: block;">
-                      Institutional
-                    </span>
-                  </td>
-                  <!-- Metric 2 -->
-                  <td width="33.3%" align="center" style="padding: 16px 12px; border-right: 1px solid rgba(255, 255, 255, 0.06);" class="metric-col">
-                    <span style="font-size: 9.5px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">
-                      VAULT SECURITY
-                    </span>
-                    <span style="font-size: 12.5px; font-weight: 700; color: #34D399; display: block;">
-                      256-Bit SSL Isolated
-                    </span>
-                  </td>
-                  <!-- Metric 3 -->
-                  <td width="33.3%" align="center" style="padding: 16px 12px;" class="metric-col">
-                    <span style="font-size: 9.5px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px;">
-                      CLOUD ENGINE
-                    </span>
-                    <span style="font-size: 12.5px; font-weight: 700; color: #38BDF8; display: block;">
-                      Multi-Device Live
-                    </span>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-
-          <!-- CORE CAPABILITIES (Spacious, High-Contrast Desk Cards) -->
-          <tr>
-            <td style="padding: 0 40px 20px 40px;" class="mobile-p-6">
+            <td style="padding: 0 40px 16px 40px;" class="mobile-p-6">
               
               <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #64748B; margin-bottom: 16px;">
-                ACTIVE INTELLIGENCE MODULES
+                YOUR CORE TRADING DESK FEATURES
               </div>
 
-              <!-- Module 1: Indian IPO Forensics & GMP -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #071120; border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 16px; margin-bottom: 14px; overflow: hidden;">
-                <tr>
-                  <td style="padding: 22px 24px;" class="mobile-p-4">
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-                      <tr>
-                        <td align="left" valign="middle" style="padding-bottom: 8px;">
-                          <span style="display: inline-block; background-color: rgba(245, 158, 11, 0.12); border-radius: 6px; padding: 2px 8px; font-size: 9.5px; font-weight: 800; color: #FBBF24; text-transform: uppercase; letter-spacing: 0.8px;">
-                            PRIMARY MARKETS &bull; REAL-TIME
-                          </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td valign="top">
-                          <span style="font-size: 15px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 6px; line-height: 20px;">
-                            Indian IPO Forensics &amp; Live GMP
-                          </span>
-                          <span style="font-size: 13px; line-height: 21px; color: #94A3B8; display: block;">
-                            Track verified grey market sentiment, institutional QIB 50X alerts, financial health ratios, and registrar allotment timelines for Mainboard &amp; SME public issues.
-                          </span>
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Module 2: Cross-Device Family PAN Vault -->
+              <!-- Feature 1: Multi-PAN Allotment Vault -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #071120; border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 16px; margin-bottom: 14px; overflow: hidden;">
                 <tr>
                   <td style="padding: 22px 24px;" class="mobile-p-4">
@@ -197,17 +128,17 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
                       <tr>
                         <td align="left" valign="middle" style="padding-bottom: 8px;">
                           <span style="display: inline-block; background-color: rgba(16, 185, 129, 0.12); border-radius: 6px; padding: 2px 8px; font-size: 9.5px; font-weight: 800; color: #34D399; text-transform: uppercase; letter-spacing: 0.8px;">
-                            ACCOUNT VAULT &bull; ENCRYPTED
+                            FAMILY ALLOTMENT &bull; 1-CLICK CHECK
                           </span>
                         </td>
                       </tr>
                       <tr>
                         <td valign="top">
-                          <span style="font-size: 15px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 6px; line-height: 20px;">
-                            Strictly Private Family PAN Vault
+                          <span style="font-size: 16px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 6px; line-height: 22px;">
+                            Multi-PAN Family Allotment Vault
                           </span>
                           <span style="font-size: 13px; line-height: 21px; color: #94A3B8; display: block;">
-                            Save family PANs once—they are strictly isolated to your Google account and sync across your phone and desktop for 1-click batch allotment checking.
+                            Save your entire family's PAN profiles once. Check IPO allotment status across all major registrars (<strong style="color: #E2E8F0;">Link Intime, KFintech, Bigshare</strong>) in one single click without retyping PAN numbers.
                           </span>
                         </td>
                       </tr>
@@ -216,25 +147,25 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
                 </tr>
               </table>
 
-              <!-- Module 3: Quantitative Central Bank & Macro Desk -->
+              <!-- Feature 2: Live GMP & IPO Forensics -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #071120; border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 16px; margin-bottom: 14px; overflow: hidden;">
                 <tr>
                   <td style="padding: 22px 24px;" class="mobile-p-4">
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                       <tr>
                         <td align="left" valign="middle" style="padding-bottom: 8px;">
-                          <span style="display: inline-block; background-color: rgba(168, 85, 247, 0.12); border-radius: 6px; padding: 2px 8px; font-size: 9.5px; font-weight: 800; color: #C084FC; text-transform: uppercase; letter-spacing: 0.8px;">
-                            CENTRAL BANKS &bull; POSITION SIZING
+                          <span style="display: inline-block; background-color: rgba(245, 158, 11, 0.12); border-radius: 6px; padding: 2px 8px; font-size: 9.5px; font-weight: 800; color: #FBBF24; text-transform: uppercase; letter-spacing: 0.8px;">
+                            PRIMARY MARKETS &bull; REAL-TIME GMP
                           </span>
                         </td>
                       </tr>
                       <tr>
                         <td valign="top">
-                          <span style="font-size: 15px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 6px; line-height: 20px;">
-                            Global Forex &amp; Monetary Benchmarks
+                          <span style="font-size: 16px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 6px; line-height: 22px;">
+                            Live GMP &amp; Subscription Multiple Intelligence
                           </span>
                           <span style="font-size: 13px; line-height: 21px; color: #94A3B8; display: block;">
-                            Official policy rate tracking (RBI Repo Rate, US Fed Funds, ECB, BoE) paired with mathematical pip valuation, position sizing calculators, and economic calendar feeds.
+                            Live Grey Market Premium (GMP) trends, Kostak rates, subject-to-sauda estimates, and institutional QIB/HNI subscription demand tracking for both Mainboard and SME public issues.
                           </span>
                         </td>
                       </tr>
@@ -243,25 +174,52 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
                 </tr>
               </table>
 
-              <!-- Module 4: Discipline Trading Journal -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #071120; border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 16px; overflow: hidden;">
+              <!-- Feature 3: Discipline Forex Trading Journal -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #071120; border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 16px; margin-bottom: 14px; overflow: hidden;">
                 <tr>
                   <td style="padding: 22px 24px;" class="mobile-p-4">
                     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                       <tr>
                         <td align="left" valign="middle" style="padding-bottom: 8px;">
                           <span style="display: inline-block; background-color: rgba(28, 155, 218, 0.12); border-radius: 6px; padding: 2px 8px; font-size: 9.5px; font-weight: 800; color: #38BDF8; text-transform: uppercase; letter-spacing: 0.8px;">
-                            DISCIPLINE JOURNAL &bull; ZERO BIAS
+                            DISCIPLINE JOURNAL &bull; R:R METRICS
                           </span>
                         </td>
                       </tr>
                       <tr>
                         <td valign="top">
-                          <span style="font-size: 15px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 6px; line-height: 20px;">
-                            Private Discipline Trading Journal
+                          <span style="font-size: 16px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 6px; line-height: 22px;">
+                            Private Discipline Forex Journal
                           </span>
                           <span style="font-size: 13px; line-height: 21px; color: #94A3B8; display: block;">
-                            Audit execution setups, session expectancy, and risk-to-reward ratios across prop firm balances ($5,000 to $200,000) with complete strategy confidentiality.
+                            Audit your trades with mathematical precision. Track session expectancy, automated risk-to-reward (R:R) modeling, and emotional composure across prop firm account challenges ($5,000 to $200,000).
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Feature 4: Live Forex News & Macro Catalyst Desk -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #071120; border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 16px; overflow: hidden;">
+                <tr>
+                  <td style="padding: 22px 24px;" class="mobile-p-4">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td align="left" valign="middle" style="padding-bottom: 8px;">
+                          <span style="display: inline-block; background-color: rgba(168, 85, 247, 0.12); border-radius: 6px; padding: 2px 8px; font-size: 9.5px; font-weight: 800; color: #C084FC; text-transform: uppercase; letter-spacing: 0.8px;">
+                            MACRO DESK &bull; LIVE FEEDS
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td valign="top">
+                          <span style="font-size: 16px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 6px; line-height: 22px;">
+                            Live Forex News &amp; Economic Calendar
+                          </span>
+                          <span style="font-size: 13px; line-height: 21px; color: #94A3B8; display: block;">
+                            Real-time macroeconomic feeds, high-impact news catalysts, central bank benchmark policy rates (RBI Repo, US Fed, ECB, BoE), and zero-latency position sizing calculators.
                           </span>
                         </td>
                       </tr>
@@ -273,14 +231,14 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
             </td>
           </tr>
 
-          <!-- PRIMARY ACTION: Luxurious Pill CTA Button -->
+          <!-- PRIMARY ACTION: Launch Your Trading Desk -->
           <tr>
-            <td align="center" style="padding: 20px 40px 36px 40px;" class="mobile-p-6">
+            <td align="center" style="padding: 20px 40px 24px 40px;" class="mobile-p-6">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" class="mobile-btn" style="margin: 0 auto;">
                 <tr>
                   <td align="center" style="border-radius: 14px; background: linear-gradient(135deg, #10B981 0%, #1C9BDA 100%); box-shadow: 0 12px 28px -6px rgba(28, 155, 218, 0.35);">
-                    <a href="https://calmcapital.space" target="_blank" style="display: inline-block; padding: 16px 42px; font-size: 14.5px; font-weight: 800; color: #FFFFFF; text-decoration: none; border-radius: 14px; letter-spacing: 0.3px;">
-                      Open Your Trading Desk &rarr;
+                    <a href="https://calmcapital.space" target="_blank" style="display: inline-block; padding: 16px 42px; font-size: 15px; font-weight: 800; color: #FFFFFF; text-decoration: none; border-radius: 14px; letter-spacing: 0.3px;">
+                      Launch Your Trading Desk &rarr;
                     </a>
                   </td>
                 </tr>
@@ -288,6 +246,35 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
               <span style="display: block; font-size: 11px; color: #64748B; margin-top: 14px; text-align: center;">
                 Direct workspace URL: <a href="https://calmcapital.space" target="_blank" style="color: #38BDF8; text-decoration: underline;">https://calmcapital.space</a>
               </span>
+            </td>
+          </tr>
+
+          <!-- INSTAGRAM COMMUNITY CARD (Prominent with @calmcapital_space handle) -->
+          <tr>
+            <td style="padding: 0 40px 28px 40px;" class="mobile-p-6">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background: linear-gradient(135deg, rgba(225, 48, 108, 0.08) 0%, rgba(28, 155, 218, 0.08) 100%); border: 1px solid rgba(225, 48, 108, 0.25); border-radius: 16px; overflow: hidden;">
+                <tr>
+                  <td style="padding: 20px 24px;" class="mobile-p-4">
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                      <tr>
+                        <td width="36" valign="middle" style="padding-right: 14px;">
+                          <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); text-align: center; line-height: 36px; font-size: 18px; color: #FFFFFF;">
+                            &#x1F4F7;
+                          </div>
+                        </td>
+                        <td valign="middle">
+                          <span style="font-size: 14px; font-weight: 700; color: #FFFFFF; display: block; margin-bottom: 2px;">
+                            Follow Us on Instagram: <a href="https://www.instagram.com/calmcapital_space?utm_source=qr" target="_blank" style="color: #E1306C; text-decoration: underline;">@calmcapital_space</a>
+                          </span>
+                          <span style="font-size: 12px; line-height: 18px; color: #94A3B8; display: block;">
+                            Daily IPO GMP updates, listing gain alerts, forex setups, and market infographics.
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
 
@@ -311,18 +298,18 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
             <td style="padding: 30px 40px 38px 40px; background-color: #040812; border-top: 1px solid rgba(255, 255, 255, 0.05);" class="mobile-p-6">
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                 
-                <!-- Quick Navigation Links -->
+                <!-- Quick Navigation Links with Instagram handle -->
                 <tr>
                   <td align="center" style="padding-bottom: 22px;">
                     <a href="https://calmcapital.space" target="_blank" style="color: #94A3B8; font-size: 12px; font-weight: 600; margin: 0 12px;">calmcapital.space</a>
                     <span style="color: #334155;">&bull;</span>
                     <a href="mailto:yash@calmcapital.space" style="color: #1C9BDA; font-size: 12px; font-weight: 600; margin: 0 12px;">yash@calmcapital.space</a>
                     <span style="color: #334155;">&bull;</span>
-                    <a href="https://www.instagram.com/calmcapital.space?utm_source=qr" target="_blank" style="color: #E1306C; font-size: 12px; font-weight: 600; margin: 0 12px;">Instagram</a>
+                    <a href="https://www.instagram.com/calmcapital_space?utm_source=qr" target="_blank" style="color: #E1306C; font-size: 12px; font-weight: 700; margin: 0 12px;">Instagram @calmcapital_space</a>
                   </td>
                 </tr>
 
-                <!-- SEBI & RBI FEMA Regulatory Disclosures (Clean, legible spacing) -->
+                <!-- SEBI & RBI FEMA Regulatory Disclosures -->
                 <tr>
                   <td style="font-size: 11px; line-height: 18px; color: #475569; text-align: left; padding-bottom: 12px;">
                     <strong style="color: #64748B;">SEBI Regulatory Status:</strong> Calm Capital is an independent informational and research platform. We are not registered with the Securities and Exchange Board of India (SEBI) as investment advisers or research analysts. Information provided on the platform, including Grey Market Premiums (GMP) and subscription figures, is for educational and analytical purposes only and should not be construed as financial advice.
@@ -356,24 +343,20 @@ export function generateWelcomeEmail({ name = "Trader", email = "", loginTime = 
 
   const text = `Welcome to Calm Capital, ${displayName}!
 
-Your institutional trading workspace and dual-market intelligence desk are ready.
+Your single destination for disciplined Indian IPO forensics and quantitative Forex trading intelligence.
 
-ACCOUNT SNAPSHOT:
-- Workspace Tier: Institutional
-- Vault Security: 256-Bit SSL Isolated
-- Cloud Sync: Multi-Device Live
+HERO FEATURES ON YOUR TRADING DESK:
+1. Multi-PAN Family Allotment Vault: Save family PANs once and check batch IPO allotments across Link Intime, KFintech, and Bigshare in 1 single click.
+2. Live GMP & Subscription Tracker: Real-time Grey Market Premiums, Kostak rates, subject-to-sauda estimates, and institutional QIB/HNI subscription demand.
+3. Private Discipline Forex Journal: Audit trade expectancy, calculate automatic R:R modeling, and track execution composure across prop firm accounts ($5k to $200k).
+4. Live Forex News & Economic Calendar: High-impact macro events, central bank benchmark policy rates (RBI, US Fed, ECB, BoE), and live economic calendars.
 
-ACTIVE INTELLIGENCE MODULES:
-1. Indian IPO Forensics & Real-Time GMP: Track live grey market sentiment, QIB 50X alerts, and registrar allotment timelines.
-2. Strictly Private Family PAN Vault: Save family PANs once with multi-device cloud synchronization and 1-click batch allotment checking.
-3. Global Forex & Monetary Benchmarks: Official monetary policy rates (RBI, Fed, ECB, BoE) with zero-latency pip and position sizing calculators.
-4. Private Discipline Trading Journal: Audit execution setups, session expectancy, and risk-to-reward ratios across prop firm balances ($5,000 to $200,000).
+Follow us on Instagram: https://instagram.com/calmcapital_space (Handle: @calmcapital_space)
 
 Launch your trading desk: https://calmcapital.space
 
 Security Confirmation: Signed in via Google OAuth 2.0 at ${formattedTime}.
-Support & Inquiries: yash@calmcapital.space
-Official Instagram: https://instagram.com/calmcapital.space
+Official Contact: yash@calmcapital.space
 
 Disclaimer: Calm Capital is an independent educational platform. Not SEBI registered financial advisory.
 © ${new Date().getFullYear()} Calm Capital. Designed by Discipline.`;

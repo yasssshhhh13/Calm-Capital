@@ -10045,11 +10045,11 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
               <Send size={16} />
             </a>
             <a
-              href="https://www.instagram.com/calmcapital.space?utm_source=qr"
+              href="https://www.instagram.com/calmcapital_space?utm_source=qr"
               target="_blank"
               rel="noopener noreferrer"
               className="text-slate-400 hover:text-[#E1306C] transition-colors"
-              title="Follow on Instagram"
+              title="Follow on Instagram (@calmcapital_space)"
             >
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
@@ -10159,7 +10159,7 @@ function Footer({ dark, navigateToTab, setOverviewType }) {
         <div className="flex items-center gap-3">
           {/* Instagram */}
           <a
-            href="https://www.instagram.com/calmcapital.space?utm_source=qr"
+            href="https://www.instagram.com/calmcapital_space?utm_source=qr"
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-200 no-underline"
