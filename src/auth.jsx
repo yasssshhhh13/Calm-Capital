@@ -199,45 +199,43 @@ export function AuthProvider({ children }) {
     }
   }, [user]);
 
-  // Automatic cross-device Cloud Synchronization for Family PANs
+  // Automatic cross-device Cloud Synchronization for Family PANs (Strictly Isolated per Email)
   useEffect(() => {
     if (!user?.email) return;
     let active = true;
+    const userEmail = user.email.toLowerCase();
 
     (async () => {
       try {
-        const cloudUser = await fetchCloudUser(user.email);
+        const cloudUser = await fetchCloudUser(userEmail);
         if (!active) return;
 
-        let localPans = [];
+        // Scoped storage strictly for THIS user
+        let scopedLocalPans = [];
         try {
-          const raw = localStorage.getItem("calmcapital_family_pans");
-          if (raw) localPans = JSON.parse(raw);
+          const raw = localStorage.getItem(`calmcapital_family_pans_${userEmail}`);
+          if (raw) scopedLocalPans = JSON.parse(raw);
         } catch { /* ignore */ }
 
-        const currentPans = Array.isArray(user.savedPans) && user.savedPans.length > 0
-          ? user.savedPans
-          : (Array.isArray(localPans) ? localPans : []);
-
-        const mergedPans = mergePans(cloudUser?.savedPans || [], currentPans);
+        const cloudPans = Array.isArray(cloudUser?.savedPans) ? cloudUser.savedPans : [];
+        // Only merge with this user's own scoped storage (never across users)
+        const mergedPans = mergePans(cloudPans, scopedLocalPans);
         const mergedAllotments = {
           ...(cloudUser?.savedAllotments || {}),
           ...(user.savedAllotments || {})
         };
 
-        const currentPansJson = JSON.stringify(currentPans);
+        const currentPansJson = JSON.stringify(user.savedPans || []);
         const mergedPansJson = JSON.stringify(mergedPans);
 
-        // If cloud had new PANs (e.g. mobile phone just logged in and loaded laptop's 12 PANs)
         if (mergedPansJson !== currentPansJson) {
-          setUser((prev) => (prev ? { ...prev, savedPans: mergedPans, savedAllotments: mergedAllotments } : prev));
+          setUser((prev) => (prev && prev.email === user.email ? { ...prev, savedPans: mergedPans, savedAllotments: mergedAllotments } : prev));
           try {
-            localStorage.setItem("calmcapital_family_pans", mergedPansJson);
+            localStorage.setItem(`calmcapital_family_pans_${userEmail}`, mergedPansJson);
           } catch { /* ignore */ }
         }
 
-        // If local had PANs that were missing from cloud (e.g. laptop had 12 PANs saved offline)
-        const cloudPansJson = JSON.stringify(cloudUser?.savedPans || []);
+        const cloudPansJson = JSON.stringify(cloudPans);
         if (mergedPansJson !== cloudPansJson && mergedPans.length > 0) {
           pushCloudUser(user.email, user.name, mergedPans, mergedAllotments);
         }
@@ -261,9 +259,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * 1-Click Sign In with Google / Gmail (Firebase Powered + Cloud PAN Vault Sync)
+   * 1-Click Sign In with Google / Gmail (Firebase Powered + Strict Account Isolation)
    */
-  const signInWithGoogle = useCallback(async (localPans = []) => {
+  const signInWithGoogle = useCallback(async () => {
     let googleUser = null;
     try {
       googleUser = await signInWithFirebaseGoogle();
@@ -281,24 +279,22 @@ export function AuthProvider({ children }) {
     const photoURL = googleUser.photoURL || "";
     const now = new Date().toISOString();
 
-    // Fetch existing cloud vault for this email
+    // Fetch existing cloud vault strictly for THIS email
     let cloudUser = null;
     try {
       cloudUser = await fetchCloudUser(cleanEmail);
     } catch { /* ignore */ }
 
-    // Read any local pans in localStorage if localPans argument is empty
-    let fallbackLocal = [];
-    if (!Array.isArray(localPans) || localPans.length === 0) {
-      try {
-        const raw = localStorage.getItem("calmcapital_family_pans");
-        if (raw) fallbackLocal = JSON.parse(raw);
-      } catch { /* ignore */ }
-    }
-    const candidateLocal = Array.isArray(localPans) && localPans.length > 0 ? localPans : fallbackLocal;
+    // Read offline scoped storage for THIS email only
+    let accountScopedPans = [];
+    try {
+      const raw = localStorage.getItem(`calmcapital_family_pans_${cleanEmail}`);
+      if (raw) accountScopedPans = JSON.parse(raw);
+    } catch { /* ignore */ }
 
-    // Smart merge cloud + local
-    const mergedPans = mergePans(cloudUser?.savedPans || [], candidateLocal);
+    // Strict isolation: this account's pans come ONLY from its own cloud vault or its own scoped offline cache
+    const cloudPans = Array.isArray(cloudUser?.savedPans) ? cloudUser.savedPans : [];
+    const mergedPans = mergePans(cloudPans, accountScopedPans);
     const mergedAllotments = {
       ...(cloudUser?.savedAllotments || {}),
       ...(cloudUser?.allotments || {})
@@ -317,15 +313,16 @@ export function AuthProvider({ children }) {
       savedAllotments: mergedAllotments
     };
 
-    // Save to localStorage & session
+    // Save strictly to this user's session & scoped storage
     saveStoredSession(account);
     try {
-      localStorage.setItem("calmcapital_family_pans", JSON.stringify(mergedPans));
+      localStorage.setItem(`calmcapital_family_pans_${cleanEmail}`, JSON.stringify(mergedPans));
+      localStorage.removeItem("calmcapital_family_pans");
     } catch { /* ignore */ }
 
     setUser(account);
 
-    // Push merged vault back to cloud
+    // Push vault back to cloud
     if (cleanEmail) {
       pushCloudUser(cleanEmail, cleanName, mergedPans, mergedAllotments);
       triggerWelcomeEmail(cleanEmail, cleanName);
@@ -335,9 +332,9 @@ export function AuthProvider({ children }) {
   }, []);
 
   /**
-   * Direct Gmail Connect (In-Modal fallback + Cloud PAN Vault Sync)
+   * Direct Gmail Connect (In-Modal fallback + Strict Account Isolation)
    */
-  const signInWithGmailAddress = useCallback(async (inputEmail, localPans = []) => {
+  const signInWithGmailAddress = useCallback(async (inputEmail) => {
     if (!inputEmail || typeof inputEmail !== "string" || !inputEmail.includes("@")) {
       throw new Error("Please enter a valid Gmail address (e.g. trader@gmail.com).");
     }
@@ -350,16 +347,14 @@ export function AuthProvider({ children }) {
       cloudUser = await fetchCloudUser(cleanEmail);
     } catch { /* ignore */ }
 
-    let fallbackLocal = [];
-    if (!Array.isArray(localPans) || localPans.length === 0) {
-      try {
-        const raw = localStorage.getItem("calmcapital_family_pans");
-        if (raw) fallbackLocal = JSON.parse(raw);
-      } catch { /* ignore */ }
-    }
-    const candidateLocal = Array.isArray(localPans) && localPans.length > 0 ? localPans : fallbackLocal;
+    let accountScopedPans = [];
+    try {
+      const raw = localStorage.getItem(`calmcapital_family_pans_${cleanEmail}`);
+      if (raw) accountScopedPans = JSON.parse(raw);
+    } catch { /* ignore */ }
 
-    const mergedPans = mergePans(cloudUser?.savedPans || [], candidateLocal);
+    const cloudPans = Array.isArray(cloudUser?.savedPans) ? cloudUser.savedPans : [];
+    const mergedPans = mergePans(cloudPans, accountScopedPans);
     const mergedAllotments = {
       ...(cloudUser?.savedAllotments || {}),
       ...(cloudUser?.allotments || {})
@@ -380,7 +375,8 @@ export function AuthProvider({ children }) {
 
     saveStoredSession(account);
     try {
-      localStorage.setItem("calmcapital_family_pans", JSON.stringify(mergedPans));
+      localStorage.setItem(`calmcapital_family_pans_${cleanEmail}`, JSON.stringify(mergedPans));
+      localStorage.removeItem("calmcapital_family_pans");
     } catch { /* ignore */ }
 
     setUser(account);
@@ -402,6 +398,8 @@ export function AuthProvider({ children }) {
     try {
       localStorage.removeItem(SESSION_STORAGE_KEY);
       localStorage.removeItem("calmcapital_accounts");
+      localStorage.removeItem("calmcapital_family_pans");
+      localStorage.removeItem("calmcapital_family_allotments");
     } catch { /* ignore */ }
   }, []);
 
@@ -410,7 +408,7 @@ export function AuthProvider({ children }) {
    */
   const syncPansToAccount = useCallback((newPans) => {
     const currentUser = userRef.current;
-    if (!currentUser || currentUser.authProvider !== "google") return;
+    if (!currentUser || currentUser.authProvider !== "google" || !currentUser.email) return;
 
     const oldPansJson = JSON.stringify(currentUser.savedPans || []);
     const newPansJson = JSON.stringify(newPans || []);
@@ -420,16 +418,17 @@ export function AuthProvider({ children }) {
 
     const now = new Date().toISOString();
     setUser((prev) => {
-      if (!prev) return null;
+      if (!prev || prev.email !== currentUser.email) return prev;
       const updated = { ...prev, savedPans: newPans, vaultUpdatedAt: now };
       saveStoredSession(updated);
+      try {
+        localStorage.setItem(`calmcapital_family_pans_${currentUser.email.toLowerCase()}`, newPansJson);
+      } catch { /* ignore */ }
       return updated;
     });
 
     // Asynchronously push to cloud store
-    if (currentUser.email) {
-      pushCloudUser(currentUser.email, currentUser.name, newPans, currentUser.savedAllotments || {});
-    }
+    pushCloudUser(currentUser.email, currentUser.name, newPans, currentUser.savedAllotments || {});
   }, []);
 
   /**
@@ -437,7 +436,7 @@ export function AuthProvider({ children }) {
    */
   const syncAllotmentsToAccount = useCallback((newAllotments) => {
     const currentUser = userRef.current;
-    if (!currentUser || currentUser.authProvider !== "google") return;
+    if (!currentUser || currentUser.authProvider !== "google" || !currentUser.email) return;
 
     const oldAllotmentsJson = JSON.stringify(currentUser.savedAllotments || {});
     const newAllotmentsJson = JSON.stringify(newAllotments || {});
@@ -446,15 +445,16 @@ export function AuthProvider({ children }) {
     }
 
     setUser((prev) => {
-      if (!prev) return null;
+      if (!prev || prev.email !== currentUser.email) return prev;
       const updated = { ...prev, savedAllotments: newAllotments };
       saveStoredSession(updated);
+      try {
+        localStorage.setItem(`calmcapital_family_allotments_${currentUser.email.toLowerCase()}`, newAllotmentsJson);
+      } catch { /* ignore */ }
       return updated;
     });
 
-    if (currentUser.email) {
-      pushCloudUser(currentUser.email, currentUser.name, currentUser.savedPans || [], newAllotments);
-    }
+    pushCloudUser(currentUser.email, currentUser.name, currentUser.savedPans || [], newAllotments);
   }, []);
 
   const refreshFromCloud = useCallback(async () => {
@@ -463,15 +463,9 @@ export function AuthProvider({ children }) {
     try {
       const cloud = await fetchCloudUser(currentUser.email);
       if (cloud && Array.isArray(cloud.savedPans)) {
-        let localPans = [];
+        setUser((prev) => (prev && prev.email === currentUser.email ? { ...prev, savedPans: cloud.savedPans, savedAllotments: cloud.savedAllotments || prev.savedAllotments } : prev));
         try {
-          const raw = localStorage.getItem("calmcapital_family_pans");
-          if (raw) localPans = JSON.parse(raw);
-        } catch { /* ignore */ }
-        const merged = mergePans(cloud.savedPans, localPans || currentUser.savedPans || []);
-        setUser((prev) => (prev ? { ...prev, savedPans: merged, savedAllotments: cloud.savedAllotments || prev.savedAllotments } : prev));
-        try {
-          localStorage.setItem("calmcapital_family_pans", JSON.stringify(merged));
+          localStorage.setItem(`calmcapital_family_pans_${currentUser.email.toLowerCase()}`, JSON.stringify(cloud.savedPans));
         } catch { /* ignore */ }
       }
     } catch (err) {

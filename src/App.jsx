@@ -5557,19 +5557,14 @@ function useFamilyPans() {
       const userSession = localStorage.getItem("calmcapital_user_session");
       if (userSession) {
         const u = JSON.parse(userSession);
-        if (u && u.authProvider === "google" && Array.isArray(u?.savedPans) && u.savedPans.length > 0) {
+        if (u && u.authProvider === "google" && Array.isArray(u?.savedPans)) {
           return u.savedPans;
         }
       }
-      const stored = localStorage.getItem("calmcapital_family_pans");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          const realOnly = parsed.filter(
-            (p) => p && p.pan && p.pan !== "AAACB1234F" && p.pan !== "BNZPD5678K" && p.pan !== "CPYPS9012L"
-          );
-          return realOnly;
-        }
+      const guest = localStorage.getItem("calmcapital_family_pans_guest");
+      if (guest) {
+        const parsed = JSON.parse(guest);
+        if (Array.isArray(parsed)) return parsed;
       }
     } catch (e) {
       console.error(e);
@@ -5579,53 +5574,61 @@ function useFamilyPans() {
 
   const [masked, setMasked] = useState(true);
 
-  // When user session changes, load user's saved pans if available (with smart merge)
+  // When user session changes, cleanly switch to this account's pans ONLY (NO CROSS-ACCOUNT MERGING)
+  const activeUserEmailRef = useRef(user?.email || null);
   const lastUserPansRef = useRef(null);
+
   useEffect(() => {
+    const nextEmail = user?.email ? user.email.toLowerCase() : null;
+    const accountChanged = activeUserEmailRef.current !== nextEmail;
+    activeUserEmailRef.current = nextEmail;
+
+    if (accountChanged) {
+      // Switching accounts or logging in/out:
+      if (user) {
+        const accountPans = Array.isArray(user.savedPans) ? user.savedPans : [];
+        lastUserPansRef.current = JSON.stringify(accountPans);
+        setPans(accountPans);
+      } else {
+        // Logged out / guest mode
+        lastUserPansRef.current = null;
+        try {
+          const guest = localStorage.getItem("calmcapital_family_pans_guest");
+          setPans(guest ? JSON.parse(guest) : []);
+        } catch {
+          setPans([]);
+        }
+      }
+      return;
+    }
+
+    // Same account: sync from cloud updates
     if (user && Array.isArray(user.savedPans)) {
       const userPansJson = JSON.stringify(user.savedPans);
       if (lastUserPansRef.current === userPansJson) return;
       lastUserPansRef.current = userPansJson;
-
-      setPans((prev) => {
-        const seen = new Set();
-        const merged = [];
-        for (const p of user.savedPans) {
-          const num = (p?.pan || "").toUpperCase();
-          if (num && !seen.has(num)) {
-            seen.add(num);
-            merged.push(p);
-          }
-        }
-        for (const p of prev) {
-          const num = (p?.pan || "").toUpperCase();
-          if (num && !seen.has(num)) {
-            seen.add(num);
-            merged.push(p);
-          }
-        }
-        if (JSON.stringify(merged) === JSON.stringify(prev)) {
-          return prev;
-        }
-        return merged;
-      });
+      setPans(user.savedPans);
     }
-  }, [user?.id, user?.savedPans]);
+  }, [user?.email, user?.savedPans]);
 
-  // Persist to localStorage and sync to cloud account only when pans actually change
+  // Persist strictly to this account's scoped storage and push to cloud
   const lastSyncedPansRef = useRef(null);
   useEffect(() => {
     try {
       const pansJson = JSON.stringify(pans);
-      localStorage.setItem("calmcapital_family_pans", pansJson);
-      if (user && lastSyncedPansRef.current !== pansJson) {
-        lastSyncedPansRef.current = pansJson;
-        syncPansToAccount(pans);
+      if (user?.email) {
+        localStorage.setItem(`calmcapital_family_pans_${user.email.toLowerCase()}`, pansJson);
+        if (lastSyncedPansRef.current !== pansJson) {
+          lastSyncedPansRef.current = pansJson;
+          syncPansToAccount(pans);
+        }
+      } else {
+        localStorage.setItem("calmcapital_family_pans_guest", pansJson);
       }
     } catch (e) {
       console.error(e);
     }
-  }, [pans, user?.id, syncPansToAccount]);
+  }, [pans, user?.email, syncPansToAccount]);
 
   const addPan = (item) => {
     const cleanPan = item.pan.trim().toUpperCase();
@@ -5688,44 +5691,63 @@ function useFamilyAllotments() {
           return u.savedAllotments;
         }
       }
-      const stored = localStorage.getItem("calmcapital_family_allotments");
-      return stored ? JSON.parse(stored) : {};
+      const guest = localStorage.getItem("calmcapital_family_allotments_guest");
+      return guest ? JSON.parse(guest) : {};
     } catch {
       return {};
     }
   });
 
+  const activeUserEmailRef = useRef(user?.email || null);
   const lastUserAllotmentsRef = useRef(null);
+
   useEffect(() => {
+    const nextEmail = user?.email ? user.email.toLowerCase() : null;
+    const accountChanged = activeUserEmailRef.current !== nextEmail;
+    activeUserEmailRef.current = nextEmail;
+
+    if (accountChanged) {
+      if (user) {
+        const accountAllotments = user.savedAllotments || {};
+        lastUserAllotmentsRef.current = JSON.stringify(accountAllotments);
+        setAllotments(accountAllotments);
+      } else {
+        lastUserAllotmentsRef.current = null;
+        try {
+          const guest = localStorage.getItem("calmcapital_family_allotments_guest");
+          setAllotments(guest ? JSON.parse(guest) : {});
+        } catch {
+          setAllotments({});
+        }
+      }
+      return;
+    }
+
     if (user && user.savedAllotments) {
       const userAllotmentsJson = JSON.stringify(user.savedAllotments);
       if (lastUserAllotmentsRef.current === userAllotmentsJson) return;
       lastUserAllotmentsRef.current = userAllotmentsJson;
-
-      setAllotments((prev) => {
-        const merged = {
-          ...prev,
-          ...user.savedAllotments,
-        };
-        if (JSON.stringify(merged) === JSON.stringify(prev)) return prev;
-        return merged;
-      });
+      setAllotments(user.savedAllotments);
     }
-  }, [user?.id, user?.savedAllotments]);
+  }, [user?.email, user?.savedAllotments]);
 
   const lastSyncedAllotmentsRef = useRef(null);
   useEffect(() => {
     try {
       const allotmentsJson = JSON.stringify(allotments);
-      localStorage.setItem("calmcapital_family_allotments", allotmentsJson);
-      if (user && lastSyncedAllotmentsRef.current !== allotmentsJson) {
-        lastSyncedAllotmentsRef.current = allotmentsJson;
-        syncAllotmentsToAccount(allotments);
+      if (user?.email) {
+        localStorage.setItem(`calmcapital_family_allotments_${user.email.toLowerCase()}`, allotmentsJson);
+        if (lastSyncedAllotmentsRef.current !== allotmentsJson) {
+          lastSyncedAllotmentsRef.current = allotmentsJson;
+          syncAllotmentsToAccount(allotments);
+        }
+      } else {
+        localStorage.setItem("calmcapital_family_allotments_guest", allotmentsJson);
       }
     } catch (e) {
       console.error(e);
     }
-  }, [allotments, user?.id, syncAllotmentsToAccount]);
+  }, [allotments, user?.email, syncAllotmentsToAccount]);
 
   const getOutcome = (ipoId, panId) => {
     if (!ipoId || !panId || !allotments[ipoId]) return { status: "Not Checked", lots: 0 };
@@ -9986,8 +10008,6 @@ export default function App() {
         isOpen={auth.authModalOpen}
         onClose={auth.closeAuthModal}
         initialTab={auth.authModalInitialTab}
-        currentLocalPans={familyPans.pans}
-        currentLocalAllotments={familyAllotments.allotments}
         dark={dark}
         onNavigateTab={navigateToTab}
       />

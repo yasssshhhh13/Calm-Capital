@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, ShieldCheck, Lock, Sparkles, CheckCircle, Mail, ArrowRight, AlertCircle, Key, Check } from "lucide-react";
 import { useAuth } from "../auth";
 
-export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark, onNavigateTab }) {
+export default function AuthModal({ isOpen, onClose, dark, onNavigateTab }) {
   const { signInWithGoogle, signInWithGmailAddress } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -26,7 +26,7 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
     setLoading(true);
 
     try {
-      const user = await signInWithGoogle(currentLocalPans);
+      const user = await signInWithGoogle();
       if (user) {
         setSuccessUser(user);
         setTimeout(() => {
@@ -66,7 +66,7 @@ export default function AuthModal({ isOpen, onClose, currentLocalPans = [], dark
     setLoading(true);
 
     try {
-      const user = await signInWithGmailAddress(directEmail, currentLocalPans);
+      const user = await signInWithGmailAddress(directEmail);
       const activeUser = user || { name: directEmail.split("@")[0], email: directEmail };
       setSuccessUser(activeUser);
       setTimeout(() => {
