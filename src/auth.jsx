@@ -125,6 +125,31 @@ async function pushCloudUser(email, name, pans, allotments) {
   }
 }
 
+// Asynchronously triggers the institutional welcome email upon user sign-in
+function triggerWelcomeEmail(email, name) {
+  if (!email) return;
+  try {
+    const sentKey = `calmcapital_welcome_sent_${email.toLowerCase()}`;
+    const alreadySent = sessionStorage.getItem(sentKey);
+    if (alreadySent) return;
+    sessionStorage.setItem(sentKey, "true");
+
+    fetch("/api/send-welcome-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        name,
+        loginTime: new Date().toUTCString()
+      })
+    }).catch((err) => {
+      console.warn("[Welcome Email Trigger]:", err?.message || err);
+    });
+  } catch {
+    /* ignore */
+  }
+}
+
 export function mergePans(cloudPans = [], localPans = []) {
   const seen = new Set();
   const merged = [];
@@ -304,6 +329,7 @@ export function AuthProvider({ children }) {
     // Push merged vault back to cloud
     if (cleanEmail) {
       pushCloudUser(cleanEmail, cleanName, mergedPans, mergedAllotments);
+      triggerWelcomeEmail(cleanEmail, cleanName);
     }
 
     return account;
@@ -363,6 +389,7 @@ export function AuthProvider({ children }) {
 
     if (cleanEmail) {
       pushCloudUser(cleanEmail, cleanName, mergedPans, mergedAllotments);
+      triggerWelcomeEmail(cleanEmail, cleanName);
     }
 
     return account;
