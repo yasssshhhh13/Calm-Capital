@@ -303,13 +303,15 @@ export default function CalmMacro3DStage({ onSelectTab, dark }) {
   return (
     <div className="relative w-full rounded-3xl overflow-hidden bg-white dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 shadow-xl p-5 sm:p-8 lg:p-10 select-none transition-all">
 
-      {/* 1. REAL HD INTERBANK TRADING VIDEO BACKDROP (Bold & Clearly Visible) */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-3xl">
+      {/* 1. REAL HD INTERBANK TRADING VIDEO BACKDROP (Bold & Clearly Visible, Instant Poster) */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-3xl bg-[#06121f]">
         <video
           autoPlay
           loop
           muted
           playsInline
+          preload="auto"
+          poster="/videos/forex-market-poster.jpg"
           className={`w-full h-full object-cover transition-opacity duration-700 ${dark ? "opacity-60" : "opacity-55"
             }`}
           src="/videos/forex-market.mp4"

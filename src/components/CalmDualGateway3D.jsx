@@ -151,14 +151,14 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
               </p>
             </div>
 
-            {/* PROMINENT HD LIVE TRADING CANDLESTICK TERMINAL SCREEN (100% CLEAR & VISIBLE) */}
-            <div className="relative w-full h-44 sm:h-48 md:h-52 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg bg-black group-hover:border-emerald-400 transition-colors">
+            {/* PROMINENT HD LIVE STOCK MARKET & EQUITY TERMINAL SCREEN (Zero Lag, Instant Poster) */}
+            <div className="relative w-full h-44 sm:h-48 md:h-52 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg bg-[#06121f] group-hover:border-emerald-400 transition-colors">
               {/* Terminal Screen Header Bar */}
               <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-3 py-1.5 bg-slate-950/80 border-b border-emerald-500/30">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   <span className="text-[10px] font-mono font-black text-emerald-400 tracking-wider">
-                    LIVE BSE/NSE ORDERFLOW &amp; CANDLESTICKS
+                    LIVE PRIMARY MARKET &amp; EQUITY EXCHANGES
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -171,14 +171,16 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
                 </div>
               </div>
 
-              {/* CRYSTAL-CLEAR HD CANDLESTICK VIDEO (High Visibility, Zero Lag) */}
+              {/* CRYSTAL-CLEAR HD EQUITY IPO VIDEO (Instant Poster, No Black Screen) */}
               <video
                 autoPlay
                 loop
                 muted
                 playsInline
+                preload="auto"
+                poster="/videos/ipo-market-poster.jpg"
                 className="w-full h-full object-cover pt-6"
-                src="/videos/trading-candles.mp4"
+                src="/videos/ipo-market.mp4"
               />
             </div>
 
@@ -252,8 +254,8 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
               </p>
             </div>
 
-            {/* PROMINENT HD LIVE INTERBANK TRADING MONITORS (100% CLEAR & VISIBLE) */}
-            <div className="relative w-full h-44 sm:h-48 md:h-52 rounded-2xl overflow-hidden border border-[#1c9bda]/40 shadow-lg bg-black group-hover:border-[#1c9bda] transition-colors">
+            {/* PROMINENT HD LIVE INTERBANK TRADING MONITORS (Instant Poster, Zero Black Flash) */}
+            <div className="relative w-full h-44 sm:h-48 md:h-52 rounded-2xl overflow-hidden border border-[#1c9bda]/40 shadow-lg bg-[#06121f] group-hover:border-[#1c9bda] transition-colors">
               {/* Terminal Screen Header Bar */}
               <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-3 py-1.5 bg-slate-950/80 border-b border-[#1c9bda]/30">
                 <div className="flex items-center gap-2">
@@ -272,12 +274,14 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
                 </div>
               </div>
 
-              {/* CRYSTAL-CLEAR HD FOREX TERMINALS VIDEO (High Visibility, Zero Lag) */}
+              {/* CRYSTAL-CLEAR HD FOREX TERMINALS VIDEO (Instant Poster, No Black Screen) */}
               <video
                 autoPlay
                 loop
                 muted
                 playsInline
+                preload="auto"
+                poster="/videos/forex-market-poster.jpg"
                 className="w-full h-full object-cover pt-6"
                 src="/videos/forex-market.mp4"
               />

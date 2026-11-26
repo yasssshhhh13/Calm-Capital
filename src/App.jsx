@@ -9186,9 +9186,9 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* Right Column: Prominent HD Live Candlestick Trading Display (Zero Lag, 100% Clear) */}
+                    {/* Right Column: Prominent HD Live Candlestick Trading Display (Zero Lag, Instant Poster) */}
                     <div className="md:col-span-5 hidden md:block">
-                      <div className="relative rounded-2xl border border-emerald-500/40 bg-black overflow-hidden shadow-2xl shadow-emerald-950/40">
+                      <div className="relative rounded-2xl border border-emerald-500/40 bg-[#06121f] overflow-hidden shadow-2xl shadow-emerald-950/40">
                         {/* Terminal Top Bar */}
                         <div className="flex items-center justify-between px-3.5 py-2 bg-slate-950 border-b border-emerald-500/30">
                           <div className="flex items-center gap-2">
@@ -9202,12 +9202,14 @@ export default function App() {
                           </span>
                         </div>
 
-                        {/* Crisp Distinct Market Video Display */}
+                        {/* Crisp Distinct Market Video Display (Instant Poster, No Black Screen) */}
                         <video
                           autoPlay
                           loop
                           muted
                           playsInline
+                          preload="auto"
+                          poster="/videos/hero-market-poster.jpg"
                           className="w-full h-44 object-cover"
                           src="/videos/hero-market.mp4"
                         />
