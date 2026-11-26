@@ -955,31 +955,87 @@ export default function ForexCalculatorTab({ dark, onNavigateJournal }) {
                 />
               </div>
 
-              <div className="sm:col-span-5 space-y-1.5">
+              <div className="sm:col-span-5 space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    Risk Percentage
+                  <label className="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Percent className="w-3.5 h-3.5 text-rose-500" />
+                    <span>Risk Percentage</span>
                   </label>
-                  <span className="text-xs font-mono font-black text-rose-500">
-                    {posRiskPercent}%
+                  <span className={`text-xs font-mono font-black px-2 py-0.5 rounded ${
+                    posRiskPercent <= 2.0
+                      ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                      : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                  }`}>
+                    {posRiskPercent}% of capital
                   </span>
                 </div>
-                <div className="flex gap-1">
-                  {[0.5, 1.0, 1.5, 2.0].map((r) => (
+
+                {/* Custom Risk Percentage Input */}
+                <div className="relative">
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0.1"
+                    max="100"
+                    value={posRiskPercent}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      setPosRiskPercent(isNaN(val) ? 0.5 : Math.max(0.05, Math.min(100, Math.round(val * 100) / 100)));
+                    }}
+                    className="w-full px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-[#071324] border border-slate-200/80 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-bold focus:outline-none focus:ring-2 focus:ring-teal-500/40"
+                    placeholder="Enter custom risk %..."
+                  />
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono font-bold text-slate-400">%</span>
+                </div>
+
+                {/* Presets with 2.0% Institutional Standard Tag */}
+                <div className="flex flex-wrap gap-1">
+                  {[0.5, 1.0, 1.5, 2.0, 3.0, 5.0].map((r) => (
                     <button
                       key={r}
                       type="button"
                       onClick={() => setPosRiskPercent(r)}
-                      className={`flex-1 py-2 rounded-xl text-[11px] font-mono font-bold transition-all cursor-pointer border ${
+                      className={`flex-1 min-w-[42px] py-1.5 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer border ${
                         posRiskPercent === r
-                          ? "bg-rose-500 text-white border-rose-500 shadow-sm"
-                          : "bg-slate-50 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-400"
+                          ? r <= 2.0
+                            ? "bg-teal-500 text-white border-teal-500 shadow-sm"
+                            : "bg-amber-500 text-white border-amber-500 shadow-sm"
+                          : "bg-slate-50 dark:bg-white/[0.03] border-slate-200/80 dark:border-white/5 text-slate-600 dark:text-slate-400 hover:border-slate-300"
                       }`}
                     >
-                      {r}%
+                      {r}%{r === 2.0 ? "★" : ""}
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Institutional 2% Max Risk Rule & Capital Protection Guidance Banner */}
+              <div className="sm:col-span-12">
+                {posRiskPercent <= 2.0 ? (
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-start gap-2.5 text-xs text-emerald-800 dark:text-emerald-300">
+                    <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-bold flex items-center gap-1.5">
+                        <span>Institutional Rule: Safe Capital Preservation ({posRiskPercent}% ≤ 2.0% Recommended Max)</span>
+                      </div>
+                      <p className="text-[11px] text-emerald-700/90 dark:text-emerald-300/80 mt-0.5 leading-relaxed">
+                        Top institutional trading desks and prop firms advise risking a maximum of <strong>2.0% per trade</strong> to survive consecutive loss variance. Your risk setting is disciplined.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
+                    <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-bold flex items-center gap-1.5 text-amber-700 dark:text-amber-300">
+                        <span>High Risk Notice: Exceeds Recommended 2.0% Maximum Rule ({posRiskPercent}%)</span>
+                      </div>
+                      <p className="text-[11px] text-amber-700/90 dark:text-amber-300/80 mt-0.5 leading-relaxed">
+                        Institutional best practice recommends risking <strong>max 2.0%</strong> of capital per trade. You have full freedom to set whatever risk you want — at the end of the day, it is completely your choice — but higher risk accelerates drawdown velocity.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* TradingView Live Quote Link */}

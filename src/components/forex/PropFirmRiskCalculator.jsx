@@ -167,18 +167,43 @@ export default function PropFirmRiskCalculator({ onClose, dark }) {
 
         {/* Risk Percentage */}
         <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-            Planned Risk %
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Planned Risk %
+            </label>
+            <span className={`text-[10px] font-mono font-bold px-1.5 py-0.2 rounded ${
+              riskPercent <= 2.0 ? "text-emerald-500 bg-emerald-500/10" : "text-amber-500 bg-amber-500/10"
+            }`}>
+              {riskPercent <= 2.0 ? "≤ 2% Standard" : "> 2% Custom"}
+            </span>
+          </div>
           <div className="relative">
             <input
               type="number"
               step="0.1"
+              min="0.1"
+              max="100"
               value={riskPercent}
               onChange={(e) => setRiskPercent(Math.max(0.1, Number(e.target.value)))}
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-slate-900 dark:text-white focus:outline-none focus:border-teal-500"
             />
             <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-mono text-slate-400">%</span>
+          </div>
+          <div className="flex gap-1 mt-1.5">
+            {[0.5, 1.0, 1.5, 2.0, 3.0, 5.0].map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRiskPercent(r)}
+                className={`flex-1 py-1 rounded-lg text-[9px] font-mono font-bold transition-all cursor-pointer border ${
+                  riskPercent === r
+                    ? r <= 2.0 ? "bg-teal-500 text-white border-teal-500" : "bg-amber-500 text-white border-amber-500"
+                    : "bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-slate-300"
+                }`}
+              >
+                {r}%{r === 2.0 ? "★" : ""}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -196,6 +221,33 @@ export default function PropFirmRiskCalculator({ onClose, dark }) {
         </div>
 
       </div>
+
+      {/* Institutional 2% Max Risk Guidance Banner */}
+      {riskPercent <= 2.0 ? (
+        <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-start gap-2.5 text-xs text-emerald-800 dark:text-emerald-300">
+          <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+          <div>
+            <div className="font-bold flex items-center gap-1.5">
+              <span>Institutional Rule: Safe Capital Preservation ({riskPercent}% ≤ 2.0% Recommended Max)</span>
+            </div>
+            <p className="text-[11px] text-emerald-700/90 dark:text-emerald-300/80 mt-0.5 leading-relaxed">
+              Top prop firms and institutional funds enforce a maximum <strong>2.0% risk rule</strong> per setup to protect against drawdown ruin. Your current position is disciplined.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
+          <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          <div>
+            <div className="font-bold flex items-center gap-1.5 text-amber-700 dark:text-amber-300">
+              <span>High Risk Notice: Exceeds Recommended 2.0% Maximum Rule ({riskPercent}%)</span>
+            </div>
+            <p className="text-[11px] text-amber-700/90 dark:text-amber-300/80 mt-0.5 leading-relaxed">
+              Institutional best practice recommends risking <strong>max 2.0%</strong> per trade. You have full freedom to set whatever risk percentage you want — at the end of the day, it is your choice — but higher risk accelerates drawdown velocity.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Dynamic Results Output Ribbon */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.02] border border-slate-200/80 dark:border-white/10">

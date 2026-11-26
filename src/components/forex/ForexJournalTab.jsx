@@ -21,6 +21,119 @@ import { fetchLiveForexRates } from "../../services/forexLiveRates.js";
 
 const LOCAL_STORAGE_KEY = "calm_capital_forex_journal_v7_clean";
 
+// Instrument specs for institutional pip step & pip value per 1.0 standard lot
+export const JOURNAL_INSTRUMENT_METRICS = {
+  // Majors
+  "EUR/USD": { pipStep: 0.0001, pipValuePerLot: 10, contractSize: 100000 },
+  "GBP/USD": { pipStep: 0.0001, pipValuePerLot: 10, contractSize: 100000 },
+  "USD/JPY": { pipStep: 0.01, pipValuePerLot: 6.5, contractSize: 100000 },
+  "USD/CHF": { pipStep: 0.0001, pipValuePerLot: 11.3, contractSize: 100000 },
+  "USD/CAD": { pipStep: 0.0001, pipValuePerLot: 7.2, contractSize: 100000 },
+  "AUD/USD": { pipStep: 0.0001, pipValuePerLot: 10, contractSize: 100000 },
+  "NZD/USD": { pipStep: 0.0001, pipValuePerLot: 10, contractSize: 100000 },
+  // Crosses
+  "EUR/GBP": { pipStep: 0.0001, pipValuePerLot: 12.7, contractSize: 100000 },
+  "EUR/JPY": { pipStep: 0.01, pipValuePerLot: 6.5, contractSize: 100000 },
+  "GBP/JPY": { pipStep: 0.01, pipValuePerLot: 6.5, contractSize: 100000 },
+  // Metals & Energy (Standard 100 oz gold contract: 1 pip = $0.10 move = $10 per lot)
+  "XAU/USD": { pipStep: 0.1, pipValuePerLot: 10, contractSize: 100 },
+  "XAG/USD": { pipStep: 0.01, pipValuePerLot: 50, contractSize: 5000 },
+  "WTI/USD": { pipStep: 0.01, pipValuePerLot: 10, contractSize: 1000 },
+  "BRENT/USD": { pipStep: 0.01, pipValuePerLot: 10, contractSize: 1000 },
+  // Indices
+  "US30": { pipStep: 1.0, pipValuePerLot: 1.0, contractSize: 1 },
+  "NAS100": { pipStep: 0.1, pipValuePerLot: 1.0, contractSize: 1 },
+  "SPX500": { pipStep: 0.1, pipValuePerLot: 10, contractSize: 10 },
+  "GER40": { pipStep: 1.0, pipValuePerLot: 1.08, contractSize: 1 },
+  // Crypto
+  "BTC/USD": { pipStep: 1.0, pipValuePerLot: 1.0, contractSize: 1 },
+  "ETH/USD": { pipStep: 0.1, pipValuePerLot: 1.0, contractSize: 1 },
+  "SOL/USD": { pipStep: 0.01, pipValuePerLot: 1.0, contractSize: 1 },
+  // Emerging
+  "USD/INR": { pipStep: 0.01, pipValuePerLot: 1.18, contractSize: 100000 },
+  "USD/AED": { pipStep: 0.0001, pipValuePerLot: 2.72, contractSize: 100000 }
+};
+
+/**
+ * Universal institutional trade metrics calculator
+ * Computes exact net pips, realized dollar P&L, and risk-reward ratio from execution parameters
+ */
+export function calculateJournalTradeMetrics({
+  pair = "EUR/USD",
+  type = "LONG",
+  entryPrice,
+  stopLoss,
+  takeProfit,
+  exitPrice = null,
+  status = "WIN",
+  lotSize = 1.0
+}) {
+  const entry = parseFloat(entryPrice);
+  const sl = parseFloat(stopLoss);
+  const tp = parseFloat(takeProfit);
+  const exit = parseFloat(exitPrice);
+  const lots = Math.max(0.001, parseFloat(lotSize) || 1.0);
+  const isLong = (type || "LONG").toUpperCase() === "LONG" || (type || "LONG").toUpperCase() === "BUY";
+
+  const normPair = (pair || "EUR/USD").toUpperCase().trim();
+  const spec = JOURNAL_INSTRUMENT_METRICS[normPair] || (
+    normPair.includes("JPY")
+      ? { pipStep: 0.01, pipValuePerLot: 6.5 }
+      : normPair.includes("XAU") || normPair.includes("GOLD")
+      ? { pipStep: 0.1, pipValuePerLot: 10 }
+      : normPair.includes("BTC")
+      ? { pipStep: 1.0, pipValuePerLot: 1.0 }
+      : normPair.includes("ETH")
+      ? { pipStep: 0.1, pipValuePerLot: 1.0 }
+      : normPair.includes("30") || normPair.includes("40")
+      ? { pipStep: 1.0, pipValuePerLot: 1.0 }
+      : { pipStep: 0.0001, pipValuePerLot: 10 }
+  );
+
+  if (isNaN(entry) || entry <= 0) {
+    return { pips: 0, pnl: 0, riskReward: null, effectiveExit: 0 };
+  }
+
+  // Determine effective exit price based on outcome or manual exit
+  let effectiveExit = null;
+  if (!isNaN(exit) && exit > 0) {
+    effectiveExit = exit;
+  } else if (status === "WIN") {
+    effectiveExit = !isNaN(tp) && tp > 0 ? tp : (isLong ? entry + spec.pipStep * 50 : entry - spec.pipStep * 50);
+  } else if (status === "LOSS") {
+    effectiveExit = !isNaN(sl) && sl > 0 ? sl : (isLong ? entry - spec.pipStep * 25 : entry + spec.pipStep * 25);
+  } else if (status === "BREAKEVEN") {
+    effectiveExit = entry;
+  } else {
+    // OPEN trade
+    effectiveExit = entry;
+  }
+
+  // Price difference from entry
+  const priceDiff = isLong ? (effectiveExit - entry) : (entry - effectiveExit);
+  const rawPips = priceDiff / spec.pipStep;
+  const pips = Math.round(rawPips * 10) / 10;
+  const rawPnl = pips * spec.pipValuePerLot * lots;
+  const pnl = Math.round(rawPnl * 100) / 100;
+
+  // Planned Risk:Reward ratio
+  let riskReward = null;
+  if (!isNaN(sl) && !isNaN(tp) && sl > 0 && tp > 0) {
+    const riskDistance = Math.abs(entry - sl);
+    const rewardDistance = Math.abs(tp - entry);
+    if (riskDistance > 0) {
+      riskReward = (rewardDistance / riskDistance).toFixed(2);
+    }
+  }
+
+  return {
+    pips,
+    pnl,
+    riskReward,
+    effectiveExit
+  };
+}
+
 // Clean default user customizable trading account
 const DEFAULT_USER_ACCOUNTS = [
   { id: "REAL_MAIN", name: "Personal Real Account", startingBalance: 2500, type: "Real / Live" }
@@ -52,16 +165,43 @@ function purgeLegacyDummyTrades() {
 purgeLegacyDummyTrades();
 
 // Ensure no dummy trades or auto numbers from old sample presets ever leak into the journal
+// And automatically backfill pips and P&L for closed trades where entry and SL/TP are present
 function sanitizeLoadedTrades(raw) {
   if (!Array.isArray(raw)) return [];
   const dummyIds = new Set(["trade-1", "trade-2", "trade-3", "trade-4", "trade-5", "trade-6", "trade-7", "trade-8"]);
-  return raw.filter((t) => {
-    if (!t || !t.id) return false;
-    if (dummyIds.has(t.id)) return false;
-    if (t.isDummy || t.isDemo) return false;
-    if (t.notes === "Clean 15M FVG displacement" || t.notes === "Asian high sweep rejection") return false;
-    return true;
-  });
+  return raw
+    .filter((t) => {
+      if (!t || !t.id) return false;
+      if (dummyIds.has(t.id)) return false;
+      if (t.isDummy || t.isDemo) return false;
+      if (t.notes === "Clean 15M FVG displacement" || t.notes === "Asian high sweep rejection") return false;
+      return true;
+    })
+    .map((t) => {
+      const pnlNum = parseFloat(t.pnl);
+      const pipsNum = parseFloat(t.pips);
+      const entryNum = parseFloat(t.entryPrice);
+      // If pnl or pips are missing or 0 but entry and SL/TP exist, auto-calculate
+      if ((isNaN(pnlNum) || pnlNum === 0 || isNaN(pipsNum) || pipsNum === 0) && entryNum > 0 && (t.takeProfit || t.stopLoss)) {
+        const auto = calculateJournalTradeMetrics({
+          pair: t.pair,
+          type: t.type,
+          entryPrice: t.entryPrice,
+          stopLoss: t.stopLoss,
+          takeProfit: t.takeProfit,
+          exitPrice: t.exitPrice,
+          status: t.status,
+          lotSize: t.lotSize
+        });
+        return {
+          ...t,
+          pnl: isNaN(pnlNum) || pnlNum === 0 ? auto.pnl : pnlNum,
+          pips: isNaN(pipsNum) || pipsNum === 0 ? auto.pips : pipsNum,
+          rrRatio: t.rrRatio || auto.riskReward || 2.0
+        };
+      }
+      return t;
+    });
 }
 
 // Ensure no dummy tiers from old prop presets leak into the user's real account list
@@ -387,6 +527,39 @@ export default function ForexJournalTab({ dark }) {
     return null;
   }, [form.entryPrice, form.stopLoss, form.takeProfit]);
 
+  // Live Auto-Calculation for Modal Form: Pips, Dollar P&L, RR Ratio
+  const liveFormMetrics = useMemo(() => {
+    return calculateJournalTradeMetrics({
+      pair: form.pair,
+      type: form.type,
+      entryPrice: form.entryPrice,
+      stopLoss: form.stopLoss,
+      takeProfit: form.takeProfit,
+      exitPrice: form.exitPrice,
+      status: form.status,
+      lotSize: form.lotSize
+    });
+  }, [form.pair, form.type, form.entryPrice, form.stopLoss, form.takeProfit, form.exitPrice, form.status, form.lotSize]);
+
+  // Flag to know whether user explicitly manually altered pnl/pips
+  const [manualPnlOverride, setManualPnlOverride] = useState(false);
+
+  // Automatically sync calculated pips and pnl into form when user inputs price parameters
+  useEffect(() => {
+    if (!modalOpen) {
+      setManualPnlOverride(false);
+      return;
+    }
+    const hasPrices = parseFloat(form.entryPrice) > 0 && (parseFloat(form.takeProfit) > 0 || parseFloat(form.stopLoss) > 0);
+    if (hasPrices && !manualPnlOverride) {
+      setForm((prev) => ({
+        ...prev,
+        pips: String(liveFormMetrics.pips),
+        pnl: String(liveFormMetrics.pnl)
+      }));
+    }
+  }, [liveFormMetrics.pips, liveFormMetrics.pnl, modalOpen, manualPnlOverride, form.entryPrice, form.takeProfit, form.stopLoss]);
+
   // Executive Journal Statistics (for active account)
   const stats = useMemo(() => {
     const closed = accountTrades.filter((t) => t.status !== "OPEN");
@@ -517,6 +690,7 @@ export default function ForexJournalTab({ dark }) {
       return;
     }
     setEditingTradeId(null);
+    setManualPnlOverride(false);
     setForm({
       ...defaultForm,
       account: selectedAccount !== "ALL" ? selectedAccount : (accounts[0]?.id || "REAL_MAIN")
@@ -526,8 +700,28 @@ export default function ForexJournalTab({ dark }) {
 
   const handleOpenEditModal = (t) => {
     setEditingTradeId(t.id);
+    const targetAcc = t.account || (selectedAccount !== "ALL" ? selectedAccount : (accounts[0]?.id || "REAL_MAIN"));
+    
+    // Auto calculate if pnl or pips are empty or 0
+    const auto = calculateJournalTradeMetrics({
+      pair: t.pair,
+      type: t.type,
+      entryPrice: t.entryPrice,
+      stopLoss: t.stopLoss,
+      takeProfit: t.takeProfit,
+      exitPrice: t.exitPrice,
+      status: t.status,
+      lotSize: t.lotSize
+    });
+
+    const hasStoredPnl = t.pnl !== undefined && t.pnl !== "" && !isNaN(parseFloat(t.pnl)) && parseFloat(t.pnl) !== 0;
+    const hasStoredPips = t.pips !== undefined && t.pips !== "" && !isNaN(parseFloat(t.pips)) && parseFloat(t.pips) !== 0;
+
+    const initialPnl = hasStoredPnl ? t.pnl : (auto.pnl !== 0 ? String(auto.pnl) : (t.pnl || ""));
+    const initialPips = hasStoredPips ? t.pips : (auto.pips !== 0 ? String(auto.pips) : (t.pips || ""));
+
     setForm({
-      account: t.account || "FUNDED_5K",
+      account: targetAcc,
       pair: t.pair || "EUR/USD",
       type: t.type || "LONG",
       date: t.date || new Date().toISOString().slice(0, 16),
@@ -541,22 +735,42 @@ export default function ForexJournalTab({ dark }) {
       riskAmount: t.riskAmount || "",
       rewardAmount: t.rewardAmount || "",
       status: t.status || "WIN",
-      pnl: t.pnl || "",
-      pips: t.pips || "",
+      pnl: String(initialPnl),
+      pips: String(initialPips),
       psychology: t.psychology || "Disciplined ✅",
       notes: t.notes || "",
       chartUrl: t.chartUrl || ""
     });
+    setManualPnlOverride(hasStoredPnl && hasStoredPips);
     setModalOpen(true);
   };
 
   const handleSaveTrade = (e) => {
     e.preventDefault();
-    const finalRR = computedRR || form.rrRatio || 2.0;
+    const autoCalc = calculateJournalTradeMetrics({
+      pair: form.pair,
+      type: form.type,
+      entryPrice: form.entryPrice,
+      stopLoss: form.stopLoss,
+      takeProfit: form.takeProfit,
+      exitPrice: form.exitPrice,
+      status: form.status,
+      lotSize: form.lotSize
+    });
+
+    const parsedPnl = form.pnl !== "" && !isNaN(parseFloat(form.pnl))
+      ? parseFloat(form.pnl)
+      : autoCalc.pnl;
+    const parsedPips = form.pips !== "" && !isNaN(parseFloat(form.pips))
+      ? parseFloat(form.pips)
+      : autoCalc.pips;
+    const finalRR = computedRR || form.rrRatio || autoCalc.riskReward || 2.0;
+
+    const targetAccount = form.account || (selectedAccount !== "ALL" ? selectedAccount : (accounts[0]?.id || "REAL_MAIN"));
 
     const newTrade = {
       id: editingTradeId || `trade-${Date.now()}`,
-      account: form.account,
+      account: targetAccount,
       pair: form.pair,
       type: form.type,
       date: form.date,
@@ -571,8 +785,8 @@ export default function ForexJournalTab({ dark }) {
       rewardAmount: parseFloat(form.rewardAmount) || 0,
       rrRatio: parseFloat(finalRR),
       status: form.status,
-      pnl: parseFloat(form.pnl) || 0,
-      pips: parseFloat(form.pips) || 0,
+      pnl: parsedPnl,
+      pips: parsedPips,
       psychology: form.psychology,
       notes: form.notes,
       chartUrl: form.chartUrl
@@ -584,6 +798,29 @@ export default function ForexJournalTab({ dark }) {
       setTrades((prev) => [newTrade, ...prev]);
     }
     setModalOpen(false);
+  };
+
+  // 1-Click Recalculate Trade P&L and Pips from Entry / SL / TP
+  const handleRecalculateTrade = (tradeId) => {
+    setTrades((prev) => prev.map((t) => {
+      if (t.id !== tradeId) return t;
+      const auto = calculateJournalTradeMetrics({
+        pair: t.pair,
+        type: t.type,
+        entryPrice: t.entryPrice,
+        stopLoss: t.stopLoss,
+        takeProfit: t.takeProfit,
+        exitPrice: t.exitPrice,
+        status: t.status,
+        lotSize: t.lotSize
+      });
+      return {
+        ...t,
+        pnl: auto.pnl,
+        pips: auto.pips,
+        rrRatio: auto.riskReward || t.rrRatio || 2.0
+      };
+    }));
   };
 
   const handleDeleteTrade = (id) => {
@@ -831,43 +1068,60 @@ export default function ForexJournalTab({ dark }) {
             </span>
           </button>
 
-          {accounts.map((acc) => (
-            <div key={acc.id} className="relative group flex items-center">
-              <button
-                type="button"
-                onClick={() => setSelectedAccount(acc.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border flex items-center gap-1.5 ${selectedAccount === acc.id
-                    ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-sm"
-                    : "bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:bg-slate-100"
-                  }`}
-              >
-                <span>{acc.name}</span>
-                <span className={`text-[10px] font-mono font-black px-1.5 py-0.2 rounded-md ${selectedAccount === acc.id
-                    ? "bg-white/20 dark:bg-black/20 text-white dark:text-slate-900"
-                    : "bg-teal-500/10 text-teal-600 dark:text-teal-400 font-bold"
-                  }`}>
-                  ${(acc.startingBalance || 0).toLocaleString()}
-                </span>
-              </button>
+          {accounts.map((acc) => {
+            const accTrades = trades.filter((t) => t.account === acc.id || (!t.account && acc.id === "REAL_MAIN"));
+            const accClosed = accTrades.filter((t) => t.status !== "OPEN");
+            const accPnl = accTrades.reduce((sum, t) => sum + (parseFloat(t.pnl) || 0), 0);
+            const accEquity = (acc.startingBalance || 0) + accPnl;
+            const isSelected = selectedAccount === acc.id;
 
-              {/* Quick Edit Capital Button */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setEditingAccount(acc);
-                  setAccFormName(acc.name);
-                  setAccFormBalance(String(acc.startingBalance || 0));
-                  setAccFormType(acc.type || "Real / Live");
-                  setAccountModalOpen(true);
-                }}
-                className="ml-1 p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer"
-                title={`Edit Capital for ${acc.name}`}
-              >
-                <Edit2 size={12} />
-              </button>
-            </div>
-          ))}
+            return (
+              <div key={acc.id} className="relative group flex items-center">
+                <button
+                  type="button"
+                  onClick={() => setSelectedAccount(acc.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                    isSelected
+                      ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-transparent shadow-sm"
+                      : "bg-slate-50 dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:bg-slate-100"
+                  }`}
+                >
+                  <span>{acc.name}</span>
+                  <span className={`text-[10px] font-mono font-black px-1.5 py-0.5 rounded-md ${
+                    isSelected
+                      ? "bg-white/20 dark:bg-black/20 text-white dark:text-slate-900"
+                      : "bg-teal-500/10 text-teal-600 dark:text-teal-400 font-bold"
+                  }`}>
+                    ${accEquity.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                  </span>
+                  {accClosed.length > 0 && accPnl !== 0 && (
+                    <span className={`text-[9px] font-mono font-bold px-1 py-0.2 rounded ${
+                      accPnl > 0 ? "bg-emerald-500/20 text-emerald-400 dark:text-emerald-300" : "bg-rose-500/20 text-rose-300"
+                    }`}>
+                      {accPnl > 0 ? "+" : ""}${Math.round(accPnl)}
+                    </span>
+                  )}
+                </button>
+
+                {/* Quick Edit Capital Button */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingAccount(acc);
+                    setAccFormName(acc.name);
+                    setAccFormBalance(String(acc.startingBalance || 0));
+                    setAccFormType(acc.type || "Real / Live");
+                    setAccountModalOpen(true);
+                  }}
+                  className="ml-1 p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 cursor-pointer"
+                  title={`Edit Capital for ${acc.name}`}
+                >
+                  <Edit2 size={12} />
+                </button>
+              </div>
+            );
+          })}
         </div>
 
         {/* Add Real Account Button */}
@@ -1373,14 +1627,23 @@ export default function ForexJournalTab({ dark }) {
                         <td className="p-3.5 text-center whitespace-nowrap">
                           <div className="flex items-center justify-center gap-1">
                             <button
+                              onClick={() => handleRecalculateTrade(t.id)}
+                              className="p-1.5 rounded-lg hover:bg-teal-500/10 text-slate-400 hover:text-teal-600 dark:hover:text-teal-400 transition-colors cursor-pointer"
+                              title="Auto-Recalculate Net Pips & P&L"
+                            >
+                              <RefreshCw className="w-3.5 h-3.5" />
+                            </button>
+                            <button
                               onClick={() => handleOpenEditModal(t)}
                               className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors cursor-pointer"
+                              title="Edit Journal Entry"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleDeleteTrade(t.id)}
                               className="p-1.5 rounded-lg hover:bg-rose-500/10 text-slate-400 hover:text-rose-500 transition-colors cursor-pointer"
+                              title="Delete Entry"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -1741,11 +2004,47 @@ export default function ForexJournalTab({ dark }) {
               </div>
             </div>
 
-            {/* RR Pill display */}
-            {computedRR && (
-              <div className="p-2.5 rounded-xl bg-teal-500/10 border border-teal-500/20 text-xs font-mono text-teal-700 dark:text-teal-300 flex items-center justify-between">
-                <span>Computed Risk:Reward:</span>
-                <strong className="text-sm">1 : {computedRR}</strong>
+            {/* Live Auto-Calculated Net Pips & Realized P&L Indicator */}
+            {(parseFloat(form.entryPrice) > 0 && (parseFloat(form.takeProfit) > 0 || parseFloat(form.stopLoss) > 0)) && (
+              <div className="p-3 rounded-2xl bg-teal-500/10 border border-teal-500/25 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+                  <span className="text-teal-700 dark:text-teal-300 font-bold">Auto-Calculated:</span>
+                  <span className={`px-2 py-0.5 rounded font-black text-xs ${
+                    liveFormMetrics.pnl >= 0
+                      ? "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
+                      : "bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30"
+                  }`}>
+                    {liveFormMetrics.pnl >= 0 ? "+" : ""}${liveFormMetrics.pnl}
+                  </span>
+                  <span className={`font-black text-xs ${
+                    liveFormMetrics.pips >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                  }`}>
+                    ({liveFormMetrics.pips >= 0 ? "+" : ""}{liveFormMetrics.pips} pips)
+                  </span>
+                  {computedRR && (
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400">
+                      • R:R 1:{computedRR}
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setManualPnlOverride(false);
+                    setForm((prev) => ({
+                      ...prev,
+                      pips: String(liveFormMetrics.pips),
+                      pnl: String(liveFormMetrics.pnl)
+                    }));
+                  }}
+                  className="px-2.5 py-1 rounded-lg bg-teal-500/20 hover:bg-teal-500/30 text-teal-700 dark:text-teal-300 font-bold text-[10px] transition-all cursor-pointer flex items-center gap-1 active:scale-95"
+                  title="Reset inputs to exact mathematical calculation"
+                >
+                  <RefreshCw className="w-3 h-3" />
+                  <span>Sync Auto Values</span>
+                </button>
               </div>
             )}
 
@@ -1780,29 +2079,45 @@ export default function ForexJournalTab({ dark }) {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                  Realized P&amp;L ($)
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Realized P&amp;L ($)
+                  </label>
+                  {manualPnlOverride && (
+                    <span className="text-[9px] text-amber-500 font-bold">Manual</span>
+                  )}
+                </div>
                 <input
                   type="number"
                   step="any"
                   value={form.pnl}
-                  onChange={(e) => setForm({ ...form, pnl: e.target.value })}
-                  placeholder="e.g. 1250 or -250"
+                  onChange={(e) => {
+                    setManualPnlOverride(true);
+                    setForm({ ...form, pnl: e.target.value });
+                  }}
+                  placeholder={liveFormMetrics.pnl !== 0 ? String(liveFormMetrics.pnl) : "e.g. 100 or -50"}
                   className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-slate-900 dark:text-white"
                 />
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                  Net Pips
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Net Pips
+                  </label>
+                  {manualPnlOverride && (
+                    <span className="text-[9px] text-amber-500 font-bold">Manual</span>
+                  )}
+                </div>
                 <input
                   type="number"
                   step="any"
                   value={form.pips}
-                  onChange={(e) => setForm({ ...form, pips: e.target.value })}
-                  placeholder="e.g. 60 or -30"
+                  onChange={(e) => {
+                    setManualPnlOverride(true);
+                    setForm({ ...form, pips: e.target.value });
+                  }}
+                  placeholder={liveFormMetrics.pips !== 0 ? String(liveFormMetrics.pips) : "e.g. 100 or -50"}
                   className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-xs font-mono font-bold text-slate-900 dark:text-white"
                 />
               </div>
