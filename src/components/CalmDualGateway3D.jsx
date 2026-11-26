@@ -166,7 +166,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
                     PRIMARY DESK
                   </span>
                   <span className="text-[10px] font-mono text-slate-400">
-                    Kostak: +₹450
+                    BSE • NSE
                   </span>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
             <div className="grid grid-cols-2 gap-2 text-xs font-bold text-slate-700 dark:text-slate-200">
               <div className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 flex items-center gap-2">
                 <Activity className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span className="truncate">Live GMP &amp; Kostak Rates</span>
+                <span className="truncate">Live GMP &amp; Valuations</span>
               </div>
               <div className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-teal-400 shrink-0" />
