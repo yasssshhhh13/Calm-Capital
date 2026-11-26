@@ -400,3 +400,126 @@ html.dark .glow-blue { box-shadow: 0 0 16px 2px rgba(28,155,218,0.4); border-col
 .financial-bar           { height: 8px; border-radius: 4px; background-color: var(--cc-blue); transition: width 0.6s cubic-bezier(0.16,1,0.3,1); }
 .financial-bar-pat       { background-color: #16A34A; }
 .financial-bar-ebitda    { background-color: #D97706; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CALM CAPITAL — ULTRA-PREMIUM 3D & MOTION ARCHITECTURE
+   Inspired by Apple, Linear, and MotionSites institutional luxury design.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 3D Perspective Container */
+.perspective-container {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+/* 3D Depth Card */
+.card-3d-luxury {
+  position: relative;
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.32s ease, border-color 0.25s ease;
+  transform: translateZ(0);
+  will-change: transform, box-shadow;
+}
+
+html:not(.dark) .card-3d-luxury:hover {
+  transform: translateY(-4px) translateZ(8px);
+  box-shadow: 0 20px 40px -12px rgba(11, 31, 51, 0.12), 0 0 0 1px rgba(28, 155, 218, 0.15) !important;
+}
+
+html.dark .card-3d-luxury {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+}
+
+html.dark .card-3d-luxury:hover {
+  transform: translateY(-4px) translateZ(8px);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.15), 0 24px 48px -12px rgba(0, 0, 0, 0.8), 0 0 24px -4px rgba(28, 155, 218, 0.25) !important;
+  border-color: rgba(28, 155, 218, 0.45) !important;
+}
+
+/* Specular Shimmer Sweep Effect */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-150%) skewX(-15deg); }
+  50%, 100% { transform: translateX(250%) skewX(-15deg); }
+}
+
+.shimmer-active {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 100%
+  );
+  animation: shimmer-sweep 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+/* Ambient Radial Background Glow */
+.ambient-glow-bg {
+  background-image: 
+    radial-gradient(circle at 50% 0%, rgba(28, 155, 218, 0.12), transparent 45%),
+    radial-gradient(circle at 100% 50%, rgba(20, 184, 166, 0.08), transparent 35%);
+}
+
+html.dark .ambient-glow-bg {
+  background-image: 
+    radial-gradient(circle at 50% -10%, rgba(28, 155, 218, 0.18), transparent 50%),
+    radial-gradient(circle at 85% 25%, rgba(20, 184, 166, 0.12), transparent 40%),
+    radial-gradient(circle at 15% 75%, rgba(14, 165, 233, 0.08), transparent 40%);
+}
+
+/* 3D Floating Mesh Animation */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(0.4deg); }
+}
+
+.animate-float-gentle {
+  animation: float-gentle 6s ease-in-out infinite;
+}
+
+/* Live Pulse Radar Ring */
+@keyframes live-radar {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.animate-live-radar {
+  animation: live-radar 2.2s infinite;
+}
+
+/* Glass Floating Navbar Dock */
+.glass-dock {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(11, 31, 51, 0.08);
+  box-shadow: 0 12px 32px -4px rgba(11, 31, 51, 0.06);
+}
+
+html.dark .glass-dock {
+  background: rgba(11, 18, 32, 0.88);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.7), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}

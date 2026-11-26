@@ -4,6 +4,7 @@ import {
   ArrowRight, ShieldCheck, Activity, DollarSign, Calculator
 } from "lucide-react";
 import CalmForex3DStage from "./CalmForex3DStage";
+import TradingViewTickerTape from "./TradingViewTickerTape";
 import ForexNewsTab from "./ForexNewsTab";
 import ForexJournalTab from "./ForexJournalTab";
 import ForexCalculatorTab from "./ForexCalculatorTab";
@@ -29,6 +30,9 @@ export default function ForexSection({ dark, initialSubTab = "news", onSubTabCha
           if (el) el.scrollIntoView({ behavior: "smooth" });
         }}
       />
+
+      {/* Live TradingView Real-Time Ticker Feed */}
+      <TradingViewTickerTape dark={dark} />
 
       {/* Forex Sub-navigation */}
       <div id="forex-subnav" className="p-3 sm:p-4 rounded-3xl bg-white dark:bg-[#0B1528] border border-slate-200/80 dark:border-white/10 shadow-sm">

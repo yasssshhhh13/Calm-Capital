@@ -3,7 +3,7 @@ import React, { memo } from "react";
 /**
  * CalmIpoBullBackdrop
  * Ultra-Smooth Dalal Street & Wall Street Charging Bull Financial Animation.
- * 100% GPU-accelerated CSS and SVG vectors with zero external video latency.
+ * Pure GPU-accelerated CSS and SVG vectors with zero video decode lag.
  * Engineered for 120 FPS butter-smooth scrolling and crisp typography.
  */
 export const CalmIpoBullBackdrop = memo(function CalmIpoBullBackdrop({
@@ -13,54 +13,44 @@ export const CalmIpoBullBackdrop = memo(function CalmIpoBullBackdrop({
 }) {
   return (
     <div className={`absolute inset-0 overflow-hidden pointer-events-none select-none rounded-[inherit] ${className}`}>
-      
-      {/* 1. Base Tone: Obsidian Navy in Dark Mode vs Soft Luminous Mint in Light Mode */}
+
+      {/* Base Tone */}
       {dark ? (
-        <div className="absolute inset-0 bg-gradient-to-r from-[#06121E] via-[#091D30] to-[#0D2942] opacity-95" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#06121E] via-[#091D30] to-[#0D2942] opacity-90" />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.03] via-transparent to-teal-500/[0.04]" />
       )}
 
-      {/* 2. Hardware-Accelerated Ambient Glowing Mesh & Financial Waves */}
+      {/* Hardware-Accelerated Ambient Glowing Mesh */}
       {dark && (
-        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-40">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-30">
           <div
-            className="absolute -right-20 -top-20 w-[450px] h-[450px] rounded-full blur-[80px]"
+            className="absolute -right-20 -top-20 w-[400px] h-[400px] rounded-full blur-[70px]"
             style={{
-              background: "radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(20, 184, 166, 0.15) 40%, transparent 70%)",
-              transform: "translate3d(0, 0, 0)"
-            }}
-          />
-          <div
-            className="absolute right-40 bottom-[-50px] w-[350px] h-[350px] rounded-full blur-[70px]"
-            style={{
-              background: "radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(16, 185, 129, 0.1) 50%, transparent 75%)",
-              transform: "translate3d(0, 0, 0)"
+              background: "radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, rgba(20, 184, 166, 0.15) 40%, transparent 70%)"
             }}
           />
         </div>
       )}
 
-      {/* 3. Majestic Dalal Street Charging Bull Hologram (Positioned on the Right) */}
+      {/* Majestic Dalal Street Charging Bull Hologram */}
       <div className="absolute right-0 top-0 bottom-0 w-full md:w-3/5 flex items-center justify-end pr-4 sm:pr-8 lg:pr-14 pointer-events-none">
-        
-        {/* Ambient Emerald & Gold Radial Aura */}
+
+        {/* Radial Aura */}
         <div
-          className={`absolute w-[320px] sm:w-[440px] h-[320px] sm:h-[440px] rounded-full blur-3xl ${
-            dark ? "opacity-100" : "opacity-40"
-          }`}
+          className={`absolute w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] rounded-full blur-2xl ${dark ? "opacity-60" : "opacity-25"
+            }`}
           style={{
             background: dark
-              ? "radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, rgba(245, 158, 11, 0.12) 40%, transparent 70%)"
-              : "radial-gradient(circle, rgba(16, 185, 129, 0.14) 0%, rgba(245, 158, 11, 0.08) 40%, transparent 70%)"
+              ? "radial-gradient(circle at center, rgba(16, 185, 129, 0.25) 0%, rgba(245, 158, 11, 0.1) 40%, transparent 70%)"
+              : "radial-gradient(circle at center, rgba(16, 185, 129, 0.12) 0%, rgba(245, 158, 11, 0.06) 40%, transparent 70%)"
           }}
         />
 
         {/* Artistic Charging Bull & Ascending Momentum Vector */}
         <svg
-          className={`w-full max-w-[400px] h-auto max-h-[300px] transition-transform duration-700 ${
-            dark ? "opacity-60" : "opacity-20"
-          }`}
+          className={`w-full max-w-[380px] h-auto max-h-[300px] transition-transform duration-700 ${dark ? "opacity-65" : "opacity-25"
+            }`}
           viewBox="0 0 500 360"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -70,15 +60,6 @@ export const CalmIpoBullBackdrop = memo(function CalmIpoBullBackdrop({
             d="M 20 320 Q 150 300 240 220 T 460 60"
             stroke="url(#bullLaserGreen)"
             strokeWidth="2.5"
-            strokeLinecap="round"
-          />
-          
-          {/* Laser Glow Shadow */}
-          <path
-            d="M 20 320 Q 150 300 240 220 T 460 60"
-            stroke="#10b981"
-            strokeWidth="8"
-            strokeOpacity={dark ? "0.25" : "0.1"}
             strokeLinecap="round"
           />
 
@@ -111,56 +92,43 @@ export const CalmIpoBullBackdrop = memo(function CalmIpoBullBackdrop({
             opacity="0.75"
           />
 
-          {/* Muscular Spine & Rib Velocity Arcs */}
-          <path d="M 230 145 C 280 140, 340 165, 390 200" stroke="#34d399" strokeWidth="1.5" opacity="0.6" />
-          <path d="M 200 180 C 240 175, 290 195, 340 230" stroke="#10b981" strokeWidth="1.2" opacity="0.5" />
-          <path d="M 170 215 C 210 210, 260 225, 300 255" stroke="#fbbf24" strokeWidth="1" opacity="0.5" />
-
-          {/* Foreleg Driving Force */}
-          <path d="M 370 240 L 410 320" stroke="#34d399" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M 330 250 L 350 330" stroke="#10b981" strokeWidth="2" strokeLinecap="round" opacity="0.8" />
-          
-          {/* Ground Impact Rings */}
-          <ellipse cx="410" cy="325" rx="20" ry="5" stroke="#34d399" strokeWidth="1.2" opacity="0.6" />
-          <ellipse cx="350" cy="335" rx="16" ry="4" stroke="#fbbf24" strokeWidth="1" opacity="0.5" />
+          {/* Muscular Front Leg Surge */}
+          <path
+            d="M 330 280 L 370 340 M 360 270 L 400 325"
+            stroke="#10b981"
+            strokeWidth="2"
+            strokeLinecap="round"
+            opacity="0.7"
+          />
 
           {/* Gradients */}
           <defs>
-            <linearGradient id="bullGoldenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.9" />
-              <stop offset="50%" stopColor="#34d399" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#059669" stopOpacity="0.8" />
-            </linearGradient>
             <linearGradient id="bullLaserGreen" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#10b981" stopOpacity="0.2" />
-              <stop offset="50%" stopColor="#34d399" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#a7f3d0" stopOpacity="1" />
+              <stop offset="0%" stopColor="#059669" stopOpacity="0.2" />
+              <stop offset="60%" stopColor="#10b981" stopOpacity="1" />
+              <stop offset="100%" stopColor="#34d399" stopOpacity="1" />
             </linearGradient>
+
+            <linearGradient id="bullGoldenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.8" />
+              <stop offset="45%" stopColor="#10b981" stopOpacity="0.85" />
+              <stop offset="100%" stopColor="#065f46" stopOpacity="0.3" />
+            </linearGradient>
+
             <linearGradient id="hornGradient" x1="0%" y1="100%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#059669" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#fbbf24" stopOpacity="0.8" />
+              <stop offset="0%" stopColor="#d97706" />
+              <stop offset="100%" stopColor="#fef08a" />
             </linearGradient>
           </defs>
         </svg>
       </div>
 
-      {/* 4. Fine Institutional Financial Grid Coordinates */}
-      <div
-        className={`absolute inset-0 pointer-events-none ${
-          dark ? "opacity-[0.035]" : "opacity-[0.02]"
-        }`}
-        style={{
-          backgroundImage: "linear-gradient(rgba(20, 184, 166, 0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(20, 184, 166, 0.4) 1px, transparent 1px)",
-          backgroundSize: "28px 28px"
-        }}
-      />
-
-      {/* 5. Protective Left Vignette: Guarantees 100% Crisp Headline Contrast */}
+      {/* Protective Left Vignette */}
       {dark ? (
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: "linear-gradient(to right, rgba(6, 18, 30, 0.95) 0%, rgba(6, 18, 30, 0.75) 45%, rgba(6, 18, 30, 0.15) 75%, transparent 100%)"
+            background: "linear-gradient(to right, rgba(4, 14, 27, 0.95) 0%, rgba(4, 14, 27, 0.75) 45%, rgba(4, 14, 27, 0.15) 75%, transparent 100%)"
           }}
         />
       ) : (
@@ -171,9 +139,6 @@ export const CalmIpoBullBackdrop = memo(function CalmIpoBullBackdrop({
           }}
         />
       )}
-
-      {/* 6. Subtle Edge Shadow (Dark mode only) */}
-      {dark && <div className="absolute inset-0 shadow-[inset_0_0_60px_rgba(3,10,18,0.6)] pointer-events-none" />}
     </div>
   );
 });

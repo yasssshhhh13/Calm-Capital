@@ -2833,11 +2833,12 @@ const IPOCard = React.memo(function IPOCard({ ipo, onOpen, watchlist, dark }) {
   const fs = formatStyle[ipo.status] || formatStyle.Closed;
 
   return (
-    <div
-      className="bg-white dark:bg-[#121D2D] border rounded-2xl overflow-hidden relative group transition-all hover:shadow-md"
-      style={{ borderColor: fs.border, boxShadow: fs.shadow, contentVisibility: "auto", containIntrinsicSize: "1px 260px" }}
-    >
-      {/* Stretch link for SEO + open details (bookmark sits above this) */}
+    <Card3DTilt className="h-full" maxTilt={6} scale={1.015}>
+      <div
+        className="card-3d-luxury bg-white dark:bg-[#121D2D] border rounded-2xl overflow-hidden relative group transition-all h-full flex flex-col justify-between"
+        style={{ borderColor: fs.border, boxShadow: fs.shadow, contentVisibility: "auto", containIntrinsicSize: "1px 260px" }}
+      >
+        {/* Stretch link for SEO + open details (bookmark sits above this) */}
       <a
         href={ipoPath(ipo.id)}
         aria-label={`View ${ipo.company} IPO details`}
@@ -3065,6 +3066,7 @@ const IPOCard = React.memo(function IPOCard({ ipo, onOpen, watchlist, dark }) {
         </div>
       </div>
     </div>
+  </Card3DTilt>
   );
 }, (prev, next) => {
   return prev.ipo === next.ipo &&
@@ -3095,19 +3097,20 @@ const ListedIPOCard = React.memo(function ListedIPOCard({ ipo, onOpen, watchlist
   else if (currentRet < 0) currentColor = "#e11d48";
 
   return (
-    <div className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl shadow-sm hover:shadow-md transition-all overflow-hidden relative" style={{ contentVisibility: "auto", containIntrinsicSize: "1px 260px" }}>
-      <a
-        href={ipoPath(ipo.id)}
-        aria-label={`View ${ipo.company} IPO details`}
-        className="absolute inset-0 z-0"
-        onClick={(e) => {
-          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-          e.preventDefault();
-          onOpen(ipo);
-        }}
-      />
-      <div className="p-5 relative z-[1] pointer-events-none">
-        {/* Header: Avatar + Company + Type badge */}
+    <Card3DTilt className="h-full" maxTilt={6} scale={1.015}>
+      <div className="card-3d-luxury bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl shadow-sm transition-all overflow-hidden relative h-full flex flex-col justify-between" style={{ contentVisibility: "auto", containIntrinsicSize: "1px 260px" }}>
+        <a
+          href={ipoPath(ipo.id)}
+          aria-label={`View ${ipo.company} IPO details`}
+          className="absolute inset-0 z-0"
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+            e.preventDefault();
+            onOpen(ipo);
+          }}
+        />
+        <div className="p-5 relative z-[1] pointer-events-none">
+          {/* Header: Avatar + Company + Type badge */}
         <div className="flex items-center gap-3 mb-1">
           <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={44} website={ipo.website} />
           <div className="flex-1 min-w-0">
@@ -3218,13 +3221,14 @@ const ListedIPOCard = React.memo(function ListedIPOCard({ ipo, onOpen, watchlist
         </div>
 
         {/* Details link */}
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-2">
           <span className="flex items-center gap-1 text-xs font-semibold" style={{ color: BRAND.blue }}>
             Details <ChevronRight size={13} />
           </span>
         </div>
       </div>
     </div>
+  </Card3DTilt>
   );
 }, (prev, next) => {
   return prev.ipo === next.ipo &&
@@ -6698,18 +6702,19 @@ const AllotmentCard = React.memo(function AllotmentCard({ ipo, onOpen, dark, tod
   const ss = statusStyle[status] || statusStyle.Closed;
 
   return (
-    <a
-      href={ipoPath(ipo.id)}
-      onClick={(e) => {
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-        e.preventDefault();
-        onOpen?.(ipo);
-      }}
-      className="bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between h-full cursor-pointer no-underline text-inherit overflow-hidden"
-    >
-      <div className="w-full min-w-0">
-        <div className="flex items-start gap-3 w-full min-w-0">
-          <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} website={ipo.website} />
+    <Card3DTilt className="h-full" maxTilt={6} scale={1.015}>
+      <a
+        href={ipoPath(ipo.id)}
+        onClick={(e) => {
+          if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+          e.preventDefault();
+          onOpen?.(ipo);
+        }}
+        className="card-3d-luxury bg-white dark:bg-[#121D2D] border border-slate-150 dark:border-white/5 rounded-2xl p-5 shadow-sm transition-all flex flex-col justify-between h-full cursor-pointer no-underline text-inherit overflow-hidden"
+      >
+        <div className="w-full min-w-0">
+          <div className="flex items-start gap-3 w-full min-w-0">
+            <CompanyAvatar name={ipo.company} logoUrl={ipo.logoUrl} size={42} website={ipo.website} />
           <div className="min-w-0 flex-1">
             <h3 className="font-bold text-slate-800 dark:text-white text-[15px] leading-snug line-clamp-2 break-words" title={ipo.company}>
               {ipo.company}
@@ -6800,6 +6805,7 @@ const AllotmentCard = React.memo(function AllotmentCard({ ipo, onOpen, dark, tod
         )}
       </div>
     </a>
+  </Card3DTilt>
   );
 });
 
@@ -9135,19 +9141,19 @@ export default function App() {
                 />
 
                 {/* 1. Hero Section */}
-                <div id="ipo-primary-hero" className="relative rounded-3xl overflow-hidden p-6 md:p-8 sm:p-10 shadow-2xl border border-emerald-500/25 select-none"
+                <div id="ipo-primary-hero" className="relative rounded-3xl overflow-hidden p-6 md:p-8 sm:p-10 shadow-2xl border border-emerald-500/30 select-none"
                   style={{
-                    background: "linear-gradient(135deg, #061423 0%, #092035 60%, #040D17 100%)",
-                    boxShadow: "0 20px 50px -15px rgba(2, 12, 27, 0.5)"
+                    background: "#071322",
+                    boxShadow: "0 20px 50px -15px rgba(2, 12, 27, 0.6)"
                   }}
                 >
-                  {/* Cinematic Charging Bull & Market Surge Animation (Always deep & rich) */}
-                  <CalmIpoBullBackdrop dark={true} intensity="normal" />
+                  {/* Subtle Charging Bull & Momentum Vector */}
+                  <CalmIpoBullBackdrop dark={true} intensity="subtle" />
 
                   <div className="relative z-10 grid md:grid-cols-12 gap-6 lg:gap-8 items-center">
                     {/* Left Column: Heading and Tagline */}
                     <div className="md:col-span-7 space-y-4 text-left">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shadow-sm backdrop-blur-md">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/25 shadow-sm">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                         Designed by Discipline
                       </div>
@@ -9173,30 +9179,38 @@ export default function App() {
                         </button>
                         <button
                           onClick={() => navigateToTab("gmp")}
-                          className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border border-white/20 bg-white/10 hover:bg-white/15 text-white hover:scale-[1.01] active:scale-[0.98] cursor-pointer backdrop-blur-sm"
+                          className="px-5 py-2.5 rounded-xl text-xs font-bold transition-all border border-white/20 bg-white/10 hover:bg-white/15 text-white hover:scale-[1.01] active:scale-[0.98] cursor-pointer"
                         >
                           View Live GMP
                         </button>
                       </div>
                     </div>
 
-                    {/* Right Column: Visual Graphics Card */}
+                    {/* Right Column: Prominent HD Live Candlestick Trading Display (Zero Lag, 100% Clear) */}
                     <div className="md:col-span-5 hidden md:block">
-                      <div className="relative p-6 rounded-2xl border border-emerald-500/20 bg-slate-900/60 backdrop-blur-xl shadow-2xl flex flex-col items-center text-center space-y-3">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#1C9BDA] to-emerald-500 flex items-center justify-center text-white shadow-lg shadow-emerald-500/25">
-                          <Activity size={22} />
-                        </div>
-                        <h4 className="text-sm font-bold text-white tracking-wide">Institutional Intelligence</h4>
-                        <p className="text-[11px] text-slate-400 leading-relaxed max-w-[210px]">
-                          Real-time multi-source verified data, tracked with financial discipline.
-                        </p>
-                        <div className="flex gap-2 items-center text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/25">
-                          <span className="relative flex h-1.5 w-1.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
+                      <div className="relative rounded-2xl border border-emerald-500/40 bg-black overflow-hidden shadow-2xl shadow-emerald-950/40">
+                        {/* Terminal Top Bar */}
+                        <div className="flex items-center justify-between px-3.5 py-2 bg-slate-950 border-b border-emerald-500/30">
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                            <span className="text-[10px] font-mono font-black text-emerald-400 tracking-wider">
+                              LIVE BSE/NSE ORDERFLOW
+                            </span>
+                          </div>
+                          <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                            INSTITUTIONAL RADAR
                           </span>
-                          Live Data Synced
                         </div>
+
+                        {/* Crisp Distinct Market Video Display */}
+                        <video
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-full h-44 object-cover"
+                          src="/videos/hero-market.mp4"
+                        />
                       </div>
                     </div>
                   </div>

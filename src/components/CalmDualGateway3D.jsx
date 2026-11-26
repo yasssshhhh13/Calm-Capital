@@ -1,16 +1,32 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   TrendingUp, Globe, ShieldCheck, ArrowRight, Activity,
-  Sparkles, DollarSign, BarChart3, Clock, Zap, BookOpen, Calendar, Shield
+  Sparkles, DollarSign, BarChart3, Clock, Zap, BookOpen, Calendar, Shield, Play
 } from "lucide-react";
 import CalmIpoBullBackdrop from "./animations/CalmIpoBullBackdrop";
 import CalmForexGlobeBackdrop from "./animations/CalmForexGlobeBackdrop";
+import { fetchLiveForexRates } from "../services/forexLiveRates.js";
 
 export default function CalmDualGateway3D({ onSelectSection, activeSection = "ipos", dark = true }) {
-  const [leftTilt, setLeftTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50 });
-  const [rightTilt, setRightTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50 });
+  const [leftTilt, setLeftTilt] = useState({ x: 0, y: 0 });
+  const [rightTilt, setRightTilt] = useState({ x: 0, y: 0 });
   const [hoveredCard, setHoveredCard] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [forexSubtitle, setForexSubtitle] = useState("🌊 EUR/USD 1.0960 · Gold $3,560.50 · USD/JPY 159.24");
+
+  useEffect(() => {
+    fetchLiveForexRates()
+      .then((rates) => {
+        if (!rates) return;
+        const eur = rates["EUR/USD"] ? rates["EUR/USD"].toFixed(4) : "1.0960";
+        const gold = rates["XAU/USD"]
+          ? `$${Number(rates["XAU/USD"]).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          : "$3,560.50";
+        const jpy = rates["USD/JPY"] ? rates["USD/JPY"].toFixed(2) : "159.24";
+        setForexSubtitle(`🌊 EUR/USD ${eur} · Gold ${gold} · USD/JPY ${jpy}`);
+      })
+      .catch(() => {});
+  }, []);
 
   const leftRef = useRef(null);
   const rightRef = useRef(null);
@@ -33,11 +49,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
   }, []);
 
   const handleMouseMove = (e, ref, setTilt) => {
-    if (isMobile) return;
-    if (e.pointerType === "touch") return;
-    if (!ref.current) return;
-    if (rafRef.current) return;
-
+    if (isMobile || !ref.current || rafRef.current) return;
     const clientX = e.clientX;
     const clientY = e.clientY;
 
@@ -50,25 +62,23 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
       const centerX = rect.width / 2;
       const centerY = rect.height / 2;
 
-      const rotX = ((y - centerY) / centerY) * -8;
-      const rotY = ((x - centerX) / centerX) * 8;
-      const glareX = (x / rect.width) * 100;
-      const glareY = (y / rect.height) * 100;
-
-      setTilt({ x: rotX, y: rotY, glareX, glareY });
+      // Subtle, buttery 3D tilt without layout recalculation
+      const rotX = ((y - centerY) / centerY) * -5;
+      const rotY = ((x - centerX) / centerX) * 5;
+      setTilt({ x: rotX, y: rotY });
     });
   };
 
   const handleMouseLeave = (setTilt) => {
-    setTilt({ x: 0, y: 0, glareX: 50, glareY: 50 });
+    setTilt({ x: 0, y: 0 });
     setHoveredCard(null);
   };
 
   return (
-    <div className="relative w-full rounded-3xl overflow-hidden p-5 sm:p-6 md:p-8 my-2 border border-slate-200/80 dark:border-white/10 shadow-2xl transition-all"
+    <div className="relative w-full rounded-3xl overflow-hidden p-4 sm:p-6 md:p-8 my-2 border border-slate-200/80 dark:border-white/10 shadow-2xl transition-all"
       style={{
         background: dark
-          ? "radial-gradient(ellipse at 50% 0%, #0F233B 0%, #060D1A 100%)"
+          ? "radial-gradient(ellipse at 50% 0%, #0d1e34 0%, #040914 100%)"
           : "radial-gradient(ellipse at 50% 0%, #E9F4FB 0%, #F5F7FA 100%)"
       }}
     >
@@ -78,9 +88,10 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
 
       {/* Header Banner */}
       <div className="relative z-10 flex flex-col items-center text-center mb-6 md:mb-8 space-y-2">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-teal-500/15 via-[#1c9bda]/15 to-emerald-500/15 text-teal-600 dark:text-teal-400 border border-teal-500/30 shadow-sm">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-black uppercase tracking-widest bg-gradient-to-r from-teal-500/20 via-[#1c9bda]/20 to-emerald-500/20 text-teal-600 dark:text-teal-300 border border-teal-500/30 shadow-sm">
           <Sparkles className="w-3.5 h-3.5 animate-pulse text-[#1c9bda]" />
-          <span>Calm Capital Institutional Gateway</span>
+          <span>Calm Capital Dual-Market Intelligence Gateway</span>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
         </div>
         <h2 className="text-2xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
           Designed by Discipline. Dual-Market Intelligence.
@@ -91,7 +102,7 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
       </div>
 
       {/* 2-Sided Gateway Arena */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6" style={{ perspective: isMobile ? "none" : "1400px" }}>
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6" style={{ perspective: isMobile ? "none" : "1200px" }}>
 
         {/* LEFT GATE: INDIAN IPO INTELLIGENCE */}
         <div
@@ -104,40 +115,27 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
           }}
           onMouseLeave={() => !isMobile && handleMouseLeave(setLeftTilt)}
           onClick={() => onSelectSection("ipos")}
-          className={`relative group rounded-3xl p-5 sm:p-6 md:p-8 cursor-pointer transition-all duration-300 border ${activeSection === "ipos"
-              ? "border-emerald-500/60 ring-2 ring-emerald-500/20 shadow-2xl shadow-emerald-500/10"
-              : "border-slate-200/80 dark:border-white/10 hover:border-emerald-500/40"
+          className={`relative group rounded-3xl p-5 sm:p-6 md:p-7 cursor-pointer transition-transform duration-200 border overflow-hidden ${activeSection === "ipos"
+              ? "border-emerald-500/80 ring-2 ring-emerald-500/30 shadow-[0_0_35px_rgba(16,185,129,0.25)]"
+              : "border-slate-200/80 dark:border-white/10 hover:border-emerald-500/60 hover:shadow-[0_0_25px_rgba(16,185,129,0.15)]"
             }`}
           style={{
-            background: dark
-              ? "linear-gradient(135deg, rgba(11, 31, 51, 0.85) 0%, rgba(6, 17, 30, 0.95) 100%)"
-              : "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 248, 255, 0.9) 100%)",
-            transform: isMobile ? "none" : `rotateX(${leftTilt.x}deg) rotateY(${leftTilt.y}deg) translateZ(10px)`,
-            transformStyle: isMobile ? "flat" : "preserve-3d",
+            background: dark ? "#071322" : "#ffffff",
+            transform: isMobile ? "none" : `rotateX(${leftTilt.x}deg) rotateY(${leftTilt.y}deg) translateZ(0)`,
             willChange: isMobile ? "auto" : "transform"
           }}
         >
-          {/* Dynamic Dalal Street Charging Bull & Market Surge Animation */}
-          <CalmIpoBullBackdrop dark={dark} intensity={dark ? "vibrant" : "subtle"} />
+          {/* Subtle Vector Background */}
+          <CalmIpoBullBackdrop dark={dark} intensity="subtle" />
 
-          {/* Specular Glare overlay */}
-          {!isMobile && (
-            <div
-              className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none"
-              style={{
-                background: `radial-gradient(circle at ${leftTilt.glareX}% ${leftTilt.glareY}%, rgba(16, 185, 129, 0.8), transparent 60%)`
-              }}
-            />
-          )}
-
-          <div className="relative z-10 space-y-5 sm:space-y-6">
+          <div className="relative z-10 space-y-4">
             {/* Top pill & status */}
             <div className="flex items-center justify-between">
-              <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-500/40 flex items-center gap-1.5 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
                 <span>🇮🇳 Primary Markets Desk</span>
               </span>
-              <span className="text-[11px] font-mono font-bold text-slate-400">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 text-emerald-400 border border-emerald-500/20">
                 14 Analysis Desks
               </span>
             </div>
@@ -146,70 +144,62 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
             <div>
               <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
                 <span>Indian IPO Intelligence</span>
-                <ArrowRight className="w-5 h-5 text-emerald-500 transform group-hover:translate-x-1.5 transition-transform shrink-0" />
+                <ArrowRight className="w-5 h-5 text-emerald-400 transform group-hover:translate-x-1.5 transition-transform shrink-0" />
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                Comprehensive data, live GMP premiums, institutional QIB subscriptions, financial health scoring, and allotment checking for Mainboard &amp; SME issues.
+              <p className="text-xs text-slate-500 dark:text-slate-300 mt-1 leading-relaxed">
+                Live GMP premiums, institutional QIB subscriptions, financial health scoring, and multi-PAN allotment chances.
               </p>
             </div>
 
-            {/* Visual Bar Graph Element */}
-            <div className="relative h-24 sm:h-28 rounded-2xl bg-slate-50/90 dark:bg-black/30 border border-slate-200/80 dark:border-emerald-500/20 p-3 overflow-hidden flex items-end justify-between gap-2 shadow-sm">
-              <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:12px_12px] opacity-15 pointer-events-none" />
-
-              {/* Animated bar columns */}
-              {[
-                { h: "55%", gmp: "+32%", label: "Tech" },
-                { h: "82%", gmp: "+68%", label: "Solar", hot: true },
-                { h: "40%", gmp: "+18%", label: "Pharma" },
-                { h: "95%", gmp: "+84%", label: "Defence", hot: true },
-                { h: "65%", gmp: "+45%", label: "Infra" },
-                { h: "75%", gmp: "+52%", label: "FMCG" }
-              ].map((bar, idx) => (
-                <div key={idx} className="flex-1 flex flex-col items-center justify-end h-full relative z-10">
-                  <span className={`text-[9px] font-mono font-bold mb-1 ${bar.hot ? "text-emerald-400" : "text-slate-400"}`}>
-                    {bar.gmp}
-                  </span>
-                  <div
-                    className={`w-full rounded-t-lg transition-all duration-500 ${bar.hot
-                        ? "bg-gradient-to-t from-emerald-600 to-teal-400 shadow-md shadow-emerald-500/30"
-                        : "bg-slate-300 dark:bg-slate-700 group-hover:bg-teal-600/60"
-                      }`}
-                    style={{ height: bar.h }}
-                  />
-                  <span className="text-[8px] text-slate-400 font-semibold mt-1">
-                    {bar.label}
+            {/* PROMINENT HD LIVE TRADING CANDLESTICK TERMINAL SCREEN (100% CLEAR & VISIBLE) */}
+            <div className="relative w-full h-44 sm:h-48 md:h-52 rounded-2xl overflow-hidden border border-emerald-500/40 shadow-lg bg-black group-hover:border-emerald-400 transition-colors">
+              {/* Terminal Screen Header Bar */}
+              <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-3 py-1.5 bg-slate-950/80 border-b border-emerald-500/30">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[10px] font-mono font-black text-emerald-400 tracking-wider">
+                    LIVE BSE/NSE ORDERFLOW &amp; CANDLESTICKS
                   </span>
                 </div>
-              ))}
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+                    PRIMARY DESK
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400">
+                    Kostak: +₹450
+                  </span>
+                </div>
+              </div>
+
+              {/* CRYSTAL-CLEAR HD CANDLESTICK VIDEO (High Visibility, Zero Lag) */}
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover pt-6"
+                src="/videos/trading-candles.mp4"
+              />
             </div>
 
             {/* Feature Pills */}
-            <div className="grid grid-cols-2 gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
-              <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span className="truncate">CalmCapital Score™</span>
+            <div className="grid grid-cols-2 gap-2 text-xs font-bold text-slate-700 dark:text-slate-200">
+              <div className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 flex items-center gap-2">
+                <Activity className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="truncate">Live GMP &amp; Kostak Rates</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-teal-500 shrink-0" />
-                <span className="truncate">Live Grey Market (GMP)</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-[#1c9bda] shrink-0" />
-                <span className="truncate">50X QIB Radar</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="truncate">Batch Allotment Check</span>
+              <div className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-teal-400 shrink-0" />
+                <span className="truncate">Multi-PAN Allotment (14 Desks)</span>
               </div>
             </div>
 
             {/* Enter CTA */}
             <button
               type="button"
-              className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-500 hover:brightness-110 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
             >
-              <span>Explore Indian IPOs (14 Desks)</span>
+              <span>Explore Indian IPO Desk</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -226,40 +216,27 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
           }}
           onMouseLeave={() => !isMobile && handleMouseLeave(setRightTilt)}
           onClick={() => onSelectSection("forex")}
-          className={`relative group rounded-3xl p-5 sm:p-6 md:p-8 cursor-pointer transition-all duration-300 border ${activeSection === "forex"
-              ? "border-[#1c9bda]/70 ring-2 ring-[#1c9bda]/30 shadow-2xl shadow-[#1c9bda]/15"
-              : "border-slate-200/80 dark:border-white/10 hover:border-[#1c9bda]/40"
+          className={`relative group rounded-3xl p-5 sm:p-6 md:p-7 cursor-pointer transition-transform duration-200 border overflow-hidden ${activeSection === "forex"
+              ? "border-[#1c9bda]/80 ring-2 ring-[#1c9bda]/30 shadow-[0_0_35px_rgba(28,155,218,0.25)]"
+              : "border-slate-200/80 dark:border-white/10 hover:border-[#1c9bda]/60 hover:shadow-[0_0_25px_rgba(28,155,218,0.15)]"
             }`}
           style={{
-            background: dark
-              ? "linear-gradient(135deg, rgba(8, 26, 45, 0.85) 0%, rgba(4, 13, 24, 0.95) 100%)"
-              : "linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 249, 255, 0.9) 100%)",
-            transform: isMobile ? "none" : `rotateX(${rightTilt.x}deg) rotateY(${rightTilt.y}deg) translateZ(10px)`,
-            transformStyle: isMobile ? "flat" : "preserve-3d",
+            background: dark ? "#071322" : "#ffffff",
+            transform: isMobile ? "none" : `rotateX(${rightTilt.x}deg) rotateY(${rightTilt.y}deg) translateZ(0)`,
             willChange: isMobile ? "auto" : "transform"
           }}
         >
-          {/* Dynamic 3D Cyber Globe & Global Telemetry Animation */}
-          <CalmForexGlobeBackdrop dark={dark} intensity={dark ? "vibrant" : "subtle"} />
+          {/* Subtle Vector Background */}
+          <CalmForexGlobeBackdrop dark={dark} intensity="subtle" />
 
-          {/* Specular Glare overlay */}
-          {!isMobile && (
-            <div
-              className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none"
-              style={{
-                background: `radial-gradient(circle at ${rightTilt.glareX}% ${rightTilt.glareY}%, rgba(28, 155, 218, 0.9), transparent 60%)`
-              }}
-            />
-          )}
-
-          <div className="relative z-10 space-y-5 sm:space-y-6">
+          <div className="relative z-10 space-y-4">
             {/* Top pill & status */}
             <div className="flex items-center justify-between">
-              <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-[#1c9bda]/15 text-[#1c9bda] dark:text-[#52b1e4] border border-[#1c9bda]/30 flex items-center gap-1.5">
+              <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-[#1c9bda]/20 text-[#1c9bda] dark:text-[#52b1e4] border border-[#1c9bda]/40 flex items-center gap-1.5 shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-[#1c9bda] animate-ping" />
                 <span>🌐 Global Currency Desk</span>
               </span>
-              <span className="text-[11px] font-mono font-bold text-slate-400">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-white/10 text-[#52b1e4] border border-[#1c9bda]/20">
                 3 Focused Desks
               </span>
             </div>
@@ -270,60 +247,58 @@ export default function CalmDualGateway3D({ onSelectSection, activeSection = "ip
                 <span>Global Forex Macro Hub</span>
                 <ArrowRight className="w-5 h-5 text-[#1c9bda] transform group-hover:translate-x-1.5 transition-transform shrink-0" />
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 leading-relaxed">
-                Institutional economic calendar, profit &amp; lot size calculator, and precision trading journal designed for prop firm challenges from $5,000.
+              <p className="text-xs text-slate-500 dark:text-slate-300 mt-1 leading-relaxed">
+                Institutional economic calendar, profit &amp; lot size calculator, and precision trading journal designed for prop firm accounts.
               </p>
             </div>
 
-            {/* Ticker Row */}
-            <div className="relative h-24 sm:h-28 rounded-2xl bg-slate-50/90 dark:bg-black/30 border border-slate-200/80 dark:border-[#1c9bda]/20 p-3 overflow-hidden flex items-center justify-around shadow-sm">
-              <div className="absolute inset-0 bg-[radial-gradient(#1c9bda_1px,transparent_1px)] [background-size:12px_12px] opacity-15 pointer-events-none" />
-
-              {/* Ticking live currency tickers */}
-              {[
-                { pair: "EUR/USD", val: "1.0542", chg: "+0.18%", up: true },
-                { pair: "XAU/USD", val: "$2,596", chg: "+0.85%", up: true },
-                { pair: "USD/JPY", val: "154.62", chg: "+0.35%", up: true },
-                { pair: "BTC/USD", val: "$91,450", chg: "+2.40%", up: true }
-              ].map((item, idx) => (
-                <div key={idx} className="flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-xl bg-white/40 dark:bg-white/5 border border-slate-200/50 dark:border-white/5 text-center shrink-0">
-                  <span className="text-[10px] font-mono font-black text-slate-900 dark:text-white">
-                    {item.pair}
-                  </span>
-                  <span className="text-[11px] font-mono font-bold text-slate-700 dark:text-slate-200">
-                    {item.val}
-                  </span>
-                  <span className={`text-[9px] font-mono font-bold ${item.up ? "text-emerald-500" : "text-rose-500"}`}>
-                    {item.chg}
+            {/* PROMINENT HD LIVE INTERBANK TRADING MONITORS (100% CLEAR & VISIBLE) */}
+            <div className="relative w-full h-44 sm:h-48 md:h-52 rounded-2xl overflow-hidden border border-[#1c9bda]/40 shadow-lg bg-black group-hover:border-[#1c9bda] transition-colors">
+              {/* Terminal Screen Header Bar */}
+              <div className="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-3 py-1.5 bg-slate-950/80 border-b border-[#1c9bda]/30">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#1c9bda] animate-pulse" />
+                  <span className="text-[10px] font-mono font-black text-[#52b1e4] tracking-wider">
+                    INTERBANK ORDER FLOW &amp; TERMINALS
                   </span>
                 </div>
-              ))}
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#1c9bda]/20 text-[#52b1e4] border border-[#1c9bda]/40">
+                    GLOBAL MACRO
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400">
+                    NY • LDN • TKO
+                  </span>
+                </div>
+              </div>
+
+              {/* CRYSTAL-CLEAR HD FOREX TERMINALS VIDEO (High Visibility, Zero Lag) */}
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover pt-6"
+                src="/videos/forex-market.mp4"
+              />
             </div>
 
             {/* Feature Pills */}
-            <div className="grid grid-cols-2 gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
-              <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-rose-500 shrink-0" />
+            <div className="grid grid-cols-2 gap-2 text-xs font-bold text-slate-700 dark:text-slate-200">
+              <div className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-rose-400 shrink-0" />
                 <span className="truncate">High-Impact News Calendar</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 flex items-center gap-2">
+              <div className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200/60 dark:border-white/10 flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-[#1c9bda] shrink-0" />
-                <span className="truncate">Discipline Journal</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 flex items-center gap-2">
-                <Shield className="w-4 h-4 text-teal-500 shrink-0" />
-                <span className="truncate">Multi-Account from $5K</span>
-              </div>
-              <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-white/5 border border-slate-200/60 dark:border-white/5 flex items-center gap-2">
-                <Zap className="w-4 h-4 text-amber-500 shrink-0" />
-                <span className="truncate">Risk &amp; Lot Size Engine</span>
+                <span className="truncate">Discipline Journal ($5K-$200K)</span>
               </div>
             </div>
 
             {/* Enter CTA */}
             <button
               type="button"
-              className="w-full py-3.5 rounded-xl bg-[#1c9bda] hover:bg-[#1688c2] text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-[#1c9bda]/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#1c9bda] via-blue-600 to-[#1c9bda] hover:brightness-110 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-[#1c9bda]/25 transition-all flex items-center justify-center gap-2 cursor-pointer border-0 active:scale-[0.99]"
             >
               <span>Launch Forex Desk (3 Desks)</span>
               <ArrowRight className="w-4 h-4" />
